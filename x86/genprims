@@ -1,0 +1,23 @@
+#!/usr/bin/perl -w
+use strict;
+
+my $mf=shift;	# the map file to be generated
+
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
+my ($f,$l);	# the forth name($f) and the assembler label ($l)
+
+while (<>) {
+	if (/^code\{$/) {		# code{ : start of primitive declaration
+		$_=<>;			# read in the next line of input
+		($f,$l)=split;		# which provides forth<->label mapping
+		print $mh "$f $l\n";	# create dictionary entry for primitives
+		print "$l:\n";		# generate the label for the assembler
+	} elsif (/^\}code$/) {		# }code :end of primitive declaration:
+		print "; end of definition of $l -> $f\n";
+	} else {
+		print;	# assembler code between code{...}code is passed thru
+	}
+}
+
+close $mh;
