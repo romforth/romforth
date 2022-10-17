@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+use strict;
+
+my $map={};	# mapping from forth words to assembly labels
+
+my ($f,$l);	# the forth name($f) and the assembler label ($l)
+
+my @args=@ARGV;	# all the args are assumed to have name to label mappings
+for my $a (@args) {
+	@ARGV=($a);		# read each of the args passed in as a file
+	while(<>) {		# reading one line at a time
+		($f,$l)=split;	# split'ing the line into the name and label
+		$map->{$f}=$l;	# and generate the mapping from name to label
+	}
+}
+
+my $m;					# cache for the map from name to label
+while (<>) {				# map forth words in the standard input
+	for $f (split) {		# for each word to their equivalent
+		if ($m=$map->{$f}) {	# byte offset within the binary
+			print "\tdb ", $map->{$f}, "\n";
+		} else {		# or whine if the mapping doesn't exist
+			die "unknown word: $f"
+		}
+	}
+}
