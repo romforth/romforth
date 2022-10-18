@@ -34,6 +34,20 @@ _unimpl(char *s, byte op, int n, char *f, int l) {
 
 #define MAX16 (1<<16)
 
+typedef struct x86splitreg {
+	byte lsb;
+	byte msb;
+} x86splitreg;
+
+typedef struct x86register {
+	union {
+		x86splitreg s;
+		int val;
+	};
+} x86register;
+
+x86register si;
+
 void
 emul(byte *mem, int *pip) {
 	int ip=*pip;
@@ -41,6 +55,11 @@ emul(byte *mem, int *pip) {
 	byte o=mem[ip++];
 	// printf("opcode: %d\n", o);
 	switch(o) {
+	case 0xBE:
+		si.s.lsb=mem[ip++];
+		si.s.msb=mem[ip++];
+		// printf("mov si, %x\n", si.val);
+		break;
 	case 0xF4:
 		// printf("halt\n");
 		exit(0);
