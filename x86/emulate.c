@@ -35,7 +35,8 @@ _unimpl(char *s, byte op, int n, char *f, int l) {
 #define MAX16 (1<<16)
 
 void
-emul(byte *mem, int ip) {
+emul(byte *mem, int *pip) {
+	int ip=*pip;
 	// printf("reading memory at address %d(%x)\n", ip, ip);
 	byte o=mem[ip++];
 	// printf("opcode: %d\n", o);
@@ -45,6 +46,14 @@ emul(byte *mem, int ip) {
 		exit(0);
 	default:
 		unimpl("opcode", o, 5);
+	}
+	*pip=ip;
+}
+
+void
+emulate(byte *mem, int ip) {
+	for(;;) {
+		emul(mem, &ip);
 	}
 }
 
@@ -66,6 +75,6 @@ main(int argc, char **argv) {
 	}
 	// printf("file length is %ld\n", sb.st_size);
 	read(fd, &mem[bios], sb.st_size);
-	emul(mem, bios);
+	emulate(mem, bios);
 	close(fd);
 }
