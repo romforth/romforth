@@ -46,24 +46,49 @@ typedef struct x86register {
 	};
 } x86register;
 
-x86register si, ax;
+x86register regs[8];
+
+#define ax regs[0]
+#define si regs[6]
+
+char *regnames[]={"ax","cx","dx","bx","sp","bp","si","di"};
+
+int
+getreg(int n) {
+	int r = n&0x7;
+	if (r>7) {
+		unimpl("register", n, 6);
+	}
+	// printf("register %s\n", regnames[r]);
+	return r;
+}
 
 void
 emul(byte *mem, int *pip) {
 	int ip=*pip;
 	// printf("reading memory at address %d(%x)\n", ip, ip);
 	byte o=mem[ip++];
-	// printf("opcode: %d\n", o);
+	// printf("opcode: %d(0x%x)\n", o, o);
 	switch(o) {
 	case 0xAC:
 		ax.s.lsb=mem[si.val++];
 		// printf("stored %d in al\n", ax.s.lsb);
 		break;
+	case 0xB8:
+	case 0xB9:
+	case 0xBA:
+	case 0xBB:
+	case 0xBC:
+	case 0xBD:
 	case 0xBE:
-		si.s.lsb=mem[ip++];
-		si.s.msb=mem[ip++];
-		// printf("mov si, %x\n", si.val);
+	case 0xBF: {
+		int r=getreg(o);
+		x86register *x=&regs[r];
+		x->s.lsb=mem[ip++];
+		x->s.msb=mem[ip++];
+		// printf("mov %s, %x\n", regnames[r], x->val);
 		break;
+	}
 	case 0xF4:
 		// printf("halt\n");
 		exit(0);
