@@ -7,4 +7,12 @@ inner{
 key key
 	mov dx, 0x3f8	; x86 serial port #1
 	in al, dx	; read it
+	mov bl, al	; save as a stashed value
+}inner
+
+inner{
+emit emit
+	mov dx, 0x3f8	; x86 serial port #1
+	mov al, bl	; restore stashed value
+	out dx, al	; and echo it out
 }inner

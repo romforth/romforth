@@ -70,6 +70,14 @@ emul(byte *mem, int *pip) {
 	byte o=mem[ip++];
 	// printf("opcode: %d(0x%x)\n", o, o);
 	switch(o) {
+	case 0x88: {
+		byte n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		regs[d].s.lsb=regs[s].s.lsb;
+		// printf("mov %s.l <- %s.l\n", regnames[d], regnames[s]);
+		break;
+	}
 	case 0xAC:
 		ax.s.lsb=mem[si.val++];
 		// printf("stored %d in al\n", ax.s.lsb);
@@ -92,6 +100,10 @@ emul(byte *mem, int *pip) {
 	case 0xEC:
 		ax.s.lsb=getchar();
 		// printf("got character: %c\n", ax.s.lsb);
+		break;
+	case 0xEE:
+		// printf("put character: %c\n", ax.s.lsb);
+		putchar(ax.s.lsb);
 		break;
 	case 0xF4:
 		// printf("halt\n");
