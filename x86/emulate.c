@@ -46,7 +46,7 @@ typedef struct x86register {
 	};
 } x86register;
 
-x86register si;
+x86register si, ax;
 
 void
 emul(byte *mem, int *pip) {
@@ -55,6 +55,10 @@ emul(byte *mem, int *pip) {
 	byte o=mem[ip++];
 	// printf("opcode: %d\n", o);
 	switch(o) {
+	case 0xAC:
+		ax.s.lsb=mem[si.val++];
+		// printf("stored %d in al\n", ax.s.lsb);
+		break;
 	case 0xBE:
 		si.s.lsb=mem[ip++];
 		si.s.msb=mem[ip++];
