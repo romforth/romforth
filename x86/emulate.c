@@ -89,6 +89,10 @@ emul(byte *mem, int *pip) {
 		// printf("mov %s, %x\n", regnames[r], x->val);
 		break;
 	}
+	case 0xEC:
+		ax.s.lsb=getchar();
+		// printf("got character: %c\n", ax.s.lsb);
+		break;
 	case 0xF4:
 		// printf("halt\n");
 		exit(0);

@@ -7,14 +7,22 @@ open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my ($f,$l);	# the forth name($f) and the assembler label ($l)
 
+sub mapnames {
+	$_=<>;			# read in the next line of input
+	($f,$l)=split;		# which provides forth<->label mapping
+	print $mh "$f $l\n";	# create dictionary entry for primitives
+	print "$l:\n";		# generate the label for the assembler
+}
+
 while (<>) {
 	if (/^code\{$/) {		# code{ : start of primitive declaration
-		$_=<>;			# read in the next line of input
-		($f,$l)=split;		# which provides forth<->label mapping
-		print $mh "$f $l\n";	# create dictionary entry for primitives
-		print "$l:\n";		# generate the label for the assembler
+		mapnames();		# handle forth word to label mapping
 	} elsif (/^\}code$/) {		# }code :end of primitive declaration:
 		print "; end of definition of $l -> $f\n";
+	} elsif (/^inner\{$/) {		# inner{ : primitives that loop to inner
+		mapnames();		# handle forth word to label mapping
+	} elsif (/^\}inner$/) {		# }inner : end of word looping to inner
+		print "next	; continue within the interpreter\n";
 	} else {
 		print;	# assembler code between code{...}code is passed thru
 	}

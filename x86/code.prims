@@ -2,3 +2,9 @@ code{
 bye halt
 	hlt
 }code
+
+inner{
+key key
+	mov dx, 0x3f8	; x86 serial port #1
+	in al, dx	; read it
+}inner

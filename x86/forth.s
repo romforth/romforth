@@ -1,7 +1,12 @@
 	bits	16	; x86 real mode
 	org	0x100	; x86 BIOS origin is 0x100 - must match in emulate.c
 
+%macro next 0
+	jmp bp
+%endmacro
+
 	mov si, rom	; register SI is the equivalent of Forth's IP register
+	mov bp, inner	; cache the label in register bp
 restoreax:
 	mov ax, $	; initialize AH to this segment
 inner:			; for use in the inner interpreter, since it is the only

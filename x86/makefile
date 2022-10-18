@@ -1,5 +1,5 @@
 x86/all : x86/emulate x86/forth
-	x86/emulate x86/forth
+	cat test.inp | x86/emulate x86/forth
 x86/forth : x86/forth.s x86/prims.s x86/rom.s
 	nasm -l x86/forth.lst x86/forth.s
 x86/prims.s : x86/genprims x86/code.prims
