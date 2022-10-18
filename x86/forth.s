@@ -6,9 +6,7 @@ restoreax:
 	mov ax, $	; initialize AH to this segment
 inner:			; for use in the inner interpreter, since it is the only
 	lodsb		; al=si++	# x86 register with read+auto increment
-%ifdef NOTYET		; emulator is not up to speed on these opcodes, yet
 	jmp ax		; register AX is the equivalent of Forth's W register
-%endif
 
 %include "x86/prims.s"
 

@@ -92,6 +92,20 @@ emul(byte *mem, int *pip) {
 	case 0xF4:
 		// printf("halt\n");
 		exit(0);
+	case 0xFF: {
+		int n=mem[ip++];
+		switch (n&0xF0) {
+		case 0xE0: {
+			int r=getreg(n);
+			*pip=regs[r].val;
+			// printf("jmp %s\n", regnames[r]);
+			return;
+		}
+		default:
+			unimpl("jmp?", n, 7);
+		}
+		break;
+	}
 	default:
 		unimpl("opcode", o, 5);
 	}
