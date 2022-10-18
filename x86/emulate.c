@@ -4,6 +4,7 @@
 #include <fcntl.h>		// open
 #include <unistd.h>		// close
 #include <stdlib.h>		// exit
+#include <string.h>		// strlen
 
 typedef unsigned char byte;
 
@@ -20,6 +21,17 @@ _die(char *s, int n, char *f, int l) {
 }
 #define die(s, n) _die(s, n, __FILE__, __LINE__);
 
+void
+_unimpl(char *s, byte op, int n, char *f, int l) {
+	char buf[100];
+	if (strlen(s) > 50) { // ensure enough space
+		die("string doesn't fit in buffer", 4);
+	}
+	sprintf(buf, "unimplemented %s %d(0x%x)", s, op, op); // ~24 bytes + s
+	_die(buf, n, f, l);
+}
+#define unimpl(s, op, n) _unimpl(s, op, n, __FILE__, __LINE__)
+
 #define MAX16 (1<<16)
 
 void
@@ -32,7 +44,7 @@ emul(byte *mem, int ip) {
 		// printf("halt\n");
 		exit(0);
 	default:
-		die("unimplemented opcode", o);
+		unimpl("opcode", o, 5);
 	}
 }
 
@@ -50,7 +62,7 @@ main(int argc, char **argv) {
 		die("open failed", 2);
 	}
 	if (fstat(fd, &sb) == -1) {
-		die("fstat failed", 2);
+		die("fstat failed", 3);
 	}
 	// printf("file length is %ld\n", sb.st_size);
 	read(fd, &mem[bios], sb.st_size);
