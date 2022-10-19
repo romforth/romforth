@@ -23,6 +23,12 @@ while (<>) {
 		mapnames();		# handle forth word to label mapping
 	} elsif (/^\}inner$/) {		# }inner : end of word looping to inner
 		print "next	; continue within the interpreter\n";
+	} elsif (/^unary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# unary operators
+		($f,$l)=($1,$2);
+		print $mh "$f $l\n";	# create dictionary entry for primitives
+		print "$l:\n";		# generate the label for the assembler
+		print "\t$3\n";
+		print "\tnext\n";
 	} else {
 		print;	# assembler code between code{...}code is passed thru
 	}

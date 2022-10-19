@@ -15,22 +15,7 @@ emit emit
 	out dx, al	; and echo it out
 }inner
 
-inner{
-dup dup
-	_dup
-}inner
-
-inner{
-drop drop
-	_drop
-}inner
-
-inner{
-neg neg
-	_neg
-}inner
-
-inner{
-inv inv
-	_inv
-}inner
+unary dup dup _dup
+unary drop drop _drop
+unary neg neg _neg
+unary inv inv _inv
