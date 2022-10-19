@@ -10,9 +10,7 @@ load:			; A small bootloader
 	mov cx, mem-ram	; setup number of bytes to load
 	mov dx, 0x3f8	; from x86 serial port #1
 	cld		; to auto increment register di after each byte is read
-%ifdef NOTYET
 	rep insb	; load that number of bytes
-%endif
 ram:			; rest of the stuff can be loaded in via the serial port
 	mov si, rom	; register SI is the equivalent of Forth's IP register
 	mov bp, inner	; cache the label in register bp

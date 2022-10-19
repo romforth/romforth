@@ -49,7 +49,9 @@ typedef struct x86register {
 x86register regs[8];
 
 #define ax regs[0]
+#define cx regs[1]
 #define si regs[6]
+#define di regs[7]
 
 char *regnames[]={"ax","cx","dx","bx","sp","bp","si","di"};
 
@@ -64,14 +66,26 @@ getreg(int n) {
 }
 
 int df=1;
+int rep=0;
 
 void
 emul(byte *mem, int *pip) {
 	int ip=*pip;
+	if (rep) {
+		ip=rep;
+	}
 	// printf("reading memory at address %d(%x)\n", ip, ip);
 	byte o=mem[ip++];
 	// printf("opcode: %d(0x%x)\n", o, o);
 	switch(o) {
+	case 0x6C: {
+		byte c=getchar();
+		mem[df ? di.val-- : di.val++]=c;
+		// printf("got character: %x\n", c);
+		if (--cx.val) break;
+		rep=0;
+		break;
+	}
 	case 0x88: {
 		byte n=mem[ip++];
 		int d=getreg(n);
@@ -106,6 +120,10 @@ emul(byte *mem, int *pip) {
 	case 0xEE:
 		// printf("put character: %c\n", ax.s.lsb);
 		putchar(ax.s.lsb);
+		break;
+	case 0xF3:
+		// printf("rep ");
+		rep=ip;
 		break;
 	case 0xF4:
 		// printf("halt\n");
@@ -158,7 +176,7 @@ main(int argc, char **argv) {
 		die("fstat failed", 3);
 	}
 	// printf("file length is %ld\n", sb.st_size);
-	read(fd, &mem[bios], sb.st_size);
+	read(fd, &mem[bios], 12);
 	emulate(mem, bios);
 	close(fd);
 }

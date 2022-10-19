@@ -1,5 +1,5 @@
 x86/all : x86/emulate x86/forth
-	cat test.inp | x86/emulate x86/forth > x86/test.out
+	(dd if=x86/forth bs=1 skip=12 2>/dev/null ; cat test.inp) | x86/emulate x86/forth > x86/test.out
 	cmp x86/test.out x86/test.expected
 x86/forth : x86/forth.s x86/prims.s x86/rom.s
 	nasm -l x86/forth.lst x86/forth.s
