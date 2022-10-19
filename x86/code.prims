@@ -24,3 +24,4 @@ unary nip nip _nip
 binary + add add tos, nos
 binary & and and tos, nos
 binary | or  or  tos, nos
+binary ^ xor xor tos, nos

@@ -104,6 +104,14 @@ emul(byte *mem, int *pip) {
 		// printf("and %s, %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x31: {
+		int n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		regs[d].val ^= regs[s].val;
+		// printf("xor %s, %s\n", regnames[d], regnames[s]);
+		break;
+	}
 	case 0x53:
 		if (sp.val<=0) {
 			die("stack overflow", 8);

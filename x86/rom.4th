@@ -9,6 +9,10 @@ dup	[ c c
 dup	[ c c
 |	[ c:c|c
 dup	[ c c
+dup	[ c c c
+^	[ c 0
+|	[ c
+dup	[ c c
 neg	[ c -c
 neg	[ c c
 inv	[ c ~c
