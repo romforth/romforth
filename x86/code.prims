@@ -19,3 +19,4 @@ unary dup dup _dup
 unary drop drop _drop
 unary neg neg _neg
 unary inv inv _inv
+unary nip nip _nip

@@ -5,14 +5,18 @@
 	jmp bp
 %endmacro
 
+%define tos bx
+%define nos cx
+
 %macro unary 1
-	%1 bx
+	%1 tos
 %endmacro
 
 %define _dup unary push
 %define _drop unary pop
 %define _neg unary neg
 %define _inv unary not
+%define _nip pop nos
 
 load:			; A small bootloader
 	mov di, ram	; destination starts at ram
