@@ -50,6 +50,8 @@ x86register regs[8];
 
 #define ax regs[0]
 #define cx regs[1]
+#define bx regs[3]
+#define sp regs[4]
 #define si regs[6]
 #define di regs[7]
 
@@ -78,6 +80,20 @@ emul(byte *mem, int *pip) {
 	byte o=mem[ip++];
 	// printf("opcode: %d(0x%x)\n", o, o);
 	switch(o) {
+	case 0x53:
+		if (sp.val<=0) {
+			die("stack overflow", 8);
+		}
+		mem[--sp.val]=bx.s.msb;
+		mem[--sp.val]=bx.s.lsb;
+		break;
+	case 0x5B:
+		if (sp.val>=0x100) {
+			die("stack underflow", 9);
+		}
+		bx.s.lsb=mem[sp.val++];
+		bx.s.msb=mem[sp.val++];
+		break;
 	case 0x6C: {
 		byte c=getchar();
 		mem[df ? di.val-- : di.val++]=c;
