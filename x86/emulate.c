@@ -87,13 +87,23 @@ emul(byte *mem, int *pip) {
 		mem[--sp.val]=bx.s.msb;
 		mem[--sp.val]=bx.s.lsb;
 		break;
+	case 0x58:
+	case 0x59:
+	case 0x5A:
 	case 0x5B:
+	case 0x5C:
+	case 0x5D:
+	case 0x5E:
+	case 0x5F: {
+		int r=getreg(o);
 		if (sp.val>=0x100) {
 			die("stack underflow", 9);
 		}
-		bx.s.lsb=mem[sp.val++];
-		bx.s.msb=mem[sp.val++];
+		x86register *x=&regs[r];
+		x->s.lsb=mem[sp.val++];
+		x->s.msb=mem[sp.val++];
 		break;
+	}
 	case 0x6C: {
 		byte c=getchar();
 		mem[df ? di.val-- : di.val++]=c;
