@@ -5,6 +5,13 @@
 	jmp bp
 %endmacro
 
+%macro unary 1
+	%1 bx
+%endmacro
+
+%define _dup unary push
+%define _drop unary pop
+
 load:			; A small bootloader
 	mov di, ram	; destination starts at ram
 	mov cx, mem-ram	; setup number of bytes to load
@@ -12,6 +19,7 @@ load:			; A small bootloader
 	cld		; to auto increment register di after each byte is read
 	rep insb	; load that number of bytes
 ram:			; rest of the stuff can be loaded in via the serial port
+	mov sp, load	; stack grows to low memory
 	mov si, rom	; register SI is the equivalent of Forth's IP register
 	mov bp, inner	; cache the label in register bp
 restoredx:		; Initialize the default port to

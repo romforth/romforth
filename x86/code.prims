@@ -14,3 +14,13 @@ emit emit
 	mov al, bl	; restore stashed value
 	out dx, al	; and echo it out
 }inner
+
+inner{
+dup dup
+	_dup
+}inner
+
+inner{
+drop drop
+	_drop
+}inner
