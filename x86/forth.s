@@ -5,6 +5,15 @@
 	jmp bp
 %endmacro
 
+load:			; A small bootloader
+	mov di, ram	; destination starts at ram
+	mov cx, mem-ram	; setup number of bytes to load
+	mov dx, 0x3f8	; from x86 serial port #1
+%ifdef NOTYET
+	cld		; auto increment register di after each byte is read
+	rep insb	; load that number of bytes
+%endif
+ram:			; rest of the stuff can be loaded in via the serial port
 	mov si, rom	; register SI is the equivalent of Forth's IP register
 	mov bp, inner	; cache the label in register bp
 restoredx:		; Initialize the default port to
@@ -20,3 +29,5 @@ inner:			; for use in the inner interpreter, since it is the only
 rom:
 
 %include "x86/rom.s"
+
+mem:
