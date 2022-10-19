@@ -29,6 +29,13 @@ while (<>) {
 		print "$l:\n";		# generate the label for the assembler
 		print "\t$3\n";
 		print "\tnext\n";
+	} elsif (/^binary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# binary operators
+		($f,$l)=($1,$2);
+		print $mh "$f $l\n";	# create dictionary entry for primitives
+		print "$l:\n";		# generate the label for the assembler
+		print "\t_nip\n";
+		print "\t$3\n";
+		print "\tnext\n";
 	} else {
 		print;	# assembler code between code{...}code is passed thru
 	}
