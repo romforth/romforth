@@ -151,6 +151,9 @@ emul(byte *mem, int *pip) {
 		if ((n&0xD8)==0xD8) {
 			x->val = -x->val;
 			// printf("neg\n");
+		} else if ((n&0xD0)==0xD0) {
+			x->val = ~x->val;
+			// printf("inv\n");
 		} else {
 			unimpl("opcode F7+", n, 9);
 		}
