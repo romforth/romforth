@@ -20,6 +20,7 @@ while (<>) {				# map forth words in the standard input
 		if ($m=$map->{$f}) {	# byte offset within the binary
 			print "\tdb ", $map->{$f}, "\n";
 		} else {		# or whine if the mapping doesn't exist
+			last if ($f eq '[');	# skip to end of line
 			die "unknown word: $f"
 		}
 	}
