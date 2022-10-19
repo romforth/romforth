@@ -80,6 +80,14 @@ emul(byte *mem, int *pip) {
 	byte o=mem[ip++];
 	// printf("opcode: %d(0x%x)\n", o, o);
 	switch(o) {
+	case 0x01: {
+		int n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		regs[d].val += regs[s].val;
+		// printf("add %s, %s\n", regnames[d], regnames[s]);
+		break;
+	}
 	case 0x53:
 		if (sp.val<=0) {
 			die("stack overflow", 8);
