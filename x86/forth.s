@@ -7,6 +7,8 @@
 
 	mov si, rom	; register SI is the equivalent of Forth's IP register
 	mov bp, inner	; cache the label in register bp
+restoredx:		; Initialize the default port to
+	mov dx, 0x3f8	; x86 serial port #1
 restoreax:
 	mov ax, $	; initialize AH to this segment
 inner:			; for use in the inner interpreter, since it is the only
