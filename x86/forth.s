@@ -9,8 +9,8 @@ load:			; A small bootloader
 	mov di, ram	; destination starts at ram
 	mov cx, mem-ram	; setup number of bytes to load
 	mov dx, 0x3f8	; from x86 serial port #1
+	cld		; to auto increment register di after each byte is read
 %ifdef NOTYET
-	cld		; auto increment register di after each byte is read
 	rep insb	; load that number of bytes
 %endif
 ram:			; rest of the stuff can be loaded in via the serial port

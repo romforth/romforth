@@ -63,6 +63,8 @@ getreg(int n) {
 	return r;
 }
 
+int df=1;
+
 void
 emul(byte *mem, int *pip) {
 	int ip=*pip;
@@ -79,7 +81,7 @@ emul(byte *mem, int *pip) {
 		break;
 	}
 	case 0xAC:
-		ax.s.lsb=mem[si.val++];
+		ax.s.lsb=mem[df ? si.val-- : si.val++];
 		// printf("stored %d in al\n", ax.s.lsb);
 		break;
 	case 0xB8:
@@ -108,6 +110,10 @@ emul(byte *mem, int *pip) {
 	case 0xF4:
 		// printf("halt\n");
 		exit(0);
+	case 0xFC:
+		df=0;
+		// printf("clear direction flag\n");
+		break;
 	case 0xFF: {
 		int n=mem[ip++];
 		switch (n&0xF0) {
