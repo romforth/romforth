@@ -7,6 +7,8 @@ neg	[ c c -c
 dup	[ c c
 &	[ c:c&c
 dup	[ c c
+|	[ c:c|c
+dup	[ c c
 neg	[ c -c
 neg	[ c c
 inv	[ c ~c

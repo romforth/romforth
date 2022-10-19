@@ -88,6 +88,14 @@ emul(byte *mem, int *pip) {
 		// printf("add %s, %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x09: {
+		int n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		regs[d].val |= regs[s].val;
+		// printf("or %s, %s\n", regnames[d], regnames[s]);
+		break;
+	}
 	case 0x21: {
 		int n=mem[ip++];
 		int d=getreg(n);
