@@ -11,6 +11,8 @@
 
 %define _dup unary push
 %define _drop unary pop
+%define _neg unary neg
+%define _inv unary not
 
 load:			; A small bootloader
 	mov di, ram	; destination starts at ram

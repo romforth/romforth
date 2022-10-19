@@ -24,3 +24,13 @@ inner{
 drop drop
 	_drop
 }inner
+
+inner{
+neg neg
+	_neg
+}inner
+
+inner{
+inv inv
+	_inv
+}inner
