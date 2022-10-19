@@ -22,3 +22,4 @@ unary inv inv _inv
 unary nip nip _nip
 
 binary + add add tos, nos
+binary & and and tos, nos
