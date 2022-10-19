@@ -144,6 +144,18 @@ emul(byte *mem, int *pip) {
 	case 0xF4:
 		// printf("halt\n");
 		exit(0);
+	case 0xF7: {
+		int n=mem[ip++];
+		int r=getreg(n);
+		x86register *x=&regs[r];
+		if ((n&0xD8)==0xD8) {
+			x->val = -x->val;
+			// printf("neg\n");
+		} else {
+			unimpl("opcode F7+", n, 9);
+		}
+		break;
+	}
 	case 0xFC:
 		df=0;
 		// printf("clear direction flag\n");
