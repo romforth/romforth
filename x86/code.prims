@@ -21,6 +21,7 @@ unary neg neg _neg
 unary inv inv _inv
 unary nip nip _nip
 
+fallthru - sub _neg	; tos = -tos # and then fall thru to addition
 binary + add add tos, nos
 binary & and and tos, nos
 binary | or  or  tos, nos
