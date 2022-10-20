@@ -1,3 +1,4 @@
+	[ x < c	// x == some random value in the bx register
 key	[ c
 dup	[ c c
 dup	[ c c c
@@ -21,8 +22,8 @@ neg	[ c -c
 neg	[ c c
 inv	[ c ~c
 inv	[ c c
-emit	[ c c
 nip	[ c
-dup	[ c c
+dip	[ c c
+emit	[ c c > c
 drop	[ c
 bye

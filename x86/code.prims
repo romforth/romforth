@@ -23,6 +23,7 @@ define nos cx
 define _dup  push tos
 define _drop pop tos
 define _nip  pop nos
+define _dip  push nos
 define _neg  neg tos
 define _inv  not tos
 
@@ -31,6 +32,7 @@ unary drop drop _drop
 unary neg  neg  _neg
 unary inv  inv  _inv
 unary nip  nip  _nip
+unary dip  dip  _dip
 
 fallthru - sub _neg	; tos = -tos # and then fall thru to addition
 binary + add add tos, nos

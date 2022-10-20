@@ -112,13 +112,23 @@ emul(byte *mem, int *pip) {
 		// printf("xor %s, %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x50:
+	case 0x51:
+	case 0x52:
 	case 0x53:
+	case 0x54:
+	case 0x55:
+	case 0x56:
+	case 0x57: {
+		int r=getreg(o);
 		if (sp.val<=0) {
 			die("stack overflow", 8);
 		}
-		mem[--sp.val]=bx.s.msb;
-		mem[--sp.val]=bx.s.lsb;
+		x86register *x=&regs[r];
+		mem[--sp.val]=x->s.msb;
+		mem[--sp.val]=x->s.lsb;
 		break;
+	}
 	case 0x58:
 	case 0x59:
 	case 0x5A:
@@ -184,6 +194,9 @@ emul(byte *mem, int *pip) {
 		rep=ip;
 		break;
 	case 0xF4:
+		if (sp.val!=0x100) {
+			die("stack is not empty", 10);
+		}
 		// printf("halt\n");
 		exit(0);
 	case 0xF7: {
