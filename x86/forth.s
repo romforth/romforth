@@ -1,23 +1,6 @@
 	bits	16	; x86 real mode
 	org	0x100	; x86 BIOS origin is 0x100 - must match in emulate.c
 
-%macro next 0
-	jmp bp
-%endmacro
-
-%define tos bx
-%define nos cx
-
-%macro unary 1
-	%1 tos
-%endmacro
-
-%define _dup unary push
-%define _drop unary pop
-%define _neg unary neg
-%define _inv unary not
-%define _nip pop nos
-
 load:			; A small bootloader
 	mov di, ram	; destination starts at ram
 	mov cx, mem-ram	; setup number of bytes to load

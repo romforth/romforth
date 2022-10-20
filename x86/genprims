@@ -41,6 +41,8 @@ while (<>) {
 		print $mh "$f $l\n";	# create dictionary entry for primitives
 		print "$l:\n";		# generate the label for the assembler
 		print "\t$3\n";
+	} elsif (/^define\s+(\S+)\s+(.*)$/) {	# definitions
+		print "%define $1 $2\n";
 	} else {
 		print;	# assembler code between code{...}code is passed thru
 	}
