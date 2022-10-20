@@ -2,6 +2,9 @@
 key	[ c
 dup	[ c c
 dup	[ c c c
+2drop	[ c
+dup	[ c c
+dup	[ c c c
 neg	[ c c -c
 +	[ c 0
 +	[ c

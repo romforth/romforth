@@ -29,8 +29,9 @@ define _inv  not tos
 define _inc  inc tos
 define _dec  dec tos
 
-unary dup  dup  _dup
+fallthru 2drop drop2 _drop	; drop	# and then fall thru to drop
 unary drop drop _drop
+unary dup  dup  _dup
 unary neg  neg  _neg
 unary inv  inv  _inv
 unary nip  nip  _nip
