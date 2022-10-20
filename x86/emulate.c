@@ -160,6 +160,15 @@ emul(byte *mem, int *pip) {
 		rep=0;
 		break;
 	}
+	case 0x87: {
+		int n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		int t=regs[d].val;
+		regs[d].val=regs[s].val;
+		regs[s].val=t;
+		break;
+	}
 	case 0x88: {
 		byte n=mem[ip++];
 		int d=getreg(n);

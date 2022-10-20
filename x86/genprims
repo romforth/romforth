@@ -10,8 +10,10 @@ my ($f,$l);	# the forth name($f) and the assembler label ($l)
 sub mapnames {
 	$_=<>;			# read in the next line of input
 	($f,$l)=split;		# which provides forth<->label mapping
+	s/^\s*$f//;
+	s/^\s*$l//;
 	print $mh "$f $l\n";	# create dictionary entry for primitives
-	print "$l:\n";		# generate the label for the assembler
+	print "$l:$_\n";	# generate the label for the assembler
 }
 
 while (<>) {

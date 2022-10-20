@@ -20,6 +20,7 @@ dup	[ c c
 dup	[ c c c
 -	[ c 0
 inc	[ c 1
+swap	[ 1 c
 +	[ c+1
 dec	[ c
 dup	[ c c
