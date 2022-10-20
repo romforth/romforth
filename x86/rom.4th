@@ -16,7 +16,9 @@ dup	[ c c c
 dup	[ c c
 dup	[ c c c
 -	[ c 0
-+	[ c
+inc	[ c 1
++	[ c+1
+dec	[ c
 dup	[ c c
 neg	[ c -c
 neg	[ c c

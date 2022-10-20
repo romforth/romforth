@@ -112,6 +112,12 @@ emul(byte *mem, int *pip) {
 		// printf("xor %s, %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x43:
+		bx.val++;
+		break;
+	case 0x4B:
+		bx.val--;
+		break;
 	case 0x50:
 	case 0x51:
 	case 0x52:

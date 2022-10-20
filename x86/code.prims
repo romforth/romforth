@@ -26,6 +26,8 @@ define _nip  pop nos
 define _dip  push nos
 define _neg  neg tos
 define _inv  not tos
+define _inc  inc tos
+define _dec  dec tos
 
 unary dup  dup  _dup
 unary drop drop _drop
@@ -33,6 +35,8 @@ unary neg  neg  _neg
 unary inv  inv  _inv
 unary nip  nip  _nip
 unary dip  dip  _dip
+unary inc  inc  _inc
+unary dec  dec  _dec
 
 fallthru - sub _neg	; tos = -tos # and then fall thru to addition
 binary + add add tos, nos
