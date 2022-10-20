@@ -218,6 +218,17 @@ emul(byte *mem, int *pip) {
 		// printf("mov %s, %x\n", regnames[r], x->val);
 		break;
 	}
+	case 0xD3: {
+		int n=mem[ip++];
+		int r=getreg(n);
+		x86register *x=&regs[r];
+		if (n&0x8) {
+			x->val >>= cx.val;
+		} else {
+			x->val <<= cx.val;
+		}
+		break;
+	}
 	case 0xEC:
 		ax.s.lsb=getchar();
 		// printf("got character: %c\n", ax.s.lsb);
