@@ -30,9 +30,8 @@ inv	[ c ~c
 inv	[ c c
 nip	[ c
 dip	[ c c
-emit	[ c c > c
-drop	[ c
+emit	[ c > c
 'o'	[ c 'o'
-emit	[ c 'o' > 'o'
-drop	[ c
+emit	[ c > 'o'
+drop	[
 bye

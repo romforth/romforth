@@ -5,18 +5,6 @@ bye halt
 
 define next jmp bp
 
-inner{
-key key
-	in al, dx	; read it
-	mov bl, al	; save as a stashed value
-}inner
-
-inner{
-emit emit
-	mov al, bl	; restore stashed value
-	out dx, al	; and echo it out
-}inner
-
 define tos bx
 define nos cx
 define   w ax
@@ -30,6 +18,21 @@ define _inv  not tos
 define _inc  inc tos
 define _dec  dec tos
 define _xchg xchg tos, nos
+
+inner{
+key key
+	_dup		; save tos
+	in al, dx	; read from serial port
+	xor bx, bx	; just need to clear TOS.h
+	mov bl, al	; save byte read in TOS.l
+}inner
+
+inner{
+emit emit
+	mov al, bl	; restore stashed value
+	out dx, al	; and echo it out to the serial port
+	_drop		; drop displayed value in TOS
+}inner
 
 inner{
 lit lit			; [ x	| w | ip ] (ip:v)
