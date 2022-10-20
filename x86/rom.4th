@@ -34,4 +34,6 @@ emit	[ c > c
 'o'	[ c 'o'
 emit	[ c > 'o'
 drop	[
+114	[ 114 // ascii 'r'
+emit	[ > 'r'
 bye
