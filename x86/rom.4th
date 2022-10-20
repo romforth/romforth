@@ -32,4 +32,7 @@ nip	[ c
 dip	[ c c
 emit	[ c c > c
 drop	[ c
+'o'	[ c 'o'
+emit	[ c 'o' > 'o'
+drop	[ c
 bye

@@ -167,6 +167,7 @@ emul(byte *mem, int *pip) {
 		int t=regs[d].val;
 		regs[d].val=regs[s].val;
 		regs[s].val=t;
+		// printf("xchg %s(%d), %s(%d)\n", regnames[d], regs[d].val,  regnames[s], t);
 		break;
 	}
 	case 0x88: {
@@ -177,9 +178,30 @@ emul(byte *mem, int *pip) {
 		// printf("mov %s.l <- %s.l\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x89: {
+		byte n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		regs[d].val=regs[s].val;
+		// printf("mov %s <- %s\n", regnames[d], regnames[s]);
+		break;
+	}
+	case 0x93: {
+		int s=getreg(o);
+		int t=ax.val;
+		ax.val=regs[s].val;
+		regs[s].val=t;
+		// printf("xchg ax(%d), %s(%d)\n", ax.val, regnames[s], t);
+		break;
+	}
 	case 0xAC:
 		ax.s.lsb=mem[df ? si.val-- : si.val++];
 		// printf("stored %d in al\n", ax.s.lsb);
+		break;
+	case 0xAD:
+		ax.s.lsb=mem[df ? si.val-- : si.val++];
+		ax.s.msb=mem[df ? si.val-- : si.val++];
+		// printf("stored %d in ax\n", ax.val);
 		break;
 	case 0xB8:
 	case 0xB9:

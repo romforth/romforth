@@ -21,6 +21,12 @@ while (<>) {				# map forth words in the standard input
 			print "\tdb ", $map->{$f}, "\n";
 		} else {		# or whine if the mapping doesn't exist
 			last if ($f eq '[');	# skip to end of line
+			if ($f =~/^\'(.)\'$/) {	# char in single quotes
+				my $o=ord($1);	# to get the ascii value
+				print qq(\tdb lit\n);
+				print qq(\tdw $o\n);
+				next;
+			}
 			die "unknown word: $f"
 		}
 	}
