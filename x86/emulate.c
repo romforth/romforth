@@ -199,6 +199,18 @@ emul(byte *mem, int *pip) {
 		}
 		break;
 	}
+	case 0x8F: {
+		byte n=mem[ip++];
+		if (n==7) {
+			mem[bx.val]=mem[sp.val];
+			mem[bx.val+1]=mem[sp.val+1];
+			sp.val+=2;
+			// printf("pop word [bx]\n");
+		} else {
+			unimpl("opcode 8F+", n, 11);
+		}
+		break;
+	}
 	case 0x93: {
 		int s=getreg(o);
 		int t=ax.val;
