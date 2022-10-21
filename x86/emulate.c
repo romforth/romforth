@@ -104,6 +104,16 @@ emul(byte *mem, int *pip) {
 		// printf("and %s, %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x30: {
+		int n=mem[ip++];
+		if (n==0xFF) {
+			bx.s.msb ^= bx.s.msb;
+			// printf("xor bh, bh (%d, %x)\n", bx.s.msb, bx.val);
+		} else {
+			unimpl("opcode 30+", n, 13);
+		}
+		break;
+	}
 	case 0x31: {
 		int n=mem[ip++];
 		int d=getreg(n);
@@ -174,8 +184,15 @@ emul(byte *mem, int *pip) {
 		byte n=mem[ip++];
 		int d=getreg(n);
 		int s=getreg(n>>3);
-		regs[d].s.lsb=regs[s].s.lsb;
-		// printf("mov %s.l <- %s.l\n", regnames[d], regnames[s]);
+		if (n&0xC0) {
+			regs[d].s.lsb=regs[s].s.lsb;
+			// printf("mov %s.l <- %s.l\n", regnames[d], regnames[s]);
+		} else if (n&7==7) {
+			mem[bx.val]=regs[s].s.lsb;
+			// printf("mov [bx] <- %s.l (%d)\n", regnames[s], mem[bx.val]);
+		} else {
+			unimpl("opcode 88+", n, 14);
+		}
 		break;
 	}
 	case 0x89: {
@@ -186,6 +203,18 @@ emul(byte *mem, int *pip) {
 		// printf("mov %s <- %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x8A: {
+		byte n=mem[ip++];
+		int s=getreg(n);
+		int d=getreg(n>>3);
+		if (s==7) {
+			bx.s.lsb=mem[bx.val];
+			// printf("mov bl <- [%s]\n", regnames[d]);
+		} else {
+			unimpl("opcode 8A+", n, 12);
+		}
+		break;
+	}
 	case 0x8B: {
 		byte n=mem[ip++];
 		int s=getreg(n);
@@ -193,7 +222,7 @@ emul(byte *mem, int *pip) {
 		if (s==7) {
 			regs[d].s.lsb=mem[bx.val];
 			regs[d].s.msb=mem[bx.val+1];
-			//printf("mov bx <- [%s]\n", regnames[d]);
+			// printf("mov bx <- [%s]\n", regnames[d]);
 		} else {
 			unimpl("opcode 8B+", n, 11);
 		}

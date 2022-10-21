@@ -49,11 +49,24 @@ unary neg  neg  _neg
 unary inv  inv  _inv
 unary nip  nip  _nip
 				; [ addr	(addr:val)
-unary @    fetch mov bx, [bx]	; [ val // assume not reused, so no define macro
+unary @    fetch mov tos, [tos]	; [ val // assume not reused, so no define macro
 
 inner{
 ! store				; [ val addr
-	pop word [bx]		; [ addr	(addr:val)
+	pop word [tos]		; [ addr	(addr:val)
+	_drop			; [
+}inner
+
+inner{
+c@ cfetch			; [ addr	(addr:byte)
+	mov bl, [tos]		; [ XX|byte	// fetch to lower half of TOS
+	xor bh, bh		; [ byte	// clear top half of TOS
+}inner
+
+inner{
+c! cstore			; [ byte addr
+	_nip			; [ addr	// nos=byte
+	mov [tos], cl		; [ addr	(addr:byte)
 	_drop			; [
 }inner
 				; [ a b
@@ -85,3 +98,4 @@ inner{
 }inner
 
 var here here dw mem
+var state state db 0

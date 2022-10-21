@@ -65,6 +65,12 @@ swap	[ 0x0CBF 0x0CBF mem
 here	[ 0x0CBF 0x0CBF mem here
 !	[ 0x0CBF 0x0CBF (here:mem)
 -	[ 0
+inc	[ 1
+state	[ 1 state
+c!	[ (state:1)
+state	[ state
+c@	[ 1
+dec	[ 0
 't'	[ 0 't'
 +	[ 't'
 emit	[ > 't'
