@@ -12,7 +12,7 @@ sub mapnames {
 	($f,$l)=split;		# which provides forth<->label mapping
 	s/^\s*$f//;
 	s/^\s*$l//;
-	print $mh "$f $l\n";	# create dictionary entry for primitives
+	print $mh "code $f $l\n";	# create dictionary entry for primitives
 	print "$l:$_\n";	# generate the label for the assembler
 }
 
@@ -27,24 +27,29 @@ while (<>) {
 		print "next	; continue within the interpreter\n";
 	} elsif (/^unary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# unary operators
 		($f,$l)=($1,$2);
-		print $mh "$f $l\n";	# create dictionary entry for primitives
+		print $mh "code $f $l\n"; # create dictionary entry for unary
 		print "$l:\n";		# generate the label for the assembler
 		print "\t$3\n";
 		print "\tnext\n";
 	} elsif (/^binary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# binary operators
 		($f,$l)=($1,$2);
-		print $mh "$f $l\n";	# create dictionary entry for primitives
+		print $mh "code $f $l\n"; # create dictionary entry for binary
 		print "$l:\n";		# generate the label for the assembler
 		print "\t_nip\n";
 		print "\t$3\n";
 		print "\tnext\n";
 	} elsif (/^fallthru\s+(\S+)\s+(\S+)\s+(.*)$/) {	# "fall thru" operators
 		($f,$l)=($1,$2);
-		print $mh "$f $l\n";	# create dictionary entry for primitives
+		print $mh "code $f $l\n"; # create dictionary entry for fallthru
 		print "$l:\n";		# generate the label for the assembler
 		print "\t$3\n";
 	} elsif (/^define\s+(\S+)\s+(.*)$/) {	# definitions
 		print "%define $1 $2\n";
+	} elsif (/^var\s+(\S+)\s+(\S+)\s+(.*)$/) {	# variables
+		($f,$l)=($1,$2);
+		print $mh "var $f $l\n";# create dictionary entry for variables
+		print "$l:\n";		# generate the label for the assembler
+		print "\t$3\n";		# and allocation/initial value if any
 	} else {
 		print;	# assembler code between code{...}code is passed thru
 	}

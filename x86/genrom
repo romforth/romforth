@@ -2,15 +2,28 @@
 use strict;
 
 my $map={};	# mapping from forth words to assembly labels
+my $varmap={};	# mapping from forth words to variables
 
-my ($f,$l);	# the forth name($f) and the assembler label ($l)
+my ($t,$f,$l);	# the type($t), forth name($f) and the assembler label ($l)
 
+sub code {
+	my ($f,$l)=@_;
+	$map->{$f}=$l;	# generate the mapping from name to label
+}
+sub var {
+	my ($f,$l)=@_;
+	$varmap->{$f}=$l;
+}
+my $handle={
+	'code' => \&code,
+	'var' => \&var,
+};
 my @args=@ARGV;	# all the args are assumed to have name to label mappings
 for my $a (@args) {
 	@ARGV=($a);		# read each of the args passed in as a file
 	while(<>) {		# reading one line at a time
-		($f,$l)=split;	# split'ing the line into the name and label
-		$map->{$f}=$l;	# and generate the mapping from name to label
+		($t,$f,$l)=split;# split'ing the line into type, name and label
+		$handle->{$t}($f,$l); # and handle each type separately
 	}
 }
 
@@ -19,6 +32,9 @@ while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
 			print "\tdb ", $map->{$f}, "\n";
+		} elsif ($m=$varmap->{$f}) { # variables just need to
+			print "\tdb lit\n";	# push their
+			print "\tdw $m\n";	# address
 		} else {		# or whine if the mapping doesn't exist
 			last if ($f eq '[');	# skip to end of line
 			if ($f =~/^\'(.)\'$/) {	# char in single quotes

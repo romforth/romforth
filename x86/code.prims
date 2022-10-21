@@ -83,3 +83,5 @@ inner{
 	_drop		; [ n
 	shr bx, cl	; [ n >> cl
 }inner
+
+var here here dw mem
