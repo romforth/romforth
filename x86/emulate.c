@@ -186,6 +186,19 @@ emul(byte *mem, int *pip) {
 		// printf("mov %s <- %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x8B: {
+		byte n=mem[ip++];
+		int s=getreg(n);
+		int d=getreg(n>>3);
+		if (s==7) {
+			regs[d].s.lsb=mem[bx.val];
+			regs[d].s.msb=mem[bx.val+1];
+			//printf("mov bx <- [%s]\n", regnames[d]);
+		} else {
+			unimpl("opcode 8B+", n, 11);
+		}
+		break;
+	}
 	case 0x93: {
 		int s=getreg(o);
 		int t=ax.val;

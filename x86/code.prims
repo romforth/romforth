@@ -48,7 +48,14 @@ unary dup  dup  _dup
 unary neg  neg  _neg
 unary inv  inv  _inv
 unary nip  nip  _nip
+				; [ addr	(addr:val)
+unary @    fetch mov bx, [bx]	; [ val // assume not reused, so no define macro
 
+inner{
+! store				; [ val addr
+	pop word [bx]		; [ addr	(addr:val)
+	_drop			; [
+}inner
 				; [ a b
 fallthru swap swap _nip		; [ b	// nos=a and fall thru to xchg
 fallthru xchg xchg _xchg	; [ a	// nos=b and fall thru to dip
