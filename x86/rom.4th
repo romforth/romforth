@@ -74,4 +74,9 @@ dec	[ 0
 't'	[ 0 't'
 +	[ 't'
 emit	[ > 't'
+0x3f8	[ 0x3f8	// serial port #1
+dup	[ 0x3f8 0x3f8
+p@	[ 0x3f8 'h'
+swap	[ 'h' 0x3f8
+p!	[ > 'h'
 bye

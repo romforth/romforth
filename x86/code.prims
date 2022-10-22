@@ -19,6 +19,25 @@ define _inc  inc tos
 define _dec  dec tos
 define _xchg xchg tos, nos
 
+code{
+p@ peek			; [ port	(port:byte) // ready to read
+	mov dx, tos	; [ port	// dx is used for in/out
+	in al, dx	; [ port	// al = peek(port)
+	mov bl, al	; [ XX|byte	// copy from al to bl
+	xor bh, bh	; [ byte	// zero the high byte
+	jmp restoredx	;		to restore dx (and ah)
+}code
+
+code{
+p! poke			; [ byte port	// ready to write
+	_nip		; [ port	// nos=byte
+	mov dx, tos	; [ port	// dx is used for in/out
+	mov ax, nos	; [ port	// al is used for in/out
+	out dx, al	; [ port	// poke(port, al)
+	_drop		; [
+	jmp restoredx	;		to restore dx (and ah)
+}code
+
 inner{
 key key
 	_dup		; save tos

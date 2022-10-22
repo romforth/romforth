@@ -283,6 +283,12 @@ emul(byte *mem, int *pip) {
 		}
 		break;
 	}
+	case 0xEB: {
+		int n=mem[ip];
+		*pip=(n>=128) ? ip-(255-n&0x7f) : ip+n;
+		// printf("jmp %d ; to %x\n", n&0x7f, *pip);
+		return;
+	}
 	case 0xEC:
 		ax.s.lsb=getchar();
 		// printf("got character: %c\n", ax.s.lsb);
