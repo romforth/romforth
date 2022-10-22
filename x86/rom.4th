@@ -79,4 +79,29 @@ dup	[ 0x3f8 0x3f8
 p@	[ 0x3f8 'h'
 swap	[ 'h' 0x3f8
 p!	[ > 'h'
+
+here	[ here (here:mem)
+@	[ mem
+sp@!	[ x	// SP=mem, x==previous value of SP
+sp@!	[ mem	// restore SP, since this was just for testing
+drop	[
+
+[ // This is init code, not test code, to allocate space for the return stack {
+[ // First, setup RP the return stack pointer to point to the start of free
+[ // memory. In this implementation, the return stack grows upward
+here	[ here (here:mem)
+@	[ mem
+rp@!	[ x	// RP=mem, x==some random value that register RP previously had
+drop	[ // since we are initializing RP, old value is not needed, discard it
+
+[ // Next, use a minimal allocator to reserve mem .. mem+99 (100 bytes total)
+[ // for the return stack usage
+100	[ 100	// memory constrained devices can choose a smaller size
+here 	[ 100 here
+@	[ 100 mem
++	[ mem+100
+here	[ mem+100 here
+!	[ (here:mem+100) // mem .. mem+99 is now reserved for the return stack
+[ // this is init code, not test code, to allocate space for the return stack }
+
 bye
