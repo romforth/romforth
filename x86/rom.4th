@@ -104,4 +104,8 @@ here	[ mem+100 here
 !	[ (here:mem+100) // mem .. mem+99 is now reserved for the return stack
 [ // this is init code, not test code, to allocate space for the return stack }
 
+32	[ ' '
+>r	[	| ' '	] (mem:32) // mem .. mem+99 was reserved earlier
+r>	[ ' '	|	]
+emit	[ > ' '
 bye

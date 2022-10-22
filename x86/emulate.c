@@ -122,12 +122,30 @@ emul(byte *mem, int *pip) {
 		// printf("xor %s, %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x40:
+	case 0x41:
+	case 0x42:
 	case 0x43:
-		bx.val++;
+	case 0x44:
+	case 0x45:
+	case 0x46:
+	case 0x47: {
+		int r=getreg(o);
+		regs[r].val++;
 		break;
+	}
+	case 0x48:
+	case 0x49:
+	case 0x4A:
 	case 0x4B:
-		bx.val--;
+	case 0x4C:
+	case 0x4D:
+	case 0x4E:
+	case 0x4F: {
+		int r=getreg(o);
+		regs[r].val--;
 		break;
+	}
 	case 0x50:
 	case 0x51:
 	case 0x52:
@@ -199,8 +217,15 @@ emul(byte *mem, int *pip) {
 		byte n=mem[ip++];
 		int d=getreg(n);
 		int s=getreg(n>>3);
-		regs[d].val=regs[s].val;
-		// printf("mov %s <- %s\n", regnames[d], regnames[s]);
+		if (n&0xC0) {
+			regs[d].val=regs[s].val;
+			// printf("mov %s <- %s\n", regnames[d], regnames[s]);
+		} else if (n==0x1D) {
+			mem[di.val]=bx.s.lsb;
+			mem[di.val+1]=bx.s.msb;
+		} else {
+			unimpl("opcode 89+", n, 15);
+		}
 		break;
 	}
 	case 0x8A: {
@@ -223,6 +248,9 @@ emul(byte *mem, int *pip) {
 			regs[d].s.lsb=mem[bx.val];
 			regs[d].s.msb=mem[bx.val+1];
 			// printf("mov bx <- [%s]\n", regnames[d]);
+		} else if (n==0x1D) {
+			bx.s.lsb=mem[di.val];
+			bx.s.msb=mem[di.val+1];
 		} else {
 			unimpl("opcode 8B+", n, 11);
 		}
