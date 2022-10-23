@@ -9,6 +9,7 @@ define tos bx
 define nos cx
 define   w ax
 define  rp di
+define  ip si
 
 define _dup  push tos
 define _drop pop tos
@@ -38,6 +39,21 @@ p! poke			; [ byte port	// ready to write
 	_drop		; [
 	jmp restoredx	;		to restore dx (and ah)
 }code
+
+code{
+enter enter		; [ x	| w	| ip	 ] (ip:v)
+	lodsw		; [ x	| v	| ip+2	 ]
+	xchg w, ip	; [ x	| ip+2	| v	 ]
+	stosw		; [ x	| ip+2	| v ip+2 ]
+	jmp restoreax	; jmp inner, but restore ax first
+}code
+
+inner{
+exit exit		; [ x	| w	| ip ret ]
+	dec rp		; rp--
+	dec rp		; rp--
+	mov ip, [rp]	; [ x	| w	|    ret ]
+}inner
 
 inner{
 key key

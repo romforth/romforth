@@ -251,6 +251,9 @@ emul(byte *mem, int *pip) {
 		} else if (n==0x1D) {
 			bx.s.lsb=mem[di.val];
 			bx.s.msb=mem[di.val+1];
+		} else if (n==0x35) {
+			si.s.lsb=mem[di.val];
+			si.s.msb=mem[di.val+1];
 		} else {
 			unimpl("opcode 8B+", n, 11);
 		}
@@ -268,7 +271,13 @@ emul(byte *mem, int *pip) {
 		}
 		break;
 	}
-	case 0x93: {
+	case 0x91:
+	case 0x92:
+	case 0x93:
+	case 0x94:
+	case 0x95:
+	case 0x96:
+	case 0x97: {
 		int s=getreg(o);
 		int t=ax.val;
 		ax.val=regs[s].val;
@@ -276,6 +285,11 @@ emul(byte *mem, int *pip) {
 		// printf("xchg ax(%d), %s(%d)\n", ax.val, regnames[s], t);
 		break;
 	}
+	case 0xAB:
+		mem[df ? di.val-- : di.val++]=ax.s.lsb;
+		mem[df ? di.val-- : di.val++]=ax.s.msb;
+		// printf("stored ax(%d) in [di]++\n", ax.val);
+		break;
 	case 0xAC:
 		ax.s.lsb=mem[df ? si.val-- : si.val++];
 		// printf("stored %d in al\n", ax.s.lsb);

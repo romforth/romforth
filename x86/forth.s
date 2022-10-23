@@ -14,7 +14,7 @@ ram:			; rest of the stuff can be loaded in via the serial port
 restoredx:		; Initialize the default port to
 	mov dx, 0x3f8	; x86 serial port #1
 restoreax:
-	mov ax, $	; initialize AH to this segment
+	mov ax, bp	; initialize AH to this segment
 inner:			; for use in the inner interpreter, since it is the only
 	lodsb		; al=si++	# x86 register with read+auto increment
 	jmp ax		; register AX is the equivalent of Forth's W register
@@ -24,5 +24,7 @@ inner:			; for use in the inner interpreter, since it is the only
 rom:
 
 %include "x86/rom.s"
+
+%include "x86/defs.s"
 
 mem:

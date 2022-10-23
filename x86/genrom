@@ -1,8 +1,13 @@
 #!/usr/bin/perl -w
 use strict;
 
+my $mf=shift;   # the map file to which new defs are written
+
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
 my $map={};	# mapping from forth words to assembly labels
 my $varmap={};	# mapping from forth words to variables
+my $defs={};	# mapping from forth words to definition labels
 
 my ($t,$f,$l);	# the type($t), forth name($f) and the assembler label ($l)
 
@@ -14,9 +19,14 @@ sub var {
 	my ($f,$l)=@_;
 	$varmap->{$f}=$l;
 }
+sub olddef {
+	my ($f,$l)=@_;
+	$defs->{$f}=$l;
+}
 my $handle={
 	'code' => \&code,
 	'var' => \&var,
+	'def' => \&olddef,
 };
 my @args=@ARGV;	# all the args are assumed to have name to label mappings
 for my $a (@args) {
@@ -27,6 +37,42 @@ for my $a (@args) {
 	}
 }
 
+# state event next      action
+# 0     def{    1       -
+# 1     $w      2       $label: ; $w
+# 2     }def    0       db exit
+
+my $state=0;
+my $label="lbl000";
+
+sub def {
+	my ($w)=@_;
+	if ($state == 0) {
+		if ($w eq 'def{') {
+			$state=1;
+			return 1;
+		}
+		return 0;
+	}
+	if ($state == 1) {
+		$l=$label++;
+		print $mh "def $w $l\n"; # create mapping in "dictionary"
+		print "$l:	; $w\n"; # and generate assembly code
+		$defs->{$w}=$l;		 # for setting up a local mapping
+		$state=2;
+		return 1;
+	}
+	if ($state == 2) {
+		if ($w eq '}def') {
+			print "\tdb exit\n";
+			$state=0;
+			return 1;
+		}
+		return 0;
+	}
+	die "received $w in state $state";
+}
+
 my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
@@ -35,8 +81,12 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) { # variables just need to
 			print "\tdb lit\n";	# push their
 			print "\tdw $m\n";	# address
+		} elsif ($m=$defs->{$f}) { # definitions just need to
+			print "\tdb enter\n";	# be enter'ed at their
+			print "\tdw $m\n";	# starting address
 		} else {		# or whine if the mapping doesn't exist
 			last if ($f eq '[');	# skip to end of line
+			next if def($f);
 			if ($f =~/^\'(.)\'$/) {	# char in single quotes
 				my $o=ord($1);	# to get the ascii value
 				print qq(\tdb lit\n);
@@ -57,3 +107,4 @@ while (<>) {				# map forth words in the standard input
 		}
 	}
 }
+close $mh;
