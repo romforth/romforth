@@ -108,4 +108,11 @@ here	[ mem+100 here
 >r	[	| ' '	] (mem:32) // mem .. mem+99 was reserved earlier
 r>	[ ' '	|	]
 emit	[ > ' '
+
+'r'	[ 'r'
+lit	[ 'r' // push the next 2 bytes which will be escaped by lit at runtime
+emit	[ 'r' emit
+lit	[ 'r' lit|emit // escaped by the above lit and ignored by below exec
+exec	[ > 'r'
+
 bye

@@ -54,6 +54,14 @@ emit emit
 	_drop		; drop displayed value in TOS
 }inner
 
+
+code{
+exec exec		; [ x	| w |	]
+	mov al, bl	; [ x	| x |	]
+	_drop		; [	| x |	]
+	jmp ax		; exec the code corresponding to that offset
+}code
+
 inner{
 lit lit			; [ x	| w | ip ] (ip:v)
 	_dup		; [ x x	| w | ip ]
