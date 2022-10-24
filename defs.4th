@@ -14,3 +14,14 @@ def{ testnest
 	'm'	[ 'm'
 	emit	[ > 'm'
 }def
+
+def{ echon		[ n
+	loop{		[ n
+		dup	[ n n
+	}while{		[ n < c	// n != 0
+		getc	[ n c
+		emit	[ n > c
+		dec	[ n:n-1
+	}loop		[ n	// n == 0
+	drop		[
+}def

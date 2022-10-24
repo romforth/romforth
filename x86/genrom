@@ -45,6 +45,48 @@ for my $a (@args) {
 my $state=0;
 my $label="lbl000";
 
+my $mapjmp=$map->{'jmp'};
+my $mapjz=$map->{'jz'};
+my $mapjnz=$map->{'jnz'};
+
+my @labelstack;
+
+sub runbegin {
+	push @labelstack, [$label++, "begin"];
+	my $ol=pop @labelstack;
+	print join('_', @$ol), ":\n";
+	$ol->[1]="endloop";
+	push @labelstack, $ol;
+}
+
+sub rununtil {
+	print "\tdb ", $mapjnz, " ; branch if not zero\n";
+	my $ol=pop @labelstack;
+	print "\tdb ", join('_', @$ol), '-$-1', "\n";
+	push @labelstack, $ol;
+}
+
+sub runwhile {
+	print "\tdb ", $mapjz, " ; branch if zero\n";
+	my $ol=pop @labelstack;
+	print "\tdb ", join('_', @$ol), '-$-1', "\n";
+	push @labelstack, $ol;
+}
+
+sub runrepeat {
+	my $ol=pop @labelstack;
+	print "\tdb ", $mapjmp, " ; branch\n";
+	print "\tdb ", $ol->[0], '_begin-$-1', "\n";
+	print join('_', @$ol), ":\n";
+}
+
+my $imm={
+	'loop{'		=> \&runbegin,
+	'}until{'	=> \&rununtil,
+	'}while{'	=> \&runwhile,
+	'}loop'		=> \&runrepeat,
+};
+
 sub def {
 	my ($w)=@_;
 	if ($state == 0) {
@@ -84,6 +126,8 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$defs->{$f}) { # definitions just need to
 			print "\tdb enter\n";	# be enter'ed at their
 			print "\tdw $m\n";	# starting address
+		} elsif ($m=$imm->{$f}) { # immediates need to be run
+			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
 			last if ($f eq '[');	# skip to end of line
 			next if def($f);
