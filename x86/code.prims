@@ -41,8 +41,16 @@ p! poke			; [ byte port	// ready to write
 }code
 
 code{
+call call		; [ x	| w	| ip	]
+	mov ax, bx	; [ x	| x	| ip	]
+	_drop		; [	| x	| ip	]
+	jmp save
+}code
+
+code{
 enter enter		; [ x	| w	| ip	 ] (ip:v)
 	lodsw		; [ x	| v	| ip+2	 ]
+save:
 	xchg w, ip	; [ x	| ip+2	| v	 ]
 	stosw		; [ x	| ip+2	| v ip+2 ]
 	jmp restoreax	; jmp inner, but restore ax first

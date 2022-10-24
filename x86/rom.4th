@@ -115,6 +115,9 @@ emit	[ 'r' emit
 lit	[ 'r' lit|emit // escaped by the above lit and ignored by below exec
 exec	[ > 'r'
 
-testdef
+testdef  [ > 'o'
+
+testnest [ r
+call     [ > 'm'
 
 bye

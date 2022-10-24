@@ -327,7 +327,7 @@ emul(byte *mem, int *pip) {
 	}
 	case 0xEB: {
 		int n=mem[ip];
-		*pip=(n>=128) ? ip-(255-n&0x7f) : ip+n;
+		*pip=(n>=128) ? ip-(255-n&0x7f) : ip+n+1;
 		// printf("jmp %d ; to %x\n", n&0x7f, *pip);
 		return;
 	}
