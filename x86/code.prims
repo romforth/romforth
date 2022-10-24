@@ -63,6 +63,30 @@ exit exit		; [ x	| w	| ip ret ]
 	mov ip, [rp]	; [ x	| w	|    ret ]
 }inner
 
+code{
+jmp branch		; [	| w	| ip	] (ip:v)
+	lodsb           ; [	| v	| ip+1	] // al=*si++
+	cbw		; [	| V	| ip+1	] // sign extend al into ah
+	add ip, w	; [	| V	| ip+1+V] // si += ax
+	jmp restoreax	; jmp inner, but restore ax first
+}code
+
+inner{
+jz branchz		; [ x	| w	| ip	]
+	neg tos		; [ -x	| w	| ip	] // if tos!=0, set carry
+	_drop		; [	| w	| ip	]
+	jnc branch	; [	| w	| ip	] // if tos==0, goto branch
+	inc ip		; [	| w	| ip+1	] // otherwise skip over offset
+}inner
+
+inner{
+jnz branchnz		; [ x	| w	| ip	]
+	neg tos		; [ x	| w	| ip	] // if tos!=0, set carry
+	_drop		; [	| w	| ip	]
+	jc branch	; [	| w	| ip	] // if tos!=0, goto branch
+	inc ip		; [	| w	| ip+1	] // otherwise skip over offset
+}inner
+
 inner{
 key key
 	_dup		; save tos
