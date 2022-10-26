@@ -80,11 +80,25 @@ sub runrepeat {
 	print join('_', @$ol), ":\n";
 }
 
+sub runif {
+	print "\tdb ", $mapjz, " ; branch if zero\n";
+	print "\tdb ", $label, '_then-$-1', "\n";
+	push @labelstack, [$label++, "then"];
+}
+
+sub runthen {
+	my $ol=pop @labelstack;
+	print join('_', @$ol), ":\n";
+}
+
 my $imm={
 	'loop{'		=> \&runbegin,
 	'}until{'	=> \&rununtil,
 	'}while{'	=> \&runwhile,
 	'}loop'		=> \&runrepeat,
+
+	'if{'		=> \&runif,
+	'}if'		=> \&runthen,
 };
 
 sub def {
