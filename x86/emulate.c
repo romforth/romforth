@@ -8,6 +8,12 @@
 
 typedef unsigned char byte;
 
+// #define DEBUG 1
+
+#ifdef DEBUG
+int start=0;
+#endif
+
 void
 usage(char *s, int n) {
 	fprintf(stderr, "usage: %s binary\n",s);
@@ -48,8 +54,19 @@ typedef struct x86register {
 
 x86register regs[8];
 
+#ifdef DEBUG
+x86register fake;
+#endif
+
+typedef struct flags {
+	int carry:1;
+} flags;
+
+flags flag;
+
 #define ax regs[0]
 #define cx regs[1]
+#define dx regs[2]
 #define bx regs[3]
 #define sp regs[4]
 #define si regs[6]
@@ -78,7 +95,39 @@ emul(byte *mem, int *pip) {
 	}
 	// printf("reading memory at address %d(%x)\n", ip, ip);
 	byte o=mem[ip++];
+#ifdef DEBUG
+	if (start) {
+		if (mem[0x1ad] != 0x59) {
+			die("add assert failed", 17);
+		}
+		if (si.val < 0x22a && si.val > 0x236) {
+			if (mem[0x1dd] != 0xb2) {
+				printf("here byte2 is %x\n", mem[0x1dd]);
+				die("here byte1 assert failed", 19);
+			}
+			if (mem[0x1de] != 0x02) {
+				printf("here byte2 is %x\n", mem[0x1de]);
+				die("here byte2 assert failed", 20);
+			}
+		}
+		if (di.val != 0x2b2) {
+			printf("di is %x\n", di.val);
+			die("di assert failed", 18);
+		}
+	}
+#endif
 	// printf("opcode: %d(0x%x)\n", o, o);
+#ifdef DEBUG
+	if (sp.val<0x100) printf("\t[ ");
+	for (int i=0x100-2; i>=sp.val; i-=2) {
+		fake.s.lsb=mem[i];
+		fake.s.msb=mem[i+1];
+		printf("%d(0x%x) ", fake.val, fake.val);
+	}
+	if (sp.val<0x100) {
+		printf("%d(0x%x)\n", bx.val, bx.val);
+	}
+#endif
 	switch(o) {
 	case 0x01: {
 		int n=mem[ip++];
@@ -186,7 +235,20 @@ emul(byte *mem, int *pip) {
 		// printf("got character: %x\n", c);
 		if (--cx.val) break;
 		rep=0;
+#ifdef DEBUG
+		start=1;
+#endif
 		break;
+	}
+	case 0x72: {
+		int n=mem[ip];
+		if (flag.carry) {
+			*pip=(n>=128) ? ip-(255-n&0x7f) : ip+n+1;
+		} else {
+			*pip=ip+1;
+		}
+		// printf("jc 0x%x ; to %x\n", n, *pip);
+		return;
 	}
 	case 0x87: {
 		int n=mem[ip++];
@@ -221,6 +283,7 @@ emul(byte *mem, int *pip) {
 			regs[d].val=regs[s].val;
 			// printf("mov %s <- %s\n", regnames[d], regnames[s]);
 		} else if (n==0x1D) {
+			// printf("mov [di], bx ([%x] <- %x)\n", di.val, bx.val);
 			mem[di.val]=bx.s.lsb;
 			mem[di.val+1]=bx.s.msb;
 		} else {
@@ -245,8 +308,9 @@ emul(byte *mem, int *pip) {
 		int s=getreg(n);
 		int d=getreg(n>>3);
 		if (s==7) {
-			regs[d].s.lsb=mem[bx.val];
-			regs[d].s.msb=mem[bx.val+1];
+			int t=bx.val;
+			regs[d].s.lsb=mem[t];
+			regs[d].s.msb=mem[t+1];
 			// printf("mov bx <- [%s]\n", regnames[d]);
 		} else if (n==0x1D) {
 			bx.s.lsb=mem[di.val];
@@ -285,6 +349,15 @@ emul(byte *mem, int *pip) {
 		// printf("xchg ax(%d), %s(%d)\n", ax.val, regnames[s], t);
 		break;
 	}
+	case 0x98:
+		// printf("cbw: 0x%x -> ", ax.val);
+		if (ax.s.lsb & 0x80) {		// if msb is set
+			ax.val=-(255-ax.s.lsb); // sign extend the lsb
+		} else {
+			ax.s.msb=0;
+		}
+		// printf("0x%x\n", ax.val);
+		break;
 	case 0xAB:
 		mem[df ? di.val-- : di.val++]=ax.s.lsb;
 		mem[df ? di.val-- : di.val++]=ax.s.msb;
@@ -332,7 +405,14 @@ emul(byte *mem, int *pip) {
 		return;
 	}
 	case 0xEC:
-		ax.s.lsb=getchar();
+		// printf("port is %d\n", dx.val);
+		if (dx.val==0x3f8) {
+			ax.s.lsb=getchar();
+		} else if (dx.val==0x3fd) {
+			ax.s.lsb=1;
+		} else {
+			die("unknown port", 16);
+		}
 		// printf("got character: %c\n", ax.s.lsb);
 		break;
 	case 0xEE:
@@ -356,6 +436,8 @@ emul(byte *mem, int *pip) {
 		if ((n&0xD8)==0xD8) {
 			x->val = -x->val;
 			// printf("neg\n");
+			flag.carry=(x->val ? 1 : 0);
+			// printf("carry=%d\n", flag.carry);
 		} else if ((n&0xD0)==0xD0) {
 			x->val = ~x->val;
 			// printf("inv\n");
@@ -390,8 +472,18 @@ emul(byte *mem, int *pip) {
 
 void
 emulate(byte *mem, int ip) {
+#ifdef DEBUG
+	sp.val=0x100;
+	int prev=si.val;
+#endif
 	for(;;) {
 		emul(mem, &ip);
+#ifdef DEBUG
+		if (si.val != prev) {
+			printf("\nForth IP: 0x%x\n", si.val);
+			prev=si.val;
+		}
+#endif
 	}
 }
 

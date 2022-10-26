@@ -91,8 +91,11 @@ drop	[
 [ // memory. In this implementation, the return stack grows upward
 here	[ here (here:mem)
 @	[ mem
-rp@!	[ x	// RP=mem, x==some random value that register RP previously had
-drop	[ // since we are initializing RP, old value is not needed, discard it
+rp@!	[ x	// RP=mem, x==mem since DI was used as loadrom register pointer
+here	[ x here
+@	[ x mem
+-	[ x-mem // should be zero in this implementation
+drop	[ assert?
 
 [ // Next, use a minimal allocator to reserve mem .. mem+99 (100 bytes total)
 [ // for the return stack usage
@@ -119,5 +122,9 @@ testdef  [ > 'o'
 
 testnest [ r
 call     [ > 'm'
+
+	[ < ' '
+getc	[ ' '
+emit	[ > ' '
 
 bye
