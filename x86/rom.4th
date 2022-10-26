@@ -131,9 +131,15 @@ emit	[ > ' '
 echon	[ > '!'
 
 0		[ 0
-if{		[
+if{		[ // not taken regression test
 	'!'	[ '!'
 	emit	[ > '!'
 }if
 
+1		[ 1
+if{		[ // taken
+}else{		[ // not taken regression test
+	'@'	[ '@'
+	emit	[ > '@'
+}if
 bye

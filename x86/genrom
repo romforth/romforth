@@ -86,6 +86,16 @@ sub runif {
 	push @labelstack, [$label++, "then"];
 }
 
+sub runelse {
+	my $ol=pop @labelstack;
+	print "\tdb ", $mapjmp, " ; branch\n";
+	print "\tdb ", $ol->[0], '_endif-$-1', "\n";
+	die unless ($ol->[1] eq "then");
+	print join('_', @$ol), ":\n";
+	$ol->[1]="endif";
+	push @labelstack, $ol;
+}
+
 sub runthen {
 	my $ol=pop @labelstack;
 	print join('_', @$ol), ":\n";
@@ -98,6 +108,7 @@ my $imm={
 	'}loop'		=> \&runrepeat,
 
 	'if{'		=> \&runif,
+	'}else{'	=> \&runelse,
 	'}if'		=> \&runthen,
 };
 
