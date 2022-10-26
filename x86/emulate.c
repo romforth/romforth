@@ -9,6 +9,7 @@
 typedef unsigned char byte;
 
 // #define DEBUG 1
+// #define STACKDEBUG 1
 
 #ifdef DEBUG
 int start=0;
@@ -54,7 +55,7 @@ typedef struct x86register {
 
 x86register regs[8];
 
-#ifdef DEBUG
+#ifdef STACKDEBUG
 x86register fake;
 #endif
 
@@ -117,7 +118,7 @@ emul(byte *mem, int *pip) {
 	}
 #endif
 	// printf("opcode: %d(0x%x)\n", o, o);
-#ifdef DEBUG
+#ifdef STACKDEBUG
 	if (sp.val<0x100) printf("\t[ ");
 	for (int i=0x100-2; i>=sp.val; i-=2) {
 		fake.s.lsb=mem[i];
