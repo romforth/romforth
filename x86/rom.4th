@@ -127,4 +127,7 @@ call     [ > 'm'
 getc	[ ' '
 emit	[ > ' '
 
+1	[ 1 < '!'
+echon	[ > '!'
+
 bye

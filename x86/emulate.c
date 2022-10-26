@@ -250,6 +250,16 @@ emul(byte *mem, int *pip) {
 		// printf("jc 0x%x ; to %x\n", n, *pip);
 		return;
 	}
+	case 0x73: {
+		int n=mem[ip];
+		if (flag.carry) {
+			*pip=ip+1;
+		} else {
+			*pip=(n>=128) ? ip-(255-n&0x7f) : ip+n+1;
+		}
+		// printf("jnc 0x%x ; to %x\n", n, *pip);
+		return;
+	}
 	case 0x87: {
 		int n=mem[ip++];
 		int d=getreg(n);
@@ -352,7 +362,7 @@ emul(byte *mem, int *pip) {
 	case 0x98:
 		// printf("cbw: 0x%x -> ", ax.val);
 		if (ax.s.lsb & 0x80) {		// if msb is set
-			ax.val=-(255-ax.s.lsb); // sign extend the lsb
+			ax.val=-(256-ax.s.lsb); // sign extend the lsb
 		} else {
 			ax.s.msb=0;
 		}
