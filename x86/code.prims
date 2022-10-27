@@ -20,6 +20,7 @@ define _inv  not tos
 define _inc  inc tos
 define _dec  dec tos
 define _xchg xchg tos, nos
+define _fetch mov tos, [tos]
 
 code{
 p@ peek			; [ port	(port:byte) // ready to read
@@ -34,7 +35,7 @@ code{
 p! poke			; [ byte port	// ready to write
 	_nip		; [ port	// nos=byte
 	mov dx, tos	; [ port	// dx is used for in/out
-	mov ax, nos	; [ port	// al is used for in/out
+	mov w, nos	; [ port	// al is used for in/out
 	out dx, al	; [ port	// poke(port, al)
 	_drop		; [
 	jmp restoredx	;		to restore dx (and ah)
@@ -42,7 +43,7 @@ p! poke			; [ byte port	// ready to write
 
 code{
 call call		; [ x	| w	| ip	]
-	mov ax, bx	; [ x	| x	| ip	]
+	mov w, tos	; [ x	| x	| ip	]
 	_drop		; [	| x	| ip	]
 	jmp save
 }code
@@ -91,7 +92,7 @@ inner{
 key key
 	_dup		; save tos
 	in al, dx	; read from serial port
-	xor bx, bx	; just need to clear TOS.h
+	xor tos, tos	; just need to clear TOS.h
 	mov bl, al	; save byte read in TOS.l
 }inner
 
@@ -107,7 +108,7 @@ code{
 exec exec		; [ x	| w |	]
 	mov al, bl	; [ x	| x |	]
 	_drop		; [	| x |	]
-	jmp ax		; exec the code corresponding to that offset
+	jmp w		; exec the code corresponding to that offset
 }code
 
 inner{
@@ -135,7 +136,7 @@ pick pick			; [ n
 }code
 
 				; [ addr	(addr:val)
-unary @    fetch mov tos, [tos]	; [ val // assume not reused, so no define macro
+unary @    fetch _fetch		; [ val
 
 inner{
 ! store				; [ val addr
@@ -173,14 +174,14 @@ inner{
 << shl			; [ n s
 	mov cl, bl	; [ n s	// cl <- s.l
 	_drop		; [ n
-	shl bx, cl	; [ n << cl
+	shl tos, cl	; [ n<<cl
 }inner
 
 inner{
 >> shr			; [ n s
 	mov cl, bl	; [ n s	// cl <- s.l
 	_drop		; [ n
-	shr bx, cl	; [ n >> cl
+	shr tos, cl	; [ n>>cl
 }inner
 
 inner{
@@ -197,6 +198,14 @@ r> fromr		; [ a	| x ]
 	dec rp		; rp--
 	_dup		; [ a a	|   ] // x dropped because of the decrements
 	mov tos, [rp]	; [ a x |   ] // but the content was still in memory
+}inner
+
+inner{
+over over		; [ a b
+	mov nos, tos	; [ a b // nos=b
+	mov tos, sp	; [ a sp
+	_fetch		; [ a a
+	_dip		; [ a b a
 }inner
 
 var here here dw mem

@@ -26,6 +26,5 @@ def{ echon		[ n
 	drop		[
 }def
 
-def{ over 1 pick }def
 def{ third 2 pick }def
 def{ fourth 3 pick }def
