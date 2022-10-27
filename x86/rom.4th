@@ -150,6 +150,30 @@ if{		[ 1 2 // not taken regression test
 	'#'	[ 1 2 '#'
 	emit	[ 1 2 > '#'
 }if		[ 1 2
+
+3 4		[ 1 2 3 4
+over		[ 1 2 3 4 3
+3 -		[ 1 2 3 4 0
+if{		[ 1 2 3 4 // not taken regression test
+	'$'	[ 1 2 3 4 '$'
+	emit	[ 1 2 3 4 > '$'
+}if
+
+third		[ 1 2 3 4 2
+2 -		[ 1 2 3 4 0
+if{		[ 1 2 3 4 // not taken regression test
+	'%'	[ 1 2 3 4 '%'
+	emit	[ 1 2 3 4 > '%'
+}if
+
+fourth		[ 1 2 3 4 1
+dec		[ 1 2 3 4 0
+if{		[ 1 2 3 4 // not taken regression test
+	'^'	[ 1 2 3 4 '^'
+	emit	[ 1 2 3 4 > '^'
+}if
+
+2drop		[ 1 2
 2drop		[
 
 bye
