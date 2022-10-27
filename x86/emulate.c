@@ -59,11 +59,7 @@ x86register regs[8];
 x86register fake;
 #endif
 
-typedef struct flags {
-	int carry:1;
-} flags;
-
-flags flag;
+int carry;
 
 #define ax regs[0]
 #define cx regs[1]
@@ -146,12 +142,39 @@ emul(byte *mem, int *pip) {
 		// printf("or %s, %s\n", regnames[d], regnames[s]);
 		break;
 	}
+	case 0x11: {
+		int n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		// printf("adc %d %d %d\n", regs[d].val, regs[s].val, carry);
+		regs[d].val += regs[s].val+carry;
+		// printf("adc %s, %s\n", regnames[d], regnames[s]);
+		break;
+	}
+	case 0x19: {
+		int n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		int r=(regs[d].val -= (regs[s].val+carry));
+		// printf("sbb %s, %s; carry=%d\n", regnames[d], regnames[s], carry);
+		break;
+	}
 	case 0x21: {
 		int n=mem[ip++];
 		int d=getreg(n);
 		int s=getreg(n>>3);
 		regs[d].val &= regs[s].val;
 		// printf("and %s, %s\n", regnames[d], regnames[s]);
+		break;
+	}
+	case 0x29: {
+		int n=mem[ip++];
+		int d=getreg(n);
+		int s=getreg(n>>3);
+		// printf("sub %d %d\n", regs[d].val, regs[s].val);
+		int r=(regs[d].val -= regs[s].val);
+		carry=(r<0 ? 1 : 0);
+		// printf("sub %s, %s; carry=%d\n", regnames[d], regnames[s], carry);
 		break;
 	}
 	case 0x30: {
@@ -243,7 +266,7 @@ emul(byte *mem, int *pip) {
 	}
 	case 0x72: {
 		int n=mem[ip];
-		if (flag.carry) {
+		if (carry) {
 			*pip=(n>=128) ? ip-(255-n&0x7f) : ip+n+1;
 		} else {
 			*pip=ip+1;
@@ -253,7 +276,7 @@ emul(byte *mem, int *pip) {
 	}
 	case 0x73: {
 		int n=mem[ip];
-		if (flag.carry) {
+		if (carry) {
 			*pip=ip+1;
 		} else {
 			*pip=(n>=128) ? ip-(255-n&0x7f) : ip+n+1;
@@ -447,8 +470,8 @@ emul(byte *mem, int *pip) {
 		if ((n&0xD8)==0xD8) {
 			x->val = -x->val;
 			// printf("neg\n");
-			flag.carry=(x->val ? 1 : 0);
-			// printf("carry=%d\n", flag.carry);
+			carry=(x->val ? 1 : 0);
+			// printf("carry=%d\n", carry);
 		} else if ((n&0xD0)==0xD0) {
 			x->val = ~x->val;
 			// printf("inv\n");

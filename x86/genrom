@@ -196,12 +196,12 @@ while (<>) {				# map forth words in the standard input
 				print qq(\tdb lit\n);
 				print qq(\tdw $o\n);
 				next;
-			} elsif ($f =~/^(\d+)$/) {
+			} elsif ($f =~/^(-?\d+)$/) {
 				my $o=int($1); # atoi equivalent
 				print qq(\tdb lit\n);
 				print qq(\tdw $o\n);
 				next;
-			} elsif ($f =~/^(0x[\dA-Fa-f]+)$/) {
+			} elsif ($f =~/^(-?0x[\dA-Fa-f]+)$/) {
 				my $o=oct($1); # hex conversion
 				print qq(\tdb lit\n);
 				print qq(\tdw $o\n);

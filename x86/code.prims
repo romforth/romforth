@@ -208,5 +208,14 @@ over over		; [ a b
 	_dip		; [ a b a
 }inner
 
+inner{
+~ signum		; [ a b
+	_nip		; [ b	// nos=a
+	sub tos, nos	; [ b-a	// carry=1 if (tos<nos)
+	sbb nos, nos	; [ b-a // nos=-carry
+	sub nos, tos	; [ b-a // nos-=(b-a); carry=1 if (nos>tos)
+	adc tos, nos	; [ b-a-(b-a)+carry // tos is in (-1, 0, +1)
+}inner
+
 var here here dw mem
 var state state db 0
