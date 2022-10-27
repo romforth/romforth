@@ -127,6 +127,13 @@ unary dup  dup  _dup
 unary neg  neg  _neg
 unary inv  inv  _inv
 unary nip  nip  _nip
+
+code{
+pick pick			; [ n
+	add tos, tos		; [ n*2		// tos *= cell; actually
+	add tos, sp		; [ sp+n*2	// tos += sp; and then fall thru
+}code
+
 				; [ addr	(addr:val)
 unary @    fetch mov tos, [tos]	; [ val // assume not reused, so no define macro
 

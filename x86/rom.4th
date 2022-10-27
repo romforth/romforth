@@ -142,4 +142,14 @@ if{		[ // taken
 	'@'	[ '@'
 	emit	[ > '@'
 }if
+
+1 2 		[ 1 2
+1 pick		[ 1 2 1 // over
+dec		[ 1 2 0
+if{		[ 1 2 // not taken regression test
+	'#'	[ 1 2 '#'
+	emit	[ 1 2 > '#'
+}if		[ 1 2
+2drop		[
+
 bye
