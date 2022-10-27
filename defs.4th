@@ -37,3 +37,8 @@ def{ i		[		| ret i n
 	>r	[ i ret		|     i n ]
 	>r	[ i		| ret i n ]
 }def
+
+def{ 2dup	[ a b
+	over	[ a b a
+	over	[ a b a b
+}def

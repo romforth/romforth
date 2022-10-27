@@ -174,13 +174,24 @@ if{		[ 1 2 3 4 // not taken regression test
 }if
 
 2drop		[ 1 2
-for{		[	| i:1 n:2 ]
-	i	[ i	| i   n   ]
-}for		[ 1
+2dup		[ 1 2 1 2
+for{		[ 1 2	| i:1 n:2 ]
+	i	[ 1 2 i	| i   n   ]
+}for		[ 1 2 1
+dec		[ 1 2 0
+if{		[ 1 2 // not taken regression test
+	'&'	[ 1 2 '&'
+	emit	[ 1 2 > '&'
+}if		[ 1 2
+2 -		[ 1 0
+if{		[ 1 // not taken regression test
+	'*'	[ 1 '*'
+	emit	[ 1 > '*'
+}if		[ 1
 dec		[ 0
 if{		[ // not taken regression test
-	'&'	[ '&'
-	emit	[ > '&'
-}if
+	'('	[ '('
+	emit	[ > '('
+}if		[
 
 bye
