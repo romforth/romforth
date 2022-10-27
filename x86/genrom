@@ -23,10 +23,18 @@ sub olddef {
 	my ($f,$l)=@_;
 	$defs->{$f}=$l;
 }
+
+my $label="lbl000";
+sub savelabel {
+	my ($f,$l)=@_;
+	$label=$l;
+}
+
 my $handle={
 	'code' => \&code,
 	'var' => \&var,
 	'def' => \&olddef,
+	'label' => \&savelabel,
 };
 my @args=@ARGV;	# all the args are assumed to have name to label mappings
 for my $a (@args) {
@@ -43,7 +51,6 @@ for my $a (@args) {
 # 2     }def    0       db exit
 
 my $state=0;
-my $label="lbl000";
 
 my $mapjmp=$map->{'jmp'};
 my $mapjz=$map->{'jz'};
@@ -101,6 +108,31 @@ sub runthen {
 	print join('_', @$ol), ":\n";
 }
 
+sub genprim {
+	my ($f)=@_;
+	my $m=$map->{$f};
+	die "$f has no mapping" unless $m;
+	print "\tdb $m\n";
+}
+
+sub runfor {
+	runbegin();
+	for my $i (qw(over over >r >r -)) {
+		genprim($i);
+	}
+	runwhile();
+}
+
+sub runendfor {
+	for my $i (qw(r> inc r>)) {
+		genprim($i);
+	}
+	runrepeat();
+	for my $i (qw(r> r> 2drop)) {
+		genprim($i);
+	}
+}
+
 my $imm={
 	'loop{'		=> \&runbegin,
 	'}until{'	=> \&rununtil,
@@ -110,6 +142,9 @@ my $imm={
 	'if{'		=> \&runif,
 	'}else{'	=> \&runelse,
 	'}if'		=> \&runthen,
+
+	'for{'		=> \&runfor,
+	'}for'		=> \&runendfor,
 };
 
 sub def {
@@ -176,4 +211,5 @@ while (<>) {				# map forth words in the standard input
 		}
 	}
 }
+print $mh "label fake $label\n";
 close $mh;

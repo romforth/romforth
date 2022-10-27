@@ -28,3 +28,12 @@ def{ echon		[ n
 
 def{ third 2 pick }def
 def{ fourth 3 pick }def
+
+def{ i		[		| ret i n
+	r>	[ ret		|     i n ]
+	r>	[ ret i		|       n ]
+	swap	[ i ret		|       n ]
+	over	[ i ret i	|       n ]
+	>r	[ i ret		|     i n ]
+	>r	[ i		| ret i n ]
+}def
