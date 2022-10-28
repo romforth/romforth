@@ -11,9 +11,7 @@ typedef unsigned char byte;
 // #define DEBUG 1
 // #define STACKDEBUG 1
 
-#ifdef DEBUG
 int start=0;
-#endif
 
 void
 usage(char *s, int n) {
@@ -83,6 +81,8 @@ getreg(int n) {
 
 int df=1;
 int rep=0;
+
+int ds_base, ds_depth, rs_base, rs_depth;
 
 void
 emul(byte *mem, int *pip) {
@@ -259,9 +259,9 @@ emul(byte *mem, int *pip) {
 		// printf("got character: %x\n", c);
 		if (--cx.val) break;
 		rep=0;
-#ifdef DEBUG
 		start=1;
-#endif
+		rs_base=di.val;
+		rs_depth=di.val;
 		break;
 	}
 	case 0x72: {
@@ -462,6 +462,8 @@ emul(byte *mem, int *pip) {
 			die("stack is not empty", 10);
 		}
 		// printf("halt\n");
+		fprintf(stderr, "data stack max depth: %d\n", ds_base-ds_depth);
+		fprintf(stderr, "return stack max depth: %d\n", rs_depth-rs_base);
 		exit(0);
 	case 0xF7: {
 		int n=mem[ip++];
@@ -506,11 +508,21 @@ emul(byte *mem, int *pip) {
 
 void
 emulate(byte *mem, int ip) {
-#ifdef DEBUG
 	sp.val=0x100;
+	ds_base=sp.val;
+	ds_depth=sp.val;
+#ifdef DEBUG
 	int prev=si.val;
 #endif
 	for(;;) {
+		if (sp.val < ds_depth) {
+			ds_depth = sp.val;
+		}
+		if (start) {
+			if (di.val > rs_depth) {
+				rs_depth = di.val;
+			}
+		}
 		emul(mem, &ip);
 #ifdef DEBUG
 		if (si.val != prev) {
