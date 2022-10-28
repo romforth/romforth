@@ -42,3 +42,13 @@ def{ 2dup	[ a b
 	over	[ a b a
 	over	[ a b a b
 }def
+
+def{ >=		[ a b
+	~	[ a~b	// -1:a>b 0:a=b 1:a<b
+	dec	[ a>=b	// -2:a>b -1:a=b 0:a<b
+}def
+
+def{ <=		[ a b
+	~	[ a~b	// -1:a>b 0:a=b 1:a<b
+	inc	[ a<=b	// 0:a>b 1:a=b 2:a<b
+}def

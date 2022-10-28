@@ -49,7 +49,7 @@ typedef struct x86splitreg {
 typedef struct x86register {
 	union {
 		x86splitreg s;
-		int val;
+		short val;
 	};
 } x86register;
 
