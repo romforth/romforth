@@ -248,4 +248,22 @@ if{		[ // taken
 	emit	[ > '0'
 }if
 
+1 2 3		[ 1 2 3
+rot		[ 2 3 1
+1 -		[ 2 3 0
+if{		[ 2 3 // not taken regression test
+	'9'	[ 2 3 '9'
+	emit	[ 2 3 > '9'
+}if		[ 2 3
+3 -		[ 2 0
+if{		[ 2 // not taken regression test
+	'8'	[ 2 '8'
+	emit	[ 2 > '8'
+}if		[ 2
+2 -		[ 0
+if{		[ // not taken regression test
+	'7'	[ '7'
+	emit	[ > '7'
+}if
+
 bye

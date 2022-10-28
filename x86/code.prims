@@ -65,6 +65,16 @@ exit exit		; [ x	| w	| ip ret ]
 }inner
 
 code{
+rot rot			; [ a b c
+	_nip		; [ a c		// nos=b
+	pop w		; [ c		// w=a
+	_dip		; [ b c
+	_dup		; [ b c c
+	mov tos, w	; [ b c a
+	jmp restoreax	; jmp inner, but restore ax first
+}code
+
+code{
 jmp branch		; [	| w	| ip	] (ip:v)
 	lodsb           ; [	| v	| ip+1	] // al=*si++
 	cbw		; [	| V	| ip+1	] // sign extend al into ah
