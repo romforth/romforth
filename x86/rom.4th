@@ -266,4 +266,29 @@ if{		[ // not taken regression test
 	emit	[ > '7'
 }if
 
+here		[ here (here:h)
+@		[ h
+dup		[ h h
+10 alloc	[ h h h (here:h+10)
+-		[ h 0
+if{		[ h // not taken regression test
+	'6'	[ h '6'
+	emit	[ h > '6'
+}if		[ h
+-10 alloc	[ h h+10 (here:h)
+over		[ h h+10 h
+-		[ h 10
+10 -		[ h 0
+if{		[ h // not taken regression test
+	'5'	[ h '5'
+	emit	[ h > '5'
+}if		[ h
+here		[ h here (here:h)
+@		[ h h
+-		[ 0
+if{		[ // not taken regression test
+	'4'	[ '4'
+	emit	[ > '4'
+}if		[
+
 bye
