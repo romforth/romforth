@@ -52,3 +52,13 @@ def{ <=		[ a b
 	~	[ a~b	// -1:a>b 0:a=b 1:a<b
 	inc	[ a<=b	// 0:a>b 1:a=b 2:a<b
 }def
+
+def{ >		[ a b
+	<=	[ a<=b	// 0:a>b 1:a=b 2:a<b
+	0=	[ a>b	// 1:a>b, 0 otherwise
+}def
+
+def{ <		[ a b
+	>=	[ a>=b	// -2:a>b -1:a=b 0:a<b
+	0=	[ a<b	// 1:a<b, 0 otherwise
+}def

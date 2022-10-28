@@ -226,4 +226,26 @@ if{		[ // not taken regression test
 	emit	[ > '\'
 }if
 
+0		[ 0
+0=		[ 1
+if{		[ // taken
+}else{		[ // not taken regression test
+	'='	[ '='
+	emit	[ > '='
+}if
+
+3 2 >		[ 1
+if{		[ // taken
+}else{		[ // not taken regression test
+	'-'	[ '-'
+	emit	[ > '-'
+}if
+
+2 3 <		[ 1
+if{		[ // taken
+}else{		[ // not taken regression test
+	'0'	[ '0'
+	emit	[ > '0'
+}if
+
 bye
