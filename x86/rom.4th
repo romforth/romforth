@@ -1,3 +1,9 @@
+[ // init code goes outside the TESTROM flag
+[ // test code goes inside the TESTROM flag
+
+#ifdef TESTROM
+
+	[ // actual stack picture comments begin only below this line
 	[ x < c	// x == some random value in the bx register
 key	[ c
 dup	[ c c
@@ -86,15 +92,23 @@ sp@!	[ x	// SP=mem, x==previous value of SP
 sp@!	[ mem	// restore SP, since this was just for testing
 drop	[
 
+#endif
+
 [ // This is init code, not test code, to allocate space for the return stack {
 [ // First, setup RP the return stack pointer to point to the start of free
 [ // memory. In this implementation, the return stack grows upward
 here	[ here (here:mem)
 @	[ mem
 rp@!	[ x	// RP=mem, x==mem since DI was used as loadrom register pointer
+
+#ifdef TESTROM
+
 here	[ x here
 @	[ x mem
 -	[ x-mem // should be zero in this implementation
+
+#endif
+
 drop	[ assert?
 
 [ // Next, use a minimal allocator to reserve mem .. mem+99 (100 bytes total)
@@ -106,6 +120,8 @@ here 	[ 100 here
 here	[ mem+100 here
 !	[ (here:mem+100) // mem .. mem+99 is now reserved for the return stack
 [ // this is init code, not test code, to allocate space for the return stack }
+
+#ifdef TESTROM
 
 32	[ ' '
 >r	[	| ' '	] (mem:32) // mem .. mem+99 was reserved earlier
@@ -290,5 +306,7 @@ if{		[ // not taken regression test
 	'4'	[ '4'
 	emit	[ > '4'
 }if		[
+
+#endif
 
 bye

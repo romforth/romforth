@@ -23,8 +23,16 @@ inner:			; for use in the inner interpreter, since it is the only
 
 rom:
 
+%ifdef TESTROM
 %include "x86/rom.s"
+%else
+%include "x86/rom.notest.s"
+%endif
 
+%ifdef TESTROM
 %include "x86/defs.s"
+%else
+%include "x86/defs.notest.s"
+%endif
 
 mem:

@@ -1,3 +1,7 @@
+[ // "test only" definitions must be wrapped inside the TESTROM flag
+
+#ifdef TESTROM
+
 def{ testdef	[
 	'o'	[ 'o'
 	emit	[ > 'o'
@@ -25,6 +29,8 @@ def{ echon		[ n
 	}loop		[ n	// n == 0
 	drop		[
 }def
+
+#endif
 
 def{ third 2 pick }def
 def{ fourth 3 pick }def
