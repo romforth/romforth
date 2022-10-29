@@ -1,3 +1,9 @@
+[ // defs.4th : Forth definitions which are architecture independent
+[
+[ // Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+[ // SPDX-License-Identifier: AGPL-3.0-only
+[ // Please see the LICENSE file for the Affero GPL 3.0 license details
+
 [ // "test only" definitions must be wrapped inside the TESTROM flag
 
 #ifdef TESTROM

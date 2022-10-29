@@ -1,0 +1,28 @@
+I can't imagine that anyone except me cares about this code.
+Just in case anyone does, this work is licensed under the terms of the
+Affero GPL license (SPDX-License-Identifier: AGPL-3.0-only) the details
+of which are provided in the LICENSE file in this directory.
+
+Before talking about why this licence was chosen, let me talk about intent.
+
+I wrote this code for love of the craft and I'm sharing it with just about
+anyone who wishes to use it under the assumption that they will return the
+favor by publishing any changes that they may make to it.
+
+Any of the "regular" GPL licenses should be sufficient to ensure this.
+
+Unfortunately though, large corporations have worked around this ethos of
+allowing access to the source code that the GPL licenses were designed to
+enforce by keeping the code locked up in walled off gardens (and sometimes,
+even trying to extract monopoly rents on the work of others)
+
+The Affero GPL 3.0 license that I've chosen for this project is an attempt
+to head off any such behavior. For commercial use or if anyone wishes to use
+this code outside the terms of the existing AGPL 3.0 license (the exact terms
+of which are called out in the LICENSE file), please feel free to contact me
+at romforth@proton.me so we can discuss specific requirements and negotiate
+modified license terms.
+
+I am not a lawyer and this is not meant to lay out the license terms under
+which this code is provided. For the actual license under which this code is
+provided, please see the LICENSE file.

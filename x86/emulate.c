@@ -1,3 +1,11 @@
+/*
+ * emulate.c : "just enough emulation" of x86 to run the generated binary
+ *
+ * Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Please see the LICENSE file for the Affero GPL 3.0 license details
+ */
+
 #include <stdio.h>		// fprintf
 #include <sys/types.h>		// open
 #include <sys/stat.h>		// open

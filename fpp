@@ -1,4 +1,12 @@
 #!/usr/bin/perl -w
+
+# fpp : cpp-like preprocessor for .4th files, only handles #ifdef/#endif
+# fpp was written because cpp fails on the .4th input files
+#
+# Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
 use strict;
 
 my @defs;

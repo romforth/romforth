@@ -1,3 +1,9 @@
+; forth.s : bootloader over serial port, initialization and inner interpreter
+;
+; Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+; SPDX-License-Identifier: AGPL-3.0-only
+; Please see the LICENSE file for the Affero GPL 3.0 license details
+
 	bits	16	; x86 real mode
 	org	0x100	; x86 BIOS origin is 0x100 - must match in emulate.c
 

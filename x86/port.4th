@@ -1,3 +1,9 @@
+[ // port.4th : Forth definitions which are specific to the x86 architecture
+[
+[ // Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+[ // SPDX-License-Identifier: AGPL-3.0-only
+[ // Please see the LICENSE file for the Affero GPL 3.0 license details
+
 def{ getc		[
 	loop{		[
 		0x3f8	[ p // serial port #1
