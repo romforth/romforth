@@ -7,4 +7,6 @@
 [ // init code goes outside the TESTROM flag
 [ // test code goes inside the TESTROM flag
 
+key
+emit
 bye

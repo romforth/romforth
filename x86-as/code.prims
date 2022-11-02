@@ -8,3 +8,19 @@ code{
 bye halt
 	hlt
 }code
+
+define tos %bx
+define next jmp *%bp
+
+inner{
+key key
+	in %dx, %al	# read from serial port
+	xor tos, tos	# just need to clear TOS.h
+	mov %al, %bl	# save byte read in TOS.l
+}inner
+
+inner{
+emit emit
+	mov %bl, %al	# restore stashed value
+	out %al, %dx	# and echo it out to the serial port
+}inner
