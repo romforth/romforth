@@ -72,6 +72,7 @@ lit lit			# [ x	| w | ip ] (ip:v)
 	xchg w, tos	# [ x v | w | ip+2 ]	// to restore AH and set tos
 }inner
 
+fallthru 2drop drop2 _drop	# drop	# and then fall thru to drop
 unary drop drop _drop
 unary dup  dup  _dup
 unary nip  nip  _nip
