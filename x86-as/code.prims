@@ -92,3 +92,17 @@ binary + add add nos, tos
 binary & and and nos, tos
 binary |  or  or nos, tos
 binary ^ xor xor nos, tos
+
+inner{
+<< shl			# [ n s
+	mov %bl, %cl	# [ n s	// cl <- s.l
+	_drop		# [ n
+	shl %cl, tos	# [ n<<cl
+}inner
+
+inner{
+>> shr			# [ n s
+	mov %bl, %cl	# [ n s	// cl <- s.l
+	_drop		# [ n
+	shr %cl, tos	# [ n>>cl
+}inner

@@ -114,4 +114,12 @@ if{		[ // not taken regression test
 	emit	[ > '\'
 }if
 
+4 2 <<		[ 16
+64 2 >>		[ 16 16
+-		[ 0
+if{		[ // not taken regression test
+	'='	[ '='
+	emit	[ > '='
+}if
+
 bye
