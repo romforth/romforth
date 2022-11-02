@@ -11,4 +11,6 @@ key	[ c
 dup	[ c c
 emit	[ c
 drop	[
+'o'	[ 'o'
+emit	[ > 'o'
 bye

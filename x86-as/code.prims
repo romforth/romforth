@@ -10,6 +10,8 @@ bye halt
 }code
 
 define tos %bx
+define   w %ax
+
 define next jmp *%bp
 
 define _dup push tos
@@ -28,6 +30,14 @@ emit emit
 	mov %bl, %al	# restore stashed value
 	out %al, %dx	# and echo it out to the serial port
 	_drop		# drop displayed value in TOS
+}inner
+
+inner{
+lit lit			# [ x	| w | ip ] (ip:v)
+	_dup		# [ x x	| w | ip ]
+	mov w, tos	# [ x w | w | ip ]	// just to preserve AH
+	lodsw		# [ x w | v | ip+2 ]
+	xchg w, tos	# [ x v | w | ip+2 ]	// to restore AH and set tos
 }inner
 
 unary drop drop _drop
