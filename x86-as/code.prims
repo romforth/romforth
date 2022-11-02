@@ -24,6 +24,7 @@ define _inc inc tos
 define _dec dec tos
 define _neg neg tos
 define _inv not tos
+define _xchg xchg tos, nos
 
 code{
 jmp branch		# [	| w	| ip	] (ip:v)
@@ -76,7 +77,10 @@ fallthru 2drop drop2 _drop	# drop	# and then fall thru to drop
 unary drop drop _drop
 unary dup  dup  _dup
 unary nip  nip  _nip
-unary dip  dip  _dip
+				# [ a b
+fallthru swap swap _nip		# [ b	// nos=a and fall thru to xchg
+fallthru xchg xchg _xchg	# [ a	// nos=b and fall thru to dip
+unary dip  dip  _dip		# [ b a
 
 unary inc  inc  _inc
 unary dec  dec  _dec

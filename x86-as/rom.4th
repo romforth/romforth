@@ -105,4 +105,13 @@ if{		[ // not taken regression test
 	emit	[ > '|'
 }if		[
 
+1 2		[ 1 2
+swap		[ 2 1
+-		[ 1
+dec		[ 0
+if{		[ // not taken regression test
+	'\'	[ '\'
+	emit	[ > '\'
+}if
+
 bye
