@@ -55,7 +55,7 @@ for my $a (@args) {
 # state event next      action
 # 0     def{    1       -
 # 1     $w      2       $label: ; $w
-# 2     }def    0       db exit
+# 2     }def    0       .byte exit
 
 my $state=0;
 
@@ -74,36 +74,36 @@ sub runbegin {
 }
 
 sub rununtil {
-	print "\tdb ", $mapjnz, " ; branch if not zero\n";
+	print "\t.byte ", $mapjnz, "-load # branch if not zero\n";
 	my $ol=pop @labelstack;
-	print "\tdb ", join('_', @$ol), '-$-1', "\n";
+	print "\t.byte ", join('_', @$ol), '-.-1', "\n";
 	push @labelstack, $ol;
 }
 
 sub runwhile {
-	print "\tdb ", $mapjz, " ; branch if zero\n";
+	print "\t.byte ", $mapjz, "-load # branch if zero\n";
 	my $ol=pop @labelstack;
-	print "\tdb ", join('_', @$ol), '-$-1', "\n";
+	print "\t.byte ", join('_', @$ol), '-.-1', "\n";
 	push @labelstack, $ol;
 }
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\tdb ", $mapjmp, " ; branch\n";
-	print "\tdb ", $ol->[0], '_begin-$-1', "\n";
+	print "\t.byte ", $mapjmp, "-load # branch\n";
+	print "\t.byte ", $ol->[0], '_begin-.-1', "\n";
 	print join('_', @$ol), ":\n";
 }
 
 sub runif {
-	print "\tdb ", $mapjz, " ; branch if zero\n";
-	print "\tdb ", $label, '_then-$-1', "\n";
+	print "\t.byte ", $mapjz, "-load # branch if zero\n";
+	print "\t.byte ", $label, '_then-.-1', "\n";
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\tdb ", $mapjmp, " ; branch\n";
-	print "\tdb ", $ol->[0], '_endif-$-1', "\n";
+	print "\t.byte ", $mapjmp, "-load # branch\n";
+	print "\t.byte ", $ol->[0], '_endif-.-1', "\n";
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
 	$ol->[1]="endif";
@@ -119,7 +119,7 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\tdb $m\n";
+	print "\t.byte $m\n";
 }
 
 sub runfor {
