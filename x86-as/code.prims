@@ -17,6 +17,8 @@ define next jmp *%bp
 
 define _dup push tos
 define _drop pop tos
+define _inc inc tos
+define _dec dec tos
 
 code{
 jmp branch		# [	| w	| ip	] (ip:v)
@@ -67,3 +69,5 @@ lit lit			# [ x	| w | ip ] (ip:v)
 
 unary drop drop _drop
 unary dup  dup  _dup
+unary inc  inc  _inc
+unary dec  dec  _dec
