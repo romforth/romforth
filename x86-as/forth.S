@@ -28,6 +28,7 @@ inner:			# for use in the inner interpreter, since it is the only
 #include "prims.s"
 
 rom:
-	.byte halt-load
+
+#include "rom.s"
 
 mem:
