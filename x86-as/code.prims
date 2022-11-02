@@ -19,6 +19,8 @@ define _dup push tos
 define _drop pop tos
 define _inc inc tos
 define _dec dec tos
+define _neg neg tos
+define _inv not tos
 
 code{
 jmp branch		# [	| w	| ip	] (ip:v)
@@ -71,3 +73,5 @@ unary drop drop _drop
 unary dup  dup  _dup
 unary inc  inc  _inc
 unary dec  dec  _dec
+unary neg  neg  _neg
+unary inv  inv  _inv
