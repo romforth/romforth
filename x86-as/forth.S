@@ -25,8 +25,7 @@ inner:			# for use in the inner interpreter, since it is the only
 	lodsb		# al=si++	# x86 register with read+auto increment
 	jmp *%ax	# register AX is the equivalent of Forth's W register
 
-halt:
-	hlt
+#include "prims.s"
 
 rom:
 	.byte halt-load
