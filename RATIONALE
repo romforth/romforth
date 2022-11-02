@@ -1,0 +1,76 @@
+When I get a developer kit, with some random microcontroller on it,
+I'd think, in an ideal world, blinking an LED on it was as simple as:
+
+1. Connect to it using a USB cable
+2. Get a "Forth like" REPL prompt after power up when attaching to that USB port
+   using say, picocom (or any of your favorite serial communication programs
+   such as minicom/microcom/socat/screen/agetty/getty/cu/what have you)
+3. Start blinking LEDs about once a second on the board directly from that REPL
+   using code that perhaps looks like this:
+
+   	loop{
+		green led_on
+		500 millisec sleep
+		green led_off
+		500 millisec sleep
+	}loop
+
+Simple, right?
+
+With that "hello world" equivalent on an IOT device out of the way, you'd now
+be empowered to code your way to creating your very own (in)secure device. ;)
+
+Compare that, to what happens in reality:
+You start off by ordering a microcontroller dev kit. It comes with instructions
+that ask you to download gigabytes of software to do anything useful with it.
+If you are successful running all that software (only on Windows though!) you
+then spend multiple weekends reading manuals weighing in at hundreds of pages
+and figuring out instruction sets and register offsets before finally deciding
+to let the board start gathering dust in some far corner of your shelf because
+everyone in the food chain seems to be hell-bent on making things harder than
+they really ought to be.
+
+The reason for this state of affairs is obvious: the hardware makers want to
+create software complements which enforce stickiness, even if it creates a
+high barrier to entry for a hobbyist/weekend tinkerer. As a software guy, I
+want to see if I can do the opposite and turn the hardware into a complement
+with Forth providing a level playing field. Let the best hardware kit win - by
+standing on its own merits, either in cost or features.
+
+I'm going to try and see if I can code my way out of the current situation into
+that utopia that I keep hoping for. So this is just an exploration of that
+design space to see how close to that ideal world I can get. Looking around for
+existing solutions and knowing how small Forth implementations can be, my take
+was that perhaps I can start with an existing version of Forth. (Note: if you
+squint at the "blink code" shown above, it should be recognizable, for the most
+part, as "mostly Forth", except for some syntactic sugar changes)
+
+Now, since practically anyone who learns Forth tends to write an implementation
+of it as well, it is safe to assume that there are as many Forth implementations
+as there are Forth programmers. So finding a version of Forth that "just works"
+on any random microcontroller out there should be a solved problem, right?
+
+Well, sort of. For many of the microcontrollers in the TI-MSP family, there
+is Camelforth, for STM stuff there is mecrisp and if those don't work, there is
+FlashForth for the Atmels and PICs and obviously, for anything with enough
+registers for a decent C compiler support (and a large enough flash/ROM), there
+is gforth.
+
+All of this sounds reasonable until you read the documentation for the micro
+you have on hand and ponder the question that has been bouncing around in the
+back of your mind: "but can it run with just 64 bytes of RAM and 1KB of ROM"?
+
+That's when you have to wade into the weeds with Forth "metacompilation" and try
+to figure out what exactly "umbilical hosting" means. You can also expect to be
+facing questions out of left field: "How about on a Harvard architecture?"
+- usually when someone is stuck with a PIC (pun intended).
+
+It turns out that there is no "one size fits all" answer to this question.
+Microcontrollers come in all variations of sizes of RAM and ROM/Flash and
+there is currently no "one true Forth" that can be modified to fit all these
+different needs/use cases.
+
+So I consider this attempt at a Forth implementation as an experiment to see
+if there is a small, fast, baremetal yet portable version of Forth that can be
+easily ported to various microcontrollers - especially ones at the lower end of
+the scale in terms of RAM/ROM and perhaps even CPU registers.
