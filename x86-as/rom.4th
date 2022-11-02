@@ -52,4 +52,23 @@ if{		[ // not taken regression test
 	emit	[ > '%'
 }if		[
 
+0 1		[ 0 1
+nip		[ 1	// nos=0
+dup		[ 1 1
+dip		[ 1 0 1	// ie tuck == nip dup dip
+dec		[ 1 0 0
+if{		[ 1 0 // not taken regression test
+	'^'	[ 1 0 '^'
+	emit	[ 1 0 > '^'
+}if		[ 1 0
+if{		[ 1 // not taken regression test
+	'&'	[ 1 '&'
+	emit	[ 1 > '&'
+}if		[ 1
+dec		[ 0
+if{		[ // not taken regression test
+	'*'	[ '*'
+	emit	[ > '*'
+}if		[
+
 bye

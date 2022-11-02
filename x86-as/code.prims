@@ -10,11 +10,14 @@ bye halt
 }code
 
 define tos %bx
+define nos %cx
 define   w %ax
 define  ip %si
 
 define next jmp *%bp
 
+define _nip pop nos
+define _dip push nos
 define _dup push tos
 define _drop pop tos
 define _inc inc tos
@@ -71,6 +74,9 @@ lit lit			# [ x	| w | ip ] (ip:v)
 
 unary drop drop _drop
 unary dup  dup  _dup
+unary nip  nip  _nip
+unary dip  dip  _dip
+
 unary inc  inc  _inc
 unary dec  dec  _dec
 unary neg  neg  _neg
