@@ -71,4 +71,11 @@ if{		[ // not taken regression test
 	emit	[ > '*'
 }if		[
 
+1 2 +		[ 3
+3 -		[ 0
+if{		[ // not taken regression test
+	'('	[ '('
+	emit	[ > '('
+}if		[
+
 bye

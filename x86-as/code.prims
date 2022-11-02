@@ -81,3 +81,6 @@ unary inc  inc  _inc
 unary dec  dec  _dec
 unary neg  neg  _neg
 unary inv  inv  _inv
+
+fallthru - sub _neg	# tos = -tos # and then fall thru to addition
+binary + add add nos, tos
