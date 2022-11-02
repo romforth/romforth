@@ -12,8 +12,12 @@ bye halt
 define tos %bx
 define next jmp *%bp
 
+define _dup push tos
+define _drop pop tos
+
 inner{
 key key
+	_dup		# save tos
 	in %dx, %al	# read from serial port
 	xor tos, tos	# just need to clear TOS.h
 	mov %al, %bl	# save byte read in TOS.l
@@ -23,4 +27,8 @@ inner{
 emit emit
 	mov %bl, %al	# restore stashed value
 	out %al, %dx	# and echo it out to the serial port
+	_drop		# drop displayed value in TOS
 }inner
+
+unary drop drop _drop
+unary dup  dup  _dup
