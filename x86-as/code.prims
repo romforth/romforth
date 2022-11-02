@@ -84,3 +84,6 @@ unary inv  inv  _inv
 
 fallthru - sub _neg	# tos = -tos # and then fall thru to addition
 binary + add add nos, tos
+binary & and and nos, tos
+binary |  or  or nos, tos
+binary ^ xor xor nos, tos
