@@ -235,4 +235,12 @@ if{		[ // not taken regression test
 	emit	[ > '6'
 }if		[
 
+bl		[ 32
+-32		[ 32 -32
++		[ 0
+if{		[ // not taken regression test
+	'6'	[ '6'
+	emit	[ > '6'
+}if		[
+
 bye

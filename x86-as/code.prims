@@ -48,6 +48,21 @@ p! poke			# [ byte port	// ready to write
 }code
 
 code{
+enter enter		# [ x	| w	| ip	 ] (ip:v)
+	lodsw		# [ x	| v	| ip+2	 ]
+	xchg w, ip	# [ x	| ip+2	| v	 ]
+	stosw		# [ x	| ip+2	| v ip+2 ]
+	jmp restoreax	# jmp inner, but restore ax first
+}code
+
+inner{
+exit exit		# [ x	| w	| ip ret ]
+	dec rp		# rp--
+	dec rp		# rp--
+	mov (rp), ip	# [ x	| w	|    ret ]
+}inner
+
+code{
 jmp branch		# [	| w	| ip	] (ip:v)
 	lodsb           # [	| v	| ip+1	] // al=*si++
 	cbw		# [	| V	| ip+1	] // sign extend al into ah
