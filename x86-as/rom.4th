@@ -243,4 +243,13 @@ if{		[ // not taken regression test
 	emit	[ > '6'
 }if		[
 
+testnest	[ r
+call		[ 1234
+-1234		[ 1234 -1234
++		[ 0
+if{		[ // not taken regression test
+	'5'	[ '5'
+	emit	[ > '5'
+}if		[
+
 bye
