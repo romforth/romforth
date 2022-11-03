@@ -13,6 +13,7 @@ define tos %bx
 define nos %cx
 define   w %ax
 define  ip %si
+define  rp %di
 
 define next jmp *%bp
 
@@ -92,6 +93,9 @@ lit lit			# [ x	| w | ip ] (ip:v)
 	lodsw		# [ x w | v | ip+2 ]
 	xchg w, tos	# [ x v | w | ip+2 ]	// to restore AH and set tos
 }inner
+
+unary rp@! rpxchg xchg tos, rp
+unary sp@! spxchg xchg tos, %sp
 
 fallthru 2drop drop2 _drop	# drop	# and then fall thru to drop
 unary drop drop _drop
