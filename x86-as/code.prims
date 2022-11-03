@@ -28,6 +28,25 @@ define _xchg xchg tos, nos
 define _fetch mov (tos), tos
 
 code{
+p@ peek			# [ port	(port:byte) // ready to read
+	mov tos, %dx	# [ port	// dx is used for in/out
+	in %dx, %al	# [ port	// al = peek(port)
+	mov %al, %bl	# [ XX|byte	// copy from al to bl
+	xor %bh, %bh	# [ byte	// zero the high byte
+	jmp restoredx	#		to restore dx (and ah)
+}code
+
+code{
+p! poke			# [ byte port	// ready to write
+	_nip		# [ port	// nos=byte
+	mov tos, %dx	# [ port	// dx is used for in/out
+	mov nos, w	# [ port	// al is used for in/out
+	out %al, %dx	# [ port	// poke(port, al)
+	_drop		# [
+	jmp restoredx	#		to restore dx (and ah)
+}code
+
+code{
 jmp branch		# [	| w	| ip	] (ip:v)
 	lodsb           # [	| v	| ip+1	] // al=*si++
 	cbw		# [	| V	| ip+1	] // sign extend al into ah

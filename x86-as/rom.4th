@@ -173,4 +173,10 @@ if{		[ 3 2 // not taken regression test
 }if		[ 3 2
 2drop		[
 
+0x3f8		[ 0x3f8	// serial port #1
+dup		[ 0x3f8 0x3f8
+p@		[ 0x3f8 'h'
+swap		[ 'h' 0x3f8
+p!		[ > 'h'
+
 bye
