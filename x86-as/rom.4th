@@ -122,4 +122,29 @@ if{		[ // not taken regression test
 	emit	[ > '='
 }if
 
+100		[ 100
+@		[ 0x0CBF
+-0xCBF		[ 0x0CBF -0x0CBF
++		[ 0
+if{		[ // not taken regression test
+	'-'	[ '-'
+	emit	[ > '-'
+}if		[
+
+here		[ here (here:h)
+@		[ h
+123		[ h 123
+here		[ h 123 here
+!		[ h (here:123)
+here		[ h here
+@		[ h 123
+-123		[ h 123 -123
++		[ h 0
+if{		[ h // not taken regression test
+	'0'	[ h '0'
+	emit	[ h > '0'
+}if		[ h
+here		[ h here
+!		[ (here:h)
+
 bye

@@ -25,6 +25,7 @@ define _dec dec tos
 define _neg neg tos
 define _inv not tos
 define _xchg xchg tos, nos
+define _fetch mov (tos), tos
 
 code{
 jmp branch		# [	| w	| ip	] (ip:v)
@@ -77,6 +78,16 @@ fallthru 2drop drop2 _drop	# drop	# and then fall thru to drop
 unary drop drop _drop
 unary dup  dup  _dup
 unary nip  nip  _nip
+
+				# [ addr	(addr:val)
+unary @    fetch _fetch		# [ val
+
+inner{
+! store				# [ val addr
+	pop (tos)		# [ addr	(addr:val)
+	_drop			# [
+}inner
+
 				# [ a b
 fallthru swap swap _nip		# [ b	// nos=a and fall thru to xchg
 fallthru xchg xchg _xchg	# [ a	// nos=b and fall thru to dip
@@ -106,3 +117,5 @@ inner{
 	_drop		# [ n
 	shr %cl, tos	# [ n>>cl
 }inner
+
+var here here .word mem
