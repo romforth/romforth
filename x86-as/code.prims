@@ -214,6 +214,13 @@ over over		# [ a b
 }inner
 
 inner{
+0= iszero		# [ a
+	neg tos		# [ -a		// if tos!=0, set carry
+	sbb tos, tos	# [ -carry	// tos = -carry
+	inc tos		# [ 1-carry	// 1 if tos was zero, 0 otherwise
+}inner
+
+inner{
 ~ signum		# [ a b
 	_nip		# [ b	// nos=a
 	sub nos, tos	# [ b-a	// carry=1 if (tos<nos)
