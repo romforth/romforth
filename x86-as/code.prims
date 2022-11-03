@@ -159,5 +159,21 @@ inner{
 	shr %cl, tos	# [ n>>cl
 }inner
 
+inner{
+>r tor			# [ x	|   ]
+	mov tos, (rp)	# [ x	| x ]
+	_drop		# [	| x ]
+	inc rp		# rp++
+	inc rp		# rp++
+}inner
+
+inner{
+r> fromr		# [ a	| x ]
+	dec rp		# rp--
+	dec rp		# rp--
+	_dup		# [ a a	|   ] // x dropped because of the decrements
+	mov (rp), tos	# [ a x |   ] // but the content was still in memory
+}inner
+
 var here here .word mem
 var state state .byte 0

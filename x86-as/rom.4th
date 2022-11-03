@@ -210,4 +210,17 @@ here	[ mem+100 here
 !	[ (here:mem+100) // mem .. mem+99 is now reserved for the return stack
 [ // this is init code, not test code, to allocate space for the return stack }
 
+3 2		[ 3 2
+>r		[ 3 	| 2 ]
+dup		[ 3 3	| 2 ]
+r>		[ 3 3 2
+swap		[ 3 2 3	// over
+-3		[ 3 2 3 -3
++		[ 3 2 0
+if{		[ 3 2 // not taken regression test
+	'7'	[ 3 2 '7'
+	emit	[ 3 2 > '7'
+}if		[ 3 2
+2drop		[
+
 bye
