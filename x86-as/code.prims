@@ -205,5 +205,13 @@ r> fromr		# [ a	| x ]
 	mov (rp), tos	# [ a x |   ] // but the content was still in memory
 }inner
 
+inner{
+over over		# [ a b
+	mov tos, nos	# [ a b // nos=b
+	mov %sp, tos	# [ a sp
+	_fetch		# [ a a
+	_dip		# [ a b a
+}inner
+
 var here here .word mem
 var state state .byte 0

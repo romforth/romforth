@@ -252,4 +252,13 @@ if{		[ // not taken regression test
 	emit	[ > '5'
 }if		[
 
+1 2		[ 1 2
+over		[ 1 2 1
+-		[ 1 1
+-		[ 0
+if{		[ // not taken regression test
+	'4'	[ '4'
+	emit	[ > '4'
+}if		[
+
 bye
