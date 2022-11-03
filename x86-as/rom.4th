@@ -133,12 +133,12 @@ if{		[ // not taken regression test
 
 here		[ here (here:h)
 @		[ h
-123		[ h 123
-here		[ h 123 here
-!		[ h (here:123)
+1234		[ h 1234
+here		[ h 1234 here
+!		[ h (here:1234)
 here		[ h here
-@		[ h 123
--123		[ h 123 -123
+@		[ h 1234
+-1234		[ h 1234 -1234
 +		[ h 0
 if{		[ h // not taken regression test
 	'0'	[ h '0'
@@ -146,5 +146,21 @@ if{		[ h // not taken regression test
 }if		[ h
 here		[ h here
 !		[ (here:h)
+
+state		[ state (state:b)
+c@		[ b
+123		[ b 123
+state		[ b 123 state
+c!		[ b (state:123)
+state		[ b state
+c@		[ b 123
+-123		[ b 123 -123
++		[ b 0
+if{		[ b // not taken regression test
+	'9'	[ b '9'
+	emit	[ b > '9'
+}if		[ b
+state		[ b state
+c!		[ (state:b)
 
 bye

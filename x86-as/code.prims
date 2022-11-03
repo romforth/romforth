@@ -88,6 +88,19 @@ inner{
 	_drop			# [
 }inner
 
+inner{
+c@ cfetch			# [ addr	(addr:byte)
+	mov (tos), %bl		# [ XX|byte	// fetch to lower half of TOS
+	xor %bh, %bh		# [ byte	// clear top half of TOS
+}inner
+
+inner{
+c! cstore			# [ byte addr
+	_nip			# [ addr	// nos=byte
+	mov %cl, (tos)		# [ addr	(addr:byte)
+	_drop			# [
+}inner
+
 				# [ a b
 fallthru swap swap _nip		# [ b	// nos=a and fall thru to xchg
 fallthru xchg xchg _xchg	# [ a	// nos=b and fall thru to dip
@@ -119,3 +132,4 @@ inner{
 }inner
 
 var here here .word mem
+var state state .byte 0
