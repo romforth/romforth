@@ -79,6 +79,11 @@ unary drop drop _drop
 unary dup  dup  _dup
 unary nip  nip  _nip
 
+code{
+pick pick			# [ n
+	add tos, tos		# [ n*2		// tos *= cell; actually
+	add %sp, tos		# [ sp+n*2	// tos += sp; and then fall thru
+}code
 				# [ addr	(addr:val)
 unary @    fetch _fetch		# [ val
 
