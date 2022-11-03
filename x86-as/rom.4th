@@ -223,4 +223,16 @@ if{		[ 3 2 // not taken regression test
 }if		[ 3 2
 2drop		[
 
+1 2		[ 1 2
+lit		[ 1 2 // push the next 2 bytes which will be escaped by lit
+swap		[ 1 2 swap
+lit		[ 1 2 lit|swap	// the lit byte is ignored by the exec below
+exec		[ 2 1
+-		[ 1
+dec		[ 0
+if{		[ // not taken regression test
+	'6'	[ '6'
+	emit	[ > '6'
+}if		[
+
 bye
