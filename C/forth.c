@@ -15,7 +15,7 @@ enum {
 };
 
 byte rom[]={
-	HLT,
+#include "rom.h"
 };
 
 byte w, *ip=rom;
