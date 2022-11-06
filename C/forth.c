@@ -7,6 +7,7 @@
  */
 
 #include <stdlib.h>	// exit
+#include <stdio.h>	// getchar, putchar
 
 typedef unsigned char byte;
 
@@ -19,6 +20,10 @@ byte rom[]={
 };
 
 byte w, *ip=rom;
+
+typedef short cell;
+
+cell tos;
 
 void
 exec(byte w) {

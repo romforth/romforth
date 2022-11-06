@@ -10,3 +10,15 @@ code{
 bye HLT
 	exit(0);
 }code
+
+#define next break
+
+inner{
+key KEY
+	tos=getchar();
+}inner
+
+inner{
+emit EMIT
+	putchar(tos);
+}inner
