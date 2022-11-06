@@ -11,7 +11,7 @@
 typedef unsigned char byte;
 
 enum {
-	HLT,
+#include "enums.h"
 };
 
 byte rom[]={
@@ -23,8 +23,7 @@ byte w, *ip=rom;
 void
 exec(byte w) {
 	switch(w) {
-	case HLT:
-		exit(0);
+#include "prims.h"
 	}
 }
 

@@ -1,0 +1,68 @@
+#!/usr/bin/perl -w
+
+# genprims : convert code.prims into C glue code
+#
+# Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+my $mf=shift;	# the map file to be generated
+my $ef=shift;	# the enum file to be generated
+
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+open(my $eh, ">$ef") or die "can't open $ef for writing";
+
+my ($f,$l);	# the forth name($f) and the C switch label ($l)
+
+sub mapnames {
+	$_=<>;			# read in the next line of input
+	($f,$l)=split;		# which provides forth<->label mapping
+	s/^\s*$f//;
+	s/^\s*$l//;
+	print $mh "code $f $l\n";	# create dictionary entry for primitives
+	print $eh "\t$l,\n";	# add an enum mapping for that opcode
+	print "case $l: {$_\n";	# generate the label for the switch
+}
+
+while (<>) {
+	if (/^code\{$/) {		# code{ : start of primitive declaration
+		mapnames();		# handle forth word to label mapping
+	} elsif (/^\}code$/) {		# }code :end of primitive declaration:
+		print "}; // end of definition of $l -> $f\n";
+	} elsif (/^inner\{$/) {		# inner{ : primitives that loop to inner
+		mapnames();		# handle forth word to label mapping
+	} elsif (/^\}inner$/) {		# }inner : end of word looping to inner
+		print "next	; continue within the interpreter\n";
+	} elsif (/^unary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# unary operators
+		($f,$l)=($1,$2);
+		print $mh "code $f $l\n"; # create dictionary entry for unary
+		print "case $l:\n";	# generate the label for the switch
+		print "\t$3\n";
+		print "\tnext\n";
+	} elsif (/^binary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# binary operators
+		($f,$l)=($1,$2);
+		print $mh "code $f $l\n"; # create dictionary entry for binary
+		print "case $l:\n";	# generate the label for the switch
+		print "\t_nip\n";
+		print "\t$3\n";
+		print "\tnext\n";
+	} elsif (/^fallthru\s+(\S+)\s+(\S+)\s+(.*)$/) {	# "fall thru" operators
+		($f,$l)=($1,$2);
+		print $mh "code $f $l\n"; # create dictionary entry for fallthru
+		print "case $l:\n";	# generate the label for the switch
+		print "\t$3\n";
+	} elsif (/^define\s+(\S+)\s+(.*)$/) {	# definitions
+		print "%define $1 $2\n";
+	} elsif (/^var\s+(\S+)\s+(\S+)\s+(.*)$/) {	# variables
+		($f,$l)=($1,$2);
+		print $mh "var $f $l\n";# create dictionary entry for variables
+		print "case $l:\n";	# generate the label for the switch
+		print "\t$3\n";		# and allocation/initial value if any
+	} else {
+		print;	# C code between code{...}code is passed thru as is
+	}
+}
+
+close $mh;
