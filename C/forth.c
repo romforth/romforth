@@ -16,6 +16,9 @@ enum {
 };
 
 byte rom[]={
+#ifdef TEST_INVALID_OPCODE
+	-1,
+#endif
 #include "rom.h"
 };
 
@@ -25,10 +28,26 @@ typedef short cell;
 
 cell tos;
 
+#include <stdarg.h>
+
+void
+_die(char *f, int l, int n, char *s, ...) {
+	va_list ap;
+
+	va_start(ap, s);
+	vfprintf(stderr, s, ap);
+	fprintf(stderr, "Died in file %s at line %d\n", f, l);
+	exit(n);
+}
+
+#define die(n, s, w) _die(__FILE__, __LINE__, n, s, w);
+
 void
 exec(byte w) {
 	switch(w) {
 #include "prims.h"
+	default:
+		die(1, "unknown opcode %d\n", w);
 	}
 }
 
