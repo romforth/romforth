@@ -38,9 +38,10 @@ while (<>) {
 	} elsif (/^unary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# unary operators
 		($f,$l)=($1,$2);
 		print $mh "code $f $l\n"; # create dictionary entry for unary
+		print $eh "\t$l,\n";	# add an enum mapping for that opcode
 		print "case $l:\n";	# generate the label for the switch
 		print "\t$3\n";
-		print "\tnext\n";
+		print "\tnext;\n";
 	} elsif (/^binary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# binary operators
 		($f,$l)=($1,$2);
 		print $mh "code $f $l\n"; # create dictionary entry for binary

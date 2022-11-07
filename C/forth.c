@@ -42,6 +42,41 @@ _die(char *f, int l, int n, char *s, ...) {
 
 #define die(n, s, w) _die(__FILE__, __LINE__, n, s, w);
 
+#define MAXD 100
+cell dstk[MAXD], *d=dstk, maxd=0;
+
+void
+checkempty(cell *d, cell *s) {
+	if (d!=s) {
+		die(2, "Data stack is not empty, remaining=%d\n", d-s);
+	}
+}
+
+void
+verify() {
+	checkempty(d, dstk);
+}
+
+void
+push(cell c) {
+	*d++=c;
+	int l=d-dstk;
+	if (l>maxd) {
+		maxd=l;
+	}
+	if (maxd>MAXD) {
+		die(3, "Data stack size needs to be increased, current=%d\n", MAXD);
+	}
+}
+
+void
+pop(cell *cp) {
+	*cp=*--d;
+	if (d-dstk < 0) {
+		die(4, "Data stack underflowed by %d\n", d-dstk);
+	}
+}
+
 void
 exec(byte w) {
 	switch(w) {
@@ -53,6 +88,7 @@ exec(byte w) {
 
 int
 main() {
+	atexit(verify);
 	for(;;) {
 		exec(w=*ip++);
 	}
