@@ -184,8 +184,10 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\t.byte lit-load\n);
-	print qq(\t.word $o\n);
+	print qq(\tLIT,\n);
+	my $l=$o%256;
+	my $h=int $o/256;
+	print qq(\t$l,\n\t$h,\n);
 }
 
 my $m;					# cache for the map from name to label

@@ -29,3 +29,10 @@ emit EMIT
 
 unary dup DUP _dup;
 unary drop DROP _drop;
+
+inner{
+lit LIT				// [ x     | w | ip   ] (ip:v)
+	_dup;			// [ x x   | w | ip   ]
+	tos=*ip++;		// [ x v.l | w | ip+1 ]
+	tos+=(*ip++<<8);	// [ x v   | w | ip+2 ]
+}inner
