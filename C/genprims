@@ -22,8 +22,7 @@ sub mapnames {
 	s/^\s*$f//;
 	s/^\s*$l//;
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
-	print $eh "\t$l,\n";	# add an enum mapping for that opcode
-	print "case $l: {$_\n";	# generate the label for the switch
+	print "void $l() {$_\n";	# generate the function to call
 }
 
 while (<>) {

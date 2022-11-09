@@ -11,18 +11,12 @@
 
 typedef unsigned char byte;
 
-enum {
-#include "enums.h"
-};
+#include "prims.h"
 
-byte rom[]={
-#ifdef TEST_INVALID_OPCODE
-	-1,
-#endif
+void
+rom() {
 #include "rom.h"
-};
-
-byte w, *ip=rom;
+}
 
 typedef short cell;
 
@@ -77,19 +71,8 @@ pop(cell *cp) {
 	}
 }
 
-void
-exec(byte w) {
-	switch(w) {
-#include "prims.h"
-	default:
-		die(1, "unknown opcode %d\n", w);
-	}
-}
-
 int
 main() {
-	atexit(verify);
-	for(;;) {
-		exec(w=*ip++);
-	}
+	rom();
+	verify();
 }

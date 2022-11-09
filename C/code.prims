@@ -10,29 +10,3 @@ code{
 bye HLT
 	exit(0);
 }code
-
-#define next break
-#define _dup push(tos)
-#define _drop pop(&tos)
-
-inner{
-key KEY
-	_dup;
-	tos=getchar();
-}inner
-
-inner{
-emit EMIT
-	putchar(tos);
-	_drop;
-}inner
-
-unary dup DUP _dup;
-unary drop DROP _drop;
-
-inner{
-lit LIT				// [ x     | w | ip   ] (ip:v)
-	_dup;			// [ x x   | w | ip   ]
-	tos=*ip++;		// [ x v.l | w | ip+1 ]
-	tos+=(*ip++<<8);	// [ x v   | w | ip+2 ]
-}inner

@@ -11,7 +11,7 @@ forth : forth.c prims.h enums.h rom.h
 	cc -Ofast -o forth forth.c
 enums.h prims.h : code.prims genprims
 	cat code.prims | ./genprims dict.map enums.h > prims.h
-rom.h : genrom rom.4th prims.h enums.h
-	cat rom.4th | ./genrom rom.map dict.map > rom.h
+rom.h	: genstc rom.4th prims.h enums.h
+	cat rom.4th | ./genstc rom.map dict.map > rom.h
 clean:
 	rm -f forth dict.map enums.h prims.h rom.map rom.h test.out

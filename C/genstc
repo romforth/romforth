@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+
+# genstc : convert the .4th files into "subroutine threaded" C code
+#
+# Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+my $mf=shift;   # the map file to which new defs are written
+
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
+my $map={};     # mapping from forth words to C functions
+
+my ($t,$f,$l);  # the type($t), forth name($f) and the C switch label ($l)
+
+sub code {
+	my ($f,$l)=@_;
+	$map->{$f}=$l;	# generate the mapping from name to label
+}
+
+my $handle={
+	'code' => \&code,
+	'var' => \&var,
+	'def' => \&olddef,
+	'label' => \&savelabel,
+};
+my @args=@ARGV;	# all the args are assumed to have name to label mappings
+for my $a (@args) {
+	@ARGV=($a);		# read each of the args passed in as a file
+	while(<>) {		# reading one line at a time
+		($t,$f,$l)=split;# split'ing the line into type, name and label
+		$handle->{$t}($f,$l); # and handle each type separately
+	}
+}
+
+my $m;
+while (<>) {			# map forth words in the standard input
+	for $f (split) {	# for each word to their equivalent
+		if ($m=$map->{$f}) {	# function name
+			print "\t", $m, "();\n";
+		}
+	}
+}
