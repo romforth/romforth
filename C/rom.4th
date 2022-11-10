@@ -46,4 +46,19 @@ if{		[ // not taken regression test
 	emit	[ > '#'
 }if		[
 
+[ // verify inv/neg
+1		[ 1
+neg		[ -1
+inc		[ 0
+if{		[ // not taken regression test
+	'$'	[ '$'
+	emit	[ > '$'
+}if		[
+-1		[ -1
+inv		[ 0
+if{		[ // not taken regression test
+	'%'	[ '%'
+	emit	[ > '%'
+}if		[
+
 bye

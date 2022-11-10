@@ -15,11 +15,15 @@ bye HLT
 #define _drop pop(&tos)
 #define _inc tos++
 #define _dec tos--
+#define _neg tos = -tos
+#define _inv tos ^= -1
 
 unary dup DUP _dup;
 unary drop DROP _drop;
 unary inc INC _inc;
 unary dec DEC _dec;
+unary neg NEG _neg;
+unary inv INV _inv;
 
 inner{
 key KEY
