@@ -166,4 +166,14 @@ if{		[ b // not taken regression test
 state		[ b state
 c!		[ (state:b)
 
+3 2		[ 3 2
+1 pick		[ 3 2 3 // over
+-3		[ 3 2 3 -3
++		[ 3 2 0
+if{		[ 3 2 // not taken regression test
+	'8'	[ 3 2 '8'
+	emit	[ 3 2 > '8'
+}if		[ 3 2
+2drop		[
+
 bye

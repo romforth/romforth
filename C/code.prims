@@ -86,5 +86,9 @@ emit EMIT
 	_drop;
 }inner
 
+inner{
+pick PICK
+	tos=*(d-tos-1);
+}inner
 var here here cell
 var state state byte
