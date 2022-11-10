@@ -19,7 +19,7 @@ bye HLT
 #define _dec tos--
 #define _neg tos = -tos
 #define _inv tos ^= -1
-#define _fetch tos = memory.u.ram[tos]
+#define _fetch tos = (memory.u.ram[tos+1] << 8 | memory.u.ram[tos])
 
 #define bin(op) tos = nos op tos;
 
@@ -44,7 +44,20 @@ binary >> shr bin(>>)
 inner{
 ! store
 	_nip;
-	memory.u.ram[tos] = nos;
+	memory.u.ram[tos] = nos&0xff;
+	memory.u.ram[tos+1] = (nos&0xff00)>>8;
+	_drop;
+}inner
+
+inner{
+c@ cfetch
+	tos=memory.u.ram[tos];
+}inner
+
+inner{
+c! cstore
+	_nip;
+	memory.u.ram[tos] = nos&0xff;
 	_drop;
 }inner
 
@@ -74,3 +87,4 @@ emit EMIT
 }inner
 
 var here here cell
+var state state byte

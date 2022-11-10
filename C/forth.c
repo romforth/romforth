@@ -20,8 +20,9 @@ struct mem {
 	union u {
 		struct {
 			cell here;
+			byte state;
 		} bss;
-		cell ram[1<<(8*sizeof(cell))];
+		byte ram[1<<(8*sizeof(cell))];
 	} u;
 } memory;
 

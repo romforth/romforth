@@ -150,4 +150,20 @@ if{		[ h // not taken regression test
 here		[ h here
 !		[ (here:h)
 
+state		[ state (state:b)
+c@		[ b
+123		[ b 123
+state		[ b 123 state
+c!		[ b (state:123)
+state		[ b state
+c@		[ b 123
+-123		[ b 123 -123
++		[ b 0
+if{		[ b // not taken regression test
+	'9'	[ b '9'
+	emit	[ b > '9'
+}if		[ b
+state		[ b state
+c!		[ (state:b)
+
 bye
