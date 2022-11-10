@@ -13,9 +13,13 @@ bye HLT
 
 #define _dup push(tos)
 #define _drop pop(&tos)
+#define _inc tos++
+#define _dec tos--
 
 unary dup DUP _dup;
 unary drop DROP _drop;
+unary inc INC _inc;
+unary dec DEC _dec;
 
 inner{
 key KEY

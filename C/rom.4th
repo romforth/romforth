@@ -32,4 +32,18 @@ if{		[ // taken
 	}if	[
 }if
 
+[ // verify inc/dec
+1		[ 1
+dec		[ 0
+if{		[ // not taken regression test
+	'@'	[ '@'
+	emit	[ > '@'
+}if		[
+-1		[ -1
+inc		[ 0
+if{		[ // not taken regression test
+	'#'	[ '#'
+	emit	[ > '#'
+}if		[
+
 bye
