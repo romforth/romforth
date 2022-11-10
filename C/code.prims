@@ -36,6 +36,8 @@ binary - sub bin(-)
 binary & and bin(&)
 binary | or  bin(|)
 binary ^ xor bin(^)
+binary << shl bin(<<)
+binary >> shr bin(>>)
 
 inner{
 swap swap
