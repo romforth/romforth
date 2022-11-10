@@ -57,8 +57,8 @@ while (<>) {
 	} elsif (/^var\s+(\S+)\s+(\S+)\s+(.*)$/) {	# variables
 		($f,$l)=($1,$2);
 		print $mh "var $f $l\n";# create dictionary entry for variables
-		print "case $l:\n";	# generate the label for the switch
-		print "\t$3\n";		# and allocation/initial value if any
+		print "void $l() { lit(offsetof(struct mem, u.bss.$l)); }\n";
+		# which push their offset in ram
 	} else {
 		print;	# C code between code{...}code is passed thru as is
 	}

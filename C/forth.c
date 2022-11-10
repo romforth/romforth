@@ -8,12 +8,22 @@
 
 #include <stdlib.h>	// exit
 #include <stdio.h>	// getchar, putchar
+#include <stddef.h>	// offsetof
 
 typedef unsigned char byte;
 
 typedef short cell;
 
 cell tos, nos;
+
+struct mem {
+	union u {
+		struct {
+			cell here;
+		} bss;
+		cell ram[1<<(8*sizeof(cell))];
+	} u;
+} memory;
 
 #include <stdarg.h>
 
@@ -63,6 +73,8 @@ pop(cell *cp) {
 		die(4, "Data stack underflowed by %d\n", d-dstk);
 	}
 }
+
+void lit(cell);
 
 #include "prims.h"
 

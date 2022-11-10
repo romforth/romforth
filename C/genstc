@@ -13,6 +13,7 @@ my $mf=shift;   # the map file to which new defs are written
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my $map={};     # mapping from forth words to C functions
+my $varmap={};  # mapping from forth words to variables
 
 my ($t,$f,$l);  # the type($t), forth name($f) and the C switch label ($l)
 
@@ -21,6 +22,10 @@ sub code {
 	$map->{$f}=$l;	# generate the mapping from name to label
 }
 
+sub var {
+	my ($f,$l)=@_;
+	$varmap->{$f}=$l;
+}
 my $handle={
 	'code' => \&code,
 	'var' => \&var,
@@ -74,6 +79,8 @@ while (<>) {			# map forth words in the standard input
 			print "\t", $m, "();\n";
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
+		} elsif ($m=$varmap->{$f}) { # variables just need to
+			print "\t", $m, "();\n"; # push their address
 		} else {
 			last if ($f eq '[');    # skip to end of line
 			if ($f =~/^\'(.)\'$/) {	# char in single quotes

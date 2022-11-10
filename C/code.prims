@@ -19,6 +19,7 @@ bye HLT
 #define _dec tos--
 #define _neg tos = -tos
 #define _inv tos ^= -1
+#define _fetch tos = memory.u.ram[tos]
 
 #define bin(op) tos = nos op tos;
 
@@ -30,6 +31,7 @@ unary neg NEG _neg;
 unary inv INV _inv;
 unary nip NIP _nip;
 unary dip DIP _dip;
+unary @ FETCH _fetch;
 
 binary + add bin(+)
 binary - sub bin(-)
@@ -38,6 +40,13 @@ binary | or  bin(|)
 binary ^ xor bin(^)
 binary << shl bin(<<)
 binary >> shr bin(>>)
+
+inner{
+! store
+	_nip;
+	memory.u.ram[tos] = nos;
+	_drop;
+}inner
 
 inner{
 swap swap
@@ -63,3 +72,5 @@ emit EMIT
 	putchar(tos);
 	_drop;
 }inner
+
+var here here cell

@@ -134,4 +134,20 @@ if{		[ // not taken regression test
 	emit	[ > '='
 }if
 
+here		[ here (here:h)
+@		[ h
+1234		[ h 1234
+here		[ h 1234 here
+!		[ h (here:1234)
+here		[ h here
+@		[ h 1234
+-1234		[ h 1234 -1234
++		[ h 0
+if{		[ h // not taken regression test
+	'0'	[ h '0'
+	emit	[ h > '0'
+}if		[ h
+here		[ h here
+!		[ (here:h)
+
 bye
