@@ -38,6 +38,12 @@ binary | or  bin(|)
 binary ^ xor bin(^)
 
 inner{
+2drop drop2
+	_drop;
+	_drop;
+}inner
+
+inner{
 key KEY
 	_dup;
 	tos=getchar();
