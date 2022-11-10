@@ -13,6 +13,8 @@ bye HLT
 
 #define _dup push(tos)
 #define _drop pop(&tos)
+#define _nip pop(&nos)
+#define _dip push(nos)
 #define _inc tos++
 #define _dec tos--
 #define _neg tos = -tos
@@ -24,6 +26,8 @@ unary inc INC _inc;
 unary dec DEC _dec;
 unary neg NEG _neg;
 unary inv INV _inv;
+unary nip NIP _nip;
+unary dip DIP _dip;
 
 inner{
 key KEY

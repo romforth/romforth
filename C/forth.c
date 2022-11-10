@@ -13,7 +13,7 @@ typedef unsigned char byte;
 
 typedef short cell;
 
-cell tos;
+cell tos, nos;
 
 #include <stdarg.h>
 
