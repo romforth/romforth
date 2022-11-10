@@ -5,9 +5,5 @@
 [ // Please see the LICENSE file for the Affero GPL 3.0 license details
 
 key	[ c
-dup	[ c c
 emit	[ c
-drop	[
-'o'	[ 'o'
-emit	[ > 'o'
 bye

@@ -10,3 +10,13 @@ code{
 bye HLT
 	exit(0);
 }code
+
+inner{
+key KEY
+	tos=getchar();
+}inner
+
+inner{
+emit EMIT
+	putchar(tos);
+}inner

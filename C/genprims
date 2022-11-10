@@ -33,7 +33,7 @@ while (<>) {
 	} elsif (/^inner\{$/) {		# inner{ : primitives that loop to inner
 		mapnames();		# handle forth word to label mapping
 	} elsif (/^\}inner$/) {		# }inner : end of word looping to inner
-		print "\tnext;\n\t}; // continue within the interpreter\n";
+		print "}\n";
 	} elsif (/^unary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# unary operators
 		($f,$l)=($1,$2);
 		print $mh "code $f $l\n"; # create dictionary entry for unary

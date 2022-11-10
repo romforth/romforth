@@ -41,6 +41,9 @@ while (<>) {			# map forth words in the standard input
 	for $f (split) {	# for each word to their equivalent
 		if ($m=$map->{$f}) {	# function name
 			print "\t", $m, "();\n";
+		} else {
+			last if ($f eq '[');    # skip to end of line
+			die "unknown word: $f"
 		}
 	}
 }

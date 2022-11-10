@@ -11,16 +11,16 @@
 
 typedef unsigned char byte;
 
+typedef short cell;
+
+cell tos;
+
 #include "prims.h"
 
 void
 rom() {
 #include "rom.h"
 }
-
-typedef short cell;
-
-cell tos;
 
 #include <stdarg.h>
 
