@@ -36,6 +36,11 @@ for my $a (@args) {
 	}
 }
 
+sub lit {
+	my ($o)=@_;
+	print qq[\tlit($o);\n];
+}
+
 my $m;
 while (<>) {			# map forth words in the standard input
 	for $f (split) {	# for each word to their equivalent
@@ -43,6 +48,16 @@ while (<>) {			# map forth words in the standard input
 			print "\t", $m, "();\n";
 		} else {
 			last if ($f eq '[');    # skip to end of line
+			if ($f =~/^\'(.)\'$/) {	# char in single quotes
+				lit(ord($1)); # to get the ascii value
+				next;
+			} elsif ($f =~/^(-?\d+)$/) {
+				lit(int($1)); # atoi equivalent
+				next;
+			} elsif ($f =~/^(-?0x[\dA-Fa-f]+)$/) {
+				lit(oct($1)); # hex conversion
+				next;
+			}
 			die "unknown word: $f"
 		}
 	}

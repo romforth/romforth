@@ -67,6 +67,12 @@ pop(cell *cp) {
 #include "prims.h"
 
 void
+lit(cell c) {
+	_dup;
+	tos=c;
+}
+
+void
 rom() {
 #include "rom.h"
 }
