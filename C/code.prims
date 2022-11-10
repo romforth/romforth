@@ -20,7 +20,7 @@ bye HLT
 #define _neg tos = -tos
 #define _inv tos ^= -1
 
-#define bin(op) tos = tos op nos;
+#define bin(op) tos = nos op tos;
 
 unary dup DUP _dup;
 unary drop DROP _drop;
@@ -36,6 +36,13 @@ binary - sub bin(-)
 binary & and bin(&)
 binary | or  bin(|)
 binary ^ xor bin(^)
+
+inner{
+swap swap
+	_nip;
+	_dup;
+	tos = nos;
+}inner
 
 inner{
 2drop drop2
