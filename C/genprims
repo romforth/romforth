@@ -43,10 +43,10 @@ while (<>) {
 	} elsif (/^binary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# binary operators
 		($f,$l)=($1,$2);
 		print $mh "code $f $l\n"; # create dictionary entry for binary
-		print "case $l:\n";	# generate the label for the switch
-		print "\t_nip\n";
+		print "void $l() {\n";	# generate the function to call
+		print "\t_nip;\n";
 		print "\t$3\n";
-		print "\tnext\n";
+		print "}\n";
 	} elsif (/^fallthru\s+(\S+)\s+(\S+)\s+(.*)$/) {	# "fall thru" operators
 		($f,$l)=($1,$2);
 		print $mh "code $f $l\n"; # create dictionary entry for fallthru

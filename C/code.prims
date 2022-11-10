@@ -20,6 +20,8 @@ bye HLT
 #define _neg tos = -tos
 #define _inv tos ^= -1
 
+#define bin(op) tos = tos op nos;
+
 unary dup DUP _dup;
 unary drop DROP _drop;
 unary inc INC _inc;
@@ -28,6 +30,9 @@ unary neg NEG _neg;
 unary inv INV _inv;
 unary nip NIP _nip;
 unary dip DIP _dip;
+
+binary + add bin(+)
+binary - sub bin(-)
 
 inner{
 key KEY
