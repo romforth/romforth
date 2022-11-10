@@ -90,5 +90,22 @@ inner{
 pick PICK
 	tos=*(d-tos-1);
 }inner
+
+inner{
+p@ pfetch
+	if (tos==0x3f8) {
+		_drop;
+		KEY();
+	}
+}inner
+
+inner{
+p! pstore
+	if (tos==0x3f8) {
+		_drop;
+		EMIT();
+	}
+}inner
+
 var here here cell
 var state state byte
