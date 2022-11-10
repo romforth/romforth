@@ -33,6 +33,9 @@ unary dip DIP _dip;
 
 binary + add bin(+)
 binary - sub bin(-)
+binary & and bin(&)
+binary | or  bin(|)
+binary ^ xor bin(^)
 
 inner{
 key KEY

@@ -89,4 +89,24 @@ if{		[ // not taken regression test
 	emit	[ > '('
 }if		[
 
+1 2 &		[ 0
+if{		[ // not taken regression test
+	')'	[ ')'
+	emit	[ > ')'
+}if		[
+
+1 2 |		[ 3
+3 -		[ 0
+if{		[ // not taken regression test
+	'_'	[ '_'
+	emit	[ > '_'
+}if		[
+
+-1 0 ^		[ -1
+inc		[ 0
+if{		[ // not taken regression test
+	'+'	[ '+'
+	emit	[ > '+'
+}if		[
+
 bye
