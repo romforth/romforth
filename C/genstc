@@ -41,11 +41,39 @@ sub lit {
 	print qq[\tlit($o);\n];
 }
 
+sub runif {
+	print "\t{\n\t\tcell c=tos; _drop; if(c) {\n";
+}
+
+sub runelse {
+	print "\t\t} else {\n";
+}
+
+sub runthen {
+	print "\t\t}\n\t}\n";
+}
+
+my $imm={
+	'loop{'		=> \&runbegin,
+	'}until{'	=> \&rununtil,
+	'}while{'	=> \&runwhile,
+	'}loop'		=> \&runrepeat,
+
+	'if{'		=> \&runif,
+	'}else{'	=> \&runelse,
+	'}if'		=> \&runthen,
+
+	'for{'		=> \&runfor,
+	'}for'		=> \&runendfor,
+};
+
 my $m;
 while (<>) {			# map forth words in the standard input
 	for $f (split) {	# for each word to their equivalent
 		if ($m=$map->{$f}) {	# function name
 			print "\t", $m, "();\n";
+		} elsif ($m=$imm->{$f}) { # immediates need to be run
+			$m->();		  # well, immediately
 		} else {
 			last if ($f eq '[');    # skip to end of line
 			if ($f =~/^\'(.)\'$/) {	# char in single quotes

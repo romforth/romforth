@@ -10,4 +10,26 @@ emit	[ c
 drop	[
 'o'	[ 'o'
 emit	[ > 'o'
+
+0		[ 0
+if{		[ // not taken regression test
+	'~'	[ '~'
+	emit	[ > '~'
+}if		[
+1		[ 1
+if{		[ // taken
+}else{		[ // not taken regression test
+	'!'	[ '!'
+	emit	[ > '!'
+}if		[
+
+[ // verify nested branches
+1		[
+if{		[ // taken
+	1	[ 1
+	if{	[ // taken
+	}else{	[ // not taken regression test
+	}if	[
+}if
+
 bye
