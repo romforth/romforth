@@ -11,12 +11,20 @@ bye HLT
 	exit(0);
 }code
 
+#define _dup push(tos)
+#define _drop pop(&tos)
+
+unary dup DUP _dup;
+unary drop DROP _drop;
+
 inner{
 key KEY
+	_dup;
 	tos=getchar();
 }inner
 
 inner{
 emit EMIT
 	putchar(tos);
+	_drop;
 }inner

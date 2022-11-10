@@ -15,13 +15,6 @@ typedef short cell;
 
 cell tos;
 
-#include "prims.h"
-
-void
-rom() {
-#include "rom.h"
-}
-
 #include <stdarg.h>
 
 void
@@ -71,8 +64,15 @@ pop(cell *cp) {
 	}
 }
 
+#include "prims.h"
+
+void
+rom() {
+#include "rom.h"
+}
+
 int
 main() {
+	atexit(verify);
 	rom();
-	verify();
 }
