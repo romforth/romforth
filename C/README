@@ -1,0 +1,18 @@
+This "C port" implementation is incomplete for now.
+
+The most important part it is missing is the ability to manipulate the return
+stack at runtime. See the very first JOURNAL entry for 11 Nov 2022 which goes
+into some detail about the difficulties of implementing that feature.
+
+There are some other features that the "C port" is missing as well:
+	# "while true" loops : loop{ ... }while{ ... }loop
+	# "until true" loops : loop{ ... }until{ ... }loop
+	# "for" loops : for{ ... }for
+	# the index "i" operator used within "for" loops
+	# conditional operators : >= <= > < 0= ~
+	# misc stack operators: over third fourth 2dup rot
+	# memory allocation : alloc
+
+All of these could, theoretically, be added in without too much effort,
+but the return stack is the true stumbling block so it might be a better
+use of my time to work on the the other "real" ports instead.

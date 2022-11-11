@@ -1,0 +1,24 @@
+11 Nov '22
+----------
+The difficulty I'm running into now with the C port is that it is turning into
+what appears to be a long drawn out struggle between C and Forth to figure out
+who has first dibs on access to the system.
+
+Forth obviously considers the entire machine as personal property unto itself,
+to treat as it wishes. For example, Forth needs access to the return stack but
+modifying the return stack in C looks like a fairly heavyweight operation using
+getcontext/setcontext or other lower level alternatives using "asm"
+
+There is also clearly an impedance mismatch between Forth's view of memory and
+the memory abstraction that C provides - especially since the Forth bit'ness
+of this implementation by design is 16 bits vs whatever processor bit width it
+happens to be on the system that the C compiler is running on.
+
+Rather than go into contortions trying to make the two world views conform to
+fit each other, I'll call this port to C complete, for the most part, since new
+Forth definitions can be added to defs.4th (although clipping its wings like
+this makes for a very crippled/powerless Forth implementation).
+
+So it does look like there is a real need for direct access to the CPU to have
+Forth's power shine forth, so I think I'll go back to the original roadmap and
+pick up things back up from where I left off, looking at what port to do next.
