@@ -85,6 +85,8 @@ lit(cell c) {
 	tos=c;
 }
 
+#include "defs.h"
+
 void
 rom() {
 #include "rom.h"

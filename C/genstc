@@ -14,6 +14,7 @@ open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my $map={};     # mapping from forth words to C functions
 my $varmap={};  # mapping from forth words to variables
+my $defs={};    # mapping from forth words to C functions
 
 my ($t,$f,$l);  # the type($t), forth name($f) and the C switch label ($l)
 
@@ -26,6 +27,18 @@ sub var {
 	my ($f,$l)=@_;
 	$varmap->{$f}=$l;
 }
+
+sub olddef {
+	my ($f,$l)=@_;
+	$defs->{$f}=$l;
+}
+
+my $label="lbl000";
+sub savelabel {
+	my ($f,$l)=@_;
+	$label=$l;
+}
+
 my $handle={
 	'code' => \&code,
 	'var' => \&var,
@@ -39,6 +52,41 @@ for my $a (@args) {
 		($t,$f,$l)=split;# split'ing the line into type, name and label
 		$handle->{$t}($f,$l); # and handle each type separately
 	}
+}
+
+# state event next      action
+# 0     def{    1       -
+# 1     $w      2       void $label() {
+# 2     }def    0       }
+
+my $state=0;
+
+sub def {
+	my ($w)=@_;
+	if ($state == 0) {
+		if ($w eq 'def{') {
+			$state=1;
+			return 1;
+		}
+		return 0;
+	}
+	if ($state == 1) {
+		$l=$label++;
+		print $mh "def $w $l\n"; # create mapping in "dictionary"
+		print "void $l() {	// $w\n"; # and generate C function map
+		$defs->{$w}=$l;		 # for setting up a local mapping
+		$state=2;
+		return 1;
+	}
+	if ($state == 2) {
+		if ($w eq '}def') {
+			print "}\n";
+			$state=0;
+			return 1;
+		}
+		return 0;
+	}
+	die "received $w in state $state";
 }
 
 sub lit {
@@ -81,8 +129,11 @@ while (<>) {			# map forth words in the standard input
 			$m->();		  # well, immediately
 		} elsif ($m=$varmap->{$f}) { # variables just need to
 			print "\t", $m, "();\n"; # push their address
+		} elsif ($m=$defs->{$f}) {	# definitions just need to
+			print "$m", "();\n";	# be called
 		} else {
 			last if ($f eq '[');    # skip to end of line
+			next if def($f);
 			if ($f =~/^\'(.)\'$/) {	# char in single quotes
 				lit(ord($1)); # to get the ascii value
 				next;

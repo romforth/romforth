@@ -182,4 +182,12 @@ p@		[ 0x3f8 'h'
 swap		[ 'h' 0x3f8
 p!		[ > 'h'
 
+bl		[ 32
+-32		[ 32 -32
++		[ 0
+if{		[ // not taken regression test
+	'6'	[ '6'
+	emit	[ > '6'
+}if		[
+
 bye
