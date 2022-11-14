@@ -28,7 +28,8 @@ Running "make" will generate a "forth" binary which can be flashed into ROM
 run within a home grown emulator).
 
 The following (mostly) traditional Forth runtime words are available:
-Data Stack operators	: dup drop nip dip swap pick over rot 2drop third fourth
+Data Stack operators	: dup drop nip dip swap over rot 2drop third fourth
+Data Stack get/set ops	: pick stick
 Arithmetic		: + - inc(1+) dec(1-) neg
 Memory access		: ! @ c! c@
 Comparison operators	: > < >= <= 0= ~
@@ -42,6 +43,11 @@ Bit operators		: & | ^ << >> inv
 Control flow		: jmp(branch) jz(branch0) jnz
 Stack switch operators	: sp@! rp@!
 Halt			: bye
+Conditionals		: if{ ... }else{ ... }if
+unconditional loop	: loop{ ... }loop
+while loop		: loop{ ... }while{ ... }loop
+until loop		: loop{ ... }until{ ... }loop
+for loop		: for{ ... }for
 
 What is not available, compared to regular Forth, is the dictionary. We make
 up for that by providing an "umbilical host"ed solution using a set of scripts,

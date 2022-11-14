@@ -1,3 +1,8 @@
+INDEX
+-----
+	* 11 Nov '22
+	* 13 Nov '22
+
 11 Nov '22
 ----------
 The difficulty I'm running into now with the C port is that it is turning into
@@ -22,3 +27,55 @@ this makes for a very crippled/powerless Forth implementation).
 So it does look like there is a real need for direct access to the CPU to have
 Forth's power shine forth, so I think I'll go back to the original roadmap and
 pick up things back up from where I left off, looking at what port to do next.
+
+13 Nov '22
+----------
+Rather than jump directly into selecting a processor for the next round of the
+porting exercise, I decided to take a step back to look at where I could be
+more productive and not waste time on repetitive grunt work.
+
+So now that I've done the porting exercise a couple of times, one thing that
+I've found which appears to be a serious waste of time is starting over from
+scratch for each port with an empty rom.4th and then adding the same generic
+code over and over again after each step as the port progresses. For example,
+the rom.4th changes to verify the key/emit functionality was done in commit
+589f315d74e90e3e097112dc8760b41cdf958a22 at the time of the initial bootstrap.
+At the time of "porting" this change to GNU "as", the same set of changes was
+done in rom.4th at commit 2eba44f4643e42c98b8cf654c3936a333a4e225d. This was
+repeated yet again at the time of the C port, when the exact same set of
+changes to rom.4th was made in commit 07c25aaf30e1a7dc0a566adc086e3d0a3f896519
+
+So rather than repeat this for each port, it makes sense to abstract out
+the generic code in rom.4th and delimit each step of the porting process
+within that file so that we can increase a "step" variable after each step
+of the porting process so that when all the "steps" are complete, and all the
+tests run successfully, we can declare that port complete.
+
+This removes all of the duplicated effort that goes into keeping the tests
+(which are part of rom.4th) in sync with each of the porting steps. Instead
+of that approach, the new process ensures that the rom.4th contents remain
+the same for all ports and the only thing that changes is the "step" variable
+(which in some sense denotes the progress of a specific port).
+
+Only time will tell if this "premature standardization" is a good thing or not.
+
+As part of this process, I've also decided to add yet another primitive and
+sneak it into the rom.4th "standard" as part of this overhaul. The primary
+reason to add it in is for symmetry with "pick". For lack of a better name,
+I'm calling it "stick" and like "pick", which gets an element from the stack,
+"stick" replaces an element in the stack with a new value.
+
+To parameterize individual ports, I've added a provision for Perl/shell-like
+"dollar" variables. Since the code processor does not yet exist, I've not
+modified the existing rom.4th files but created the new/generic version at
+the top level. As this gets fleshed out and tested, the other rom.4th files
+will be eventually obsoleted and removed.
+
+---
+
+That's it for the technical part of this journal entry. On a personal note,
+as of today, it is 13 years since Lisa died. She would have been just the age
+at which I was getting into the swing of all things related to coding. I wonder
+if she would have chosen to be a coder like me.
+
+Anyway, miss you Lisamma.
