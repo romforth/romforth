@@ -1,0 +1,796 @@
+# code : Describe the porting process in step wise fashion
+#
+# Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+# Preamble { : Decide on a porting target and the build/emulate/test toolchain
+
+# a. Pick a CPU to which the code needs to be ported.
+#	The reasons for picking a particular CPU might be as simple as "I feel
+#	like it", or perhaps it was inflicted on you by your PHB or perhaps
+#	your customer or it could be any random/arcane/superfluous reason.
+
+# b. Choose the toolchain that can be used to build code for that target
+#	- if it doesn't exist, code it yourself or decide on alternatives
+
+# c. Setup the toolchain to be able to run the code either directly on the
+#	hardware itself or in an emulator/simulator.
+
+# d. In case this needs to be tested on physical hardware, choose the toolchain
+#	that can be used to flash the target. This may be from the manufacturer
+#	of the board, or from opensource enthusiasts or if if you have no other
+#	choices, diy.
+
+# Preamble } : Decide on a porting target and build/emulate/test toolchain
+
+# Step 0 { : Decide on ROM layout, instruction pointer mapping and threading
+
+# a. Figure out/decide on the location/size of ROM from the memory map
+#	- if the ROM is "too small", think about alternative approaches
+#	- for now, we can choose to
+#	  1. ignore the case where ROM is not one continguous chunk of memory
+#	  2. ignore Harvard systems where the code/data memory are separate
+#	- while you are here, you could evaluate RAM size as well (see Step 3)
+#    rom	: { rom0, rom1, ... }
+#    rom'	: MEM[ROMOFFSET;ROMSIZE]
+
+# b. Pick a register (or RAM location) for i, the instruction pointer
+#	- worry about "cell" size,
+#	- worry about address bus width vs data bus width
+#    i	: instruction pointer
+
+# c. Initialize the instruction pointer to the start of byte codes in ROM
+cold	: i=rom'	# then fall thru to to the rest of init code below
+
+# d. Decide on direct/indirect/subroutine threading (or try all three)
+
+# Meta note about notation:
+# for the auto-increment and auto-decrement operators used below, I'm
+# going to diverge a bit from the C notation and using 6809 assembler
+# notation. So a single + denotes a byte increment, a ++ denotes a 2 byte
+# (word) increment and +++ denotes a 4 byte (quad) increment and ++++ is
+# used for 8 byte increments. Similarly for autodecrement -/--/---/----
+# can be used. Currently, since this is meant for size constrained devices,
+# only +/- and ++/-- are used.
+
+inner	: goto MEM[i+]	# looping happens implicitly via "next"
+next	: goto inner ;	# goes full circle. Expand in place to avoid a branch.
+;	: next		# from here on ';' denotes "next" in the code below
+
+# Step 0 } : Decide on ROM layout, instruction pointer mapping and threading
+
+# Step 1 { : Test a halt'ing interpreter by initializing the rom byte codes
+
+# a. Add the init code to the ROM
+bye	: halt	# exit this universe
+rom'	: bye	# thread that into the init code sequnce
+
+# b. This may be a good time to code up the rom generator : genrom
+# This enables the rom to be coded in the version of Forth that you are coding
+
+# c. First test of init code (and of toolchain)
+#    - Test that the "halting interpreter" halts
+
+# Step 1 } : Test a halt'ing interpreter by initializing the rom byte codes
+
+# Step 2 { : Use the serial port for debugging
+
+# a. Decide on how to implement a serial port
+#    - Assume serial port is on the IO bus (separate from the Memory bus)
+#    - decide on alternatives if a serial port is not available for debugging
+#	- use the JTAG?
+#	- blink leds?
+#	- code up an emulator?
+#    port	: serial port
+cold'	: port=SERIAL ;	# add this to the earlier set of code in cold
+
+# b. Pick a register or RAM location for tos - top element of the data stack
+#	- worry about "cell" size mismatch between address and data bus
+#	- If using a register, make sure to pick one capable of MEM/IO access
+#    tos	: top of stack
+
+# c. Implement input(key) and output(emit) using the serial port
+: key	tos=IO[port] ;
+: emit	IO[port]=tos ;
+
+# Note that the terminating ';' in the above code signifies 'next' expansion
+
+# d : Echo test the input and output using the serial port
+rom"	: key emit	# thread these instructions into the init code
+			# this needs to go ahead of rom' : bye
+
+# e. Test your debug capabilities
+#	- For sanity checking, the expected final output is "forth rom !"
+#	- start off by making sure that an input byte can be echo'ed back
+#	- input byte could be 'f' (first byte in the "forth rom !" string)
+#	- this will need to be run over and over again, consider automation
+
+# Step 2 } : Use the serial port for debugging
+
+# Step 3 { : Test the data stack and verify dup/push and drop/pop operations
+
+# a. Figure out/decide on the location/size of RAM from the memory map
+#	- if it is "too small", give up
+#	- ignore the case where RAM is not one continguous chunk of memory
+#    ram	: MEM[RAMOFFSET;RAMSIZE]
+
+# b. Figure out/decide on the direction/size of the data stack
+#    datastack	: ram[datastack_offset;datastack_size;datastack_direction]
+
+# c. Pick a register or memory location for d, a pointer to the data stack
+#	- decide if you want to use the native machine stack
+#	- and make sure it grows in the direction you intend
+#    d	: data stack pointer
+
+# d. Initialize d to the data stack in ram
+cold'	: d=datastack	# add this to the earlier set of code in cold
+
+# e. Implement dup/push and drop/pop
+# See "Meta note about notation" above for auto increment/decrement notation
+# Assume the data stack growth is downward in memory
+: dup	MEM[--d]=tos ;
+: drop	tos=MEM[d++] ;
+
+# For other directions of stack growth, make sure it is encoded correctly. For
+# example, in an implementation that grows upward, the implementation might be:
+#	: dup	MEM[d++]=tos ;
+#	: drop	tos=MEM[--d] ;
+
+# If the CPU supports stack operations such as push/pop and the native machine
+# stack can be used for the data stack, the dup and drop instructions could be
+# wrapped up using a unary/"uno" macro such as this:
+#	uno(op)	: op tos ;
+# Using the uno/unary macro defined above, dup/drop could also be defined as :
+#	dup	: uno(push)
+#	drop	: uno(pop)
+
+# f. Replace earlier input/output from/to the serial port to use the stack
+: key
+	dup
+	tos=IO[port]
+;
+: emit
+	IO[port]=tos
+	drop
+;
+
+# g. Test the modified input/output code
+rom"	: key emit	# same as earlier, repeated for clarity
+
+# h. Test the dup/drop operators explicitly, for completeness
+#	- repeat the previous test, automation will come in handy
+rom"	: key dup emit drop # replace earlier version rom" : key emit
+
+# Step 3 } : Test the data stack and verify dup/push and drop/pop operations
+
+# Step 4 { : Decide if you need a bootloader
+
+# If the ROM size is "very small" (or if you have an OTP ROM device) and there
+# is sufficient RAM to hold the contents that would typically go into the ROM,
+# this is as good a time as any to code a bootstrap bootloader using key+dup
+# to read in byte codes and fill them in memory. Do this only if you are
+# desperate. Search for "Frank Sergeant's "3 instruction Forth" for ideas.
+
+# Step 4 } : Decide if you need a bootloader
+
+# Step 5 { : Implement and test literals
+
+# a. Implement the code for lit and add it to the ROM
+# See "Meta note about notation" above for auto increment/decrement notation
+: lit
+	dup
+	tos=MEM[i++]
+;
+
+# b. Test it using a character literal and emit'ing it
+#    using code such as this to echo out the second byte from the
+#    expected final output string of "forth rom !"
+#    all of the rom" code from here on gets appended to previous code
+rom"	:	'o' emit	# another sanity check output byte : 'o'
+
+# Step 5 } : Implement and test literals
+
+# Step 6 { : Implement and test neg'ate
+
+# Meta note about carry bit: This implementation detail reflects the x86 CPU
+# specifics since the neg'ate operation sets the carry bit and this is used by
+# the branch operators which assume that the negate operation sets the carry
+# bit. Other processors may not necessarily replicate this behaviour so this
+# step may be optional/deferred as appropriate
+
+# a. Implement neg
+: neg	tos=-tos ;
+
+# Alternative (single instruction, machine code) implementation is :
+#	neg	: neg tos ;
+# Using the uno/unary macro defined above, this could also be defined as :
+#	neg	: uno(neg)
+
+# b. Test it using a character literal and emit'ing it
+#    using code such as this to echo out the third byte from the
+#    expected final output string of "forth rom !"
+rom"	: -114 neg emit		# another sanity check output byte : 'r'
+
+# Step 6 } : Implement and test neg'ate
+
+# Step 7 { : Implement and test conditionals
+
+# a. Extend genrom to handle if{ ... }else{ ... }if
+
+# b. Implement the (un)conditional branching operators
+: j i+=MEM[i+] ;	# add a signed byte to the instruction pointer
+: jz
+	neg		# if tos!=0, set carry
+	drop		# toss tos
+	jnc j		# branch if tos==0 (ie carry is not set)
+	i++		# otherwise step over the offset byte
+;
+: jnz
+	neg		# if tos!=0, set carry
+	drop		# toss tos
+	jc j		# branch if tos!=0 (ie carry is set)
+	i++		# otherwise step over the offset byte
+;
+
+# c. Test if{ ... }if
+rom"	: 0 if{ assert }if
+
+# d. Test if{ ... }else{ ... }if
+rom"	: 1 if{ }else{ assert }if
+
+# Step 7 } : Implement and test conditionals
+
+# Step 8 { : Implement and test inc(1+)/dec(1-)
+
+# This step is optional if ROM space is really tight
+# if this is not implemented, macro expand using the following definitions
+#	: 1+ 1 + ;
+#	: 1- 1 - ;
+
+# a. Implement inc/dec
+: 1+	tos+ ;
+: 1-	tos- ;
+
+# Typical single instruction, machine code implementations are :
+#	inc : inc tos ;
+#	dec : dec tos ;
+# These could also be wrapped up using the unary/uno macro described above as:
+#	inc	: uno(inc)
+#	dec	: uno(dec)
+# Assume inc/dec are aliases for 1+/1- for all the code below this
+
+# b. Test inc
+rom"	: -1 inc if{ assert }if
+
+# c. Test dec
+rom"	: 1 dec if{ assert }if
+
+# Step 8 } : Implement and test inc(1+)/dec(1-)
+
+# Step 9 { : Implement and test inv'ert
+
+# a. Implement inv
+: inv	tos^=-1 ;
+
+# Alternative (single instruction, machine code) implementation is :
+#	inv	: not tos ;
+# Using the uno/unary macro defined above, this could also be defined as :
+#	inv	: uno(not)
+
+# b. Test inv
+rom"	: 1 neg inv if{ assert }if
+
+# Step 9 } : Implement and test inv'ert
+
+# Step 10 { : Implement and test nip/dip
+
+# a. Implement nip/dip
+# See "Meta note about notation" above for auto increment/decrement notation
+: nip	nos=MEM[d++] ;
+: dip	MEM[--d]=nos ;
+
+# For other directions of stack growth, make sure it is encoded correctly. For
+# example, in an implementation that grows upward, the implementation might be:
+#	: nip	nos=MEM[--d] ;
+#	: dip	MEM[d++]=nos ;
+
+# b. Test nip/dip
+rom"	: 0 1 nip dup dip dec if{ assert }if if{ assert }if dec if{ assert }if
+# The test sequence used above is usually called tuck where tuck can be
+#	: tuck nip dup dip ;
+# with the stack signature
+#	[a b] tuck [b a b]
+
+# Step 10 } : Implement and test nip/dip
+
+# Step 11 { : Implement and test addition(+) and subtraction(-)
+
+# a. Implement +/-
+# See "Meta note about notation" above for auto increment/decrement notation
+bin(op)	: tos = MEM[d++] op tos ;
+: -	neg	# fall thru
+: +	bin(+) ;
+
+# Alternative, 3 operand, tern'ary macro machine code implementation might be :
+#	tern(op) : op tos, @SP+, tos
+#	+ : tern(add) ;
+#	- : tern(sub) ;
+
+# Another generic 3 operand ternary/tres macro implementation might be this:
+#	tres(op,dst) :
+#		nip
+#		dst = nos op tos
+#	;
+#	: +	tres(+,tos) ;
+#	: -	tres(-,tos) ;
+
+# Yet another alternative, 2 operand, 2 instruction, machine code
+# implementation might be :
+#	bin(op)	:
+#		nip
+#		op tos, nos
+#	;
+#	: -	neg	# fall thru
+#	: +	bin(+) ;
+
+# Since most small microcontrollers tend to use two operand ISA, the bin macro
+# for the rest of this document, although any of the other choices will work.
+
+# b. Test +/-
+rom"	: 1 2 + 2 - dec if{ assert }if
+
+# Step 11 } : Implement and test addition(+) and subtraction(-)
+
+# Step 12 { : Implement and test and(&) or(|) xor(^)
+
+# a. Implement and(&) or(|) xor(^)
+: &	bin(&) ;
+: |	bin(|) ;
+: ^	bin(^) ;
+
+# Alternative, single instruction, machine code implementation might be :
+#	and	: bin(and) ;
+#	or	: bin(or) ;
+#	xor	: bin(xor) ;
+
+# b. Test and(&)
+rom"	: 1 2 & if{ assert }if
+
+# c. Test or(|)
+rom"	: 1 2 | 3 - if{ assert }if
+
+# d. Test xor(^)
+rom"	: -1 0 ^ inc if{ assert }if
+
+# Step 12 } : Implement and test and(&) or(|) xor(^)
+
+# Step 13 { : Implement and test "2drop"
+
+# This step is optional if ROM space is really tight
+# if this is not implemented, macro expand using the following definition
+#	: 2drop drop drop ;
+
+# a. Implement 2drop
+: 2drop	drop	# and fall thru to earlier implementation of drop
+
+# b. Test 2drop
+rom"	: 0 1 2 2drop if{ assert }if
+
+# Step 13 } : Implement and test "2drop"
+
+# Step 14 { : Implement and test "swap"
+
+# Meta note about the exchange operator:
+# I'll pretend that the notation a<=>b denotes an exchange of values
+
+# a. Implement swap
+swap	: tos<=>MEM[d] ;
+
+# b. Test swap
+rom"	: 1 2 swap - dec if{ assert }if
+
+# Step 14 } : Implement and test "swap"
+
+# Step 15 { : Implement and test left shift(<<) and right shift(>>) operators
+
+# a. Implement the shift operators
+: <<	bin(<<) ;
+: >>	bin(>>) ;
+
+# b. Test the shift operators
+rom"	: 4 2 << 64 2 >> - if{ assert }if
+
+# Step 15 } : Implement and test left shift(<<) and right shift(>>) operators
+
+# Step 16 { : Memory fetch(@) operator
+
+# a. Implement fetch(@)
+: @	tos=MEM[tos] ;
+
+# c. If possible, test @ using an address AAAA with known contents CCCC
+rom"	: AAAA @ CCCC - if{ assert }if
+
+# Step 16 } : Memory fetch(@) operator
+
+# Step 17 { : Memory store(!) operator
+# a. Make sure to extend genrom to handle var'iable declarations
+#	- and add a variable : here
+#	mem	: MEM[FREEMEM;FREEMEMSIZE]
+#	var_cell here=mem
+
+# b. Implement store(!)
+# See "Meta note about notation" above for auto increment/decrement notation
+: !
+	MEM[tos]=MEM[d++]
+	drop
+;
+
+# d. Test ! using the "here" variable
+rom"	: here @ 1234 here ! here @ 1234 - if{ assert }if here !
+
+# Step 17 } : Memory store(!) operator
+
+# Step 18 { : Byte memory access using cfetch(c@) and cstore(c!)
+
+# a. Implement cfetch(c@) and cstore(c!)
+: c@
+	tos.0=MEM[tos]	# the .0 denotes the least significant byte
+	tos&=(-1<<8)	# null out all bits except the least significant byte
+;
+: c!	MEM[tos]=tos.0 ;	# the .0 denotes the least significant byte
+
+# b. Add a state variable initialized to 1
+#	var_byte state=1
+
+# c. Test c@ using the "state" variable (initialized with 1)
+rom"	: state c@ dec if{ assert }if
+
+# d. Test c!
+rom"	: state c@ 123 state c! state c@ 123 - if{ assert }if state c!
+
+# Step 18 } : Byte memory access using cfetch(c@) and cstore(c!)
+
+# Step 19 { : Implement and test "pick"
+
+# a. Implement pick
+: pick	tos=MEM[d+tos] ;
+
+# b. Test pick
+rom"	: 3 2 1 pick 3 - if{ assert }if - dec if{ assert }if
+
+# Step 19 } : Implement and test "pick"
+
+# Step 20 { : Implement and test "stick" (just for symmetry with pick)
+
+# a. Implement stick
+: stick
+	nip
+	MEM[d+tos-1]=nos
+	drop
+;
+
+# b. Test stick
+rom"	: 2 1 1 stick dec if{ assert }if
+
+# Step 20 } : Implement and test "stick" (just for symmetry with pick)
+
+# Step 21 { : Implement and test a means to get/set the data stack pointer
+
+# a. Implement sp@!
+# See "Meta note about the exchange operator" above for details
+: sp@!	tos<=>d ;
+
+# b. Test sp@!
+# This test assumes that a "tos" exists independent of the stack itself.
+# This needs a better test since all it does is test the "nop"ness of sp@!
+# Testing is tricky because we don't want to write to the new stack, yet
+# since no space can be allocated (and in this test the new location is at 0)
+rom"	: 0 sp@! sp@! if{ assert }if
+
+# Step 21 } : Implement and test a means to get/set the data stack pointer
+
+# Step 22 { : Implement and test a means to get/set the return stack pointer
+
+# a. Pick a register or memory location for r, a pointer to the return stack
+#	- decide if you want to use the native machine stack
+#		- in case it is not already used for the data stack
+#		- making sure it grows in the direction you intend
+#    r	: return stack pointer
+
+# b. Implement rp@!
+# See "Meta note about the exchange operator" above for details
+: rp@!	tos<=>r ;
+
+# c. Test rp@!
+# Well, we can't because none of the routines that exercise the return stack
+# are in place yet. So this is a chicken and egg problem. What can be done
+# instead, is to use it as part of the init code to setup the return stack.
+# This assumes that "here" contains a valid pointer usable as the starting
+# address of the return stack. Assume the current value in rp is drop'able
+rom"	: here @ rp@! drop
+
+# Next we need to allocate space for the return stack using Forth's
+# "here+=size allocator". Assume RRRR is the return stack size required.
+rom"	: RRRR here @ + here !
+
+# This will work fine if the return stack grows upwards, but if it is required
+# to grow downward, set up the return stack _after_ doing the above allocation.
+
+# Step 22 } : Implement and test a means to get/set the return stack pointer
+
+# Step 23 { : Implement and test the tor(>r) and rfrom(r>) return stack ops
+
+# a. Implement >r/r>
+# See "Meta note about notation" above for auto increment/decrement notation
+# Assume the return stack grows upward in memory (see Step 22 for details)
+: >r
+	MEM[r++]=tos
+	drop
+;
+: r>
+	dup
+	tos=MEM[--r]
+;
+
+# b. Test >r/r>
+# This test implicitly uses the definition : over >r dup r> swap ;
+rom"	: 3 2 >r dup r> swap 3 - if{ assert }if - dec if{ assert }if
+
+# Step 23 } : Implement and test the tor(>r) and rfrom(r>) return stack ops
+
+# Step 24 { : Implement and test "exec" to dynamically jump to native code
+
+# a. Pick a register or RAM location for x, a temporary register
+#    used to temporarily switch the flow of control
+
+# b. Implement exec
+: exec
+	x=tos
+	drop
+	goto x	# note that ';'/next is strictly unnecessary after the goto
+;
+
+# c. Test exec
+rom"	: 1 2 lit swap lit exec - dec if{ assert }if
+
+# Step 24 } : Implement and test "exec" to dynamically jump to native code
+
+# Step 25 { : Implement and test enter/exit
+
+# a. Extend genrom to handle Forth def'initions using enter/exit
+# add a simple definition such as that for "bl", for testing
+: bl	32 ;
+
+# b. Implement enter/exit
+# See "Meta note about notation" above for auto increment/decrement notation
+# Assume the return stack grows upward in memory (see Step 22 for details)
+: enter
+	MEM[r++]=i
+	i=MEM[i]
+;
+: exit
+	i=MEM[--r]
+	i++
+;
+
+# c. Test enter/exit
+rom"	: bl 32 - if{ assert }if
+
+# Step 25 } : Implement and test enter/exit
+
+# Step 26 { : Implement and test "call" to dynamically call tos
+
+# a. Implement call
+# See "Meta note about notation" above for auto increment/decrement notation
+: call
+	MEM[r++]=i
+	i=tos
+	drop
+;
+
+# b. Define some test routines to be able to exercise call
+: 2ret	r> ;
+: testnest 2ret 1234 ;
+
+# c. Test call using 2ret/testret
+rom"	: testnest call 1234 - if{ assert }if
+
+# Step 26 } : Implement and test "call" to dynamically call tos
+
+# Step 27 { : Implement and test p@/p!
+
+# a. Implement p@/p!
+# See "Meta note about notation" above for auto increment/decrement notation
+: p@	tos.0=IO[tos]
+	tos&=(-1<<8)	# null out all bits except the least significant byte
+;
+: p!
+	nip
+	IO[tos]=nos.0	# the .0 denotes the least significant byte
+	drop
+;
+
+# b. Test p@/p!
+#    Read in a byte from the specific port and echo it back
+#	- for now, this is just a reuse of the serial port
+#	- input byte could be 't' (fourth byte in the "forth rom !" string)
+rom"	: SERIAL p@ SERIAL p!	# another sanity check output byte : 't'
+
+# Step 27 } : Implement and test p@/p!
+
+# Step 28 { : Implement and test "until true" loops
+
+# a. Modify genrom to support "until true" loops : loop{ ... }until{ ... }loop
+
+# b. Test the implementation of "getc", which waits until a char is available
+# Assume serial port ready byte is at SSSS and the ready bit is at position T
+# the input byte could be 'x'
+rom"	: loop{ SSSS p@ 1 T << & }until{ }loop key 'x' - if{ assert }if
+
+# Step 28 } : Implement and test "until true" loops
+
+# Step 29 { : Implement and test "while true" loops
+
+# a. Modify genrom to support "while true" loops : loop{ ... }while{ ... }loop
+
+# b. Test the implementation of "echon" which echo's character while --n!=0
+#    the input byte could be 'h' (fifth byte of the "forth rom !" string)
+rom"	: 3 loop{ dup }while{ getc emit dec }loop drop	# sanity check byte 'h'
+
+# Step 29 } : Implement and test "while true" loops
+
+# Step 30 { : Implement and test "over"
+
+# a. Implement "over"
+# If there is a space crunch, it can be defined as : over 1 pick ;
+: over
+	dup
+	tos=MEM[d+1]
+;
+
+# b. Test "over"
+rom"	:	1 2 over - dec if{ assert }if dec if{ assert }if
+
+# Step 30 } : Implement and test "over"
+
+# Step 31 { : Implement and test "third"
+
+# a. Implement "third"
+# If there is a space crunch, it can be defined as : third 2 pick ;
+: third
+	dup
+	tos=MEM[d+2]
+;
+
+# b. Test "third"
+rom"	:	3 2 3 third - if{ assert }if - dec if{ assert }if
+
+# Step 31 } : Implement and test "third"
+
+# Step 32 { : Implement and test "fourth"
+
+# a. Implement "fourth"
+# If there is a space crunch, it can be defined as : fourth 3 pick ;
+: fourth
+	dup
+	tos=MEM[d+3]
+;
+
+# b. Test "fourth"
+rom"	:	4 6 2 4 fourth - if{ assert }if - - if{ assert }if
+
+# Step 32 } : Implement and test "fourth"
+
+# Step 33 { : Implement and test "for" loops
+
+# a. Modify genrom to support "for" loops : "for{ ... }for"
+
+# b. Test for loops
+#    The input bytes could be " rom !" (bytes 6-11 of the "forth rom !" string)
+rom"	: 1 7 for{ getc emit }for # sanity check bytes : " rom !'
+
+# Step 33 } : Implement and test "for" loops
+
+# Step 34 { : Implement and test the for loop index operator "i"
+
+# a. Implement "i"
+# Assume the return stack growth is upward in memory (see Step 22 for details)
+# If there is a space crunch, it can be defined as : i r> r> swap over >r >r ;
+: i
+	dup
+	tos=MEM[r-1]
+;
+
+# b. Test "i"
+rom"	: 1 4 for{ i }for - + if{ assert }if
+
+# Step 34 } : Implement and test the for loop index operator "i"
+
+# Step 35 { : Implement and test the signum/~ comparison operator
+
+# a. Implement the signum/~ comparison operator
+# Henry Massalin's superoptimization trick can give a compact implementation
+: ~	bin(~) ;
+
+# b. Test the signum/~ comparison operator
+rom"	: 1 1 ~ if{ assert }if
+rom"	: 2 1 ~ inc if{ assert }if
+rom"	: 1 2 ~ dec if{ assert }if
+
+# Step 35 } : Implement and test the signum/~ comparison operator
+
+# Step 36 { : Implement and test the ge/>= comparison operator
+
+# a. Implement the "greater than or equal"/ge/>= comparison operator
+# Since ~ can be encoded compactly using superoptimization, if space is really
+# tight, >= can be defined in terms of ~ as : >= ~ dec ;
+: >=	bin(>=) ;
+
+# b. Test the "greater than or equal"/ge/>= comparison operator
+rom"	: 2 1 >= if{ }else{ assert }if
+rom"	: 1 1 >= if{ }else{ assert }if
+rom"	: 1 2 >= if{ assert }if
+
+# Step 36 } : Implement and test the ge/>= comparison operator
+
+# Step 37 { : Implement and test the le/<= comparison operator
+
+# a. Implement the "less than or equal"/le/<= comparison operator
+# Since ~ can be encoded compactly using superoptimization, if space is really
+# tight, <= can be defined in terms of ~ as : <= ~ inc ;
+: <=	bin(<=) ;
+
+# b. Test the "less than or equal"/le/<= comparison operator
+rom"	: 1 2 <= if{ }else{ assert }if
+rom"	: 1 1 <= if{ }else{ assert }if
+rom"	: 2 1 <= if{ assert }if
+
+# Step 37 } : Implement and test the le/<= comparison operator
+
+# Step 38 { : Implement and test the 0= comparison operator
+
+# a. Implement the 0= comparison operator
+# Henry Massalin's superoptimization trick can give a compact implementation
+: 0=	if{ 0 }else{ -1 }if ;
+
+# b. Test the 0= comparison operator
+rom"	: 0 0= if{ }else{ assert }if
+rom"	: 1 0= if{ assert }if
+
+# Step 38 } : Implement and test the 0= comparison operator
+
+# Step 39 { : Implement and test the lt/< comparison operator
+
+# a. Implement the "less than"/lt/< comparison operator
+# Since 0= can be encoded compactly using superoptimization, if space is really
+# tight, < can be defined in terms of 0= : < >= 0= ;
+: <	bin(<) ;
+
+# b. Test the "less than"/lt/< comparison operator
+rom"	: 1 2 <	if{ }else{ assert }if
+rom"	: 1 1 <	if{ assert }if
+rom"	: 2 1 <	if{ assert }if
+
+# Step 39 } : Implement and test the lt/< comparison operator
+
+# Step 40 { : Implement and test the gt/> comparison operator
+
+# a. Implement the "greater than"/gt/> comparison operator
+# Since 0= can be encoded compactly using superoptimization, if space is really
+# tight, > can be defined in terms of 0= as : > <= 0= ;
+: >	bin(>) ;
+
+# b. Test the "greater than"/gt/> comparison operator
+rom"	: 2 1 >	if{ }else{ assert }if
+rom"	: 1 1 >	if{ assert }if
+rom"	: 1 2 >	if{ assert }if
+
+# Step 40 } : Implement and test the gt/> comparison operator
+
+# Step 41 { : Other additional primitives, if required
+
+# Depending on the hardware you have and what features of it need to be exposed
+# additional primitives can be added to the implementation, as required.
+
+# Step 41 } : Other additional primitives, if required

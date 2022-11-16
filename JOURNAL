@@ -2,6 +2,7 @@ INDEX
 -----
 	* 11 Nov '22
 	* 13 Nov '22
+	* 15 Nov '22
 
 11 Nov '22
 ----------
@@ -79,3 +80,25 @@ at which I was getting into the swing of all things related to coding. I wonder
 if she would have chosen to be a coder like me.
 
 Anyway, miss you Lisamma.
+
+15 Nov '22
+----------
+I'm yet again at the crossroads of choosing a processor to work on next and as
+with the earlier choice that was made, of fleshing out the generic test code in
+rom.4th first, I've chosen to again start off by writing up what amounts to an
+elaborate and generic how-to/"process document" on how to go about the porting
+exercise for any given processor. It is meant to match up with the "step"s in
+the rom.4th test cases although there isn't an exact 1-1 correspondence since
+this "code" is meant to be more for human consumption than for direct use by
+machine.
+
+This is also an attempt to consolidate the things I've learnt from the previous
+round of porting exercises that have been completed so far and the expectation
+is that this "code" will continue to be updated with newer ideas as I work on
+additional ports for other CPUs.
+
+Since it is written for a "generic" CPU, I've placed it under pseudo/code since
+much of the "code", if you want to call it that, is a mishmash of C and Forth
+along with some non-C like notation for auto increment/decrement borrowed from
+6809 assembly code. Although it is pseudo-code I've written it in a way such
+that it may be possible to write a parser for it and turn it into machine code.
