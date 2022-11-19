@@ -6,7 +6,7 @@
 
 [ // "test only" definitions must be wrapped inside the TESTROM flag
 
-#ifdef TESTROM
+#{ifdef TESTROM
 
 def{ testdef	[
 	'o'	[ 'o'
@@ -25,18 +25,7 @@ def{ testnest
 	emit	[ > 'm'
 }def
 
-def{ echon		[ n
-	loop{		[ n
-		dup	[ n n
-	}while{		[ n < c	// n != 0
-		getc	[ n c
-		emit	[ n > c
-		dec	[ n:n-1
-	}loop		[ n	// n == 0
-	drop		[
-}def
-
-#endif
+#}ifdef
 
 def{ third 2 pick }def
 def{ fourth 3 pick }def

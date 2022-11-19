@@ -3,6 +3,7 @@ INDEX
 	* 11 Nov '22
 	* 13 Nov '22
 	* 15 Nov '22
+	* 18 Nov '22
 
 11 Nov '22
 ----------
@@ -102,3 +103,15 @@ much of the "code", if you want to call it that, is a mishmash of C and Forth
 along with some non-C like notation for auto increment/decrement borrowed from
 6809 assembly code. Although it is pseudo-code I've written it in a way such
 that it may be possible to write a parser for it and turn it into machine code.
+
+18 Nov '22
+----------
+This is starting to become a pattern now I guess: everytime I think I should
+start on a new port, the overhang of the previous work takes me off on yet
+another tangent. In this case it is an attempt to make sure that the new
+version of the tests in rom.4th can actually work seamlessly with the original
+code. The newer version of rom.4th had some changes from the version in the
+port directories so I assume it is wise to test stuff out now on known code
+rather than figure things out the hard way on unknown code where I'm wrangling
+a new CPU and new toolchain along with the newer tests. It will also prove
+if this strategy was a good choice to begin with.

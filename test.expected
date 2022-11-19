@@ -1,0 +1,20 @@
+#{ifdef TESTROM
+#{if step>=1
+f
+#}if
+#{if step>2
+o
+#}if
+#{if step>3
+r
+#}if
+#{if step>24
+t
+#}if
+#{if step>26
+h
+#}if
+#{if step>30
+ rom !
+#}if
+#}ifdef
