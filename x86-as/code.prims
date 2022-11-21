@@ -240,4 +240,4 @@ inner{
 }inner
 
 var here here .word mem
-var state state .byte 0
+var state state .byte 1

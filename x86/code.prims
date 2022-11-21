@@ -241,4 +241,4 @@ inner{
 }inner
 
 var here here dw mem
-var state state db 0
+var state state db 1
