@@ -523,8 +523,10 @@ emulate(byte *mem, int ip) {
 	int prev=si.val;
 #endif
 	for(;;) {
-		if (sp.val < ds_depth) {
-			ds_depth = sp.val;
+		if (sp.val != 0) {
+			if (sp.val < ds_depth) {
+				ds_depth = sp.val;
+			}
 		}
 		if (start) {
 			if (di.val > rs_depth) {
