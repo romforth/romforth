@@ -150,6 +150,12 @@ pick pick			# [ n
 				# [ addr	(addr:val)
 unary @    fetch _fetch		# [ val
 
+code{
+stick stick			# [ v n
+	add tos, tos		# [ v n*2	// tos *= cell; actually
+	add %sp, tos		# [ v sp+n*2	// tos += sp; and then fall thru
+}code
+
 inner{
 ! store				# [ val addr
 	pop (tos)		# [ addr	(addr:val)
