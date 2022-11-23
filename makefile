@@ -2,7 +2,7 @@ all : x86/all
 	(cd x86-as ; make)
 
 allsteps :
-	for i in $$(seq 0 22) ; do (echo "step=$$i" ; cat fpp.config.x86 ) > fpp.config ; echo ; echo Step $$i ; $(MAKE) || break ; done
+	for i in $$(seq 0 23) ; do (echo "step=$$i" ; cat fpp.config.x86 ) > fpp.config ; echo ; echo Step $$i ; $(MAKE) || break ; done
 
 include x86/makefile
 
