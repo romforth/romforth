@@ -1,5 +1,5 @@
-x86/all : x86/emulate x86/forth x86/test.exp
-	(dd if=x86/forth bs=1 skip=12 2>/dev/null ; cat test.inp) | x86/emulate x86/forth > x86/test.out
+x86/all : x86/emulate x86/forth x86/test.exp test.inp fpp fpp.config
+	(dd if=x86/forth bs=1 skip=12 2>/dev/null ; cat test.inp | ./fpp -DTESTROM -c fpp.config | perl -pe chomp) | x86/emulate x86/forth > x86/test.out
 	cmp x86/test.out x86/test.exp
 x86/test.exp : test.expected fpp.config fpp
 	cat test.expected | ./fpp -DTESTROM -c fpp.config | perl -pe chomp > x86/test.exp

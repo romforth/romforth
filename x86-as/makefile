@@ -1,5 +1,5 @@
-all : ../x86/emulate forth ../x86/test.exp
-	(dd if=forth bs=1 skip=12 2>/dev/null; cat ../test.inp) | ../x86/emulate forth > test.out
+all : ../x86/emulate forth ../x86/test.exp ../test.inp ../fpp ../fpp.config
+	(dd if=forth bs=1 skip=12 2>/dev/null; cat ../test.inp | ../fpp -DTESTROM -c ../fpp.config | perl -pe chomp) | ../x86/emulate forth > test.out
 	cmp test.out ../x86/test.exp
 forth : forth.o forth.lds
 	ld -o forth -T forth.lds forth.o
