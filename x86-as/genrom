@@ -119,7 +119,7 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\t.byte $m\n";
+	print "\t.byte $m-load\n";
 }
 
 sub runfor {
