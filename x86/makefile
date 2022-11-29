@@ -19,7 +19,7 @@ x86/notest : x86/emulate x86/forth.notest
 	(dd if=x86/forth.notest bs=1 skip=12 2>/dev/null ; cat test.inp) | x86/emulate x86/forth.notest
 x86/forth.notest : x86/forth.s x86/prims.s x86/rom.notest.s x86/defs.notest.s
 	nasm -o x86/forth.notest -l x86/forth.notest.lst x86/forth.s
-x86/defs.notest.s : x86/genrom x86/port.4th defs.4th x86/prims.s fpp fpp.config
-	cat x86/port.4th defs.4th | ./fpp -c fpp.config | x86/genrom x86/defs.map x86/dict.map > x86/defs.notest.s
-x86/rom.notest.s : x86/genrom rom.4th x86/prims.s x86/defs.s fpp fpp.config
+x86/defs.notest.s : x86/genrom defs.4th x86/prims.s fpp fpp.config
+	cat defs.4th | ./fpp -c fpp.config | x86/genrom x86/defs.map x86/dict.map > x86/defs.notest.s
+x86/rom.notest.s : x86/genrom rom.4th x86/prims.s x86/defs.notest.s fpp fpp.config
 	cat rom.4th | ./fpp -c fpp.config | x86/genrom x86/rom.map x86/dict.map x86/defs.map > x86/rom.notest.s

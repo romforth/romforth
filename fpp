@@ -50,6 +50,10 @@ if ($config) { # assume config entries are always in the form foo=bar
 # 1	any		1	print
 # 2	#}ifdef		pop	-
 # 2	#}if		pop	-
+# 2	#{ifdef DEFINED	push,2	-
+# 2	#{ifdef UNDEF 	push,2	-
+# 2	#{if true	push,2	-
+# 2	#{if false	push,2	-
 # 2	any		2	-
 
 my $states=[];
@@ -74,10 +78,12 @@ sub replacevar {
 }
 
 sub starting {
+	my ($f)=@_;
+	$f=1 unless $f;
 	if (/^\#\{ifdef\s+(\S+)$/) {
 		push @$states, $state;
 		if ($hash->{$1}) {
-			$state=1;
+			$state=$f;
 		} else {
 			$state=2;
 		}
@@ -87,7 +93,7 @@ sub starting {
 		push @$states, $state;
 		my $m=replace($1);
 		if (eval($m)) {
-			$state=1;
+			$state=$f;
 		} else {
 			$state=2;
 		}
@@ -98,7 +104,7 @@ sub starting {
 }
 
 sub stopping {
-	return 1 if starting();
+	return 1 if starting(@_);
 	if (/^\#\}ifdef$/) {
 		$state=pop @$states;
 		return 1;
@@ -118,12 +124,12 @@ while (<>) {
 		next;
 	}
 	if ($state==1) {
-		next if stopping();
+		next if stopping(1);
 		print;
 		next;
 	}
 	if ($state==2) {
-		next if stopping();
+		next if stopping(2);
 		next;
 	}
 	die "unknown state: $state";
