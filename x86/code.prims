@@ -11,20 +11,20 @@ bye halt
 
 define next jmp bp
 
+define   w ax
+define  ip si
 define tos bx
 define nos cx
-define   w ax
 define  rp di
-define  ip si
 
 define _dup  push tos
 define _drop pop tos
-define _nip  pop nos
-define _dip  push nos
 define _neg  neg tos
-define _inv  not tos
 define _inc  inc tos
 define _dec  dec tos
+define _inv  not tos
+define _nip  pop nos
+define _dip  push nos
 define _xchg xchg tos, nos
 define _fetch mov tos, [tos]
 
@@ -118,7 +118,6 @@ emit emit
 	out dx, al	; and echo it out to the serial port
 	_drop		; drop displayed value in TOS
 }inner
-
 
 code{
 exec exec		; [ x	| w |	]

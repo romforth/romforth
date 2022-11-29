@@ -27,10 +27,10 @@ inner:			# for use in the inner interpreter, since it is the only
 
 #include "prims.s"
 
-#include "defs.s"
-
 rom:
 
 #include "rom.s"
+
+#include "defs.s"
 
 mem:
