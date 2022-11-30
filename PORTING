@@ -46,6 +46,7 @@ architecture to pick next and some of the options I've listed below are in
 the order in which I learnt about them (starting from the time I first came
 across them as a kid)
 - Z80 (ZX Spectrum)
+- PDP11 ("Computer Organization" by Hamacher, Vranesic and Zaky)
 - MIX (Knuth's Ye Olde Computer)
 - 8085 (or was it an 8080? not sure anymore - a box with keypad for m/c code)
 - x86 (IBM PC) : I'll consider this bootstrap/port already complete
