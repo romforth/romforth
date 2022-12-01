@@ -1,0 +1,5 @@
+define ip r0
+
+cold	: mov $rom, ip
+next	: jmp @(ip)+
+bye	: halt
