@@ -1,5 +1,10 @@
 define ip r0
 
+define xcsr 0177564
+define xbuf 0177566
+
 cold	: mov $rom, ip
 next	: jmp @(ip)+
 bye	: halt
+key	: nop ;
+emit	: movb $'f', xbuf ; 1: ; tstb xcsr ; beq 1b ;
