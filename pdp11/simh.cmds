@@ -1,3 +1,4 @@
+attach lpt test.out
 load forth.lda
 go
 quit

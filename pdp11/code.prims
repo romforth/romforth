@@ -1,7 +1,7 @@
 define ip r0
 
-define xcsr 0177564
-define xbuf 0177566
+define xcsr 0177514
+define xbuf 0177516
 
 cold	: mov $rom, ip
 next	: jmp @(ip)+

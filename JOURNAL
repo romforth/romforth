@@ -6,6 +6,7 @@ INDEX
 	* 18 Nov '22
 	* 30 Nov '22
 	* 01 Dec '22
+	* 03 Dec '22
 
 11 Nov '22
 ----------
@@ -239,3 +240,23 @@ implementation, simh/PDP11 provides me 64K of RAM which is such a luxury that
 I'm going on a splurge and use an entire 16 bits for each word offset. This is
 a code size win even for jsr calls so I'm not going to go into contortions to
 reduce the offset down to 8 bits - although that should be fairly easy as well.
+
+03 Dec '22
+----------
+Getting output to the console working under simh was not too much of a hassle
+since I was continuing to follow the really helpful notes at
+https://ancientbits.blogspot.com/2012/07/programming-barebones-pdp11.html
+
+I did simplify the code, a lot, though, based on the sample code from the
+"PDP11 Peripherals and Interfacing Handbook", an online copy of which is
+available from:
+http://www.bitsavers.org/pdf/dec/pdp11/handbooks/PDP11_PeripheralsHbk_1972.pdf
+
+Although I initially used the console device for output, one difficulty I ran
+into with using it was with trying to redirect that output to a named file. In
+the end, I decided that the struggle was not worth it and just decided to use
+a different device (the line printer, LPT/LP11) since simh allows it to be
+directly attach'ed to a named file.
+
+Next, I just need to do the same thing for console input as well. Let's see
+how long figuring that one out takes.
