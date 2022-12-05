@@ -1,4 +1,5 @@
 attach lpt test.out
+do test.inp
 load forth.lda
 go
 quit

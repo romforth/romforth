@@ -1,10 +1,14 @@
-define ip r0
+define ip	r0
+define tos	r1
 
 define xcsr 0177514
 define xbuf 0177516
 
+define rcsr 0177560
+define rbuf 0177562
+
 cold	: mov $rom, ip
 next	: jmp @(ip)+
 bye	: halt
-key	: nop ;
-emit	: movb $'f', xbuf ; 1: ; tstb xcsr ; beq 1b ;
+key	: 1: ; tstb rcsr ; beq 1b ; movb rbuf, tos ;
+emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ;

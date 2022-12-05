@@ -1,0 +1,9 @@
+#!/usr/bin/perl -w
+use strict;
+
+my $agg='';
+while (<>) {
+	chomp;
+	$agg.=$_;
+}
+print qq{send "$agg"}, "\n";

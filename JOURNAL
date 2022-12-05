@@ -7,6 +7,7 @@ INDEX
 	* 30 Nov '22
 	* 01 Dec '22
 	* 03 Dec '22
+	* 05 Dec '22
 
 11 Nov '22
 ----------
@@ -260,3 +261,33 @@ directly attach'ed to a named file.
 
 Next, I just need to do the same thing for console input as well. Let's see
 how long figuring that one out takes.
+
+05 Dec '22
+----------
+Sometimes it is the simplest things that take the longest to get done. It turns
+out the premonition I had about redirecting the input from a file as mentioned
+in my previous journal entry turned out to be fairly spot on.
+
+My first attempt at implementing "key" was to use the console device and it
+worked without much debugging - using the sample code from Digital in the
+"PDP11 Peripherals and Interfacing Handbook" available from:
+http://www.bitsavers.org/pdf/dec/pdp11/handbooks/PDP11_PeripheralsHbk_1972.pdf
+came in pretty handy again.
+
+Since I want to be able to automate the testing though, the next attempt was
+to redirect the input from a file. I initially tried to use the same approach
+that succeeded for me with "emit" (where I used the LPT device instead of the
+DL11 console output). I thought I could attach the "Paper Tape Reader"/PC11/ptr
+device to the input file and change the addresses from 017756X to 017755X and
+call it a day. But for some unknown reason I haven't been able to get that
+working so far. Running ex'amine on the device shows that the data exists as
+expected but the code kept looping as if the data wasn't available. Rather than
+spend even more time on trying to fix whatever was broken, I decided to read
+through the simh docs to see if there was another device I could test instead
+but happened to see the "send" command that allows you to inject data into the
+console input. So for now, I've decided to use that feature as a workaround.
+
+Given the time I've spent trying to get this working on simh, I now wonder if
+it wouldn't have been faster to just write yet another emulator for the pdp11
+just like I did for the x86. Perhaps, if I get stuck again, that's just what
+I'll do.
