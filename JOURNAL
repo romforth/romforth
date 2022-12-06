@@ -8,6 +8,7 @@ INDEX
 	* 01 Dec '22
 	* 03 Dec '22
 	* 05 Dec '22
+	* 06 Dec '22
 
 11 Nov '22
 ----------
@@ -291,3 +292,23 @@ Given the time I've spent trying to get this working on simh, I now wonder if
 it wouldn't have been faster to just write yet another emulator for the pdp11
 just like I did for the x86. Perhaps, if I get stuck again, that's just what
 I'll do.
+
+06 Dec '22
+----------
+For implementing the data stack on the PDP11, there is a literal profusion of
+choices since any of the PDP11 registers can be used as the data stack pointer
+(given the PDP11's flexible addressing modes).
+
+Since I want to see if the native/machine stack can be used for the return
+stack, I'll choose the next available register (r2), rather than r6 as the
+data stack pointer. The current register mapping is: R0: IP, R1: TOS, R2: SP
+
+The remaining decision is about where to place the data stack. I'll make the
+same choice that I made on the x86 port, which is to have it grow to low memory
+starting from the beginning of the text area. So the current memory layout
+looks like this:
+
+			0x100 -> higher memory
+	  ------------------------------
+	   <- data stack | code/text ->
+	  ------------------------------

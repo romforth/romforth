@@ -33,8 +33,8 @@ emit	[ tos='f' > 'f'
 	[ < 'f'
 key	[ 'f'
 dup	[ 'f' 'f'
-emit	[ 'f' > 'f'
-drop	[
+drop	[ 'f'
+emit	[ > 'f'
 
 #}if
 

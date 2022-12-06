@@ -1,5 +1,6 @@
 define ip	r0
 define tos	r1
+define sp	r2
 
 define xcsr 0177514
 define xbuf 0177516
@@ -7,8 +8,10 @@ define xbuf 0177516
 define rcsr 0177560
 define rbuf 0177562
 
-cold	: mov $rom, ip
+cold	: mov $rom, ip ; mov $cold, sp
 next	: jmp @(ip)+
 bye	: halt
 key	: 1: ; tstb rcsr ; beq 1b ; movb rbuf, tos ;
 emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ;
+dup	: mov tos, -(sp) ;
+drop	: mov (sp)+, tos ;
