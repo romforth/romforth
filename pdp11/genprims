@@ -20,6 +20,8 @@ sub mapnames {
 	print "$l:\n";	# generate the label for the assembler
 }
 
+my $hash={};
+my $agg=[];
 my $label="lbl000";
 while (<>) {
 	if (s/^\s*(\S+)\s+:\s+//) {
@@ -31,13 +33,18 @@ while (<>) {
 		}
 		for my $w (split(' ;')) {
 			chomp $w;
-			if ($w) {
-				$w=~s/^\s+//;
-				print "\t$w\n";
+			$w="next" unless ($w);
+			$w=~s/^\s+//;
+			if ($l=$hash->{$w}) {
+				print "\t", join("\n\t",@$l), "\n";
+				push @$agg, @$l unless ($w eq "next");
 			} else {
-				print "\tjmp next\n";
+				print "\t$w\n";
+				push @$agg, $w;
 			}
 		}
+		$hash->{"$f"}=[@$agg];
+		$agg=[];
 		next;
 	}
 	if (/^define\s+(\S+)\s+(.*)$/) {	# definitions

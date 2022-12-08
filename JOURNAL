@@ -9,6 +9,7 @@ INDEX
 	* 03 Dec '22
 	* 05 Dec '22
 	* 06 Dec '22
+	* 07 Dec '22
 
 11 Nov '22
 ----------
@@ -312,3 +313,19 @@ looks like this:
 	  ------------------------------
 	   <- data stack | code/text ->
 	  ------------------------------
+
+07 Dec '22
+----------
+During the x86 port, I chose to use the macro features of the x86 assembler
+to do all of the macro expansions that were needed when a Forth word used a
+"lower" level forth word. For the PDP11 port though, I want to try something
+different and have most of those expansions done by genrom instead. This seems
+to be a cleaner approach than the ugliness of the x86 version where I have
+to disambiguate between the macro expansion and a regular call by using '_' to
+prefix the words that needed to be expanded.
+
+So this required a little bit of addition to genrom's capabilities.
+
+In the x86 port, I was using 8 bit offsets so all of the addresses were stored
+as offsets from the base of the text area. Since I'm using the full 16 bits
+for the PDP11 port, I can store the addresses as is.
