@@ -16,3 +16,4 @@ emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ;
 dup	: mov tos, -(sp) ;
 drop	: mov (sp)+, tos ;
 lit	: dup ; mov (ip)+, tos ;
+neg	: neg tos ;
