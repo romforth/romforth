@@ -17,3 +17,4 @@ dup	: mov tos, -(sp) ;
 drop	: mov (sp)+, tos ;
 lit	: dup ; mov (ip)+, tos ;
 neg	: neg tos ;
+j	: 1: ; add (ip)+, ip ;
