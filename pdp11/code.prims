@@ -29,6 +29,7 @@ inv	: com tos ;
 +	: add (sp)+, tos ;
 pick	: add tos, tos ; add sp, tos
 @	: mov (tos), tos ;
+stick	: add tos, tos ; add sp, tos
 !	: mov (sp)+, (tos) ; drop ;
 c@	: movb (tos), tos ;
 c!	: nip ; movb nos, (tos) ; drop ;
