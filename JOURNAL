@@ -11,6 +11,7 @@ INDEX
 	* 06 Dec '22
 	* 07 Dec '22
 	* 08 Dec '22
+	* 09 Dec '22
 
 11 Nov '22
 ----------
@@ -371,3 +372,14 @@ and can be denoted as bare numbers/variables or prefixed with the $ notation.
 
 The "offsets" are new and are used for encoding JUMP offsets which don't
 need to be prefixed with 'lit' - they are denoted using a '#' prefix.
+
+09 Dec '22
+----------
+Today was a fairly productive day as I cranked away at most of the easy
+parts of the port. The next set of primitives are the hard ones since they
+usually require you to pay attention to a lot of detail. I did start off
+thinking about how to implement exec/enter/exit/call and have some ideas
+about tying it to the PDP11 JSR instruction but that needs me to use the R6
+register instead of the R4 register which is used currently.
+
+I'm tired now though and I think all of that can wait for another day.
