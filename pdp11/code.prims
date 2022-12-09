@@ -27,6 +27,7 @@ dec	: dec tos ;
 inv	: com tos ;
 -	: neg
 +	: add (sp)+, tos ;
+pick	: add tos, tos ; add sp, tos
 @	: mov (tos), tos ;
 !	: mov (sp)+, (tos) ; drop ;
 c@	: movb (tos), tos ;
