@@ -149,7 +149,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>8
+#{if step>=9
 
 1		[ 1
 2		[ 1 2
