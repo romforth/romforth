@@ -20,7 +20,9 @@ drop	: mov (sp)+, tos ;
 nip	: mov (sp)+, nos ;
 dip	: mov nos, -(sp) ;
 lit	: dup ; mov (ip)+, tos ;
-swap	: nip ; dup ; mov nos, tos ;
+swap	: nip ; dup
+t_n	: mov nos, tos ;
+sp@!	: mov sp, nos ; mov tos, sp ; t_n ;
 neg	: neg tos ;
 inc	: inc tos ;
 dec	: dec tos ;
