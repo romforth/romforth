@@ -373,24 +373,43 @@ rom"	: 1 2 + 2 - dec if{ assert }if
 
 # Step 12 { : Implement and test and(&) or(|) xor(^)
 
-# a. Implement and(&) or(|) xor(^)
+# Step 12.1 { : Implement and test and(&)
+# a. Implement and(&)
 : &	bin(&) ;
-: |	bin(|) ;
-: ^	bin(^) ;
 
 # Alternative, single instruction, machine code implementation might be :
 #	and	: bin(and) ;
-#	or	: bin(or) ;
-#	xor	: bin(xor) ;
 
 # b. Test and(&)
 rom"	: 1 2 & if{ assert }if
 
-# c. Test or(|)
+# Step 12.1 } : Implement and test and(&)
+
+# Step 12.2 { : Implement and test or(|)
+
+# a. Implement or(|)
+: |	bin(|) ;
+
+# Alternative, single instruction, machine code implementation might be :
+#	or	: bin(or) ;
+
+# b. Test or(|)
 rom"	: 1 2 | 3 - if{ assert }if
+
+# Step 12.2 } : Implement and test or(|)
+
+# Step 12.3 { : Implement and test xor(^)
+
+# a. Implement xor(^)
+: ^	bin(^) ;
+
+# Alternative, single instruction, machine code implementation might be :
+#	xor	: bin(xor) ;
 
 # d. Test xor(^)
 rom"	: -1 0 ^ inc if{ assert }if
+
+# Step 12.3 } : Implement and test xor(^)
 
 # Step 12 } : Implement and test and(&) or(|) xor(^)
 

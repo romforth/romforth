@@ -163,7 +163,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>9
+#{if step>=10.1
 
 1		[ 0b01
 2		[ 0b10
@@ -171,6 +171,10 @@ if{		[	// not taken
 if{		[	// not taken
 	#assert
 }if		[
+
+#}if
+
+#{if step>=10.2
 
 1		[ 0b01
 2		[ 0b10
@@ -180,6 +184,10 @@ if{		[	// not taken
 if{		[	// not taken
 	#assert
 }if		[
+
+#}if
+
+#{if step>=10.3
 
 -1		[ 0b111...
 0		[ 0b000...
@@ -191,7 +199,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>10
+#{if step>=11
 
 0		[ 0
 1		[ 0 1
