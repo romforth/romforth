@@ -11,7 +11,7 @@ forth.lda : forth
 forth : forth.o forth.lds
 	pdp11-aout-ld -T forth.lds forth.o -o forth
 forth.o : forth.S rom.s
-	pdp11-aout-as -mkd11d -al=forth.lst -o forth.o forth.S
+	pdp11-aout-as -al=forth.lst -o forth.o forth.S
 rom.s : ../rom.4th ../fpp fpp.config prims.s genrom
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map > rom.s
 	test -s rom.s

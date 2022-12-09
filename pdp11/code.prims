@@ -26,6 +26,7 @@ inv	: com tos ;
 -	: neg
 +	: add (sp)+, tos ;
 |	: bis (sp)+, tos ;
+^	: nip ; xor nos, tos ;
 &	: nip ; com nos ; bic nos, tos ;
 j	: 1: ; add (ip)+, ip ;
 jz	: neg ; drop ; bcc 1b ; add $2, ip ;
