@@ -2,7 +2,7 @@
 #{if step>=1
 f
 #}if
-#{if step>=25
+#{if step>=24
 t
 #}if
 #{if step>=26

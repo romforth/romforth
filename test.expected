@@ -17,7 +17,7 @@ h
 #{if step>=4.3
  
 #}if
-#{if step>=25
+#{if step>=24
 t
 #}if
 #{if step>=27

@@ -56,8 +56,8 @@ emit	[ > 'r'
 #{if step>=4.1
 
 j	[	// raw opcode test of the 'j' operator
-#JUMP	[ 	// the byte offset to skip over the emit below
-'j' emit
+#JUMP	[ 	// the byte offset to skip over the assert below
+#assert
 
 't'	[ 't'
 emit	[ > 't'
@@ -68,8 +68,8 @@ emit	[ > 't'
 
 0	[ 0
 jz	[	// raw opcode test of the 'jz' operator
-#JUMP	[	// the byte offset to skip over the emit below
-'z' emit
+#JUMP	[	// the byte offset to skip over the assert below
+#assert
 
 'h'	[ 'h'
 emit	[ > 'h'
@@ -80,8 +80,8 @@ emit	[ > 'h'
 
 1	[ 1
 jnz	[	// raw opcode test of the 'jnz' operator
-#JUMP	[	// the byte offset to skip over the emit below
-'n' emit
+#JUMP	[	// the byte offset to skip over the assert below
+#assert
 
 32	[ ' '
 emit	[ > ' '
@@ -224,22 +224,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>12
-
-4		[ 0b100
-2		[ 0b100 2
-<<		[ 0b10000
-64		[ 0b10000 0b1000000
-2		[ 0b10000 0b1000000 2
->>		[ 0b10000 0b10000
--		[ 0
-if{		[	// not taken
-	#assert
-}if		[
-
-#}if
-
-#{if step>13
+#{if step>=13
 
 $AAAA		[ $AAAA
 @		[ $CCCC
@@ -251,7 +236,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>14
+#{if step>=14
 
 here		[ here (here:h)
 @		[ h
@@ -270,7 +255,7 @@ here		[ h here
 
 #}if
 
-#{if step>15
+#{if step>=15
 
 state		[ state (state:1)
 c@		[ 1
@@ -296,7 +281,7 @@ c!		[ (state:s)
 
 #}if
 
-#{if step>16
+#{if step>=16
 
 3		[ 3
 2		[ 3 2
@@ -315,7 +300,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>17
+#{if step>=17
 
 2		[ 2
 1		[ 2 1
@@ -328,7 +313,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>18
+#{if step>=18
 
 0		[ 0
 sp@! sp@!	[ 0
@@ -340,7 +325,7 @@ if{		[	// not taken
 
 #}ifdef
 
-#{if step>19
+#{if step>=19
 
 [ // set up the return stack
 
@@ -359,7 +344,7 @@ here		[ $RRRR+mem here
 
 #{ifdef TESTROM
 
-#{if step>20
+#{if step>=20
 
 3		[ 3
 2		[ 3 2
@@ -380,7 +365,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>21
+#{if step>=21
 
 1		[ 1
 2		[ 1 2
@@ -396,7 +381,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>22
+#{if step>=22
 
 bl		[ ' '	// ASCII space == 32
 32		[ 32 32
@@ -407,7 +392,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>23
+#{if step>=23
 
 testnest	[ ret
 call		[ 1234
@@ -419,7 +404,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>24
+#{if step>=24
 
 $SERIAL		[ $SERIAL < 't'
 p@		[ 't'
@@ -428,7 +413,22 @@ p!		[ > 't'
 
 #}if
 
-#{if step>25
+#{if step>=25
+
+4		[ 0b100
+2		[ 0b100 2
+<<		[ 0b10000
+64		[ 0b10000 0b1000000
+2		[ 0b10000 0b1000000 2
+>>		[ 0b10000 0b10000
+-		[ 0
+if{		[	// not taken
+	#assert
+}if		[
+
+#}if
+
+#{if step>=26
 
 loop{		[
 	$SSSS	[ $SSSS
@@ -448,7 +448,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>26
+#{if step>=27
 
 1		[ 1 < 'h'
 loop{		[ n:1
@@ -462,7 +462,7 @@ drop		[
 
 #}if
 
-#{if step>27
+#{if step>=28
 
 1		[ 1
 2		[ 1 2
@@ -479,7 +479,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>28
+#{if step>=29
 
 3		[ 3
 2		[ 3 2
@@ -497,7 +497,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>29
+#{if step>=30
 
 4		[ 4
 6		[ 4 6
@@ -516,7 +516,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>30
+#{if step>=31
 
 1		[ 1
 7		[ 1 7
@@ -527,7 +527,7 @@ for{		[ < " rom !"
 
 #}if
 
-#{if step>31
+#{if step>=32
 
 1		[ 1
 4		[ 1 4
@@ -542,7 +542,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>32
+#{if step>=33
 
 1		[ 1
 1		[ 1 1
@@ -569,7 +569,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>33
+#{if step>=34
 
 2		[ 2
 1		[ 2 1
@@ -596,7 +596,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>34
+#{if step>=35
 
 1		[ 1
 2		[ 1 2
@@ -623,7 +623,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>35
+#{if step>=36
 
 0		[ 0
 0=		[ 1
@@ -640,7 +640,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>36
+#{if step>=37
 
 1		[ 1
 2		[ 1 2
@@ -666,7 +666,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>37
+#{if step>=38
 
 2		[ 2
 1		[ 2 1

@@ -440,18 +440,7 @@ rom"	: 1 2 swap - dec if{ assert }if
 
 # Step 14 } : Implement and test "swap"
 
-# Step 15 { : Implement and test left shift(<<) and right shift(>>) operators
-
-# a. Implement the shift operators
-: <<	bin(<<) ;
-: >>	bin(>>) ;
-
-# b. Test the shift operators
-rom"	: 4 2 << 64 2 >> - if{ assert }if
-
-# Step 15 } : Implement and test left shift(<<) and right shift(>>) operators
-
-# Step 16 { : Memory fetch(@) operator
+# Step 15 { : Memory fetch(@) operator
 
 # a. Implement fetch(@)
 : @	tos=MEM[tos] ;
@@ -459,9 +448,9 @@ rom"	: 4 2 << 64 2 >> - if{ assert }if
 # c. If possible, test @ using an address AAAA with known contents CCCC
 rom"	: AAAA @ CCCC - if{ assert }if
 
-# Step 16 } : Memory fetch(@) operator
+# Step 15 } : Memory fetch(@) operator
 
-# Step 17 { : Memory store(!) operator
+# Step 16 { : Memory store(!) operator
 # a. Make sure to extend genrom to handle var'iable declarations
 #	- and add a variable : here
 #	mem	: MEM[FREEMEM;FREEMEMSIZE]
@@ -477,9 +466,9 @@ rom"	: AAAA @ CCCC - if{ assert }if
 # d. Test ! using the "here" variable
 rom"	: here @ 1234 here ! here @ 1234 - if{ assert }if here !
 
-# Step 17 } : Memory store(!) operator
+# Step 16 } : Memory store(!) operator
 
-# Step 18 { : Byte memory access using cfetch(c@) and cstore(c!)
+# Step 17 { : Byte memory access using cfetch(c@) and cstore(c!)
 
 # a. Implement cfetch(c@) and cstore(c!)
 : c@
@@ -497,9 +486,9 @@ rom"	: state c@ dec if{ assert }if
 # d. Test c!
 rom"	: state c@ 123 state c! state c@ 123 - if{ assert }if state c!
 
-# Step 18 } : Byte memory access using cfetch(c@) and cstore(c!)
+# Step 17 } : Byte memory access using cfetch(c@) and cstore(c!)
 
-# Step 19 { : Implement and test "pick"
+# Step 18 { : Implement and test "pick"
 
 # a. Implement pick
 : pick	tos=MEM[d+tos] ;
@@ -507,9 +496,9 @@ rom"	: state c@ 123 state c! state c@ 123 - if{ assert }if state c!
 # b. Test pick
 rom"	: 3 2 1 pick 3 - if{ assert }if - dec if{ assert }if
 
-# Step 19 } : Implement and test "pick"
+# Step 18 } : Implement and test "pick"
 
-# Step 20 { : Implement and test "stick" (just for symmetry with pick)
+# Step 19 { : Implement and test "stick" (just for symmetry with pick)
 
 # a. Implement stick
 : stick
@@ -521,9 +510,9 @@ rom"	: 3 2 1 pick 3 - if{ assert }if - dec if{ assert }if
 # b. Test stick
 rom"	: 2 1 1 stick dec if{ assert }if
 
-# Step 20 } : Implement and test "stick" (just for symmetry with pick)
+# Step 19 } : Implement and test "stick" (just for symmetry with pick)
 
-# Step 21 { : Implement and test a means to get/set the data stack pointer
+# Step 20 { : Implement and test a means to get/set the data stack pointer
 
 # a. Implement sp@!
 # See "Meta note about the exchange operator" above for details
@@ -536,9 +525,9 @@ rom"	: 2 1 1 stick dec if{ assert }if
 # since no space can be allocated (and in this test the new location is at 0)
 rom"	: 0 sp@! sp@! if{ assert }if
 
-# Step 21 } : Implement and test a means to get/set the data stack pointer
+# Step 20 } : Implement and test a means to get/set the data stack pointer
 
-# Step 22 { : Implement and test a means to get/set the return stack pointer
+# Step 21 { : Implement and test a means to get/set the return stack pointer
 
 # a. Pick a register or memory location for r, a pointer to the return stack
 #	- decide if you want to use the native machine stack
@@ -565,13 +554,13 @@ rom"	: RRRR here @ + here !
 # This will work fine if the return stack grows upwards, but if it is required
 # to grow downward, set up the return stack _after_ doing the above allocation.
 
-# Step 22 } : Implement and test a means to get/set the return stack pointer
+# Step 21 } : Implement and test a means to get/set the return stack pointer
 
-# Step 23 { : Implement and test the tor(>r) and rfrom(r>) return stack ops
+# Step 22 { : Implement and test the tor(>r) and rfrom(r>) return stack ops
 
 # a. Implement >r/r>
 # See "Meta note about notation" above for auto increment/decrement notation
-# Assume the return stack grows upward in memory (see Step 22 for details)
+# Assume the return stack grows upward in memory (see Step 21 for details)
 : >r
 	MEM[r++]=tos
 	drop
@@ -585,9 +574,9 @@ rom"	: RRRR here @ + here !
 # This test implicitly uses the definition : over >r dup r> swap ;
 rom"	: 3 2 >r dup r> swap 3 - if{ assert }if - dec if{ assert }if
 
-# Step 23 } : Implement and test the tor(>r) and rfrom(r>) return stack ops
+# Step 22 } : Implement and test the tor(>r) and rfrom(r>) return stack ops
 
-# Step 24 { : Implement and test "exec" to dynamically jump to native code
+# Step 23 { : Implement and test "exec" to dynamically jump to native code
 
 # a. Pick a register or RAM location for x, a temporary register
 #    used to temporarily switch the flow of control
@@ -602,9 +591,9 @@ rom"	: 3 2 >r dup r> swap 3 - if{ assert }if - dec if{ assert }if
 # c. Test exec
 rom"	: 1 2 lit swap lit exec - dec if{ assert }if
 
-# Step 24 } : Implement and test "exec" to dynamically jump to native code
+# Step 23 } : Implement and test "exec" to dynamically jump to native code
 
-# Step 25 { : Implement and test enter/exit
+# Step 24 { : Implement and test enter/exit
 
 # a. Extend genrom to handle Forth def'initions using enter/exit
 # add a simple definition such as that for "bl", for testing
@@ -612,7 +601,7 @@ rom"	: 1 2 lit swap lit exec - dec if{ assert }if
 
 # b. Implement enter/exit
 # See "Meta note about notation" above for auto increment/decrement notation
-# Assume the return stack grows upward in memory (see Step 22 for details)
+# Assume the return stack grows upward in memory (see Step 21 for details)
 : enter
 	MEM[r++]=i
 	i=MEM[i]
@@ -625,9 +614,9 @@ rom"	: 1 2 lit swap lit exec - dec if{ assert }if
 # c. Test enter/exit
 rom"	: bl 32 - if{ assert }if
 
-# Step 25 } : Implement and test enter/exit
+# Step 24 } : Implement and test enter/exit
 
-# Step 26 { : Implement and test "call" to dynamically call tos
+# Step 25 { : Implement and test "call" to dynamically call tos
 
 # a. Implement call
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -644,9 +633,9 @@ rom"	: bl 32 - if{ assert }if
 # c. Test call using 2ret/testret
 rom"	: testnest call 1234 - if{ assert }if
 
-# Step 26 } : Implement and test "call" to dynamically call tos
+# Step 25 } : Implement and test "call" to dynamically call tos
 
-# Step 27 { : Implement and test p@/p!
+# Step 26 { : Implement and test p@/p!
 
 # a. Implement p@/p!
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -665,7 +654,18 @@ rom"	: testnest call 1234 - if{ assert }if
 #	- input byte could be 't' (fourth byte in the "forth rom !" string)
 rom"	: SERIAL p@ SERIAL p!	# another sanity check output byte : 't'
 
-# Step 27 } : Implement and test p@/p!
+# Step 26 } : Implement and test p@/p!
+
+# Step 27 { : Implement and test left shift(<<) and right shift(>>) operators
+
+# a. Implement the shift operators
+: <<	bin(<<) ;
+: >>	bin(>>) ;
+
+# b. Test the shift operators
+rom"	: 4 2 << 64 2 >> - if{ assert }if
+
+# Step 27 } : Implement and test left shift(<<) and right shift(>>) operators
 
 # Step 28 { : Implement and test "until true" loops
 
@@ -743,7 +743,7 @@ rom"	: 1 7 for{ getc emit }for # sanity check bytes : " rom !'
 # Step 34 { : Implement and test the for loop index operator "i"
 
 # a. Implement "i"
-# Assume the return stack growth is upward in memory (see Step 22 for details)
+# Assume the return stack growth is upward in memory (see Step 21 for details)
 # If there is a space crunch, it can be defined as : i r> r> swap over >r >r ;
 : i
 	dup
