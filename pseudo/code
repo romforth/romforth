@@ -475,7 +475,11 @@ rom"	: here @ 1234 here ! here @ 1234 - if{ assert }if here !
 	tos.0=MEM[tos]	# the .0 denotes the least significant byte
 	tos&=(-1<<8)	# null out all bits except the least significant byte
 ;
-: c!	MEM[tos]=tos.0 ;	# the .0 denotes the least significant byte
+: c!
+	nip
+	MEM[tos]=nos.0	# the .0 denotes the least significant byte
+	drop
+;
 
 # b. Add a state variable initialized to 1
 #	var_byte state=1
