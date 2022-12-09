@@ -216,28 +216,57 @@ rom"	: -114 neg emit		# another sanity check output byte : 'r'
 
 # Step 7 { : Implement and test conditionals
 
-# a. Extend genrom to handle if{ ... }else{ ... }if
+# Step 7.1 { : Implement the unconditional branching operator
 
-# b. Implement the (un)conditional branching operators
+# a. Implement the j'ump operator
 : j i+=MEM[i+] ;	# add a signed byte to the instruction pointer
+
+# b. Test the j'ump operator
+rom"	: j 1 assert	# pretend that the assert opcode needs 1 byte
+
+# Step 7.1 } : Implement the unconditional branching operator
+
+# Step 7.2 { : Implement the "branch if zero" operator
+
+# a. Implement the jz operator
 : jz
 	neg		# if tos!=0, set carry
 	drop		# toss tos
 	jnc j		# branch if tos==0 (ie carry is not set)
-	i++		# otherwise step over the offset byte
+	i+		# otherwise step over the offset byte
 ;
+
+# b. Test the jz operator
+rom"	: 0 jz 1 assert	# pretend that the assert opcode needs 1 byte
+
+# Step 7.2 } : Implement the "branch if zero" operator
+
+# Step 7.3 { : Implement the "branch if not zero" operator
+
+# a. Implement the jnz operator
 : jnz
 	neg		# if tos!=0, set carry
 	drop		# toss tos
 	jc j		# branch if tos!=0 (ie carry is set)
-	i++		# otherwise step over the offset byte
+	i+		# otherwise step over the offset byte
 ;
 
-# c. Test if{ ... }if
+# b. Test the jnz operator
+rom"	: 1 jnz 1 assert	# pretend that the assert opcode needs 1 byte
+
+# Step 7.3 } : Implement the "branch if not zero" operator
+
+# Step 7.4 { : Implement the conditionals
+
+# a. Extend genrom to handle if{ ... }else{ ... }if
+
+# b. Test if{ ... }if
 rom"	: 0 if{ assert }if
 
-# d. Test if{ ... }else{ ... }if
+# c. Test if{ ... }else{ ... }if
 rom"	: 1 if{ }else{ assert }if
+
+# Step 7.4 } : Implement the conditionals
 
 # Step 7 } : Implement and test conditionals
 
