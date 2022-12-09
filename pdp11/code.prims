@@ -27,6 +27,7 @@ dec	: dec tos ;
 inv	: com tos ;
 -	: neg
 +	: add (sp)+, tos ;
+@	: mov (tos), tos ;
 |	: bis (sp)+, tos ;
 ^	: nip ; xor nos, tos ;
 &	: nip ; com nos ; bic nos, tos ;
