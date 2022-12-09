@@ -1,6 +1,7 @@
 define ip	r0
 define tos	r1
 define sp	r2
+define nos	r3
 
 define xcsr 0177514
 define xbuf 0177516
@@ -15,6 +16,8 @@ key	: 1: ; tstb rcsr ; beq 1b ; movb rbuf, tos ;
 emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ;
 dup	: mov tos, -(sp) ;
 drop	: mov (sp)+, tos ;
+nip	: mov (sp)+, nos ;
+dip	: mov nos, -(sp) ;
 lit	: dup ; mov (ip)+, tos ;
 neg	: neg tos ;
 inc	: inc tos ;

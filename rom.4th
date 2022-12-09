@@ -128,7 +128,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>7
+#{if step>=8
 
 0		[ 0
 1		[ 0 1
