@@ -28,9 +28,14 @@ inv	: com tos ;
 -	: neg
 +	: add (sp)+, tos ;
 @	: mov (tos), tos ;
+!	: mov (sp)+, (tos) ; drop ;
 |	: bis (sp)+, tos ;
 ^	: nip ; xor nos, tos ;
 &	: nip ; com nos ; bic nos, tos ;
 j	: 1: ; add (ip)+, ip ;
 jz	: neg ; drop ; bcc 1b ; add $2, ip ;
 jnz	: neg ; drop ; bcs 1b ; add $2, ip ;
+
+var here .word mem
+
+mem	:
