@@ -166,7 +166,7 @@ if{		[	// not taken
 #{if step>=10.1
 
 1		[ 0b01
-2		[ 0b10
+2		[ 0b01 0b10
 &		[ 0b00
 if{		[	// not taken
 	#assert
