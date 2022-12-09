@@ -15,6 +15,7 @@ bye	: halt
 key	: 1: ; tstb rcsr ; beq 1b ; movb rbuf, tos ;
 emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ;
 dup	: mov tos, -(sp) ;
+2drop	: mov (sp)+, tos
 drop	: mov (sp)+, tos ;
 nip	: mov (sp)+, nos ;
 dip	: mov nos, -(sp) ;

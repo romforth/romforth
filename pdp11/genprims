@@ -26,7 +26,7 @@ my $label="lbl000";
 while (<>) {
 	if (s/^\s*(\S+)\s+:\s+//) {
 		$f=$1;
-		if ($f=~/^\w+$/) {
+		if ($f=~/^[a-z]\w+$/) {
 			mapnames($f, $f);
 		} else {
 			mapnames($f, $label++);
