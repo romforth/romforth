@@ -211,7 +211,7 @@ if{		[	// not taken
 
 #}if
 
-#{if step>11
+#{if step>=12
 
 1		[ 1
 2		[ 1 2
