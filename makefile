@@ -3,7 +3,7 @@ all : x86/all
 	(cd pdp11 ; make)
 
 allsteps :
-	for i in $$(seq 0 37) ; do (echo "step=$$i" ; cat fpp.config.x86 ) > fpp.config ; echo ; echo Step $$i ; $(MAKE) || break ; done
+	for i in $$(seq 0 4) 4.1 4.2 4.3 $$(seq 5 37); do (echo "step=$$i" ; cat fpp.config.x86 ) > fpp.config ; echo ; echo Step $$i ; $(MAKE) || break ; done
 
 include x86/makefile
 

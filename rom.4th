@@ -28,7 +28,7 @@ emit	[ tos='f' > 'f'
 
 #}if
 
-#{if step>1
+#{if step>=2
 
 	[ < 'f'
 key	[ 'f'
@@ -38,14 +38,14 @@ emit	[ > 'f'
 
 #}if
 
-#{if step>2
+#{if step>=3
 
 'o'	[ 'o'
 emit	[ > 'o'
 
 #}if
 
-#{if step>3
+#{if step>=4
 
 -114	[ -114
 neg	[ 114	// ASCII r == 114
@@ -53,7 +53,42 @@ emit	[ > 'r'
 
 #}if
 
-#{if step>4
+#{if step>=4.1
+
+j	[	// raw opcode test of the 'j' operator
+#JUMP	[ 	// the byte offset to skip over the emit below
+'j' emit
+
+'t'	[ 't'
+emit	[ > 't'
+
+#}if
+
+#{if step>=4.2
+
+0	[ 0
+jz	[	// raw opcode test of the 'jz' operator
+#JUMP	[	// the byte offset to skip over the emit below
+'z' emit
+
+'h'	[ 'h'
+emit	[ > 'h'
+
+#}if
+
+#{if step>=4.3
+
+1	[ 1
+jnz	[	// raw opcode test of the 'jnz' operator
+#JUMP	[	// the byte offset to skip over the emit below
+'n' emit
+
+32	[ ' '
+emit	[ > ' '
+
+#}if
+
+#{if step>=5
 
 0		[ 0
 if{		[	// not taken

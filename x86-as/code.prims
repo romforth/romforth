@@ -81,7 +81,7 @@ rot rot			# [ a b c
 }code
 
 code{
-jmp branch		# [	| w	| ip	] (ip:v)
+j branch		# [	| w	| ip	] (ip:v)
 	lodsb           # [	| v	| ip+1	] // al=*si++
 	cbw		# [	| V	| ip+1	] // sign extend al into ah
 	add w, ip	# [	| V	| ip+1+V] // si += ax

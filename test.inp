@@ -2,16 +2,16 @@
 #{if step>=1
 f
 #}if
-#{if step>24
+#{if step>=25
 t
 #}if
-#{if step>25
+#{if step>=26
 x
 #}if
-#{if step>26
+#{if step>=27
 h
 #}if
-#{if step>30
+#{if step>=31
  rom !
 #}if
 #}ifdef

@@ -40,7 +40,7 @@ Call/return		: enter exit call exec
 Loop index		: i
 Literals		: lit
 Bit operators		: & | ^ << >> inv
-Control flow		: jmp(branch) jz(branch0) jnz
+Control flow		: j(branch) jz(branch0) jnz(branchnz)
 Stack switch operators	: sp@! rp@!
 Halt			: bye
 Conditionals		: if{ ... }else{ ... }if

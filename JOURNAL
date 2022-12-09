@@ -10,6 +10,7 @@ INDEX
 	* 05 Dec '22
 	* 06 Dec '22
 	* 07 Dec '22
+	* 08 Dec '22
 
 11 Nov '22
 ----------
@@ -329,3 +330,44 @@ So this required a little bit of addition to genrom's capabilities.
 In the x86 port, I was using 8 bit offsets so all of the addresses were stored
 as offsets from the base of the text area. Since I'm using the full 16 bits
 for the PDP11 port, I can store the addresses as is.
+
+08 Dec '22
+----------
+While working my way through "step 5" to implement conditionals on the PDP11
+I decided that the scope of this step is too large and needs to be broken up
+into smaller steps which are finer grained and more easily tested.
+
+I also found that using "jmp" as a label seems to cause a hiccup for the
+PDP11 assembler so it needs to be renamed to something other than "jmp".
+I'll pick "j" as the replacement name, for now.
+
+So, my solution to address these issues is to separate out the support for
+implementing the primitives "j/jz/jnz" into 3 sub-steps which I'm calling
+steps 4.1, 4.2 and 4.3 and then follow that up with the implementation for
+"if{ ... }else{ ... }if" in genrom (which remains the same as before) as
+part of the original "step 5".
+
+I chose to use the floating point notation for the newer steps since it
+allows me to not have to redo the numbering for all of the the other later
+steps, thus keeping those step numbers the same, just in case they are
+referred elsewhere.
+
+Since it is quite useful to be able to test each of the basic "j/jz/jnz"
+primitives independently of the language support (which is only added later
+in "step 5"), some standalone/newer tests for these steps have been added
+to rom.4th as well. This change then snowballed into requiring changes to
+test.inp and test.expected as well. So while I was there I decided to clean
+up the conditions used for the earlier tests from "step>N-1" to "step>=N"
+which makes it easier to match up each test with the corresponding "step"
+during coding and testing.
+
+Since more granular steps are being added, I decided it is safer to test
+it all out on the x86 ports first before trying it out on the PDP11 port.
+
+One addition that I've made to the genrom feature set is the ability to
+use "immediate offsets" which are different from the "immediate literals".
+The "literals" are the usual Forth literals prefixed with the lit operator
+and can be denoted as bare numbers/variables or prefixed with the $ notation.
+
+The "offsets" are new and are used for encoding JUMP offsets which don't
+need to be prefixed with 'lit' - they are denoted using a '#' prefix.

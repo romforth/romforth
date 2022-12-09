@@ -69,6 +69,14 @@ sub replace {
 	return $m;
 }
 
+sub replaceimm {
+	my ($s)=@_;
+	my $k=substr($s,1); # skip the leading '#'
+	my $v=$hash->{$k};
+	return "#".$v if (defined $v);
+	die "unknown variable $k";
+}
+
 sub replacevar {
 	my ($s)=@_;
 	my $k=substr($s,1); # skip the leading '$'
@@ -118,6 +126,7 @@ sub stopping {
 
 while (<>) {
 	s/(\$[A-Z]+)/replacevar($1)/eg; # replace $FOO variables with value
+	s/(\#[A-Z]+)/replaceimm($1)/eg; # replace #FOO variables with #value
 	if ($state==0) {
 		next if starting();
 		print;

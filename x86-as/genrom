@@ -59,7 +59,7 @@ for my $a (@args) {
 
 my $state=0;
 
-my $mapjmp=$map->{'jmp'};
+my $mapjmp=$map->{'j'};
 my $mapjz=$map->{'jz'};
 my $mapjnz=$map->{'jnz'};
 
@@ -211,6 +211,10 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f =~/^(-?0x[\dA-Fa-f]+)$/) {
 				lit(oct($1)); # hex conversion
+				next;
+			} elsif ($f =~/^\#(-?\d+)$/) {
+				my $o=int($1); # "immediate" assembly equivalent
+				print ".byte $o\n";
 				next;
 			}
 			die "unknown word: $f"

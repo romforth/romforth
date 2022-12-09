@@ -59,7 +59,7 @@ for my $a (@args) {
 
 my $state=0;
 
-my $mapjmp=$map->{'jmp'};
+my $mapjmp=$map->{'j'};
 my $mapjz=$map->{'jz'};
 my $mapjnz=$map->{'jnz'};
 
@@ -212,6 +212,10 @@ while (<>) {				# map forth words in the standard input
 				my $o=oct($1); # hex conversion
 				print qq(\tdb lit\n);
 				print qq(\tdw $o\n);
+				next;
+			} elsif ($f =~/^\#(-?\d+)$/) {
+				my $o=int($1); # "immediate" assembly equivalent
+				print qq(\tdb $o\n);
 				next;
 			}
 			die "unknown word: $f"
