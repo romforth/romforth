@@ -2,6 +2,7 @@ define ip	r0
 define tos	r1
 define sp	r2
 define nos	r3
+define rp	r4
 
 define xcsr 0177514
 define xbuf 0177516
@@ -23,6 +24,7 @@ lit	: dup ; mov (ip)+, tos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
 sp@!	: mov sp, nos ; mov tos, sp ; t_n ;
+rp@!	: mov rp, nos ; mov tos, rp ; t_n ;
 neg	: neg tos ;
 inc	: inc tos ;
 dec	: dec tos ;
