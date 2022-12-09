@@ -17,6 +17,8 @@ dup	: mov tos, -(sp) ;
 drop	: mov (sp)+, tos ;
 lit	: dup ; mov (ip)+, tos ;
 neg	: neg tos ;
+inc	: inc tos ;
+dec	: dec tos ;
 j	: 1: ; add (ip)+, ip ;
 jz	: neg ; drop ; bcc 1b ; add $2, ip ;
 jnz	: neg ; drop ; bcs 1b ; add $2, ip ;

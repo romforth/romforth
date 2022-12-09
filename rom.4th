@@ -102,7 +102,7 @@ if{		[	// taken
 
 #}if
 
-#{if step>5
+#{if step>=6
 
 -1		[ -1
 inc		[ 0
