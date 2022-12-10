@@ -606,6 +606,8 @@ rom"	: 1 2 lit swap lit exec - dec if{ assert }if
 # b. Implement enter/exit
 # See "Meta note about notation" above for auto increment/decrement notation
 # Assume the return stack grows upward in memory (see Step 21 for details)
+# Decide on direct/indirect/subroutine threading (or try all three)
+
 : enter
 	MEM[r++]=i
 	i=MEM[i]

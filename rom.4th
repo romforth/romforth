@@ -329,16 +329,26 @@ if{		[	// not taken
 
 [ // set up the return stack
 
+#{if RGROWLOW==0
 here		[ here (here:mem)
 @		[ mem (rp:r)
 rp@!		[ r (rp:mem)
 drop		[
+#}if
+
 $RRRR		[ $RRRR
 here		[ $RRRR here
 @		[ $RRRR mem
 +		[ $RRRR+mem
 here		[ $RRRR+mem here
 !		[ (here:mem+$RRRR)
+
+#{if RGROWLOW==1
+here		[ here (here:mem)
+@		[ mem (rp:r)
+rp@!		[ r (rp:mem)
+drop		[
+#}if
 
 #}if
 
