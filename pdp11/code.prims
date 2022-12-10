@@ -20,8 +20,8 @@ dup	: mov tos, -(sp) ;
 drop	: mov (sp)+, tos ;
 nip	: mov (sp)+, nos ;
 dip	: mov nos, -(sp) ;
->r	: mov tos, (rp)+ ; drop ;
-r>	: dup ; mov -(rp), tos ;
+>r	: mov tos, -(rp) ; drop ;
+r>	: dup ; mov (rp)+, tos ;
 lit	: dup ; mov (ip)+, tos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
