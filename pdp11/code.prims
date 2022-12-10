@@ -13,11 +13,11 @@ define rbuf 0177562
 cold	: mov $rom, ip ; mov $cold, sp
 next	: jmp @(ip)+
 bye	: halt
-key	: 1: ; tstb rcsr ; beq 1b ; movb rbuf, tos ;
-emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ;
 dup	: mov tos, -(sp) ;
+key	: dup ; 1: ; tstb rcsr ; beq 1b ; movb rbuf, tos ;
 2drop	: mov (sp)+, tos
 drop	: mov (sp)+, tos ;
+emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ; drop ;
 nip	: mov (sp)+, nos ;
 dip	: mov nos, -(sp) ;
 >r	: mov tos, -(rp) ; drop ;
