@@ -18,6 +18,7 @@ key	: dup ; 1: ; tstb rcsr ; beq 1b ; movb rbuf, tos ;
 2drop	: mov (sp)+, tos
 drop	: mov (sp)+, tos ;
 emit	: movb tos, xbuf ; 1: ; tstb xcsr ; beq 1b ; drop ;
+exec	: mov tos, nos ; drop ; jmp (nos)
 nip	: mov (sp)+, nos ;
 dip	: mov nos, -(sp) ;
 >r	: mov tos, -(rp) ; drop ;
