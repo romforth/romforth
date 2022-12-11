@@ -2,6 +2,7 @@ define ip	r0
 define tos	r1
 define sp	r2
 define nos	r3
+define nr	r4
 define rp	r6
 
 define xcsr 0177514
@@ -10,7 +11,7 @@ define xbuf 0177516
 define rcsr 0177560
 define rbuf 0177562
 
-cold	: mov $rom, ip ; mov $cold, sp
+cold	: mov $rom, ip ; mov $cold, sp ; mov $next, nr
 next	: jmp @(ip)+
 bye	: halt
 dup	: mov tos, -(sp) ;
@@ -47,7 +48,7 @@ j	: 1: ; add (ip)+, ip ;
 jz	: neg ; drop ; bcc 1b ; add $2, ip ;
 jnz	: neg ; drop ; bcs 1b ; add $2, ip ;
 exit	: mov (rp)+, ip ;
-bl	: jsr ip, next ; .word lit ; .word 32 ; .word exit
+bl	: jsr ip, (nr) ; .word lit ; .word 32 ; .word exit
 
 var here	.word	mem
 var state	.word	1
