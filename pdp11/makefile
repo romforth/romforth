@@ -10,15 +10,17 @@ forth.lda : forth
 	bin2load -a -f forth -o forth.lda
 forth : forth.o forth.lds
 	pdp11-aout-ld -T forth.lds forth.o -o forth
-forth.o : forth.S rom.s
+forth.o : forth.S rom.s defs.s
 	pdp11-aout-as -al=forth.lst -o forth.o forth.S
-rom.s : ../rom.4th ../fpp fpp.config prims.s genrom
-	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map > rom.s
+rom.s : ../rom.4th ../fpp fpp.config prims.s defs.s genrom
+	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
 	test -s rom.s
 fpp.config : stepfile fpp.config.pdp11
 	cat stepfile fpp.config.pdp11 > fpp.config
 prims.s : prims.S
 prims.S : genprims code.prims
 	cat code.prims | ./genprims dict.map > prims.S
+defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom defs.map dict.map > defs.s
 clean :
-	rm -f forth.o forth forth.lda test.out forth.lst rom.s rom.map fpp.config prims.S prims.s dict.map test.inp test.exp
+	rm -f forth.o forth forth.lda test.out forth.lst rom.s rom.map fpp.config prims.S prims.s dict.map test.inp test.exp defs.s defs.map

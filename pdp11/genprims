@@ -103,4 +103,6 @@ while (<>) {
 
 }
 
+print $mh "label fake $label\n";
+
 close $mh;
