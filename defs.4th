@@ -6,12 +6,15 @@
 
 [ // "test only" definitions must be wrapped inside the TESTROM flag
 
+#{if step>=22
+
+def{ bl 32 }def
+
+#}if
+
 #{ifdef TESTROM
 
-def{ testdef	[
-	'o'	[ 'o'
-	emit	[ > 'o'
-}def
+#{if step>=23
 
 def{ 2ret	[	| r ]
 	r>	[ r	|   ]
@@ -24,11 +27,23 @@ def{ testnest
 	1234	[ 1234
 }def
 
+#}if
+
 #}ifdef
 
-def{ bl 32 }def
+#{if step>=29
+
 def{ third 2 pick }def
+
+#}if
+
+#{if step>=30
+
 def{ fourth 3 pick }def
+
+#}if
+
+#{if step>=32
 
 def{ i		[		| ret i n
 	r>	[ ret		|     i n ]
@@ -39,30 +54,45 @@ def{ i		[		| ret i n
 	>r	[ i		| ret i n ]
 }def
 
-def{ 2dup	[ a b
-	over	[ a b a
-	over	[ a b a b
-}def
+#}if
+
+#{if step>=34
 
 def{ >=		[ a b
 	~	[ a~b	// -1:a>b 0:a=b 1:a<b
 	dec	[ a>=b	// -2:a>b -1:a=b 0:a<b
 }def
 
+#}if
+
+#{if step>=35
+
 def{ <=		[ a b
 	~	[ a~b	// -1:a>b 0:a=b 1:a<b
 	inc	[ a<=b	// 0:a>b 1:a=b 2:a<b
 }def
+
+#}if
+
+#{if step>=37
+
+def{ <		[ a b
+	>=	[ a>=b	// -2:a>b -1:a=b 0:a<b
+	0=	[ a<b	// 1:a<b, 0 otherwise
+}def
+
+#}if
+
+#{if step>=38
 
 def{ >		[ a b
 	<=	[ a<=b	// 0:a>b 1:a=b 2:a<b
 	0=	[ a>b	// 1:a>b, 0 otherwise
 }def
 
-def{ <		[ a b
-	>=	[ a>=b	// -2:a>b -1:a=b 0:a<b
-	0=	[ a<b	// 1:a<b, 0 otherwise
-}def
+#}if
+
+#{if step>=39
 
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n
@@ -74,3 +104,10 @@ def{ alloc		[ n
 	here		[ h n+h here
 	!		[ h (here:h+n)
 }def
+
+def{ 2dup	[ a b
+	over	[ a b a
+	over	[ a b a b
+}def
+
+#}if
