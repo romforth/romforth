@@ -48,6 +48,7 @@ j	: 1: ; add (ip)+, ip ;
 jz	: neg ; drop ; bcc 1b ; add $2, ip ;
 jnz	: neg ; drop ; bcs 1b ; add $2, ip ;
 exit	: mov (rp)+, ip ;
+call	: add $2, ip ; mov ip, -(rp) ; mov tos, ip ; drop ;
 
 var here	.word	mem
 var state	.word	1
