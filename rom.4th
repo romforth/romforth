@@ -406,9 +406,16 @@ if{		[	// not taken
 
 #{if step>=23
 
-testnest	[ ret
-call		[ 1234
-1234		[ 1234 1234
+4321		[ 4321
+testnest	[ 4321 ret
+call		[ 4321 1234
+1234		[ 4321 1234 1234
+-		[ 4321 0
+if{		[ 4321 	// not taken
+	#assert
+}if		[ 4321
+
+4321		[ 4321 4321
 -		[ 0
 if{		[	// not taken
 	#assert

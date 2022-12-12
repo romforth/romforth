@@ -383,3 +383,23 @@ about tying it to the PDP11 JSR instruction but that needs me to use the R6
 register instead of the R4 register which is used currently.
 
 I'm tired now though and I think all of that can wait for another day.
+
+12 Dec '22
+----------
+I have a decent implementation of exec/enter/exit/call now, I think.
+
+Trying to think of the issues that slowed me down, one obvious thing in
+hindsight is the GNU assembler's violation of the law of least surprise.
+
+My expectation was that "jmp r" where r is a register containing the
+address to jump to should "just work". I found the hard way that the PDP11
+GNU assembler expects this to be "jmp (r)" but since there was no error
+either way, I had to spend some time looking at various docs to figure out
+what was going on. Once past exec, enter/exit was the next gauntlet. I had
+an idea of using JSR to do the call/return linkage and that panned out well
+because all of the complex link chaining is automatically handled by the CPU.
+
+Here also, the elegance of the PDP11 in the flexibility of JSR linkage shines
+through. Looking at the history of PDP11 and Forth on wikipedia, it looks
+like both are of about the same vintage (late 60's) and they seem to be a
+perfect fit for each other.
