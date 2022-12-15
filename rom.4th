@@ -450,14 +450,14 @@ if{		[	// not taken
 #{if step>=26
 
 loop{		[
-	$SSSS	[ $SSSS
+	$TTYCSR	[ $TTYCSR
 	p@	[ ready
 	1	[ ready 1
-	$T	[ ready 1 $T
-	<<	[ ready 1<<$T
-	&	[ ready&(1<<$T)
-}until{		[ ready&(1<<$T)==0
-}loop		[ ready&(1<<$T)!=0
+	$BIT	[ ready 1 $BIT
+	<<	[ ready 1<<$BIT
+	&	[ ready&(1<<$BIT)
+}until{		[ ready&(1<<$BIT)==0
+}loop		[ ready&(1<<$BIT)!=0
 key		[ 'x'
 'x'		[ 'x' 'x'
 -		[ 0
