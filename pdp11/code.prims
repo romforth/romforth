@@ -54,6 +54,7 @@ call	: mov ip, -(rp) ; mov tos, ip ; drop ;
 >>	: neg
 <<	: nip ; ash tos, nos ; t_n ;
 over	: dup ; mov 2(sp), tos ;
+0=	: cmp tos, $0 ; beq 1f ; xor tos, tos ; next ; 1: ; inv ;
 
 var here	.word	mem
 var state	.word	1
