@@ -52,5 +52,3 @@ call	: add $2, ip ; mov ip, -(rp) ; mov tos, ip ; drop ;
 
 var here	.word	mem
 var state	.word	1
-
-mem	:

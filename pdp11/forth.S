@@ -5,3 +5,5 @@
 rom:
 
 .include "rom.s"
+
+mem:

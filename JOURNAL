@@ -12,6 +12,8 @@ INDEX
 	* 07 Dec '22
 	* 08 Dec '22
 	* 09 Dec '22
+	* 12 Dec '22
+	* 15 Dec '22
 
 11 Nov '22
 ----------
@@ -403,3 +405,32 @@ Here also, the elegance of the PDP11 in the flexibility of JSR linkage shines
 through. Looking at the history of PDP11 and Forth on wikipedia, it looks
 like both are of about the same vintage (late 60's) and they seem to be a
 perfect fit for each other.
+
+15 Dec '22
+----------
+I found and fixed a stupid bug that managed to crawl into the code. It was
+subtle, asymptomatic, and serious enough to cause memory corruptions and
+it turned out to be an unnecessarily long and drawn out debug exercise.
+
+The symptom was that although the simulation ended successfully and the test
+passed, I noticed that the address at which the simulation ended was not at
+the expected address. On the PDP11, halt's opcode is 0 so if the code goes
+off into the weeds and accesses an uninitialized address with content 0, it
+will halt right there instead of where it was expected to halt. Since "call"
+is a tricky beast to implement, I was being fairly cautious and luckily was
+able to catch the problem (although it was asymptomatic since the test itself
+succeeds)
+
+After a boatload of debugging using simh and struggling with the stupid
+oct (used by simh) <-> hex (used by gas) conversions, I finally figured
+out it was due to memory corruption of the instructions in the code area.
+
+The cause of the memory corruption was because the return stack which grows
+to low memory was initialized to the end of the code area for primitives
+instead of the very tail end of the "rom" and this happened because the
+"mem" label was not really at the tail end of code (including rom) but in
+the middle of it (since it was defined in code.prims).
+
+So although the debugging/understanding of what was going on took a while,
+the fix was trivial: just place "mem" at the very end so it just needed
+to be moved from code.prims to forth.S
