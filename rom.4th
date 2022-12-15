@@ -469,12 +469,12 @@ if{		[	// not taken
 
 #{if step>=27
 
-1		[ 1 < 'h'
+1		[ 1 < 'o'
 loop{		[ n:1
 	dup	[ n n
 }while{		[ n < c	// n!=0
-	key	[ n 'h'
-	emit	[ n > 'h'
+	key	[ n 'o'
+	emit	[ n > 'o'
 	dec	[ n:n-1
 }loop		[ n	// n==0
 drop		[

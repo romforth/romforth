@@ -688,9 +688,9 @@ rom"	: loop{ SSSS p@ 1 T << & }until{ }loop key 'x' - if{ assert }if
 
 # a. Modify genrom to support "while true" loops : loop{ ... }while{ ... }loop
 
-# b. Test the implementation of "echon" which echo's character while --n!=0
-#    the input byte could be 'h' (fifth byte of the "forth rom !" string)
-rom"	: 3 loop{ dup }while{ getc emit dec }loop drop	# sanity check byte 'h'
+# b. Test the implementation of "echon" which echo's character while (--n != 0)
+#    the input byte could be 'o' (eighth byte of the "forth rom !" string)
+rom"	: 3 loop{ dup }while{ getc emit dec }loop drop	# sanity check byte 'o'
 
 # Step 29 } : Implement and test "while true" loops
 

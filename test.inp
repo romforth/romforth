@@ -9,7 +9,7 @@ r
 x
 #}if
 #{if step>=27
-h
+o
 #}if
 #{if step>=31
  rom !
