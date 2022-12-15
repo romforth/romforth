@@ -7,7 +7,7 @@
 [ // init code goes outside the TESTROM flag
 [ // test code goes inside the TESTROM flag
 [ // each step of the porting process can be individually controlled using
-[ // the unadorned "step" variable. Dollar variables (eg. $AAAA) are used to
+[ // the unadorned "step" variable. Dollar variables (eg. $ADDR) are used to
 [ // pass in/specify the arch specific constants. Unadorned variables can
 [ // only be used as part of "#{if" conditions.
 
@@ -226,9 +226,9 @@ if{		[	// not taken
 
 #{if step>=13
 
-$AAAA		[ $AAAA
-@		[ $CCCC
-$CCCC		[ $CCCC $CCCC
+$ADDR		[ $ADDR
+@		[ $VALUE
+$VALUE		[ $VALUE $VALUE
 -		[ 0
 if{		[	// not taken
 	#assert
