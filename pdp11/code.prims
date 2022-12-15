@@ -53,6 +53,7 @@ exit	: mov (rp)+, ip ;
 call	: mov ip, -(rp) ; mov tos, ip ; drop ;
 >>	: neg
 <<	: nip ; ash tos, nos ; t_n ;
+over	: dup ; mov 2(sp), tos ;
 
 var here	.word	mem
 var state	.word	1
