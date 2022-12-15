@@ -51,6 +51,8 @@ jz	: neg ; drop ; bcc 1b ; add $2, ip ;
 jnz	: neg ; drop ; bcs 1b ; add $2, ip ;
 exit	: mov (rp)+, ip ;
 call	: mov ip, -(rp) ; mov tos, ip ; drop ;
+>>	: neg
+<<	: nip ; ash tos, nos ; t_n ;
 
 var here	.word	mem
 var state	.word	1

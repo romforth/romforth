@@ -435,9 +435,32 @@ So although the debugging/understanding of what was going on took a while,
 the fix was trivial: just place "mem" at the very end so it just needed
 to be moved from code.prims to forth.S
 
+---
+
 After that bug was fixed, I ran into yet another bug with the same symptoms
 - this one turned out to be bug in "call" itself since I was unnecessarily
 incrementing the instruction pointer (since I used the x86 code as a template)
 
 With both bugs fixed, the tests pass and emulator reports the halt happening
 at the expected/right address, currently at PC: 000420
+
+---
+
+While doing an initial/quick browse of the PDP11 instruction set, I'd seen the
+ASL/ASR instructions for shifting bits. Since these could only do 1-bit shifts,
+I decided to defer the implementation of the shift operators << and >> until
+they were really needed (and loop operations could be fleshed out). That time
+has now arrived and my choices are to either implement this in Forth using
+loops or do a native implementation (using loops in the assembler)
+
+Since using a Forth loop would have less performance than native loops, I
+decided to use assembly code and the initial implementation looked like this:
+	<<     : nip ; 1: ; asl nos ; sob tos, 1b ; t_n ;
+	>>     : nip ; 1: ; asr nos ; sob tos, 1b ; t_n ;
+But reading through the PDP11 docs again, I noticed yet another opcode: ASH
+which can be do multiple bit shifts. So the final implementation uses that.
+
+Which means I could have saved all of the effort that went into the commit
+titled "Move the shift operators to a later step". In any case, I assume
+there will be microcontrollers that can only do 1-bit shifts so I hope all
+this work was not a complete waste of effort and might come in handy later.
