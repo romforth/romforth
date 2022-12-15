@@ -41,6 +41,8 @@ stick	: add tos, tos ; add sp, tos
 !	: mov (sp)+, (tos) ; drop ;
 c@	: movb (tos), tos ;
 c!	: nip ; movb nos, (tos) ; drop ;
+p@	: 1: ; tstb rcsr ; beq 1b ; c@ ;
+p!	: c! ; 1: ; tstb xcsr ; beq 1b ;
 |	: bis (sp)+, tos ;
 ^	: nip ; xor nos, tos ;
 &	: nip ; com nos ; bic nos, tos ;
