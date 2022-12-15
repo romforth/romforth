@@ -12,6 +12,6 @@ x
 o
 #}if
 #{if step>=31
- rom !
+m !
 #}if
 #}ifdef

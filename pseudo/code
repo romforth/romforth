@@ -690,7 +690,7 @@ rom"	: loop{ SSSS p@ 1 T << & }until{ }loop key 'x' - if{ assert }if
 
 # b. Test the implementation of "echon" which echo's character while (--n != 0)
 #    the input byte could be 'o' (eighth byte of the "forth rom !" string)
-rom"	: 3 loop{ dup }while{ getc emit dec }loop drop	# sanity check byte 'o'
+rom"	: 3 loop{ dup }while{ key emit dec }loop drop	# sanity check byte 'o'
 
 # Step 29 } : Implement and test "while true" loops
 
@@ -741,8 +741,8 @@ rom"	:	4 6 2 4 fourth - if{ assert }if - - if{ assert }if
 # a. Modify genrom to support "for" loops : "for{ ... }for"
 
 # b. Test for loops
-#    The input bytes could be " rom !" (bytes 6-11 of the "forth rom !" string)
-rom"	: 1 7 for{ getc emit }for # sanity check bytes : " rom !'
+#    The input bytes could be "m !" (bytes 9-11 of the "forth rom !" string)
+rom"	: 1 4 for{ key emit }for	# sanity check bytes : "m !'
 
 # Step 33 } : Implement and test "for" loops
 

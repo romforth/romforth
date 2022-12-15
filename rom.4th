@@ -538,11 +538,11 @@ if{		[	// not taken
 #{if step>=31
 
 1		[ 1
-7		[ 1 7
-for{		[ < " rom !"
+4		[ 1 4
+for{		[ < "m !"
 	key
 	emit
-}for		[ > " rom !"
+}for		[ > "m !"
 
 #}if
 
