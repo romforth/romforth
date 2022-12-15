@@ -425,9 +425,9 @@ if{		[	// not taken
 
 #{if step>=24
 
-$SERIAL		[ $SERIAL < 't'
+$SERIALIN	[ $SERIALIN < 't'
 p@		[ 't'
-$SERIAL		[ 't' $SERIAL
+$SERIALOUT	[ 't' $SERIALOUT
 p!		[ > 't'
 
 #}if

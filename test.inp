@@ -3,7 +3,7 @@
 f
 #}if
 #{if step>=24
-t
+r
 #}if
 #{if step>=26
 x

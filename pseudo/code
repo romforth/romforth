@@ -83,7 +83,7 @@ rom'	: bye	# thread that into the init code sequnce
 #	- blink leds?
 #	- code up an emulator?
 #    port	: serial port
-cold'	: port=SERIAL ;	# add this to the earlier set of code in cold
+cold'	: port=SERIALIN ;	# add this to the earlier set of code in cold
 
 # b. Pick a register or RAM location for tos - top element of the data stack
 #	- worry about "cell" size mismatch between address and data bus
@@ -657,8 +657,8 @@ rom"	: testnest call 1234 - if{ assert }if
 # b. Test p@/p!
 #    Read in a byte from the specific port and echo it back
 #	- for now, this is just a reuse of the serial port
-#	- input byte could be 't' (fourth byte in the "forth rom !" string)
-rom"	: SERIAL p@ SERIAL p!	# another sanity check output byte : 't'
+#	- input byte could be 'r' (seventh byte in the "forth rom !" string)
+rom"	: SERIALIN p@ SERIALOUT p!	# another sanity check output byte : 'r'
 
 # Step 26 } : Implement and test p@/p!
 
