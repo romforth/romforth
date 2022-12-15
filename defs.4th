@@ -56,6 +56,29 @@ def{ i		[		| ret i n
 
 #}if
 
+#{if step>=33
+
+#{if NEEDSIGNUM
+
+def{ ~			[ a b
+	-		[ s=a-b
+	dup		[ s s
+	if{ 		[ s	// a!=b
+		0xF000	[ s 0x8000
+		&	[ s&8000
+		if{	[	// a<b
+			1
+		}else{	[	// a>b
+			-1
+		}if	[ -1/1
+		exit
+	}if		[ 0	// a=b
+}def
+
+#}if
+
+#}if
+
 #{if step>=34
 
 def{ >=		[ a b
