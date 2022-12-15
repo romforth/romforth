@@ -336,12 +336,12 @@ rp@!		[ r (rp:mem)
 drop		[
 #}if
 
-$RRRR		[ $RRRR
-here		[ $RRRR here
-@		[ $RRRR mem
-+		[ $RRRR+mem
-here		[ $RRRR+mem here
-!		[ (here:mem+$RRRR)
+$RSTKSZ		[ $RSTKSZ
+here		[ $RSTKSZ here
+@		[ $RSTKSZ mem
++		[ $RSTKSZ+mem
+here		[ $RSTKSZ+mem here
+!		[ (here:mem+$RSTKSZ)
 
 #{if RGROWLOW==1
 here		[ here (here:mem)
