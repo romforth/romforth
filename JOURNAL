@@ -14,6 +14,7 @@ INDEX
 	* 09 Dec '22
 	* 12 Dec '22
 	* 15 Dec '22
+	* 16 Dec '22
 
 11 Nov '22
 ----------
@@ -464,3 +465,42 @@ Which means I could have saved all of the effort that went into the commit
 titled "Move the shift operators to a later step". In any case, I assume
 there will be microcontrollers that can only do 1-bit shifts so I hope all
 this work was not a complete waste of effort and might come in handy later.
+
+16 Dec '22
+----------
+As of the last commit from yesterday, the PDP11 Forth runtime can be considered
+complete so I've included the PDP11 under the "allsteps" regression step in
+the toplevel makefile.
+
+---
+
+Comparing sizes with the x86 port, without the tests compiled in, the PDP11
+binary weighs in at 422 bytes (including initialization) where x86 needs 338
+bytes. The additional overhead is partly because of using 2 byte offsets and
+also the fact that x86 byte opcodes can be a tiny bit more compact than the
+PDP11 opcodes which need atleast 2 bytes.
+
+The PDP11 binary with all of the tests and initialization code clocks in at
+1828 bytes compared to 1236 bytes for the x86 binary. Most of this difference
+boils down to the fact that I chose to uniformly use 2 bytes for all Forth
+words instead of the hybrid scheme on x86 which uses 1 byte for primitives and
+3 byte calls for defined words.
+
+---
+
+The part I like best about this port is that code.prims has been whittled
+down to just 60 lines of code. So if we use Fred Brooks' productivity metric
+of ~10 lines of debugged code per day, for a "regular" programmer, I'll
+guesstimate that a new Forth port can be completed in about a week (or two),
+assuming a decent architecture like the PDP11.
+
+---
+
+So, where to next? I think I have a couple of choices:
+1. Shrink wrap the x86 and x86-as code.prims just as I did for the PDP11
+	- $TECHDEBT, nah!
+2. Start off on a new port to one of the architectures listed in PORTING
+	- Just completed one, nah!
+3. Use the runtime I already have to create a Forth REPL for the PDP11 (or x86)
+
+I think I like option 3 best so that's what I'll be spending some time on next.

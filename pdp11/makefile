@@ -23,4 +23,4 @@ prims.S : genprims code.prims
 defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom defs.map dict.map > defs.s
 clean :
-	rm -f forth.o forth forth.lda test.out forth.lst rom.s rom.map fpp.config prims.S prims.s dict.map test.inp test.exp defs.s defs.map
+	rm -f forth.o forth forth.lda test.out forth.lst rom.s rom.map fpp.config prims.S prims.s dict.map test.inp test.exp defs.s defs.map sim
