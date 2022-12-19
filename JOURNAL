@@ -15,6 +15,7 @@ INDEX
 	* 12 Dec '22
 	* 15 Dec '22
 	* 16 Dec '22
+	* 18 Dec '22
 
 11 Nov '22
 ----------
@@ -504,3 +505,53 @@ So, where to next? I think I have a couple of choices:
 3. Use the runtime I already have to create a Forth REPL for the PDP11 (or x86)
 
 I think I like option 3 best so that's what I'll be spending some time on next.
+
+18 Dec '22
+----------
+I've decided to go ahead with the REPL implementation to see how well it fares.
+
+The "real" Forth REPL needs to read in "tokens" (which are defined as any
+sequence of non-whitespace characters) and look them up in a "dictionary" and
+either run the code (if it is found in the dictionary) or attempt to turn it
+into a "literal" number (if it is composed of numeric characters).
+If it doesn't match either of those categories the REPL could report an error.
+
+As usual, I'll start off with small changes that I can test easily. So to begin
+with, the only thing that the REPL does is read a "token" from the input. This
+functionality is called "parse" in some of the Forth implementations that I
+looked at so I'll stick to that convention.
+
+Most implementations also use an input buffer to hold the bytes but since it
+can be done in a single pass, I'll use the unallocated area for that purpose so
+that the memory layout doesn't have to be fragmented into even more segments.
+So this breaks with the usual Forth convention of needing words such as TIB
+#TIB >IN etc but I prefer the simplicity of what I've done and hope that it
+doesn't turn out to be too simplistic.
+
+Looking ahead and planning for ports to other processors, it makes sense to
+continue with the "step"wise addition of functionality that I've been using so
+far. So the changes that I've made so far have been ifdef'ed under step 39.
+
+To sanity test the implementation, the length of the token that was read is
+verified and in addition, it checks the returned location where the string is
+stored and also verifies the start and end bytes of the token that was read.
+
+Testing these changes showed that it worked on x86 but failed in a weird way on
+the PDP11 simh emulator despite the fact that the changes tested were identical
+in both cases. Before lugging out the big guns for debugging the PDP11 issue, I
+had a gut feel that the return stack was overflowing and based on that hunch I
+bumped up the return stack size and luckily enough that fixed the problem.
+
+Rationalizing about this later, it is obvious that the x86 version was not
+affected since the return stack grows to higher addresses (which is currently
+unused) whereas on the PDP11 the return stack grows to lower addresses (ie
+toward the code area) and any stack overflow will result in overwriting and
+corrupting the code area resulting in the weird errors that were observed.
+
+Looking at the emulator output (for the x86) does show that the return stack
+size had reached its configured limit. So, for the "real" fix, I've doubled
+the configured stack size for the return stack on both the x86 and the PDP11.
+
+It was just dumb luck that the problem was diagnosed fairly easily and I'm
+glad this turned out to be an easy fix rather than yet another long drawn out
+nightmare debug/redesign exercise.

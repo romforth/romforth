@@ -711,6 +711,38 @@ if{		[	// not taken
 
 #}if
 
+#{if step==39
+
+here		[ here (here:h)
+@		[ h < "token"
+repl		[ h addr n (addr:"token")
+5		[ h addr n 5	// 5==length("token")
+-		[ h addr n-5
+if{		[ h addr	// not taken
+	#assert
+}if		[ h addr	// n==5
+tuck		[ addr h addr
+-		[ addr h-addr
+if{		[ addr 		// not taken
+	#assert
+}if		[ addr		// h==addr
+dup		[ addr addr
+4 +		[ addr addr+6 (addr:'t' addr+6:'n')
+c@		[ addr c
+'n'		[ addr c 'n'
+-		[ addr c-'n'
+if{		[ addr 		// not taken
+	#assert
+}if		[ addr		// c=='n'
+c@		[ c
+'t'		[ c 't'
+-		[ c-'t'
+if{		[		// not taken
+	#assert
+}if		[		// c=='t'
+
+#}if
+
 #}ifdef
 
 bye

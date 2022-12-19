@@ -14,4 +14,7 @@ o
 #{if step>=31
 m !
 #}if
+#{if step==39
+token 
+#}if
 #}ifdef

@@ -117,6 +117,103 @@ def{ >		[ a b
 
 #{if step>=39
 
+def{ 2dup	[ a b
+	over	[ a b a
+	over	[ a b a b
+}def
+
+def{ tuck	[ a b
+	nip	[ b	// nos:a
+	dup	[ b b
+	dip	[ b a b
+}def
+
+[ Given address a, offset o, delimiter d and character c, store c at a+o this
+[ usually writes to the un-alloc'ated area in memory beyond the dictionary. By
+[ design, allocation is not done, but we write to the unallocated space anyway
+def{ append		[ a o d c
+	fourth		[ a o d c a
+	fourth		[ a o d c a o
+	+		[ a o d c a+o
+	c!		[ a o d // (a+o:c)
+	swap		[ a d o
+	inc		[ a d o:o+1
+	swap		[ a o d
+}def
+
+[ Given character c, check if it is a "whitespace" in the range [9:13]
+[ return 1 if it is in the range [9:13], return 0 otherwise
+def{ ws?		[ c
+	dup		[ c c
+	dup		[ c c c
+	9		[ c c c 9
+	>=		[ c c c>=9
+	swap		[ c c>=9 c
+	13		[ c c>=9 c 13
+	<=		[ c c>=9 c<=13
+	&		[ c flag // flag!=0 if (c in 9..13), 0 otherwise
+}def
+
+[ Given a delimiter d and a character c, return a boolean flag f, which is
+[ 1, if c==d
+[ 1, if d==32 and c is a whitespace in the range [9:13]
+[ 0, otherwise
+def{ wscmpr			[ d c
+	2dup			[ d c d c
+	-			[ d c d-c
+	if{			[ d c // d != c
+		over		[ d c d
+		32		[ d c d 32
+		-		[ d c d-32
+		if{		[ d c // d != 32
+			0	[ d c 0
+		}else{		[ d c // d == 32
+			ws?	[ d c f // f is !0 if (c in 9..13), 0 otherwise
+		}if		[ d c f
+	}else{			[ d c // d == c
+		1		[ d c 1
+	}if			[ d c f
+}def				[ d c f
+
+[ Given a delimiter d, read and append characters from the input stream
+[ until delimiter d is seen (after skipping any initial delimiters).
+[ Denoting the delimiter with $d, the regex is just this : $d*([^$d]+)$d
+def{ parse		[ d
+	here @		[ d a
+	swap		[ a d
+	0		[ a d 0
+	swap		[ a 0 d
+	loop{		[ a 0 d
+		key	[ a 0 d c
+		wscmpr	[ a 0 d c flag
+	}while{		[ a 0 d c // c is ~same as d
+		drop	[ a 0 d
+	}loop		[ a 0 d c // c is not ~same as d
+	append		[ a 1 d (a:c)
+	loop{		[ a n d
+		key	[ a n d c
+		wscmpr	[ a n d c flag
+	}until{		[ a n d c // c is not ~same as d
+		append	[ a n:n+1 d (a+n:c)
+	}loop		[ a n d c // c is ~same as d
+	2drop		[ a n
+}def
+
+#}if
+
+#{if step==39
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within this one step (ie step==39)
+def{ repl
+	32	[ 32 < "token "
+	parse	[ addr n (addr:"token")
+}def
+
+#}if
+
+#{if step>=40
+
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n
 	here		[ n here (here:h)
@@ -126,11 +223,6 @@ def{ alloc		[ n
 	+		[ h n+h
 	here		[ h n+h here
 	!		[ h (here:h+n)
-}def
-
-def{ 2dup	[ a b
-	over	[ a b a
-	over	[ a b a b
 }def
 
 #}if
