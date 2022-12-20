@@ -743,6 +743,17 @@ if{		[		// not taken
 
 #}if
 
+#{if step==40
+		[ < "1000 "
+repl		[ 1000
+1000		[ 1000 1000
+-		[ 0
+if{		[		// not taken
+	#assert
+}if		[
+
+#}if
+
 #}ifdef
 
 bye

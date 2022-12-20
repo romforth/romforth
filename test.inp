@@ -17,4 +17,7 @@ m !
 #{if step==39
 token 
 #}if
+#{if step==40
+1000 
+#}if
 #}ifdef

@@ -214,6 +214,64 @@ def{ repl
 
 #{if step>=40
 
+[ Multiply by 10 : needed only because * is not yet defined
+def{ 10*			[ n
+	dup			[ n n
+	dup			[ n n n
+	3 <<			[ n n n*8
+	+			[ n n*9
+	+			[ n*10
+}def
+
+[ aggregate current digit(c) into the accumulator(acc) as decimal
+def{ num			[ acc c
+	'0'			[ acc c '0'
+	-			[ acc n:c-'0'
+	swap			[ n acc
+	10*			[ n acc*10
+	+			[ acc*10+n
+}def
+
+[ Turn an ascii "counted string" into an integer
+[ assumes that the string is composed of digits in the range [0:9]
+def{ atoi			[ addr n
+	0			[ addr n acc:0
+	swap			[ addr acc n
+	0			[ addr acc n 0
+	swap			[ addr acc 0 n
+	for{			[ addr acc		| i n ]
+		over		[ addr acc addr		| i n ]
+		i		[ addr acc addr i	| i n ]
+		+		[ addr acc addr+i	| i n ]
+		c@		[ addr acc c		| i n ]
+		num		[ addr acc:acc*10+c-'0'	| i n ]
+	}for			[ addr acc
+	swap			[ acc addr
+	drop			[ acc
+}def
+
+#}if
+
+#{if step==40
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within this one step (ie step==40)
+[ The only change from the previous repl at step==39 is an attempt to turn
+[ the token into a number
+def{ repl
+	32		[ 32 < "1000 "
+	parse		[ addr n (addr:"1000")
+	state		[ addr n state (state:s)
+	c@		[ addr n s
+	if{		[ addr n	// interpreting
+		atoi	[ 1000
+	}if		[ 1000		// unless it is not interpreting
+}def
+
+#}if
+
+#{if step>=41
+
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n
 	here		[ n here (here:h)

@@ -16,6 +16,7 @@ INDEX
 	* 15 Dec '22
 	* 16 Dec '22
 	* 18 Dec '22
+	* 19 Dec '22
 
 11 Nov '22
 ----------
@@ -555,3 +556,11 @@ the configured stack size for the return stack on both the x86 and the PDP11.
 It was just dumb luck that the problem was diagnosed fairly easily and I'm
 glad this turned out to be an easy fix rather than yet another long drawn out
 nightmare debug/redesign exercise.
+
+19 Dec '22
+----------
+Continuing with the exercise of incrementally adding functionality to the REPL,
+at this step (step==40), I've added support for turning a numeric string (read
+by "parse" from the input stream) into the equivalent integer when the "state"
+variable is non-zero (ie in "interpret"ing state). I've named the word that
+does this "atoi" after the C library function that does the same thing.
