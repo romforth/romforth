@@ -3,8 +3,8 @@ x86/all : x86/emulate x86/forth x86/test.exp test.inp fpp fpp.config
 	cmp x86/test.out x86/test.exp
 x86/test.exp : test.expected fpp.config fpp
 	cat test.expected | ./fpp -DTESTROM -c fpp.config | perl -pe chomp > x86/test.exp
-fpp.config : fpp.config.x86
-	$(MAKE) allsteps
+fpp.config : fpp.config.x86 pdp11/stepfile
+	cat pdp11/stepfile fpp.config.x86 > fpp.config
 x86/forth : x86/forth.s x86/prims.s x86/rom.s x86/defs.s
 	nasm -DTESTROM -l x86/forth.lst x86/forth.s
 x86/prims.s : x86/genprims x86/code.prims
