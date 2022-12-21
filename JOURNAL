@@ -17,6 +17,7 @@ INDEX
 	* 16 Dec '22
 	* 18 Dec '22
 	* 19 Dec '22
+	* 20 Dec '22
 
 11 Nov '22
 ----------
@@ -564,3 +565,65 @@ at this step (step==40), I've added support for turning a numeric string (read
 by "parse" from the input stream) into the equivalent integer when the "state"
 variable is non-zero (ie in "interpret"ing state). I've named the word that
 does this "atoi" after the C library function that does the same thing.
+
+20 Dec '22
+----------
+I'm starting to work on adding a dictionary and that brings up a philosophical
+question: How much Forth do you really need?
+
+Adding the dictionary manipulation routines (which in conventional Forth are
+typically named "create" and "find") requires that the existing "primitive"
+words and "defined" words will now need additional space to store their
+"metadata" with the dictionary name and header in addition to the "data" (with
+just the executable code). This additional requirement for ROM/RAM may exceed
+the hardware capabilities that a really "small" microcontroller may have.
+
+The most "minimal Forth" might be one which has just the data stack in RAM
+and a bunch of primitives saved in ROM with all of the heavy lifting done
+via "metacompilation" performed on the "umblical host". This can easily run
+on boards with just a few bytes of RAM and very little ROM (say, less than
+about 256 bytes of ROM, if we use something like the single byte offset
+scheme that I used in the original x86 implementation).
+
+The next step up might be to add a return stack which increases the RAM
+requirements by a bit. Assuming N levels of nesting with 16-bit return
+addresses requires N*2 bytes of additional RAM. For example, 4 levels of
+call nesting and 4 data stack elements can easily fit within 16 bytes of RAM.
+
+With a larger ROM, it may be possible to have a "static dictionary" stored on
+the target (rather than on the host). This allows us to have something close to
+a regular interactive Forth except the ability to add new definitions and we
+are getting closer to the eventual goal of getting rid of the "metacompilation"
+step. I assume that a 512 to 1KB ROM might be sufficient for such a standalone
+Forth implementation which can support "find" but not "create" since supporting
+"dynamic" dictionary additions enforces the requirement for a larger RAM.
+
+Finally, with an even larger RAM, say 512 bytes or more, it will be possible
+to have an "extensible dictionary" which can be used to define new words
+residing on the target (with, say, 64 bytes reserved for data+return stack)
+and have a completely standalone Forth target which can dispense with the
+"umblical hosted metacompilation".
+
+Thus we can see that there are effectively 4 "levels" of Forth needed.
+For lack of better names, I'll refer to these "levels" as:
+1/4 : "oneforth" (pun intended), which has only primitives and a data stack
+      ROM : ~256 bytes, RAM : in the single digit byte range?
+2/4 : "twoforth" which has definitions and a return stack (in addition to
+      the primitives and data stack that "oneforth" has)
+      ROM : ~256 bytes, RAM : 16 bytes (or thereabouts in two digit byte range)
+3/4 : "threeforth" which has a static dictionary (in addition to the primitives
+      and definitions and the two stacks that "twoforth" has)
+      ROM : ~512 bytes, RAM : 16 bytes (or thereabouts in two digit byte range)
+4/4 : a full fledged "fourforth"/full/regular Forth with a dynamic dictionary
+      in addition to the rest of the bells and whistles from "threeforth".
+      ROM : ~1024 bytes, RAM : 512 bytes or more - to hold the dictionary
+
+So the answer to my earlier question: How much Forth do you really need?
+is "it depends" so my response is to provide 4 options in the makefile
+(as named above) and let the user who is stuck with a specific choice of
+microprocessor decide how much Forth they really need.
+
+Since microcontrollers come in various sizes, I'll also need to think of a
+"shrink to fit" capability rather than the current incremental "step" wise
+implementation such that only the closure of the set of all words required
+from rom.4th gets pulled into the final ROM image.
