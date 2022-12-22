@@ -58,3 +58,4 @@ over	: dup ; mov 2(sp), tos ;
 
 var here	.word	mem
 var state	.word	1
+var latest	.include "latest.s"

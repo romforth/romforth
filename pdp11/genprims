@@ -10,14 +10,37 @@ use strict;
 
 my $mf=shift;	# the map file to be generated
 
+my $gendict=0;
+if ($mf eq "-d") {
+	$gendict=1;
+	$mf=shift;	# the map file to be generated
+}
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my ($f,$l);	# the forth name($f) and the assembler label ($l)
+
+my $prev="0";
+
+sub genheader {
+	my ($f,$l,$flag)=@_;
+	my $len=length($f);
+	print "$l","_lfa:\t.word $prev\n";
+	print "$l","_nfa:\t.byte $len\n";
+	print qq{\t.ascii "$f"\n};
+	print "\t.align 1\n";
+	print "$l","_cfa:\t.word $l\n" if ($flag);
+	$prev="$l"."_lfa";
+}
+
+my $headers=[];
 
 sub mapnames {
 	($f,$l)=@_;		# which provides forth<->label mapping
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
 	print "$l:\n";	# generate the label for the assembler
+	if ($gendict) {
+		push @$headers, [$f,$l];
+	}
 }
 
 my $hash={};
@@ -53,6 +76,9 @@ while (<>) {
 	} elsif (/^var\s+(\S+)\s+(.*)$/) {	# variables
 		($f)=($1);
 		print $mh "var $f $f\n";# create dictionary entry for variables
+		if ($gendict) {
+			genheader($f,$f,0);
+		}
 		print "$f:\n";		# generate the label for the assembler
 		print "\t$2\n";		# and allocation/initial value if any
 		next;
@@ -60,49 +86,23 @@ while (<>) {
 	next if (/^\s*$/);
 	chomp;
 	die "unknown declaration: '$_'";
-
-=head cut
-
-	if (/^code\{$/) {		# code{ : start of primitive declaration
-		mapnames();		# handle forth word to label mapping
-	} elsif (/^\}code$/) {		# }code :end of primitive declaration:
-		print "# end of definition of $l -> $f\n";
-	} elsif (/^inner\{$/) {		# inner{ : primitives that loop to inner
-		mapnames();		# handle forth word to label mapping
-	} elsif (/^\}inner$/) {		# }inner : end of word looping to inner
-		print "next	# continue within the interpreter\n";
-	} elsif (/^unary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# unary operators
-		($f,$l)=($1,$2);
-		print $mh "code $f $l\n"; # create dictionary entry for unary
-		print "$l:\n";		# generate the label for the assembler
-		print "\t$3\n";
-		print "\tnext\n";
-	} elsif (/^binary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# binary operators
-		($f,$l)=($1,$2);
-		print $mh "code $f $l\n"; # create dictionary entry for binary
-		print "$l:\n";		# generate the label for the assembler
-		print "\t_nip\n";
-		print "\t$3\n";
-		print "\tnext\n";
-	} elsif (/^fallthru\s+(\S+)\s+(\S+)\s+(.*)$/) {	# "fall thru" operators
-		($f,$l)=($1,$2);
-		print $mh "code $f $l\n"; # create dictionary entry for fallthru
-		print "$l:\n";		# generate the label for the assembler
-		print "\t$3\n";
-	} elsif (/^define\s+(\S+)\s+(.*)$/) {	# definitions
-		print "#define $1 $2\n";
-	} elsif (/^var\s+(\S+)\s+(\S+)\s+(.*)$/) {	# variables
-		($f,$l)=($1,$2);
-		print $mh "var $f $l\n";# create dictionary entry for variables
-		print "$l:\n";		# generate the label for the assembler
-		print "\t$3\n";		# and allocation/initial value if any
-	} else {
-		print;	# assembler code between code{...}code is passed thru
-	}
-=cut
-
 }
 
 print $mh "label fake $label\n";
+if ($gendict) {
+	my $lh;
+	open($lh, ">dict.s");
+	select $lh;
+	for my $h (@$headers) {
+		genheader(@$h,1);
+	}
+	close $lh;
+	open($lh, ">latest.s");
+	select $lh;
+	print "\t.word $prev\n";
+	print qq{.include "dict.s"\n};
+	close $lh;
+	print $mh "label prev $prev\n";
+}
 
 close $mh;

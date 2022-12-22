@@ -18,6 +18,7 @@ INDEX
 	* 18 Dec '22
 	* 19 Dec '22
 	* 20 Dec '22
+	* 22 Dec '22
 
 11 Nov '22
 ----------
@@ -627,3 +628,117 @@ Since microcontrollers come in various sizes, I'll also need to think of a
 "shrink to fit" capability rather than the current incremental "step" wise
 implementation such that only the closure of the set of all words required
 from rom.4th gets pulled into the final ROM image.
+
+22 Dec '22
+----------
+This entry is just a documentation of the debug exercise I went through, to fix
+a bug, that cropped up while adding dictionary headers to all the "words".
+
+I'm documenting it here simply as a reminder from "current me" to "future me"
+in case other issues like this pop up on other architectures, as part of any
+future porting exercises, by which time I expect I'll probably have forgotten
+many of the more intricate parts of the plumbing. My hope is that this
+documentation will help with making those debug exercises faster/smoother or at
+least more productive.
+
+Ok, so lets start with the problem. I'd made some code changes, primarily to
+the script (genprims) that turns code.prims to assembly to generate dictionary
+headers for each of those primitives. Testing it was resulting in a failure
+only when the dictionary headers are generated, whereas things work as expected
+when the headers are not generated. With the dictionary headers in place, I was
+getting the following error from the pdp11/simh emulator:
+	Trap stack push abort, PC: 000416 (HALT)
+Using bc, we can map this octal address to the hex value:
+	obase=16
+	ibase=8
+	000416
+	10E
+And subtracting 100 from 10E give address 0xE which can be looked up in the
+assembly listing file which maps to:
+			bye:
+	000e	0000		halt
+So it appears that it halted as expected, but why does it report that strange
+"Trap stack push abort" error message?
+
+Since the "stepfile" approach gives me a means of testing this at small code
+change increments, I decided to give that a shot to find the earliest change
+that triggers this bug. Running "make allsteps" and waiting for a while until
+it fails and then running "head -1 fpp.config" gives me:
+	step=22
+which shows that the earliest failure is triggered at step 22. I decided to
+confirm that things were really working at the previous step by setting the
+step value to 21 and rerunning make :
+	cd pdp11 ; sed -i 's/step=22/step=21/' fpp.config ; make
+This to my surprise showed that that the test actually had failed even at
+the earlier step 21 with this error:
+	Trap stack push abort, PC: 000612 (JMP @(R0)+)
+Unfortunately, this is not reported as a non-zero exit by pdp11/simh so despite
+the error, make saw it as success and moved on to the next step.
+
+I could change the makefile to handle anything other than "HALT instruction"
+as an error and rerun the whole regression test with "make allsteps" to see if
+I can catch this error much earlier. So I went ahead and did that and after the
+usual long wait for the regression failure, and using "head -1 fpp.config",
+just as before, it turns out the earliest failure actually happens at step 14
+and the error is the same as the one that happened at step 21:
+	Trap stack push abort, PC: 000612 (JMP @(R0)+)
+Again using bc to do the oct->hex conversion:
+	obase=16
+	ibase=8
+	000612
+	18A
+Subtracting 100 from 18A gives us offset 8A, which maps to the fetch/@
+operator (by looking up address 8A in the forth assembly listing):
+	96                    lbl007:
+	97 0088 4112           mov (r1), r1
+	98 008a 5800           jmp @(r0)+
+So for context, what is happening is that at step 14, we have added the "here"
+variable and we are fetch'ing its value and that for some strange reason fails
+when we add the dictionary header (but works fine when there is no header).
+
+Since I'm aware of alignment issues (from the time I worked on SPARC at Sun
+Microsystems) the problem is obvious: the addition of the header made the
+location of the "here" variable unaligned, so all that is needed to fix this
+issue is to add a alignment directive (".align" in the case of binutils) ahead
+of variable declarations.
+
+If I was a newbie who was not aware of processor alignment issues, I guess the
+next step might have been to trawl through the code in SIMH to figure out
+exactly why it reports that error, but in this particular case, that additional
+step was not required due to my earlier experience with these types of issues.
+
+If I was a newbie working directly on the hardware and ran into something like
+this, I assume it would result in either grey hair or maybe no hair ;)
+The hard lesson here might be : always use an emulator - but that can come with
+its own share of latent bugs especially if the emulation does not perfectly
+match the hardware.
+
+After fixing this alignment issue with variables in the genprims script, I then
+decided to run yet another round of "make allsteps" in the hope that I was past
+the entire class of such problems but it again ran into the earlier failure at
+step 22 (which was the first problem that I had documented above, prior to the
+step 14 failure).
+
+Since alignment issues were top of mind for me, and it is at step 22 that the
+generated definition for "bl" is used for the first time, it was fairly clear
+to me that this issue was also due to not having an alignment directive for the
+generated code produced by the genrom script. So that script was also modified
+to generate the ".align" directive ahead of definitions as well.
+
+In hindsight, it is clear that like most debugging exercises, cracking it was
+a mix of grunt work and dumb luck. The "lucky part" was in observing that step
+22 was not the very first failure and tracking the very first failure all the
+way back to step 14 where it was easy to figure out the alignment problem. Once
+that was out of the way, seeing the new issue again at step 22, and putting 2
+and 2 together was a no-brainer. I assume things would have been harder if
+these were encountered the other way around (ie in the opposite order).
+
+Anyway, running the "make allsteps" regression step again after making these
+two changes resulted in all of the tests passing without any further breakage.
+I hope documenting all of this in gory detail now turns out to be useful later.
+
+For now, the addition of the dictionary headers has been done only for the
+PDP11 port - which I'll use as the "primary" port going forward. Adding the
+dictionary headers to the x86 code is the next step. Since x86 supports
+unaligned access, this bug will not be encountered there so I hope that the
+addition of the headers to the x86 port goes more smoothly than this.

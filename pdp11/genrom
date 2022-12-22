@@ -10,6 +10,11 @@ use strict;
 
 my $mf=shift;   # the map file to which new defs are written
 
+my $gendict=0;
+if ($mf eq "-d") {
+	$gendict=1;
+	$mf=shift;   # the map file to which new defs are written
+}
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my $map={};	# mapping from forth words to assembly labels
@@ -31,10 +36,17 @@ sub olddef {
 	$defs->{$f}=$l;
 }
 
+my $prev="0";
 my $label="lbl000";
 sub savelabel {
 	my ($f,$l)=@_;
-	$label=$l;
+	if ($f eq "fake") {
+		$label=$l;
+	} elsif ($f eq "prev") {
+		$prev=$l;
+	} else {
+		die "unknown label";
+	}
 }
 
 my $handle={
@@ -166,6 +178,14 @@ sub def {
 	if ($state == 1) {
 		$l=$label++;
 		print $mh "def $w $l\n"; # create mapping in "dictionary"
+		if ($gendict) {
+			print "$l","_lfa:\t.word $prev\n";
+			my $len=length($w);
+			print "$l","_nfa:\t.byte $len\n";
+			print qq{\t.ascii "$w"\n};
+			print "\t.align 1\n";
+			$prev="$l"."_lfa";
+		}
 		print "$l:	# $w\n"; # and generate assembly code
 		$defs->{$w}=$l;		 # for setting up a local mapping
 		print "\t.word 0x080c\n";
@@ -222,4 +242,12 @@ while (<>) {				# map forth words in the standard input
 	}
 }
 print $mh "label fake $label\n";
+if ($gendict) {
+	open(my $lh, ">latest.s");
+	select $lh;
+	print "\t.word $prev\n";
+	print qq{.include "dict.s"\n};
+	close $lh;
+	print $mh "label prev $prev\n";
+}
 close $mh;
