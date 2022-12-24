@@ -247,3 +247,4 @@ inner{
 
 var here here .word mem
 var state state .byte 1
+var latest latest #include "latest.s"
