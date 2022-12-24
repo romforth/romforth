@@ -247,3 +247,4 @@ inner{
 
 var here here dw mem
 var state state db 1
+var latest latest %include "latest.s"

@@ -19,6 +19,7 @@ INDEX
 	* 19 Dec '22
 	* 20 Dec '22
 	* 22 Dec '22
+	* 23 Dec '22
 
 11 Nov '22
 ----------
@@ -742,3 +743,21 @@ PDP11 port - which I'll use as the "primary" port going forward. Adding the
 dictionary headers to the x86 code is the next step. Since x86 supports
 unaligned access, this bug will not be encountered there so I hope that the
 addition of the headers to the x86 port goes more smoothly than this.
+
+23 Dec '22
+----------
+Now that the dictionary support for x86 GNU "as" is done, it is time to look
+at repeating it for the x86 nasm port as well. Since the initial bootstrap
+implementation was done on x86 nasm, it has a makefile which is different from
+that of the other ports. So as part of this exercise, I decided to "demote" it
+a bit so it is no longer considered the "primary" port and it is now just "yet
+another" port. This change also ensures that all of the makefiles now follow
+the same template but getting there needed some major surgery to the x86 and
+the x86-as makefiles since the x86-as makefile had some implicit dependencies
+on the x86 build. But all of this is technical debt and in preparation for the
+new year, I might as well pay it down now rather than later.
+
+So now that the dictionary headers are available for all the current ports, I
+plan to take a small break from all this for a week (or two) and just relax
+over the holidays so here's to hoping for a refreshed, relaxed and wonderful
+New Year.

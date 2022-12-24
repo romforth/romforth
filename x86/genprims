@@ -9,10 +9,29 @@
 use strict;
 
 my $mf=shift;	# the map file to be generated
+my $gendict=0;
+if ($mf eq "-d") {
+	$gendict=1;
+	$mf=shift;	# the map file to be generated
+}
 
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my ($f,$l);	# the forth name($f) and the assembler label ($l)
+
+my $prev="0";
+
+sub genheader {
+	my ($f,$l,$flag)=@_;
+	my $len=length($f);
+	print "$l","_lfa:\tdw $prev\n";
+	print "$l","_nfa:\tdb $len\n";
+	print qq{\tdb "$f"\n};
+	print "$l","_cfa:\tdw $l\n" if ($flag);
+	$prev="$l"."_lfa";
+}
+
+my $headers=[];
 
 sub mapnames {
 	$_=<>;			# read in the next line of input
@@ -21,6 +40,9 @@ sub mapnames {
 	s/^\s*$l//;
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
 	print "$l:$_\n";	# generate the label for the assembler
+	if ($gendict) {
+		push @$headers, [$f,$l];
+	}
 }
 
 while (<>) {
@@ -55,11 +77,30 @@ while (<>) {
 	} elsif (/^var\s+(\S+)\s+(\S+)\s+(.*)$/) {	# variables
 		($f,$l)=($1,$2);
 		print $mh "var $f $l\n";# create dictionary entry for variables
+		if ($gendict) {
+			genheader($f,$l,0);
+		}
 		print "$l:\n";		# generate the label for the assembler
 		print "\t$3\n";		# and allocation/initial value if any
 	} else {
 		print;	# assembler code between code{...}code is passed thru
 	}
+}
+
+if ($gendict) {
+	my $lh;
+	open($lh, ">dict.s");
+	select $lh;
+	for my $h (@$headers) {
+		genheader(@$h,1);
+	}
+	close $lh;
+	open($lh, ">latest.s");
+	select $lh;
+	print "\tdw $prev\n";
+	print qq{%include "dict.s"\n};
+	close $lh;
+	print $mh "label prev $prev\n";
 }
 
 close $mh;

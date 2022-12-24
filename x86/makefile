@@ -1,25 +1,41 @@
-x86/all : x86/emulate x86/forth x86/test.exp test.inp fpp fpp.config
-	(dd if=x86/forth bs=1 skip=12 2>/dev/null ; cat test.inp | ./fpp -DTESTROM -c fpp.config | perl -pe chomp) | x86/emulate x86/forth > x86/test.out
-	cmp x86/test.out x86/test.exp
-x86/test.exp : test.expected fpp.config fpp
-	cat test.expected | ./fpp -DTESTROM -c fpp.config | perl -pe chomp > x86/test.exp
-fpp.config : fpp.config.x86 pdp11/stepfile
-	cat pdp11/stepfile fpp.config.x86 > fpp.config
-x86/forth : x86/forth.s x86/prims.s x86/rom.s x86/defs.s
-	nasm -DTESTROM -l x86/forth.lst x86/forth.s
-x86/prims.s : x86/genprims x86/code.prims
-	cat x86/code.prims | x86/genprims x86/dict.map > x86/prims.s
-x86/defs.s : x86/genrom defs.4th x86/prims.s fpp fpp.config
-	cat defs.4th | ./fpp -DTESTROM -c fpp.config | x86/genrom x86/defs.map x86/dict.map > x86/defs.s
-x86/rom.s : x86/genrom rom.4th x86/prims.s x86/defs.s fpp fpp.config
-	cat rom.4th | ./fpp -DTESTROM -c fpp.config | x86/genrom x86/rom.map x86/dict.map x86/defs.map > x86/rom.s
-x86/clean :
-	rm -f x86/forth x86/forth.lst x86/emulate x86/dict.map x86/prims.s x86/rom.s x86/test.out x86/defs.map x86/rom.map x86/defs.s x86/defs.notest.s x86/rom.notest.s x86/forth.notest x86/forth.notest.lst x86/test.exp
-x86/notest : x86/emulate x86/forth.notest
-	(dd if=x86/forth.notest bs=1 skip=12 2>/dev/null ; cat test.inp) | x86/emulate x86/forth.notest
-x86/forth.notest : x86/forth.s x86/prims.s x86/rom.notest.s x86/defs.notest.s
-	nasm -o x86/forth.notest -l x86/forth.notest.lst x86/forth.s
-x86/defs.notest.s : x86/genrom defs.4th x86/prims.s fpp fpp.config
-	cat defs.4th | ./fpp -c fpp.config | x86/genrom x86/defs.map x86/dict.map > x86/defs.notest.s
-x86/rom.notest.s : x86/genrom rom.4th x86/prims.s x86/defs.notest.s fpp fpp.config
-	cat rom.4th | ./fpp -c fpp.config | x86/genrom x86/rom.map x86/dict.map x86/defs.map > x86/rom.notest.s
+threeforth : test.dict
+twoforth : test.out
+oneforth : test.out
+test.dict : emulate forth_dict test.exp ../test.inp ../fpp fpp.config
+	(dd if=forth_dict bs=1 skip=12 2>/dev/null ; cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp) | ./emulate forth_dict > test.dict
+	cmp test.dict test.exp
+test.out : emulate forth test.exp ../test.inp ../fpp fpp.config
+	(dd if=forth bs=1 skip=12 2>/dev/null ; cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp) | ./emulate forth > test.out
+	cmp test.out test.exp
+test.exp : ../test.expected fpp.config ../fpp
+	cat ../test.expected | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.exp
+fpp.config : fpp.config.x86 ../pdp11/stepfile
+	cat ../pdp11/stepfile fpp.config.x86 > fpp.config
+forth : forth.s prims.s rom.s defs.s
+	nasm -DTESTROM -l forth.lst forth.s
+forth_dict : forth_dict.s prims_dict.s rom.s defs_dict.s
+	nasm -DTESTROM -l forth_dict.lst forth_dict.s
+forth_dict.s : forth.s
+	cp forth.s forth_dict.s
+	sed -i 's/include \"prims/include \"prims_dict/' forth_dict.s
+	sed -i 's/include \"defs/include \"defs_dict/' forth_dict.s
+prims.s : genprims code.prims
+	cat code.prims | grep -v "var latest" | ./genprims dict.map > prims.s
+prims_dict.s : genprims code.prims prims.s
+	cat code.prims | ./genprims -d dict.map > prims_dict.s
+defs.s : genrom ../defs.4th prims.s ../fpp fpp.config
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom defs.map dict.map > defs.s
+defs_dict.s : genrom ../defs.4th prims_dict.s ../fpp fpp.config
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -d defs.map dict.map > defs_dict.s
+rom.s : genrom ../rom.4th prims.s defs.s ../fpp fpp.config
+	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
+clean :
+	rm -f forth forth.lst emulate dict.map prims.s rom.s test.out defs.map rom.map defs.s defs.notest.s rom.notest.s forth.notest forth.notest.lst test.exp prims_dict.s defs_dict.s dict.s forth_dict forth_dict.lst forth_dict.s latest.s fpp.config test.dict
+notest : emulate forth.notest ../test.inp
+	(dd if=forth.notest bs=1 skip=12 2>/dev/null ; cat ../test.inp) | ./emulate forth.notest
+forth.notest : forth.s prims.s rom.notest.s defs.notest.s
+	nasm -o forth.notest -l forth.notest.lst forth.s
+defs.notest.s : genrom ../defs.4th prims.s ../fpp fpp.config
+	cat ../defs.4th | ../fpp -c fpp.config | ./genrom defs.map dict.map > defs.notest.s
+rom.notest.s : genrom ../rom.4th prims.s defs.notest.s ../fpp fpp.config
+	cat ../rom.4th | ../fpp -c fpp.config | ./genrom rom.map dict.map defs.map > rom.notest.s
