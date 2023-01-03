@@ -19,10 +19,10 @@ forth_dict.s : forth.s
 	cp forth.s forth_dict.s
 	sed -i 's/include \"prims/include \"prims_dict/' forth_dict.s
 	sed -i 's/include \"defs/include \"defs_dict/' forth_dict.s
-prims.s : genprims code.prims
-	cat code.prims | grep -v "var latest" | ./genprims dict.map > prims.s
-prims_dict.s : genprims code.prims prims.s
-	cat code.prims | ./genprims -d dict.map > prims_dict.s
+prims.s : genprims code.prims ../fpp fpp.config
+	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims dict.map > prims.s
+prims_dict.s : genprims code.prims prims.s ../fpp fpp.config
+	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims -d dict.map > prims_dict.s
 defs.s : genrom ../defs.4th prims.s ../fpp fpp.config
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom defs.map dict.map > defs.s
 defs_dict.s : genrom ../defs.4th prims_dict.s ../fpp fpp.config
