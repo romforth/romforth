@@ -754,6 +754,52 @@ if{		[		// not taken
 
 #}if
 
+#{if step==41
+		[ < "1000 repl "
+repl		[ addr n addr s 0 (addr:"1000")	// lookup failed on "1000"
+if{		[ addr n addr s			// not taken
+	#assert
+}if		[ addr n addr s
+latest		[ addr n addr s latest	// sanity check that s is latest
+@		[ addr n addr s l
+-		[ addr n addr cell+1
+cell		[ addr n addr cell+1 cell
+-		[ addr n addr 1
+1		[ addr n addr 1 1
+-		[ addr n addr 0
+if{		[ addr n addr		// not taken
+	#assert
+}if		[ addr n addr
+third		[ addr n addr addr	// sanity check that first byte failed
+-		[ addr n 0
++		[ addr n
+atoi		[ 1000			// verify that repl returned "1000"
+1000		[ 1000 1000
+-		[ 0
+if{		[			// not taken
+	#assert
+}if		[
+repl		[ addr 4 addr+4 s 1 (addr:"repl")	// lookup ok on "repl"
+dec		[ addr 4 addr+4 s 0	// 4 shows up since length("repl")==4
+if{		[ addr 4 addr+4 s	// not taken
+	#assert
+}if		[ addr 4 addr+4 s
+latest		[ addr 4 addr+4 s latest (latest:l)	// verify s==l+4+cell+1
+@		[ addr 4 addr+4 s l
+-		[ addr 4 addr+4 5+cell	// length("repl")+cell+1
+cell		[ addr 4 addr+4 5+cell cell
+-		[ addr 4 addr+4 5			// verify offset was 4
+-		[ addr 4 addr-1
++		[ addr addr+3
+-		[ -3
+3		[ -3 3
++		[ 0
+if{		[			// not taken
+	#assert
+}if		[
+
+#}if
+
 #}ifdef
 
 bye

@@ -272,6 +272,63 @@ def{ repl
 
 #{if step>=41
 
+def{ cell
+	$CELL			[ arch dependent value configured in fpp.config
+}def
+
+[ Check if two strings are the same (equivalent to memcmp, except return value)
+[ return 1 if they are the same, return 0 if they are different
+def{ same			[ addr name n
+	0			[ addr name n 0
+	swap			[ addr name 0 n
+	for{			[ addr name		| i n ]
+		over		[ addr name addr	| i n ]
+		c@		[ addr name c1		| i n ]
+		over		[ addr name c1 name	| i n ]
+		c@		[ addr name c1 c2	| i n ]
+		-		[ addr name c1-c2	| i n ]
+		if{		[ addr name 		| i n ] // c1 != c2
+			r>	[ addr name n		|   n ]
+			r>	[ addr name n i
+			2drop	[ addr name
+			0	[ addr name 0
+			exit
+		}if		[ addr name		| i n ] // c1 == c2
+		inc		[ addr name+1		| i n ]
+		swap		[ name+1 addr		| i n ]
+		inc		[ name+1 addr+1		| i n ]
+		swap		[ addr+1 name+1		| i n ]
+	}for			[ addr+n name+n
+	1			[ addr+n name+n 1
+}def
+
+#}if
+
+#{if step==41
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within this one step (ie step==41)
+[ The only change from the previous repl at step==40 is to see if the token
+[ is the same as the last ("latest") name (just the string) in the dictionary
+def{ repl
+	32		[ 32 < "1000 repl "
+	parse		[ addr n (addr:"1000")
+	over		[ addr n addr
+	over		[ addr n addr n
+	latest		[ addr n addr n latest (latest:l)
+	@		[ addr n addr n l
+	cell		[ addr n addr n l cell	// skip lfa (cell sized offset)
+	+		[ addr n addr n l+cell
+	1		[ addr n addr n l+cell 1 // skip count byte in nfa
+	+		[ addr n addr n s:l+cell+1
+	swap		[ addr n addr s n
+	same		[ addr n addr s flag
+}def
+
+#}if
+
+#{if step>=42
+
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n
 	here		[ n here (here:h)

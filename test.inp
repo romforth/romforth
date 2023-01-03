@@ -20,4 +20,7 @@ token
 #{if step==40
 1000 
 #}if
+#{if step==41
+1000 repl 
+#}if
 #}ifdef
