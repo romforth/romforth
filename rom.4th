@@ -800,6 +800,44 @@ if{		[			// not taken
 
 #}if
 
+#{if step==42
+		[ < "1000 repl "
+repl		[ addr n l 0 (addr:"1000")	// lookup failed on "1000"
+if{		[ addr n l			// not taken
+	#assert
+}if		[ addr n l
+latest		[ addr n l latest	// sanity check that l is latest
+@		[ addr n l l
+-		[ addr n 0
+if{		[ addr n		// not taken
+	#assert
+}if		[ addr n
+atoi		[ 1000			// verify that repl returned "1000"
+1000		[ 1000 1000
+-		[ 0
+if{		[			// not taken
+	#assert
+}if		[
+repl		[ addr 4 l 1 (addr:"repl")	// lookup ok on "repl"
+dec		[ addr 4 l 0	// 4 shows up since length("repl")==4
+if{		[ addr 4 l	// not taken
+	#assert
+}if		[ addr 4 l
+latest		[ addr 4 l latest (latest:l)	// verify l is latest
+@		[ addr 4 l l
+-		[ addr 4 0
++		[ addr 4 		// verify offset was 4
+dec		[ addr 3
++		[ addr+3
+c@		[ 'l'
+'l'		[ 'l' 'l'
+-		[ 0
+if{		[			// not taken
+	#assert
+}if		[
+
+#}if
+
 #}ifdef
 
 bye

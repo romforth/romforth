@@ -329,6 +329,66 @@ def{ repl
 
 #{if step>=42
 
+#{if NEEDROT
+
+def{ rot	[ a b c
+	>r	[ a b	| c ]
+	swap	[ b a	| c ]
+	r>	[ b a c
+	swap	[ b c a
+}def
+
+#}if
+
+[ Check if the counted string on the stack matches the dictionary entry at lfa
+[ Return 1 if there is a match, return 0 if there is no match
+def{ match		[ addr n lfa
+	over		[ addr n lfa n
+	over		[ addr n lfa n lfa
+	cell		[ addr n lfa n lfa cell		// step over the lfa
+	+		[ addr n lfa n nfa:lfa+cell	// to get to the nfa
+	dup		[ addr n lfa n nfa nfa
+	c@		[ addr n lfa n nfa c		// get the count byte
+	rot		[ addr n lfa nfa c n
+	swap		[ addr n lfa nfa n c
+	0x7f		[ addr n lfa nfa n c 0x7f	// mask off the MSB
+	&		[ addr n lfa nfa n c:c&0x7f	// ie the immediate flag
+	-		[ addr n lfa nfa n-c
+	if{		[ addr n lfa nfa	// n != c, count mismatch
+		drop	[ addr n lfa
+		0	[ addr n lfa 0		// return 0
+		exit
+	}if		[ addr n lfa nfa	// n == c, count matches
+	inc		[ addr n lfa name:nfa+1
+	fourth		[ addr n lfa name addr	// so, pass that count as the
+	fourth		[ addr n lfa name addr n	// parameter to "same"
+	same		[ addr n lfa name+? addr+? flag	// We care only for
+	swap		[ addr n lfa name+? flag addr+?	// the return value
+	drop		[ addr n lfa name+? flag	// so drop the rest
+	swap		[ addr n lfa flag name+?	// of the stuff from
+	drop		[ addr n lfa flag		// the stack
+}def
+
+#}if
+
+#{if step==42
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within this one step (ie step==42)
+[ The only change from the previous repl at step==41 is to see if the token
+[ match'es the latest entry in the dictionary by checking the entire name field
+def{ repl
+	32		[ 32 < "1000 repl "
+	parse		[ addr n (addr:"1000")
+	latest		[ addr n latest (latest:l)
+	@		[ addr n l
+	match		[ addr n l flag
+}def
+
+#}if
+
+#{if step>=43
+
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n
 	here		[ n here (here:h)
