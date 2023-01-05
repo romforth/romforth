@@ -26,4 +26,7 @@ token
 #{if step==42
 1000 repl 
 #}if
+#{if step==43
+1000 find 
+#}if
 #}ifdef

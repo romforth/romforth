@@ -838,6 +838,26 @@ if{		[			// not taken
 
 #}if
 
+#{if step==43
+		[ < "1000 find "
+repl		[ 1000	// lookup failed on 1000 so it was turned into a number
+1000		[ 1000 1000		// verify that repl returned 1000
+-		[ 0
+if{		[			// not taken
+	#assert
+}if		[
+repl		[ addr n l		// it should return lfa of "find" which
+latest		[ addr n l latest	// is the second item in the list of
+@		[ addr n l lfa#"repl"	// dictionary entries, first is "repl"
+@		[ addr n l lfa#"find"	// next is "find"
+-		[ addr n 0
+if{		[ addr n		// not taken
+	#assert
+}if		[ addr n
+2drop
+
+#}if
+
 #}ifdef
 
 bye

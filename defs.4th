@@ -389,6 +389,48 @@ def{ repl
 
 #{if step>=43
 
+[ find the counted string in the dictionary
+[ return 0 if it is not found otherwise return the lfa of the dictionary entry
+def{ find			[ addr n
+	latest			[ addr n (latest:lfa)
+	@			[ addr n lfa
+	loop{			[ addr n lfa
+		dup		[ addr n lfa lfa
+	}while{			[ addr n lfa		// lfa != 0
+		match		[ addr n lfa flag	// see if it matches
+		if{		[ addr n lfa		// flag != 0
+			exit	[ addr n lfa		// return the lfa
+		}else{		[ addr n lfa (lfa:p)	// flag == 0
+			@	[ addr n lfa:p		// move to next entry
+		}if		[ addr n lfa		// flag == 0
+	}loop			[ addr n lfa		// return lfa:0
+}def
+
+#}if
+
+#{if step==43
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within this one step (ie step==43)
+[ The only change from the previous repl at step==42 is to see if the token
+[ can be found by walking the dictionary and if not, turn it into a number
+def{ repl
+	32		[ 32 < "1000 find "
+	parse		[ addr n (addr:"1000")
+	find		[ addr n lfa
+	dup		[ addr n lfa lfa
+	if{		[ addr n lfa	// lfa!=0, so for now,
+		exit	[ addr n lfa	// just return it.
+	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
+		drop	[ addr n	// so drop the 0 value
+		atoi	[ 1000		// and turn the string into a number
+	}if
+}def
+
+#}if
+
+#{if step>=44
+
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n
 	here		[ n here (here:h)
