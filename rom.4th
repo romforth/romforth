@@ -761,11 +761,8 @@ if{		[ addr n addr s			// not taken
 	#assert
 }if		[ addr n addr s
 latest		[ addr n addr s latest	// sanity check that s is latest
-@		[ addr n addr s l
--		[ addr n addr cell+1
-cell		[ addr n addr cell+1 cell
--		[ addr n addr 1
-1		[ addr n addr 1 1
+@		[ addr n addr s l	// ie s==lfa2nfa(l)
+lfa2nfa		[ addr n addr s s
 -		[ addr n addr 0
 if{		[ addr n addr		// not taken
 	#assert
@@ -779,20 +776,17 @@ atoi		[ 1000			// verify that repl returned "1000"
 if{		[			// not taken
 	#assert
 }if		[
-repl		[ addr 4 addr+4 s 1 (addr:"repl")	// lookup ok on "repl"
-dec		[ addr 4 addr+4 s 0	// 4 shows up since length("repl")==4
-if{		[ addr 4 addr+4 s	// not taken
+repl		[ addr 4 addr+4 name 1 (addr:"repl")	// lookup ok on "repl"
+dec		[ addr 4 addr+4 name 0	// 4 shows up since length("repl")==4
+if{		[ addr 4 addr+4 name	// not taken
 	#assert
-}if		[ addr 4 addr+4 s
-latest		[ addr 4 addr+4 s latest (latest:l)	// verify s==l+4+cell+1
-@		[ addr 4 addr+4 s l
--		[ addr 4 addr+4 5+cell	// length("repl")+cell+1
-cell		[ addr 4 addr+4 5+cell cell
--		[ addr 4 addr+4 5			// verify offset was 4
--		[ addr 4 addr-1
-+		[ addr addr+3
--		[ -3
-3		[ -3 3
+}if		[ addr 4 addr+4 name+4
+latest		[ addr 4 addr+4 name+4 latest (latest:l)
+@		[ addr 4 addr+4 name+4 l	// verify name+4+1==l
+-		[ addr 4 addr+4 -1
+inc		[ addr 4 addr+4 0
++		[ addr 4 addr+4		// next, verify that offset was 4
+-		[ addr -addr
 +		[ 0
 if{		[			// not taken
 	#assert

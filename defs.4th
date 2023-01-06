@@ -272,6 +272,17 @@ def{ repl
 
 #{if step>=41
 
+[ Given the link field address, map it to the name field address
+[ where the dictionary header is: nfa:(name | count) | lfa:link | cfa:code
+[ note that cfa2nfa usually denoted >NAME and other such mappings are
+[ trivial compared to conventional Forth, so I'll not implement them
+def{ lfa2nfa	[ link
+	dec	[ count:link-1
+	dup	[ count count
+	c@	[ count n
+	-	[ name
+}def
+
 def{ cell
 	$CELL			[ arch dependent value configured in fpp.config
 }def
@@ -311,18 +322,15 @@ def{ same			[ addr name n
 [ The only change from the previous repl at step==40 is to see if the token
 [ is the same as the last ("latest") name (just the string) in the dictionary
 def{ repl
-	32		[ 32 < "1000 repl "
-	parse		[ addr n (addr:"1000")
+	32		[ 32
+	parse		[ addr n
 	over		[ addr n addr
 	over		[ addr n addr n
-	latest		[ addr n addr n latest (latest:l)
-	@		[ addr n addr n l
-	cell		[ addr n addr n l cell	// skip lfa (cell sized offset)
-	+		[ addr n addr n l+cell
-	1		[ addr n addr n l+cell 1 // skip count byte in nfa
-	+		[ addr n addr n s:l+cell+1
-	swap		[ addr n addr s n
-	same		[ addr n addr s flag
+	latest		[ addr n addr n latest (latest:link)
+	@		[ addr n addr n link
+	lfa2nfa		[ addr n addr n name
+	swap		[ addr n addr name n
+	same		[ addr n addr+x name+x flag //flag=0||((flag==1)&&(n=x))
 }def
 
 #}if
