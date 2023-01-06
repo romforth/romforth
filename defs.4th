@@ -280,6 +280,8 @@ def{ lfa2nfa	[ link
 	dec	[ count:link-1
 	dup	[ count count
 	c@	[ count n
+	0x7f	[ count n 0x7f	// mask off the MSB
+	&	[ count n&0x7f	// ie the immediate flag
 	-	[ name
 }def
 
@@ -353,21 +355,21 @@ def{ rot	[ a b c
 def{ match		[ addr n lfa
 	over		[ addr n lfa n
 	over		[ addr n lfa n lfa
-	cell		[ addr n lfa n lfa cell		// step over the lfa
-	+		[ addr n lfa n nfa:lfa+cell	// to get to the nfa
+	dec		[ addr n lfa n nfa:lfa-1	// to get to the nfa
 	dup		[ addr n lfa n nfa nfa
 	c@		[ addr n lfa n nfa c		// get the count byte
 	rot		[ addr n lfa nfa c n
 	swap		[ addr n lfa nfa n c
 	0x7f		[ addr n lfa nfa n c 0x7f	// mask off the MSB
 	&		[ addr n lfa nfa n c:c&0x7f	// ie the immediate flag
-	-		[ addr n lfa nfa n-c
-	if{		[ addr n lfa nfa	// n != c, count mismatch
-		drop	[ addr n lfa
+	tuck		[ addr n lfa nfa c n c
+	-		[ addr n lfa nfa c n-c
+	if{		[ addr n lfa nfa c	// n != c, count mismatch
+		2drop	[ addr n lfa
 		0	[ addr n lfa 0		// return 0
 		exit
-	}if		[ addr n lfa nfa	// n == c, count matches
-	inc		[ addr n lfa name:nfa+1
+	}if		[ addr n lfa nfa c	// n == c, count matches
+	-		[ addr n lfa name:nfa-c
 	fourth		[ addr n lfa name addr	// so, pass that count as the
 	fourth		[ addr n lfa name addr n	// parameter to "same"
 	same		[ addr n lfa name+? addr+? flag	// We care only for
@@ -386,8 +388,8 @@ def{ match		[ addr n lfa
 [ The only change from the previous repl at step==41 is to see if the token
 [ match'es the latest entry in the dictionary by checking the entire name field
 def{ repl
-	32		[ 32 < "1000 repl "
-	parse		[ addr n (addr:"1000")
+	32		[ 32
+	parse		[ addr n
 	latest		[ addr n latest (latest:l)
 	@		[ addr n l
 	match		[ addr n l flag
