@@ -24,10 +24,13 @@ my $prev="0";
 sub genheader {
 	my ($f,$l,$flag)=@_;
 	my $len=length($f);
-	print "$l","_lfa:\t.word $prev\n";
-	print "$l","_nfa:\t.byte $len\n";
-	print qq{\t.ascii "$f"\n};
 	print "\t.align 1\n";
+	if ($len%2==0) {
+		print "$l","_pad:\t.byte 0\n";
+	}
+	print qq{\t.ascii "$f"\n};
+	print "$l","_nfa:\t.byte $len\n";
+	print "$l","_lfa:\t.word $prev\n";
 	print "$l","_cfa:\t.word $l\n" if ($flag);
 	$prev="$l"."_lfa";
 }

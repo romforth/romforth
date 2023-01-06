@@ -40,10 +40,10 @@ rom.s : ../rom.4th ../fpp fpp.config prims.s defs.s genrom
 fpp.config : stepfile fpp.config.pdp11
 	cat stepfile fpp.config.pdp11 > fpp.config
 prims.s : prims.S
-prims_dict.s : prims.S prims_dict.S
+prims_dict.s : prims_dict.S
 prims.S : genprims code.prims ../fpp fpp.config
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims dict.map > prims.S
-prims_dict.S : genprims code.prims ../fpp fpp.config
+prims_dict.S : prims.S genprims code.prims ../fpp fpp.config
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims -d dict.map > prims_dict.S
 defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom defs.map dict.map > defs.s

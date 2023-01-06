@@ -24,9 +24,9 @@ my $prev="0";
 sub genheader {
 	my ($f,$l,$flag)=@_;
 	my $len=length($f);
-	print "$l","_lfa:\tdw $prev\n";
-	print "$l","_nfa:\tdb $len\n";
 	print qq{\tdb "$f"\n};
+	print "$l","_nfa:\tdb $len\n";
+	print "$l","_lfa:\tdw $prev\n";
 	print "$l","_cfa:\tdw $l\n" if ($flag);
 	$prev="$l"."_lfa";
 }

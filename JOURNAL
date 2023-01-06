@@ -20,6 +20,7 @@ INDEX
 	* 20 Dec '22
 	* 22 Dec '22
 	* 23 Dec '22
+	* 06 Jan '23
 
 11 Nov '22
 ----------
@@ -761,3 +762,49 @@ So now that the dictionary headers are available for all the current ports, I
 plan to take a small break from all this for a week (or two) and just relax
 over the holidays so here's to hoping for a refreshed, relaxed and wonderful
 New Year.
+
+06 Jan '23
+----------
+As I was getting ready to add the functionality to "exec" words from the repl,
+and thinking about how to code something like "lfa2cfa", I realized that the
+align directive used in PDP11 has now turned into a stumbling block since the
+runtime does not have any meta data from the build to figure out if a padding
+alignment byte was added or not. So the only choice apparent to me is to rework
+the dictionary header layout by shuffling the fields around so that the padding
+is kept out of the way.
+
+The new header format (which, btw, completely breaks with the traditional Forth
+header layout) can be described using the simple ascii diagram layout shown
+below where the ^ symbol marks alignment boundaries:
+	... | align | pad | nfa:(name ... | count) | lfa | cfa ... |
+                    ^                              ^     ^
+The layout could also be described more formally using this C'ish pseudo code:
+
+	struct name {
+		optional byte alignment[...];
+		optional byte pad[...];
+		byte name[count];
+		byte count;
+	};
+	struct dict {
+		struct name nfa;
+		struct dict *lfa;
+		byte cfa[...];
+	};
+
+The alignment bytes are used only if the previous dictionary entry ended on an
+unaligned byte boundary. The pad bytes are used so that the name field always
+ends at an aligned byte boundary.
+
+Using this new scheme, it is clear that to get to the nfa from the lfa, we
+just subtract the count (and unlike the earlier scheme, the padding and/or
+alignment bytes are not in the way). Going from the lfa to the cfa is also
+trivial (just add "cell"). The reverse mapping from the cfa to lfa also becomes
+trivial (just subtract "cell"). This would have been much harder to do with the
+traditional Forth header layout, so, all in all, I think this scheme is a much
+better layout than the conventional Forth dictionary header layout.
+
+Since making this change will regress the tests at steps 41, 42 and 43, I've
+decided to rollback the step value to 40 and just make the dictionary header
+changes after only a manual/visual inspection. I'll add the modified tests back
+in at each step progression rather than turn this into one humongous commit.

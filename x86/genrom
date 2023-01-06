@@ -179,10 +179,10 @@ sub def {
 		$l=$label++;
 		print $mh "def $w $l\n"; # create mapping in "dictionary"
 		if ($gendict) {
-			print "$l","_lfa:\tdw $prev\n";
+			print qq{\tdb "$w"\n};
 			my $len=length($w);
 			print "$l","_nfa:\tdb $len\n";
-			print qq{\tdb "$w"\n};
+			print "$l","_lfa:\tdw $prev\n";
 			$prev="$l"."_lfa";
 		}
 		print "$l:	; $w\n"; # and generate assembly code
