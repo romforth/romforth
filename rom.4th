@@ -849,6 +849,25 @@ if{		[ addr n		// not taken
 
 #}if
 
+#{if step==44
+		[ < "1000 here "
+repl		[ 1000	// lookup failed on 1000 so it was turned into a number
+1000		[ 1000 1000		// verify that repl returned 1000
+-		[ 0
+if{		[			// not taken
+	#assert
+}if		[
+repl		[ here (here:mem)	// repl should return the cfa of "here"
+@		[ mem			// which is the variable's address
+here		[ mem here		// so we can use direct access to the
+@		[ mem mem		// variable as a primitive to verify
+-		[ 0			// that both return the same value
+if{		[			// not taken
+	#assert
+}if		[
+
+#}if
+
 #}ifdef
 
 bye

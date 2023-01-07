@@ -441,6 +441,40 @@ def{ repl
 
 #{if step>=44
 
+[ Currently cfaexec is special cased for "primitive variables" and these just
+[ need to return the cfa as is without any processing
+def{ cfaexec	[ cfa
+}def
+
+#}if
+
+#{if step==44
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within this one step (ie step==44)
+[ The only change from the previous repl at step==43 is to "exec" a word
+[ if it was found in the dictionary
+def{ repl
+	32		[ 32 < "1000 here "
+	parse		[ addr n (addr:"1000")
+	find		[ addr n lfa
+	dup		[ addr n lfa lfa
+	if{		[ addr n lfa	// lfa!=0, so get rid of
+		nip	[ addr lfa	// unneeded elements
+		nip	[ lfa		// in preparation to turn the
+		cell	[ lfa cell	// lfa into the
+		+	[ lfa+cell	// cfa
+		cfaexec	[ ?		// and then exec it
+	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
+		drop	[ addr n	// so drop the 0 value
+		atoi	[ 1000		// and turn the string into a number
+	}if
+}def
+
+#}if
+
+#{if step>=45
+
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n
 	here		[ n here (here:h)
