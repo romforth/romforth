@@ -1,6 +1,6 @@
 [ // rom.4th : arch neutral (for the most part) test cases and init code
 [
-[ // Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+[ // Copyright (c) 2022-2023 Charles Suresh <romforth@proton.me>
 [ // SPDX-License-Identifier: AGPL-3.0-only
 [ // Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -849,7 +849,7 @@ if{		[ addr n		// not taken
 
 #}if
 
-#{if step==44
+#{if step==44 || step==45
 		[ < "1000 here "
 repl		[ 1000	// lookup failed on 1000 so it was turned into a number
 1000		[ 1000 1000		// verify that repl returned 1000
@@ -863,6 +863,21 @@ here		[ mem here		// so we can use direct access to the
 @		[ mem mem		// variable as a primitive to verify
 -		[ 0			// that both return the same value
 if{		[			// not taken
+	#assert
+}if		[
+
+#}if
+
+#{if step==45
+		[ < "swap "
+0 1 2		[ 0 1 2
+repl		[ 0 2 1		// should result in exec'ing swap
+-		[ 0 1
+dec		[ 0 0
+if{		[ 0		// not taken
+	#assert
+}if		[ 0
+if{		[		// not taken
 	#assert
 }if		[
 

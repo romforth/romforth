@@ -1,3 +1,9 @@
+# code.prims : mapping from the Forth primitives to native code (x86 assembly)
+#
+# Copyright (c) 2022-2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
 define ip	r0
 define tos	r1
 define sp	r2
@@ -61,3 +67,5 @@ var state	.word	1
 #{if step>=22
 var latest	.include "latest.s"
 #}if
+# Note: latest has to be the last variable since it is used as the
+# boundary marker between variables and primitives

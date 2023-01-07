@@ -50,6 +50,7 @@ my $hash={};
 my $agg=[];
 my $label="lbl000";
 while (<>) {
+	/^\#/ and next;
 	if (s/^\s*(\S+)\s+:\s+//) {
 		$f=$1;
 		if ($f=~/^[a-z]\w+$/) {

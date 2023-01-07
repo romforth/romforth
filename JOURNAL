@@ -21,6 +21,7 @@ INDEX
 	* 22 Dec '22
 	* 23 Dec '22
 	* 06 Jan '23
+	* 07 Jan '23
 
 11 Nov '22
 ----------
@@ -808,3 +809,14 @@ Since making this change will regress the tests at steps 41, 42 and 43, I've
 decided to rollback the step value to 40 and just make the dictionary header
 changes after only a manual/visual inspection. I'll add the modified tests back
 in at each step progression rather than turn this into one humongous commit.
+
+07 Jan '23
+----------
+Adding support for exec'ing words from the repl exposed a bug that many of the
+words did not have dictionary headers (but only on x86). It turns out that the
+generation of the dictionary headers was not being done correctly for many of
+the x86 specific code.prims directives. I'll attribute this to the existing
+$TECHDEBT that genprims (and genrom) in each of the ports are copy-pasted. At
+some point I should consolidate all of them and in addition have a unified
+format for code.prims as well. For now though, I've just fixed the bugs in
+genprims (in both x86 and x86-as).

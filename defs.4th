@@ -1,6 +1,6 @@
 [ // defs.4th : Forth definitions which are architecture independent
 [
-[ // Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+[ // Copyright (c) 2022-2023 Charles Suresh <romforth@proton.me>
 [ // SPDX-License-Identifier: AGPL-3.0-only
 [ // Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -441,17 +441,25 @@ def{ repl
 
 #{if step>=44
 
-[ Currently cfaexec is special cased for "primitive variables" and these just
-[ need to return the cfa as is without any processing
-def{ cfaexec	[ cfa
+[ Assume "latest" is the last of the "primitive variables" so it can serve
+[ as the boundary marker between primitive variables and definitions. The cfa
+[ of variables are returned as is but definitions are exec'ed
+def{ cfaexec		[ cfa
+	dup		[ cfa cfa
+	latest		[ cfa cfa latest
+	>		[ cfa cfa>latest
+	if{		[ cfa		// cfa>latest : implies a definition
+		@	[ exe		// get the address to execute
+		exec	[ ?		// and exec it
+	}if		[ ?|cfa		// cfa<=latest : variable, leave as is
 }def
 
 #}if
 
-#{if step==44
+#{if step==44 || step==45
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
-[ ifdef'ed only within this one step (ie step==44)
+[ ifdef'ed only within steps 44 and 45
 [ The only change from the previous repl at step==43 is to "exec" a word
 [ if it was found in the dictionary
 def{ repl
@@ -473,7 +481,7 @@ def{ repl
 
 #}if
 
-#{if step>=45
+#{if step>=46
 
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n

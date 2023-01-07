@@ -56,12 +56,18 @@ while (<>) {
 		print "next	# continue within the interpreter\n";
 	} elsif (/^unary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# unary operators
 		($f,$l)=($1,$2);
+		if ($gendict) {
+			push @$headers, [$f,$l];
+		}
 		print $mh "code $f $l\n"; # create dictionary entry for unary
 		print "$l:\n";		# generate the label for the assembler
 		print "\t$3\n";
 		print "\tnext\n";
 	} elsif (/^binary\s+(\S+)\s+(\S+)\s+(.*)$/) {	# binary operators
 		($f,$l)=($1,$2);
+		if ($gendict) {
+			push @$headers, [$f,$l];
+		}
 		print $mh "code $f $l\n"; # create dictionary entry for binary
 		print "$l:\n";		# generate the label for the assembler
 		print "\t_nip\n";
@@ -69,6 +75,9 @@ while (<>) {
 		print "\tnext\n";
 	} elsif (/^fallthru\s+(\S+)\s+(\S+)\s+(.*)$/) {	# "fall thru" operators
 		($f,$l)=($1,$2);
+		if ($gendict) {
+			push @$headers, [$f,$l];
+		}
 		print $mh "code $f $l\n"; # create dictionary entry for fallthru
 		print "$l:\n";		# generate the label for the assembler
 		print "\t$3\n";
