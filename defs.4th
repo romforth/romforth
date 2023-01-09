@@ -6,6 +6,9 @@
 
 [ // "test only" definitions must be wrapped inside the TESTROM flag
 
+[ Note: bl is used as a boundary marker starting from step 46.
+[ Do not place other definitions ahead of it.
+
 #{if step>=22
 
 def{ bl 32 }def
@@ -456,6 +459,57 @@ def{ cfaexec		[ cfa
 
 #}if
 
+#{if step>=46
+
+#{if THREAD==1
+
+[ Compile/escape the cfa of the "defined word" and push it on the stack
+[ Currently this is needed only on the x86 port which uses the "thread"ing
+[ convention of prepending a word's cfa with the bytecode for "enter".
+[ THREAD type of 1 is used to denote the x86 port's calling convention.
+[ THREAD type of 2 is used by PDP11 which stores only the cfa so it can be
+[ escaped by prepending a "lit", so no equivalent functionality is needed there
+def{ compdef	[		| w ]
+	r>	[ w		|   ]	// get the next exec'utable address
+	inc	[ a:w+1		|   ]	// skip the exec bytecode (enter)
+	dup	[ a a		|   ]
+	@	[ a cfa		|   ]	// retrieve the cfa value at that addr
+	swap	[ cfa a		|   ]
+	cell	[ cfa a	cell	|   ]	// skip to the next exec'utable address
+	+	[ cfa w:a+cell	|   ]
+	>r	[ cfa		| w ]	// restore next exec'utable address
+}def
+
+#}if
+
+[ exec the cfa of a defined word
+[ The cfa of "bl" (which is the very first "defined" word is used as the
+[ boundary marker for defined words. All cfa's less than the cfa of "bl" are
+[ passed through to cfaexec for exec'ution. As described in the comment for
+[ compdef, THREAD'ing of type 2 which uses bare cfa's can be escaped using lit
+def{ defexec		[ cfa
+	dup		[ cfa cfa
+#{if THREAD==1
+	compdef bl	[ cfa cfa blcfa	// on x86, compdef escape's the enter
+#}if
+#{if THREAD==2
+	lit bl		[ cfa cfa blcfa	// on pdp11, lit escapes a bare cfa
+#}if
+	>=		[ cfa cfa>=blcfa
+	if{		[ cfa		// defined word
+#{if THREAD==1
+		>r	[	| cfa ]	// on x86
+#}if
+#{if THREAD==2
+		exec	[ ?		// on pdp11
+#}if
+	}else{		[ cfa		// variable or primitive
+		cfaexec	[ ?
+	}if
+}def
+
+#}if
+
 #{if step==44 || step==45
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -481,7 +535,32 @@ def{ repl
 
 #}if
 
-#{if step>=46
+#{if step==46
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within steps 46
+[ The only change from the previous repl at step==44 and 45 is to call defexec
+[ to exec defined words (in addition to primitives and variables)
+def{ repl
+	32		[ 32 < "1000 here "
+	parse		[ addr n (addr:"1000")
+	find		[ addr n lfa
+	dup		[ addr n lfa lfa
+	if{		[ addr n lfa	// lfa!=0, so get rid of
+		nip	[ addr lfa	// unneeded elements
+		nip	[ lfa		// in preparation to turn the
+		cell	[ lfa cell	// lfa into the
+		+	[ lfa+cell	// cfa
+		defexec	[ ?		// and then exec it
+	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
+		drop	[ addr n	// so drop the 0 value
+		atoi	[ 1000		// and turn the string into a number
+	}if
+}def
+
+#}if
+
+#{if step>=47
 
 [ allocate n bytes and return previous value of here
 def{ alloc		[ n

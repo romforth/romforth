@@ -849,7 +849,7 @@ if{		[ addr n		// not taken
 
 #}if
 
-#{if step==44 || step==45
+#{if step==44 || step==45 || step==46
 		[ < "1000 here "
 repl		[ 1000	// lookup failed on 1000 so it was turned into a number
 1000		[ 1000 1000		// verify that repl returned 1000
@@ -868,7 +868,7 @@ if{		[			// not taken
 
 #}if
 
-#{if step==45
+#{if step==45 || step==46
 		[ < "swap "
 0 1 2		[ 0 1 2
 repl		[ 0 2 1		// should result in exec'ing swap
@@ -879,6 +879,17 @@ if{		[ 0		// not taken
 }if		[ 0
 if{		[		// not taken
 	#assert
+}if		[
+
+#}if
+
+#{if step==46
+		[ < "bl "
+repl		[ 32		// should result in exec'ing bl
+32		[ 32 32
+-		[ 0
+if{		[		// not taken
+        #assert
 }if		[
 
 #}if

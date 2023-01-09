@@ -1,0 +1,48 @@
+#!/usr/bin/perl -w
+use strict;
+
+@ARGV=("objdump -x x86-as/forth_dict.o  | sort |");
+sub convert {
+	my ($ofs)=split;
+	$ofs=~s/^0+//;
+	my $d=oct("0x$ofs");
+	return ($ofs,$d);
+}
+my ($romx,$romd);
+my ($memx,$memd);
+my ($blx,$bld);
+while (<>) {
+	if (/\srom$/) {
+		($romx,$romd)=convert();
+		#print "rom: $romd == 0x$romx\n";
+		next;
+	}
+	if (/\sbl$/) {
+		($blx,$bld)=convert();
+		#print "bl: $bld == 0x$blx\n";
+		next;
+	}
+	if (/\smem$/) {
+		($memx,$memd)=convert();
+		#print "mem: $memd == 0x$memx\n";
+		next;
+	}
+}
+print "Total x86 size: $memd\n";
+print "x86 size excluding tests: ", $memd-($bld-$romd), "\n";
+
+@ARGV=("pdp11-aout-objdump -x pdp11/forth_dict.o | grep -v '*ABS*' | sort |");
+while (<>) {
+	if (/\srom$/) {
+		($romx,$romd)=convert();
+		#print "rom: $romd == 0x$romx\n";
+		next;
+	}
+	if (/\smem$/) {
+		($memx,$memd)=convert();
+		#print "mem: $memd == 0x$memx\n";
+		next;
+	}
+}
+print "Total PDP11 size: $memd\n";
+print "PDP11 size excluding tests: ", $memd-($memd-$romd), "\n";

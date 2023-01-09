@@ -820,3 +820,51 @@ $TECHDEBT that genprims (and genrom) in each of the ports are copy-pasted. At
 some point I should consolidate all of them and in addition have a unified
 format for code.prims as well. For now though, I've just fixed the bugs in
 genprims (in both x86 and x86-as).
+
+08 Jan '23
+----------
+With the support for exec'ing defined words from the repl, "threeforth" is
+in some sense complete since we can now interactively "exec" all the variables,
+primitive definitions and Forth definitions which are available as part of the
+dictionary. Since two different types of "thread"ing are used in the x86 and
+PDP11 ports, I've added a config variable called "THREAD" to distinguish among
+them. The x86 version which uses an opcode to prepend the cfa is called thread
+type 1 and the PDP11 version which uses a bare cfa is called type 2.
+
+The previous commit added the requirement that the "latest" variable needs to
+be the last variable defined in code.prims since it is used as the boundary
+between variables and primitives. This commit now adds another such requirement
+that the definition of "bl" needs to be the very first Forth definition since
+it is used as the boundary between primitive definitions and Forth definitions.
+
+With this commit, all of the words that are already in the dictionary can be
+run directly from the repl. As I've previously discussed in the entry dated
+20 Dec '22, additional functionality to extend the dictionary is possible by
+adding more Forth definitions. Even on relatively low-end microcontrollers, the
+ROM tends to be fairly beefy, so this implementation proves that having an
+easily portable and interactive version of Forth that can run even on the
+lowest end microcontrollers is quite possible.
+
+Currently the PDP11 ROM usage, (without all of the regression tests included),
+clocks in at 1550 bytes and the x86 usage weighs in at 1217 bytes. With all
+of the regression tests included, the PDP11 needs 3066 bytes and the x86 usage
+is 2212 bytes. The "gensize" perl script which is part of this commit was used
+to generate these numbers. I've also added this to the makefile so "make size"
+should generate these results as well.
+
+The runtime RAM usage can be estimated by running the the x86 emulation. RAM
+usage, with all the tests enabled, shows that just a paltry 24 bytes for the
+data stack and 12 bytes for the return stack are sufficient. Without the tests,
+the usage remains at 4 bytes for data stack and 0 bytes for the return stack.
+In addition, the static variables use 6 bytes.
+
+So I'll go ahead and stake a claim that the "threeforth" version of Forth which
+can be called interactive, (for some definition of exactly what "interactivity"
+means in this context), can easily run even on microcontrollers that have less
+than 32 bytes of RAM (if the current set of tests are disabled).
+
+What threeforth cannot do is create new dictionary entries at runtime, which
+one may claim is the essence of Forth. So now that threeforth is done, I can
+now start on a final/fuller version of Forth (which I had called "fourforth" in
+the entry dated 20 Dec '22) which can create dictionary entries and link them
+to the older entries in ROM and exec them at run time for "full" interactivity.
