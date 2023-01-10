@@ -1,3 +1,4 @@
+fourforth : test.dict
 threeforth : test.dict
 twoforth : test.out
 oneforth : test.out

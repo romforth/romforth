@@ -894,6 +894,49 @@ if{		[		// not taken
 
 #}if
 
+#{if step>=47
+here		[ here (here:h)	// h may already be misaligned
+@		[ h
+dup		[ h h
+1		[ h h 1
+&		[ h a:h&1
+inc		[ h m:a+1
+over		[ h m h
+1		[ h m h 1
+alloc		[ h m h h (here:h+1)
+-		[ h m 0
+if{		[ h m		// not taken
+	#assert
+}if		[ h m
+1 1		[ h m 1 1		// request alignment on 2 byte boundary
+alloca		[ h m h+1|h+2	// h+1, if h was misaligned, h+2 otherwise
+rot		[ m h+1|h+2 h
+-		[ m 1|2
+&		[ (2&1|1&2)
+if{		[		// not taken
+	#assert
+}if		[
+here		[ here (here:h)	// h is now definitely unaligned
+@		[ h
+dup		[ h h
+2 1		[ h h 2 1
+alloca		[ h h h+1 (here:h+3)
+-		[ h -1
+inc		[ h 0
+if{		[ h		// not taken
+	#assert
+}if		[ h
+-5		[ h -5		// 1+1+2+ 1(pad for misalignment)
+alloc		[ h h+3		// this is actually a deallocation
+-		[ -3
+3		[ -3 3
++		[ 0
+if{		[		// not taken
+	#assert
+}if		[
+
+#}if
+
 #}ifdef
 
 bye

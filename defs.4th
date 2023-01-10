@@ -573,4 +573,29 @@ def{ alloc		[ n
 	!		[ h (here:h+n)
 }def
 
+[ allocate n bytes aligned on the specified power of 2 alignment
+[ bits		: 1 2 3 ... n
+[ alignment	: 2 4 8 ... 2**n
+def{ alloca		[ n bits
+	1		[ n bits 1
+	swap		[ n 1 bits
+	<<		[ n align:1<<bits
+	dup		[ n align align
+	dec		[ n align a:align-1
+	here		[ n align a here (here:h)
+	@		[ n align a h
+	&		[ n align l:a&h
+	dup		[ n align l l
+	if{		[ n align l	// a&h!=0, unaligned by l
+		-	[ n m:align-l	// m(misalignment):1..a
+		tuck	[ m n m
+		+	[ m n+m		// pad allocation with misalignment
+		alloc	[ m h
+		+	[ p:h+m		// offset by the misalignment
+	}else{		[ n align l	// a&h==0, aligned already
+		2drop	[ n
+		alloc	[ p:h
+	}if		[ p
+}def
+
 #}if
