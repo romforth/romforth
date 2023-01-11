@@ -599,3 +599,93 @@ def{ alloca		[ n bits
 }def
 
 #}if
+
+#{if step>=48
+
+[ Given n, return m such that *here+m will fall on an aligned address
+[ It is used prior to calling alloc when the current allocation can be
+[ unaligned but the allocation _after_ that must be aligned.
+def{ align		[ n
+#{if ALIGN==0		[ n	// no alignment is required
+	exit
+#}if
+	dup		[ n n
+	1		[ n n 1
+	$ALIGN		[ n n 1 bits
+	<<		[ n n align:1<<bits
+	dup		[ n n align align
+	dec		[ n n align a:align-1
+	rot		[ n align a n
+	here		[ n align a n here (here:h)
+	@		[ n align a n h
+	+		[ n align a f:n+h
+	&		[ n align l:a&n
+	dup		[ n align l l
+	if{		[ n align l	// l!=0
+		-	[ n m:align-l	// m(misalignment):1..a
+		+	[ m:n+m		// bring it back into alignment
+	}else{		[ n align l	// l==0
+		2drop	[ m:n
+	}if		[ m		// m is now aligned (relative to here)
+}def
+
+[ Copy the bytes s[0:n) to d[0:n)
+[ the destination d is greater than s but may overlap, so we copy from the end
+def{ revstrdup		[ n d s
+	third		[ n d s n
+	loop{		[ n d s i
+		dup	[ n d s i i
+	}while{		[ n d s i		// i!=0
+		dec	[ n d s i:i-1
+		dup	[ n d s i i
+		third	[ n d s i i s
+		+	[ n d s i s+i (s[i]:c)
+		c@	[ n d s i c
+		fourth	[ n d s i c d
+		third	[ n d s i c d i
+		+	[ n d s i c d+i
+		c!	[ n d s i (d[i]:c)
+	}loop		[ n d s i		// i==0
+	2drop
+}def
+
+[ Create a new entry in the dictionary
+[                                             v nfa   v lfa  v cfa
+[                          --------------------------------------------
+[ Dictionary entry layout: ... pad | name ... | count | link | code ...
+[                          --------------------------------------------
+[                           ^ byte+ ^ byte+   ^ byte  ^ cell ^ cell/byte+
+[ See the JOURNAL entry dated 06 Jan '23 for more details about the layout
+[ Cell boundaries need to be aligned on architectures that need alignment
+def{ create		[
+	32		[ 32
+	parse		[ addr n
+	dup		[ addr n n
+	dup		[ addr n n n
+	inc		[ addr n n n+1		// count(1+)
+	cell +		[ addr n n m:n+1+cell	// link(cell+)
+	dup		[ addr n n m m
+	align		[ addr n n m m+d	// so lfa will be aligned
+	tuck		[ addr n n m+d m m+d
+	-		[ addr n n m+d -d
+	neg		[ addr n n m+d d
+	swap		[ addr n n d m+d
+	alloc		[ addr n n d h		// n+1+cell+d allocated
+	+		[ addr n n e:h+d	// skip d bytes for padding
+	fourth		[ addr n n e addr
+	revstrdup	[ addr n n e		// copy addr[0:n) to e[0:n)
+	+		[ addr n c:e+n		// get to the count byte
+	tuck		[ addr c n c
+	c!		[ addr c (c:n)		// store the count byte
+	inc		[ addr lfa:c+1		// get to the lfa
+	swap		[ lfa addr
+	drop		[ lfa
+	latest		[ lfa latest (latest:prev)
+	@		[ lfa prev
+	over		[ lfa prev lfa
+	!		[ lfa (lfa:prev)	// hook up to previous link
+	latest		[ lfa latest
+	!		[ (latest:lfa)		// and update to the latest
+}def
+
+#}if

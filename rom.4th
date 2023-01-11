@@ -937,6 +937,29 @@ if{		[		// not taken
 
 #}if
 
+#{if step>=48
+	[ < "foo bar foo "
+create	[ \ "foo" 3 prev_lfa	// '\' is used to denote dictionary contents
+32	[ 32
+parse	[ addr n (addr:"bar")
+find	[ addr n 0		// expect that "bar" is not found
+if{	[ addr n		// not taken
+	#assert
+}if	[ addr n
+2drop	[
+32	[ 32
+parse	[ addr n (addr:"foo")
+find	[ addr n lfa		// expect that "foo" is found and is latest
+latest	[ addr n lfa latest (latest:lfa)
+@	[ addr n lfa lfa
+-	[ addr n 0
+if{	[ addr n		// not taken
+	#assert
+}if	[ addr n
+2drop	[
+
+#}if
+
 #}ifdef
 
 bye

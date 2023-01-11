@@ -22,6 +22,8 @@ INDEX
 	* 23 Dec '22
 	* 06 Jan '23
 	* 07 Jan '23
+	* 08 Jan '23
+	* 10 Jan '23
 
 11 Nov '22
 ----------
@@ -868,3 +870,27 @@ one may claim is the essence of Forth. So now that threeforth is done, I can
 now start on a final/fuller version of Forth (which I had called "fourforth" in
 the entry dated 20 Dec '22) which can create dictionary entries and link them
 to the older entries in ROM and exec them at run time for "full" interactivity.
+
+10 Jan '23
+----------
+While working on this set of code changes, I realized my lack of foresight in
+not providing something like "#}else{" and "#}elsif{" directives in the "fpp"
+script. For now, I have to be very careful with the repeated use of "#{if" and
+"#}if" pairs to make sure that these directives don't result in overlaps and
+also cover all the cases. Perhaps I should follow Rust's example and enforce
+complete coverage for all sum types, while I'm at it ;)
+
+So far, for the Forth comments, I've been following a "structured commenting"
+style where '[' stands for the "rest of the data stack" and ']' stands for the
+"rest of the return stack" with '|' marking the boundary between them. Input
+was denoted using '<' and output using '>' while memory addresses and values
+were documented using "(addr:value)" with "//" used for additional clarifying
+comments. Now that the dictionary can be modified at runtime, I'll extend that
+notation a bit to use '\' to denote the contents of the dictionary.
+
+The commit of the allocation (alloc, alloca) routines which was done yesterday,
+marked the start of the implementation of "fourforth". Today I'm getting into
+the meat of the implementation with the definition of "create" which "parse"s a
+"token" from the input stream and adds it as a dictionary entry. Once this out
+of the way, I can start working on the repl to add state handling and provide
+a facility to deal with "immediate" words.

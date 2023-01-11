@@ -38,4 +38,7 @@ token
 #{if step==46
 1000 here swap bl 
 #}if
+#{if step>=48
+foo bar foo 
+#}if
 #}ifdef
