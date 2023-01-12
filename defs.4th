@@ -689,3 +689,21 @@ def{ create		[
 }def
 
 #}if
+
+#{if step>=49
+
+[ "immediate" marks the latest dictionary entry as an "immediate" word
+[ immediate'ness is marked in the most significant bit of the nfa's count byte
+def{ immediate	[
+	latest	[ latest (latest:lfa)
+	@	[ lfa
+	dec	[ nfa
+	dup	[ nfa nfa (nfa:c)
+	c@	[ nfa c
+	0x80	[ nfa c 0x80
+	|	[ nfa i:c|0x80
+	swap	[ i nfa
+	c!	[ (nfa:i)
+}def
+
+#}if

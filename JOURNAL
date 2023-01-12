@@ -24,6 +24,7 @@ INDEX
 	* 07 Jan '23
 	* 08 Jan '23
 	* 10 Jan '23
+	* 11 Jan '23
 
 11 Nov '22
 ----------
@@ -894,3 +895,41 @@ the meat of the implementation with the definition of "create" which "parse"s a
 "token" from the input stream and adds it as a dictionary entry. Once this out
 of the way, I can start working on the repl to add state handling and provide
 a facility to deal with "immediate" words.
+
+11 Jan '23
+----------
+In Forth, the "state" variable is used to track the transition from "interpret"
+state (usually denoted by 0) where all words are exec'uted within the repl to
+the "compile" state (usually denoted by 1) where all words are appended to the
+latest word that was create'd. The conventional Forth word that does the switch
+from 0 to 1 is '[' and the complementary word to switch the other way is ']'.
+The state diagram that compactly expresses this is:
+	state	event	nextstate
+	0	[	1
+	1	]	0
+Since I've appropriated '[' for commenting purposes, I'm going to rename them
+run[ and ]run which calls out the fact that the bracketed code is run even at
+compile time. These words are internally used by the Forth "define"ing word ':'
+and its complementary pair ';' which is the "immediate" word used to mark the
+end of the definition started by ':' which means the above state diagram needs
+to be extended a bit as shown below:
+	state	event	nextstate
+	0	:	1
+	0	run[	1
+	1	]run	0
+	1	;	0
+
+Once "compilation" starts and we assemble a sequence of existing Forth words
+into a sequence of cfa's to be exec'uted, we need a means of switching from
+"compile" state back to "interpret" state. Rather than hardcode some kind of
+a reserved word to do this, "immediate" words count as Chuck Moore's brilliant
+solution to do this in Forth. "immediate" words will be exec'uted by the repl
+even in "compile" state and this provides a generic escape mechanism to allow
+all types of intermediate processing to happen while "compile"ation is still
+in progress.
+
+Enabling the addition of "immediate" words to the dictionary now allows me to
+code up a full fledged Forth REPL. While "create" enables adding new dictionary
+entries, "immediate" allows us to create words that can switch the state. So,
+as the next step forward, I'll work on a repl that can take advantage of the
+"immediate"ness of words that have been added to the dictionary.

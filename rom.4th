@@ -960,6 +960,22 @@ if{	[ addr n		// not taken
 
 #}if
 
+#{if step>=49
+
+immediate	[		// marks foo from step 48 as an immediate word
+32		[ 32 < "foo "
+parse		[ addr n (addr:"foo")
+find		[ addr n lfa	// expect that "foo" is found and is latest
+latest		[ addr n lfa latest (latest:lfa)
+@		[ addr n lfa lfa
+-		[ addr n 0
+if{		[ addr n	// not taken
+	#assert
+}if		[ addr n
+2drop		[
+
+#}if
+
 #}ifdef
 
 bye

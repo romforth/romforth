@@ -41,4 +41,7 @@ token
 #{if step>=48
 foo bar foo 
 #}if
+#{if step>=49
+foo 
+#}if
 #}ifdef
