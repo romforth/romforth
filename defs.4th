@@ -707,3 +707,44 @@ def{ immediate	[
 }def
 
 #}if
+
+#{if step>=50
+
+[ append the byte at the top of the stack to the dictionary (with allocation)
+def{ c,		[ c
+	1	[ c 1
+	alloc	[ c p
+	c!	[ (p:c) \ c
+}def
+
+[ append the "word" at the top of the stack to the dictionary (with allocation)
+[ the available dictionary entry is expected to be aligned
+def{ ,		[ n
+	cell	[ n cell
+	alloc	[ n p
+	!	[ (p:n) \ n
+}def
+
+[ Implementations that use THREAD'ing type 2 need a prefix at the start of
+[ definitions. On the PDP11, for example, all definitions need to start with
+[ the "JSR ip, (nr)" linkage. The newly introduced "defprefix" is meant to be
+[ an arch specific means of adding such a prefix which abstracts away all of
+[ the arch specific details.
+def{ defprefix	[
+
+#{if THREAD==2
+
+[ The thinking behind having both THREAD and ARCH ifdef's is that any given
+[ ARCH may have more than one THREAD'ing implementation. TECHDEBT until I
+[ have more ports under my belt so I have a bigger picture to think through.
+
+#{if ARCH eq "PDP11"
+0x080c	[ 0x080c	// definitions start with "JSR ip, (nr)" on PDP11
+,	[ \ 0x080c	// append it to the dictionary
+#}if
+
+#}if
+
+}def
+
+#}if

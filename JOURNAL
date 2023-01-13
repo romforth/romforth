@@ -25,6 +25,7 @@ INDEX
 	* 08 Jan '23
 	* 10 Jan '23
 	* 11 Jan '23
+	* 12 Jan '23
 
 11 Nov '22
 ----------
@@ -933,3 +934,11 @@ code up a full fledged Forth REPL. While "create" enables adding new dictionary
 entries, "immediate" allows us to create words that can switch the state. So,
 as the next step forward, I'll work on a repl that can take advantage of the
 "immediate"ness of words that have been added to the dictionary.
+
+12 Jan '23
+----------
+This is the first year in which I cannot call either of my parents on their
+anniversary. After Dad died in 2020, Mom soldiered on for two years and this
+year I'll miss both of them.
+
+Happy 56'th Anniversary Apai and Mom! All of us miss you. :heart:

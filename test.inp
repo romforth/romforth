@@ -44,4 +44,7 @@ foo bar foo
 #{if step>=49
 foo 
 #}if
+#{if step>=50
+foo 
+#}if
 #}ifdef

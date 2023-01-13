@@ -976,6 +976,43 @@ if{		[ addr n	// not taken
 
 #}if
 
+#{if step>=50
+
+[ The previous set of tests had create'd "foo" in the dictionary without a body
+[ so we now flesh it out in this test with just an "exit" but since it is a
+[ definition, arch specific gyrations are needed. On the PDP11 for example, we
+[ need to add the linkage instruction 0x080c ("JSR ip, (nr)"). On x86, the
+[ "exit" token on its own is sufficient.
+lit		[ 	// lit escapes the following byte(s)
+exit		[ exit	// escaped by lit
+#{if offset==1
+lit		[ exit	// padding used for 1 byte offset, escaped by lit
+#}if
+
+#{if THREAD==1
+c,		[ \ exit	// append exit to the dictionary,
+		[		// on x86, for example
+#}if
+
+#{if THREAD!=1
+defprefix	[ exit \ prefix	// ARCH appropriate prefix was added
+,		[ \ exit	// finally, append exit to the dictionary
+#}if
+
+32		[ 32 < "foo "
+parse		[ addr n (addr:"foo")
+find		[ addr n lfa	// expect that "foo" is found
+cell		[ addr n lfa cell
++		[ addr n cfa:lfa+cell
+defexec		[ addr n	// since "foo" is currently just a nop
+3 -		[ addr n-3	// expect n==3
+if{		[ addr		// not taken
+	#assert
+}if
+drop		[
+
+#}if
+
 #}ifdef
 
 bye
