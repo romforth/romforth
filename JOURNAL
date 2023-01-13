@@ -26,6 +26,7 @@ INDEX
 	* 10 Jan '23
 	* 11 Jan '23
 	* 12 Jan '23
+	* 13 Jan '23
 
 11 Nov '22
 ----------
@@ -942,3 +943,15 @@ anniversary. After Dad died in 2020, Mom soldiered on for two years and this
 year I'll miss both of them.
 
 Happy 56'th Anniversary Apai and Mom! All of us miss you. :heart:
+
+13 Jan '23
+----------
+The bulk of the work involved in testing out the code for the all important
+Forth words ':' and ';' (which are used to define new words in Forth) was done
+as part of the tests in the previous commit at step 50. So in this commit, I've
+consolidated those changes into actual definitions. Rather than code up a repl
+to use these definitions, I've decided to make the tests at this step call ':'
+and ';' explicitly since I'm still thinking through how to make ';' immediate.
+---
+On a personal note, as of today, it is 3 years since Dad passed away from
+cancer (multiple myeloma) at the age of 79. Miss you Apai. :RIP:

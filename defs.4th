@@ -748,3 +748,48 @@ def{ defprefix	[
 }def
 
 #}if
+
+#{if step>=51
+
+[ switch to compile mode
+def{ ]run
+	1		[ 1
+	state		[ 1 state
+	c!		[ (state:1)
+}def
+
+[ start the definition of a new word (and switch to compilation mode)
+def{ :			[
+	create		[	\ nfa lfa
+	defprefix	[	\ prefix	// to prefix the definition
+	]run		[			// switch to compile mode
+}def
+
+[ switch to interpret mode
+def{ run[
+	0	[ 0
+	state	[ 0 state
+	c!	[ (state:0)
+}def
+
+[ finish up the definition of a new word (and switch to interpret mode)
+def{ ;		[
+	lit	[	// lit escapes the following byte(s)
+	exit	[ exit	// escaped by lit
+
+#{if offset==1
+	lit	[ exit	// padding used for 1 byte offset, escaped by lit
+#}if
+
+#{if THREAD==1
+	c,	[ \ exit	// append exit to the dictionary
+#}if
+
+#{if THREAD==2
+	,	[ \ exit	// append exit to the dictionary
+#}if
+
+	run[
+}def
+
+#}if

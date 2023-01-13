@@ -1013,6 +1013,24 @@ drop		[
 
 #}if
 
+#{if step>=51
+		[ < "bar bar "
+:		[ \ nfa lfa prefix
+;		[ \ exit
+32		[ 32 < "bar "
+parse		[ addr n (addr:"bar")
+find		[ addr n lfa	// expect that "bar" is found
+cell		[ addr n lfa cell
++		[ addr n cfa:lfa+cell
+defexec		[ addr n	// since "bar" is currently just a nop
+3 -		[ addr n-3	// expect n==3
+if{		[ addr		// not taken
+	#assert
+}if
+drop		[
+
+#}if
+
 #}ifdef
 
 bye
