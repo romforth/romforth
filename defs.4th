@@ -793,3 +793,63 @@ def{ ;		[
 }def
 
 #}if
+
+#{if step>=52
+
+def{ literal	[ n
+	lit	[ n	// to escape the next "token"
+	lit	[ n lit	// so as to get lit on the stack
+
+#{if offset==1
+	lit	[ n lit	// additional padding but only on x86, for now
+#}if
+
+#{if THREAD==1
+	c,	[ n \ lit	// x86/THREAD type1 exec token uses just 1 byte
+#}if
+
+#{if THREAD==2
+		[ n lit		// PDP11/THREAD type2 doesn't need to be padded
+	,	[ n \ lit	// but it does use a full cell for lit though
+#}if
+	,	[ \ n		// in either case, the value needs a full cell
+
+}def
+
+def{ number		[ n
+	state		[ n state (state:s)
+	c@		[ n s
+	if{		[ n	// compiling, append it to dictionary
+		literal	[ \ lit n	// after wrapping it in a lit
+	}if		[ n|empty	// intepreting state, leave n as is
+}def
+
+#}if
+
+#{if step==52
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within step 52
+[ The only change from the previous repl at step==46 is the addition of state
+[ handling for numbers. So in addition to being nops, definitions can now have
+[ numbers as well. Since everything except numbers is always executed, ';' does
+[ not yet have to be marked "immediate".
+def{ repl
+	32		[ 32 < ": baz 1234 ; baz "
+	parse		[ addr n
+	find		[ addr n lfa
+	dup		[ addr n lfa lfa
+	if{		[ addr n lfa	// lfa!=0, so get rid of
+		nip	[ addr lfa	// unneeded elements
+		nip	[ lfa		// in preparation to turn the
+		cell	[ lfa cell	// lfa into the
+		+	[ lfa+cell	// cfa
+		defexec	[ ?		// and then exec it
+	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
+		drop	[ addr n	// so drop the 0 value
+		atoi	[ 1000		// and turn the string into a number
+		number	[ ?		// and either compile it or leave as is
+	}if
+}def
+
+#}if

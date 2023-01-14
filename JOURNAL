@@ -27,6 +27,7 @@ INDEX
 	* 11 Jan '23
 	* 12 Jan '23
 	* 13 Jan '23
+	* 14 Jan '23
 
 11 Nov '22
 ----------
@@ -955,3 +956,21 @@ and ';' explicitly since I'm still thinking through how to make ';' immediate.
 ---
 On a personal note, as of today, it is 3 years since Dad passed away from
 cancer (multiple myeloma) at the age of 79. Miss you Apai. :RIP:
+
+14 Jan '23
+----------
+Since empty definitions were proven to work yesterday, the next step I could
+think of was to add support for compiling numbers into the body of definitions.
+After making those changes, testing showed some weird behaviour. It worked with
+no issues on x86 but consistently got into a hang state on PDP11. I spent some
+time going over the code with a fine tooth comb especially the #ifdef'ed parts
+and adding some debug prints for troubleshooting to make sure I had not messed
+up something related to the PDP11 specific parts since the code is now starting
+to be rife with ugly #ifdef's sprinkled helter skelter. Despite all that work,
+I didn't make much headway with those debug efforts, until I remembered that I
+had observed this kind of failure once before (see the JOURNAL entry dated 18
+Dec '22). Based on that I suspected yet another return stack overflow. The x86
+emulator reported that the return stack usage was 18 bytes (of the configured
+20). This was close enough to the limit that I decided to bump it up to see if
+the problem went away and sure enough after increasing it to 30 bytes (on both
+architectures), PDP11 also started working without any hitches. Whew!

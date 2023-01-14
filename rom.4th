@@ -1031,6 +1031,19 @@ drop		[
 
 #}if
 
+#{if step==52
+1234		[ 1234
+0 4		[ 1234 0 4
+for{		[ 1234 < ": baz 1234 ; baz "
+	repl	[ 1234
+}for		[ 1234 1234	// running baz should have pushed 1234
+-		[ 0
+if{		[	// not taken
+	#assert
+}if
+
+#}if
+
 #}ifdef
 
 bye
