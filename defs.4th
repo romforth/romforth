@@ -469,7 +469,7 @@ def{ cfaexec		[ cfa
 [ THREAD type of 1 is used to denote the x86 port's calling convention.
 [ THREAD type of 2 is used by PDP11 which stores only the cfa so it can be
 [ escaped by prepending a "lit", so no equivalent functionality is needed there
-def{ compdef	[		| w ]
+def{ ESCAPE	[		| w ]
 	r>	[ w		|   ]	// get the next exec'utable address
 	inc	[ a:w+1		|   ]	// skip the exec bytecode (enter)
 	dup	[ a a		|   ]
@@ -486,11 +486,11 @@ def{ compdef	[		| w ]
 [ The cfa of "bl" (which is the very first "defined" word is used as the
 [ boundary marker for defined words. All cfa's less than the cfa of "bl" are
 [ passed through to cfaexec for exec'ution. As described in the comment for
-[ compdef, THREAD'ing of type 2 which uses bare cfa's can be escaped using lit
+[ ESCAPE, THREAD'ing of type 2 which uses bare cfa's can be escaped using lit
 def{ defexec		[ cfa
 	dup		[ cfa cfa
 #{if THREAD==1
-	compdef bl	[ cfa cfa blcfa	// on x86, compdef escape's the enter
+	ESCAPE bl	[ cfa cfa blcfa	// on x86, ESCAPE escape's the enter
 #}if
 #{if THREAD==2
 	lit bl		[ cfa cfa blcfa	// on pdp11, lit escapes a bare cfa
