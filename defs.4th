@@ -871,6 +871,31 @@ def{ repl
 
 #}if
 
+#{if step>=54
+
+[ compile the cfa of a variable or primitive
+def{ compcfa		[ cfa	// cfa: var/prim, defs are handled in compdef
+	dup		[ cfa cfa
+	latest		[ cfa cfa latest
+	>		[ cfa cfa>latest
+	if{		[ cfa		// cfa>latest : it is a primitive
+		@	[ exe		// get the address/offset of code
+
+#{if THREAD==1
+		c,	[ \ exe		// x86/THREAD type1 uses a single byte
+#}if
+
+#{if THREAD==2
+		,	[ \ exe		// PDP11/THREAD type1 uses a full word
+#}if
+
+	}else{		[ cfa		// cfa<=latest : it is a variable
+		literal	[ \ lit cfa	// variables push their address
+	}if
+}def
+
+#}if
+
 #{if step>=53
 
 [ make ';' an immediate word
@@ -907,7 +932,9 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 #}if
 
 	}else{		[ cfa		// variable or primitive,
-		[ // ignore, for now, since it is just an untested placeholder
+#{if step>=54
+		compcfa	[ \ cfa	// compile the variable or primitive's cfa
+#}if
 	}if
 }def
 
@@ -943,7 +970,7 @@ def{ cpl_ex			[ cfa
 
 #}if
 
-#{if step==53
+#{if step==53 || step==54
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
 [ ifdef'ed only within step 53

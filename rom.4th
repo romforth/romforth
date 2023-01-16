@@ -1073,6 +1073,26 @@ if{		[	// not taken
 
 #}if
 
+#{if step>=54
+
+0 7		[ 0 7
+for{		[ < ": bar 1234 bl swap here ; bar "
+	repl	[
+}for		[ 32 1234 here	// exec'ing bar should have pushed these
+here		[ 32 1234 here here
+-		[ 32 1234 0
++		[ 32 1234
+1234		[ 32 1234 1234
+-		[ 32 0
++		[ 32
+32		[ 32 32
+-		[ 0
+if{		[	// not taken
+	#assert
+}if
+
+#}if
+
 #}ifdef
 
 bye

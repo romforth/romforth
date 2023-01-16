@@ -56,4 +56,7 @@ bar bar
 #{if step>=53
 : foo 1234 bl ; foo 
 #}if
+#{if step>=54
+: bar 1234 bl swap here ; bar 
+#}if
 #}ifdef
