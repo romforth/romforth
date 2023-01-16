@@ -28,6 +28,7 @@ INDEX
 	* 12 Jan '23
 	* 13 Jan '23
 	* 14 Jan '23
+	* 16 Jan '23
 
 11 Nov '22
 ----------
@@ -974,3 +975,37 @@ emulator reported that the return stack usage was 18 bytes (of the configured
 20). This was close enough to the limit that I decided to bump it up to see if
 the problem went away and sure enough after increasing it to 30 bytes (on both
 architectures), PDP11 also started working without any hitches. Whew!
+
+16 Jan '23
+----------
+Now that I'm getting to the part where the repl starts to get a bit more
+complicated with the addition of immediate words and compilation of defined
+words, it was predictable enough that I'd run into weird bugs. But these bugs
+were nasty and seemed to literally crawl out of the woodwork. They slowed me
+down quite a bit so I think it is worth documenting them here. I'll list them
+in the order that I found them:
+1. state was not initialized to 0 (it was initialized to 1 for the c@/c! tests)
+2. cpl_ex used @ instead of c@ to access the state variable
+3. cpl_ex and cpl_ex_imm expected an lfa but were passed a cfa
+
+Bug #1 was a "wrong initialization bug" where the repl code expected to start
+with interpreter state==0 but because of the tests (written long long ago,
+which predictably enough, I'd forgotten all about), it had been initialized to
+1. The fix was to initialize the state variable prior to calling the repl.
+So that was a relatively easy bug to fix.
+
+Bug #2 and #3 fall under the category of type bugs. Since Forth does not have
+any notion of static typing (or any means of enforcing it), such bugs can
+easily sneak in and strike at runtime. Bug #2 was almost a C-like type cast
+bug caused by using a byte as an int.
+
+Bug #3 was subtler since an address on the stack just looks like any other
+address. The initial coding was done with cpl_ex and cpl_ex_imm expecting an
+lfa on the stack. But somewhere along the line, while refactoring stuff, I
+changed the repl to send a cfa and forgot to update the called routines. I
+think the lack of static typing may rule out using Forth for large projects
+unless rigorous attention is paid to handling interface changes such as this.
+
+Or perhaps it's just me being tired and careless.
+
+Anyway, with all of these bugs out of the way, things are finally working. Yay!

@@ -482,12 +482,11 @@ def{ ESCAPE	[		| w ]
 
 #}if
 
-[ exec the cfa of a defined word
-[ The cfa of "bl" (which is the very first "defined" word is used as the
-[ boundary marker for defined words. All cfa's less than the cfa of "bl" are
-[ passed through to cfaexec for exec'ution. As described in the comment for
-[ ESCAPE, THREAD'ing of type 2 which uses bare cfa's can be escaped using lit
-def{ defexec		[ cfa
+[ check if the cfa is that of a defined word
+[ The cfa of "bl" (which is the very first "defined" word) is used as the
+[ boundary marker for defined words. As described in the comment for ESCAPE,
+[ THREAD'ing of type 2 which uses bare cfa's can be escaped using lit
+def{ isdefn		[ cfa
 	dup		[ cfa cfa
 #{if THREAD==1
 	ESCAPE bl	[ cfa cfa blcfa	// on x86, ESCAPE escape's the enter
@@ -496,6 +495,13 @@ def{ defexec		[ cfa
 	lit bl		[ cfa cfa blcfa	// on pdp11, lit escapes a bare cfa
 #}if
 	>=		[ cfa cfa>=blcfa
+}def
+
+[ exec the cfa of a defined word
+[ All cfa's that are not defined words are passed through to cfaexec for
+[ exec'ution.
+def{ defexec		[ cfa
+	isdefn		[ cfa flag
 	if{		[ cfa		// defined word
 #{if THREAD==1
 		>r	[	| cfa ]	// on x86
@@ -692,18 +698,29 @@ def{ create		[
 
 #{if step>=49
 
+def{ isimmediate	[ nfa (nfa:c)
+	c@		[ c
+	0x80		[ c 0x80		// immediate flag is MSB
+	&		[ c&0x80
+}def
+
+[ make the word at lfa "immediate"
+def{ immediatelfa	[ lfa
+	dec		[ nfa
+	dup		[ nfa nfa (nfa:c)
+	c@		[ nfa c
+	0x80		[ nfa c 0x80
+	|		[ nfa i:c|0x80
+	swap		[ i nfa
+	c!		[ (nfa:i)
+}def
+
 [ "immediate" marks the latest dictionary entry as an "immediate" word
 [ immediate'ness is marked in the most significant bit of the nfa's count byte
 def{ immediate	[
 	latest	[ latest (latest:lfa)
 	@	[ lfa
-	dec	[ nfa
-	dup	[ nfa nfa (nfa:c)
-	c@	[ nfa c
-	0x80	[ nfa c 0x80
-	|	[ nfa i:c|0x80
-	swap	[ i nfa
-	c!	[ (nfa:i)
+	immediatelfa
 }def
 
 #}if
@@ -845,6 +862,108 @@ def{ repl
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
 		defexec	[ ?		// and then exec it
+	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
+		drop	[ addr n	// so drop the 0 value
+		atoi	[ 1000		// and turn the string into a number
+		number	[ ?		// and either compile it or leave as is
+	}if
+}def
+
+#}if
+
+#{if step>=53
+
+[ make ';' an immediate word
+def{ ;immediate		[
+	here		[ here (here:h)
+	@		[ h
+	dup		[ h h
+	';'		[ h h ';'
+	swap		[ h ';' h
+	c!		[ h (h:';')
+	1		[ h 1
+	find		[ h 1 lfa	// lfa of ';'
+	immediatelfa	[ h 1
+	2drop		[
+}def
+
+[ compile a definition (or a native definition/variable)
+def{ compdef		[ cfa		// cfa: var/prim/def
+	isdefn		[ cfa flag
+	if{		[ cfa		// defined word
+
+#{if THREAD==1
+		lit	[ cfa		// escape the next byte
+		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
+#{if offset==1
+		lit	[ cfa enter	// padding, needed only on x86/offset=1
+#}if
+		c,	[ cfa	\ enter
+		,	[	\ cfa
+#}if
+
+#{if THREAD==2
+		,	[ 	\ cfa	// on pdp11, just the cfa is sufficient
+#}if
+
+	}else{		[ cfa		// variable or primitive,
+		[ // ignore, for now, since it is just an untested placeholder
+	}if
+}def
+
+[ cpl_ex_imm will either compile or execute the lfa based on "immediacy"
+def{ cpl_ex_imm		[ cfa
+	dup		[ cfa cfa
+	cell		[ cfa cfa cell
+	-		[ cfa lfa:cfa-cell	// cfa2lfa
+	dec		[ cfa nfa:lfa-1 (nfa:c)	// lfa2nfa
+	isimmediate	[ cfa c&0x80
+	if{		[ cfa			// immediate,
+		defexec	[ ?			// execute it
+	}else{		[ cfa			// not immediate,
+		compdef	[			// compile the cfa definition
+	}if		[ ?
+}def
+
+[ cpl_ex will either compile or execute the lfa based on this decision table:
+[	state		immediate?	action
+[ 	0:interpret	no		exec
+[ 	0:interpret	yes		exec
+[ 	1:compile	no		compile
+[ 	1:compile	yes		exec
+def{ cpl_ex			[ cfa
+	state			[ cfa state (state:s)
+	c@			[ cfa s
+	if{			[ cfa		// s==1, compiling
+		cpl_ex_imm	[ ?		// compile or exec if immediate
+	}else{			[ cfa		// s==0, interpreting
+		defexec		[ ?		// go ahead and exec it
+	}if			[ ?
+}def
+
+#}if
+
+#{if step==53
+
+[ Assume that this definition of the repl is just a stepping stone, so it is
+[ ifdef'ed only within step 53
+[ The only change from the previous repl at step==52 is that cpl_ex is called
+[ instead of defexec to compile definitions (in addition to executing them).
+[ With this change, the repl can include definitions that use other definitions
+[ (including itself) in addition to numbers which were added at step 52. Since
+[ definitions may be executed or compiled based on state, ';' needs to be
+[ marked "immediate" before this is called.
+def{ repl
+	32		[ 32 < ": foo 1234 bl ; foo "
+	parse		[ addr n
+	find		[ addr n lfa
+	dup		[ addr n lfa lfa
+	if{		[ addr n lfa	// lfa!=0, so get rid of
+		nip	[ addr lfa	// unneeded elements
+		nip	[ lfa		// in preparation to turn the
+		cell	[ lfa cell	// lfa into the
+		+	[ lfa+cell	// cfa
+		cpl_ex	[ ?		// and then compile/exec it
 	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
 		drop	[ addr n	// so drop the 0 value
 		atoi	[ 1000		// and turn the string into a number

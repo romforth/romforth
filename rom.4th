@@ -1044,6 +1044,35 @@ if{		[	// not taken
 
 #}if
 
+#{if step>=53
+
+;immediate	[		// we start off by making ';' an immediate word
+0		[ 0		// next, initialize the
+state		[ state		// state variable to
+c!		[ (state:0)	// interpreting/0, and finally,
+latest		[ latest	// clean up some clutter since 'foo' is reused
+@		[ lfa'bar'	// and the previous tests have polluted the
+@		[ lfa'foo'	// dictionary by adding "foo" and "bar". So we
+@		[ lfaxxx	// walk the list until we get to the lfa prior
+latest		[ lfaxxx latest	// to "foo" and make that the head of the list
+!		[ (latest:lfaxxx)
+1234		[ 1234
+0 5		[ 1234 0 5
+for{		[ 1234 < ": foo 1234 bl ; foo "
+	repl	[ 1234
+}for		[ 1234 1234 32	// exec'ing foo should have pushed 1234 and 32
+32		[ 1234 1234 32 32
+-		[ 1234 1234 0
+if{		[ 1234 1234	// not taken
+	#assert
+}if		[ 1234 1234
+-		[ 0
+if{		[	// not taken
+	#assert
+}if
+
+#}if
+
 #}ifdef
 
 bye
