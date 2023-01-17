@@ -970,7 +970,7 @@ def{ cpl_ex			[ cfa
 
 #}if
 
-#{if step==53 || step==54
+#{if step==53 || step==54 || step==55
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
 [ ifdef'ed only within step 53
@@ -996,6 +996,38 @@ def{ repl
 		atoi	[ 1000		// and turn the string into a number
 		number	[ ?		// and either compile it or leave as is
 	}if
+}def
+
+#}if
+
+#{if step>=55
+
+def{ 3ret
+
+#{if THREAD==2
+	r>	[ defexec+?	// THREAD type 2 needs an additional ret entry
+	drop	[	// this is not a real coroutine, just a multi level ret
+#}if
+
+	r>	[ cpl_ex+?	// after the call to defexec
+	drop	[		// multi level ret, so we drop rather than save
+	r>	[ repl+?	// after the call to cpl_ex
+	drop	[		// multi level ret, so we drop rather than save
+	r>	[ outer+?	// after the call to repl
+	drop	[		// multi level ret, so we drop rather than save
+}def
+
+[ This is probably the final version of the repl.
+[ The only change from the previous repl at step==53/54 is that it is no
+[ longer a one shot exec wrapper, instead it loops "forever" as the 'l' in repl
+[ implies. We still need to return control back to the test and this is done
+[ using 3ret which is defined above which does a multi level ret. Obviously
+[ this requires that each test now needs to be terminated with 3ret. Perhaps it
+[ should really be called "eot" for "end of test", but I digress.
+def{ outer
+	loop{
+		repl
+	}loop
 }def
 
 #}if

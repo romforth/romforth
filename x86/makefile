@@ -2,8 +2,8 @@ fourforth : test.dict
 threeforth : test.dict
 twoforth : test.out
 oneforth : test.out
-test.dict : emulate forth_dict test.exp ../test.inp ../fpp fpp.config
-	(dd if=forth_dict bs=1 skip=12 2>/dev/null ; cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp) | ./emulate forth_dict > test.dict
+test.dict : emulate forth_dict test.exp ../test.inp ../fpp fpp.config ../rest.inp
+	(dd if=forth_dict bs=1 skip=12 2>/dev/null ; cat ../test.inp ../rest.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp) | ./emulate forth_dict > test.dict
 	cmp test.dict test.exp
 test.out : emulate forth test.exp ../test.inp ../fpp fpp.config
 	(dd if=forth bs=1 skip=12 2>/dev/null ; cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp) | ./emulate forth > test.out

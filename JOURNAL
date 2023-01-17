@@ -29,6 +29,7 @@ INDEX
 	* 13 Jan '23
 	* 14 Jan '23
 	* 16 Jan '23
+	* 17 Jan '23
 
 11 Nov '22
 ----------
@@ -1053,3 +1054,35 @@ completed so far have been little-endian, I'm tempted to try a big-endian
 architecture for a change to see if that turns up any new portability issues.
 
 SPARC, maybe?
+
+17 Jan '23
+----------
+Before moving on to doing yet another port to some other processor, I decided
+to finish fleshing out the repl a bit more to add support for the conditional
+and loop control structures. But before adding even that, the very first thing
+I really need is a means of writing comments. The typical implementation of
+comments in Forth is trivial - something along the lines of "10 parse 2drop" to
+read everything upto the end of the current line and ignore what was read. Oh,
+and of course it must be marked "immediate" since it can be used within
+definitions. The fact that comments can be added to the language after the fact
+without any change to the "original language" is one of the more jaw dropping
+features that folks new to Forth often encounter since you run into it sooner
+than the fact that loops and conditional structures can also be bolted on to
+the "language", in almost the same way, almost as an afterthought.
+
+But before I can go ahead with adding support for comments, I need a more
+flexible means of switching between the test code in rom and the repl.
+Currently I'm counting words to handle this switch. A more flexible approach is
+to use the old "2ret+call" technique to implement a simple semi-coroutine like
+mechanism. So that will be the very first thing I'll work on before attempting
+to code the rest of the stuff.
+
+---
+
+After trying out a couple of alternatives, rather than use semi-coroutines, I
+ended up with a simpler approach which is to just do a multi-level return from
+a "longjmp" like word which I've provisionally called "3ret" (since it drops
+off the top 3 levels of the return stack, on x86). Calling 3ret from within the
+"outer" repl will return control back to the test. During testing, I found that
+the PDP11 needed an extra layer of return stack unwinding but I'll leave the
+name as is for now since I can't think of something more meaningful currently.

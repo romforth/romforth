@@ -1093,6 +1093,24 @@ if{		[	// not taken
 
 #}if
 
+#{if step>=55
+
+latest		[ latest	// clean up some clutter since 'foo' is reused
+@		[ lfa'bar'	// and the previous tests have polluted the
+@		[ lfa'foo'	// dictionary by adding "foo" and "bar". So we
+@		[ lfaxxx	// walk the list until we get to the lfa prior
+latest		[ lfaxxx latest	// to "foo" and make that the head of the list
+!		[ (latest:lfaxxx)
+
+outer		[ < ": foo 12345 ; foo 3ret "
+12345		[ 12345
+-		[ 0
+if{		[	// not taken
+	#assert
+}if
+
+#}if
+
 #}ifdef
 
 bye

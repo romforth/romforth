@@ -1,0 +1,7 @@
+#{ifdef TESTROM
+#{if step>=55
+: foo 12345 ; foo 
+latest @ @ latest ! 
+3ret 
+#}if
+#}ifdef
