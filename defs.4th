@@ -789,6 +789,18 @@ def{ run[
 	c!	[ (state:0)
 }def
 
+def{ offset,	[ val
+
+#{if THREAD==1
+	c,	[ \ val	// x86/THREAD type1 exec token uses just 1 byte
+#}if
+
+#{if THREAD==2
+	,	[ \ val	// PDP11/THREAD type2 exec token uses a full cell
+#}if
+
+}def
+
 [ finish up the definition of a new word (and switch to interpret mode)
 def{ ;		[
 	lit	[	// lit escapes the following byte(s)
@@ -797,15 +809,7 @@ def{ ;		[
 #{if offset==1
 	lit	[ exit	// padding used for 1 byte offset, escaped by lit
 #}if
-
-#{if THREAD==1
-	c,	[ \ exit	// append exit to the dictionary
-#}if
-
-#{if THREAD==2
-	,	[ \ exit	// append exit to the dictionary
-#}if
-
+	offset,	[ \ exit
 	run[
 }def
 
@@ -821,14 +825,7 @@ def{ literal	[ n
 	lit	[ n lit	// additional padding but only on x86, for now
 #}if
 
-#{if THREAD==1
-	c,	[ n \ lit	// x86/THREAD type1 exec token uses just 1 byte
-#}if
-
-#{if THREAD==2
-		[ n lit		// PDP11/THREAD type2 doesn't need to be padded
-	,	[ n \ lit	// but it does use a full cell for lit though
-#}if
+	offset,	[ n \ lit
 	,	[ \ n		// in either case, the value needs a full cell
 
 }def
@@ -880,15 +877,7 @@ def{ compcfa		[ cfa	// cfa: var/prim, defs are handled in compdef
 	>		[ cfa cfa>latest
 	if{		[ cfa		// cfa>latest : it is a primitive
 		@	[ exe		// get the address/offset of code
-
-#{if THREAD==1
-		c,	[ \ exe		// x86/THREAD type1 uses a single byte
-#}if
-
-#{if THREAD==2
-		,	[ \ exe		// PDP11/THREAD type1 uses a full word
-#}if
-
+		offset,	[ \ exe
 	}else{		[ cfa		// cfa<=latest : it is a variable
 		literal	[ \ lit cfa	// variables push their address
 	}if
