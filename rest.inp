@@ -4,4 +4,12 @@
 latest @ @ latest ! 
 3ret 
 #}if
+#{if step>=56
+: [ 10 parse 2drop ; immediate [ comments should start working from here on out
+: foo		[	// verify that comments work within definitions as well
+	4321	[ 4321
+; foo 		[	// and invoke foo for later verification
+latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
+3ret			[ // and switch back to test from within the outer repl
+#}if
 #}ifdef

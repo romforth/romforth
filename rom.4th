@@ -1111,6 +1111,17 @@ if{		[	// not taken
 
 #}if
 
+#{if step>=56
+
+outer		[ 4321
+4321		[ 4321
+-		[ 0
+if{		[	// not taken
+	#assert
+}if
+
+#}if
+
 #}ifdef
 
 bye

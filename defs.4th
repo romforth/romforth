@@ -970,7 +970,7 @@ def{ cpl_ex			[ cfa
 
 #}if
 
-#{if step==53 || step==54 || step==55
+#{if step==53 || step==54 || step==55 || step>=56
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
 [ ifdef'ed only within step 53

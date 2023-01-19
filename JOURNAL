@@ -30,6 +30,7 @@ INDEX
 	* 14 Jan '23
 	* 16 Jan '23
 	* 17 Jan '23
+	* 18 Jan '23
 
 11 Nov '22
 ----------
@@ -1086,3 +1087,44 @@ off the top 3 levels of the return stack, on x86). Calling 3ret from within the
 "outer" repl will return control back to the test. During testing, I found that
 the PDP11 needed an extra layer of return stack unwinding but I'll leave the
 name as is for now since I can't think of something more meaningful currently.
+
+18 Jan '23
+----------
+Now that I have a reliable means of switching from the repl back to test mode,
+I went ahead with adding the code to handle comments (which as I mentioned in
+the previous JOURNAL entry, is fairly trivial). Initially I debated with myself
+whether adding new definitions should continue to be done in defs.4th or should
+be part of the "console input" via rest.inp. For now I've reluctantly decided
+to add the definitions to rest.inp (mixed in with the tests) rather than adding
+just the definitions to defs.4th since the outer interpreter is the place which
+can process "immediate" requests. A different way to solve this might be to
+define "immediate:" which take a parameter (just like create) but that also
+requires entangling the code with the input stream. Another idea is to
+introduce yet another defining word pair (say imm{ ... }imm, just like the
+def{ ... }def pair) to declare words which are immediate. Of these choices,
+sticking newer definitions into rest.inp seemed easiest. So that's what I've
+ended up doing for now.
+
+One side effect of this choice is that the entirety of the code needed for a
+"full Forth" implementation is now spread over three different files:
+code.prims, defs.4th and now, rest.inp as well instead of being centralized
+or available in one "object" such as the assembly listing file (forth_dict.lst)
+This also means that an accurate means of getting the ROM/RAM requirements
+becomes harder.
+
+I'll assume that the amount of additional new code that will be needed is not
+a lot. So I'll forge ahead and revisit this decision if it turns out to be a
+major problem down the line. I also have in mind the idea of a "shrink to fit"
+tool which can be used at runtime to generate the closure of all dependencies
+of any given word. So that might be another alternative way of getting a single
+snapshot of all of the required code.
+
+---
+
+One issue that showed up during testing is that comments need the newline
+characters to be passed through. The existing code goes out of its way to get
+rid of them (for legacy reasons). So I've added some special casing in the
+makefiles for rest.inp, to preserve the newlines. I have a special generator
+("genrestinp" on PDP11) which sticks the newlines back in (via the simh/"send"
+command) and on x86, rest.inp is special cased so that the newlines are not
+egregiously removed.

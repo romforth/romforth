@@ -3,7 +3,7 @@ threeforth : test.dict
 twoforth : test.out
 oneforth : test.out
 test.dict : ../x86/emulate forth_dict ../x86/test.exp ../test.inp ../fpp ../x86/fpp.config ../rest.inp
-	(dd if=forth_dict bs=1 skip=12 2>/dev/null; cat ../test.inp ../rest.inp | ../fpp -DTESTROM -c ../x86/fpp.config | perl -pe chomp) | ../x86/emulate forth_dict > test.dict
+	(dd if=forth_dict bs=1 skip=12 2>/dev/null; cat ../test.inp | ../fpp -DTESTROM -c ../x86/fpp.config | perl -pe chomp; cat ../rest.inp | ../fpp -DTESTROM -c ../x86/fpp.config) | ../x86/emulate forth_dict > test.dict
 	cmp test.dict ../x86/test.exp
 test.out : ../x86/emulate forth ../x86/test.exp ../test.inp ../fpp ../x86/fpp.config
 	(dd if=forth bs=1 skip=12 2>/dev/null; cat ../test.inp | ../fpp -DTESTROM -c ../x86/fpp.config | perl -pe chomp) | ../x86/emulate forth > test.out
