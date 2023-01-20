@@ -3,5 +3,7 @@ use strict;
 
 while (<>) {
 	chomp;
+	s/\\/\\\\/g;
+	s/\"/\\\"/g;
 	print qq{send "$_\\n"}, "\n";
 }
