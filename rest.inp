@@ -72,3 +72,45 @@ immediate
 3ret
 #}ifdef
 #}if
+#{if step>=58
+[ "jump" compiles in the "j" operator and the placeholder for the offset
+: jump
+	lit	[	// lit escapes the following byte(s)
+	j	[ j	// escaped by lit
+#{if offset==1
+	lit	[ j	// padding used for 1 byte offset, escaped by lit
+#}if
+	offset,	[ \ j
+	offset	[ h \ 0
+;
+[ compile the "immediate" word following it by setting the override flag
+: [compile]
+	override!
+;
+immediate
+
+[	// this is just a few dummy {{{ to balance out the unbalanced braces
+
+[ }else{ can be treated as an unconditional branch followed by }if
+: }else{		[ o
+	jump		[ o h	// compile the unconditional branch
+	swap		[ h o
+	[compile] }if	[ h	// to compile an }if despite its immediacy
+;
+immediate
+#{ifdef TESTROM
+: foo			[ n
+	if{		[	// n!=0
+		1	[ 1
+	}else{		[	// n==0
+		0	[ 0
+	}if		[ 0,n==0;1,n!=0
+;
+0			[ 0
+foo			[ 0
+10			[ 0 1
+foo			[ 0 1
+latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
+3ret
+#}ifdef
+#}if

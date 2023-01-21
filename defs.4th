@@ -698,10 +698,47 @@ def{ create		[
 
 #{if step>=49
 
+#{if step>=58
+
+[ get the override flag (MSB of state)
+def{ override@		[
+	state		[ state (state:s)
+	c@		[ s
+	0x80		[ s 0x80
+	&		[ s&0x80
+}def
+
+[ toggle the override flag (MSB of state)
+def{ override!		[
+	0x80		[ 0x80
+	state		[ 0x80 state (state:s)
+	c@		[ 0x80 s
+	^		[ y:0x80^s
+	state		[ y state
+	c!		[ (state:y)
+}def
+
+[ return the current value of the override flag (and clear it if set)
+def{ override			[
+	override@		[ x
+	dup			[ x x
+	if{			[ x	// override (MSB of state) is set
+		override!	[ x	// clear the override bit (toggle it)
+	}if			[ x	// override (MSB of state) is clear
+}def
+
+#}if
+
 def{ isimmediate	[ nfa (nfa:c)
 	c@		[ c
-	0x80		[ c 0x80		// immediate flag is MSB
-	&		[ c&0x80
+	0x80		[ c 0x80	// immediate flag is MSB
+	&		[ k:c&0x80
+
+#{if step>=58
+	override	[ k x
+	^		[ k^x		// override immediate flag if required
+#}if
+
 }def
 
 [ make the word at lfa "immediate"
