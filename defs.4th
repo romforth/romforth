@@ -67,7 +67,7 @@ def{ ~			[ a b
 	-		[ s=a-b
 	dup		[ s s
 	if{ 		[ s	// a!=b
-		0xF000	[ s 0x8000
+		0x8000	[ s 0x8000
 		&	[ s&8000
 		if{	[	// a<b
 			1

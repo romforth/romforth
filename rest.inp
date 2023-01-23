@@ -114,3 +114,52 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 3ret
 #}ifdef
 #}if
+#{if step>=59
+[ // The loop control structures are:
+[ // loop{ ... }while{ ... }loop and loop{ ... }until{ ... }loop
+
+[ // loop{ just needs to leave a pointer to refer back to the start of the loop
+: loop{
+	here	[ here (here:h)
+	@	[ h
+;
+immediate
+[	// this is just a few dummy }}{ to balance out the unbalanced braces
+[ // An obvious way to think of }while{ is that it is just an if{ within a loop
+: }while{
+	[compile] if{	[ l	// to compile an if{ despite its immediacy
+;
+immediate
+[	// this is just a few dummy }}}{{ to balance out the unbalanced braces
+[ // And a }loop is just an }else{ within a loop, but with a backward jump
+: }loop				[ h l
+	[compile] }else{	[ h l	// compile an }else{ despite immediacy
+	swap			[ l h
+	patch			[	// back patch with a -ve offset
+;
+[	// this is just a few dummy } to balance out the unbalanced braces
+immediate
+#{ifdef TESTROM
+: fib			[ i:n
+	1		[ i a:1
+	0		[ i a b:0
+	loop{		[ i a b		// a>b
+		over	[ i a b a
+		+	[ i a c:b+a
+		swap	[ i c a
+		third	[ i c a i
+	}while{		[ i c a		// i!=0
+		rot	[ c a i
+		dec	[ c a i:i-1
+		rot	[ a i c
+		rot	[ i c a
+	}loop		[ i c a		// i==0
+	drop		[ i c
+	nip		[ c		// c=fibonacci(n), n>=1
+;
+10			[ 10	// +2
+fib			[ 144	// fibonacci(10+2)
+latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
+3ret
+#}ifdef
+#}if

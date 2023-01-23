@@ -31,6 +31,7 @@ INDEX
 	* 16 Jan '23
 	* 17 Jan '23
 	* 18 Jan '23
+	* 23 Jan '23
 
 11 Nov '22
 ----------
@@ -1128,3 +1129,82 @@ makefiles for rest.inp, to preserve the newlines. I have a special generator
 ("genrestinp" on PDP11) which sticks the newlines back in (via the simh/"send"
 command) and on x86, rest.inp is special cased so that the newlines are not
 egregiously removed.
+
+23 Jan '23
+----------
+This entry is just an attempt at documentating yet another bug that I ran into.
+Hopefully the steps I took here will be useful in the future when strange bugs
+such as this pop up.
+
+The bug itself was fairly old and was introduced over a month back (on Dec 15)
+but I ran into it only now, while it lay in wait biding its time to pounce and
+lay waste my time.
+
+This one was also seen only on the PDP11 port and showed up only when I added
+support for the looping constructs at step 59 although I think it should have
+popped up at step 58 as well.
+
+Anyway, to begin at the beginning, the symptom of the problem I was running
+into was that the PDP11 test would fail at the assert added in step 59 while
+the x86 test passed without an error running the identical code changes.
+
+Rather than use simh for debugging, I decided to go with "print debugging" and
+so I added an implementation of '.' to defs.4th which prints out the value at
+the top of the stack. I added a "dup ."  after the call to "outer" at step 59
+in rom.4th to see why the assert was being hit and to see what that incorrect
+value was. Unfortunately adding this "print" resulted in a hang while running
+make within the pdp11 directory. (Note: when you run into a hang in simh, you
+need to use Ctrl-e to break out of the hang, not Ctrl-c).
+
+So now that things are going sideways rapidly, the next "print based debug" was
+to add a "dup ." within cpl_ex to get a bigger picture of what was going on.
+
+Running make in the pdp11 directory again after adding the newer print also
+resulted in a hang. Getting out of the hang with Ctrl-e worked but doing so
+made "make" remove the test.dict output file. So I needed to run whatever make
+was running by hand. Since make only needs to run: "pdp11 simh_dict.cmds", I
+just ran it manually then waited for it to hang and pressed Ctrl-e to get an
+output file. The output in test.dict showed that a bunch of cfa's were
+processed in the outer interpreter but to get more context I added another
+debug print this time by adding "dup emit" at the start of "append".
+
+The next round of testing was: make + Ctrl-e followed by another manual run
+of: "pdp11 simh_dict.cmds" followed by Ctrl-e and then look at the generated
+output in test.dict. At the tail end of the output, I noticed something that
+caught my eye: the comments were being treated as compile/"exec"utable words.
+And this pattern started soon after the code in the definition of "}else{"
+which calls "[compile] }if" was processed. This code was added to the code as
+step 58 in the previous commit where it appeared to work (ie my tests did not
+signal any errors at step 58).
+
+Since it was clear that something funny was going on with "[compile]", the next
+debug print that I added was to check the value of the "state" variable. Since
+PDP11 uses a padded out word for state due to alignment issues my guess was
+that this difference was somehow triggering the difference in behavior on the
+PDP11. But that line of thinking didn't turn up anything useful but all of that
+debugging helped to narrow down the problem which could be now be summarized
+as: "[compile] }if" was expected to result in "}if" being defexec'ed but it
+looked like that wasn't happening on PDP11.
+
+So the new round of debugging focused on the following execution chain:
+	outer -> repl -> cpl_ex -> cpl_ex_imm -> defexec
+mainly to see why the "exec" path inside defexec wasn't being taken on PDP11
+when it needed to "defexec" the "[compile]'ed" word "}if".
+
+defexec calls "isdefn" so the question was further narrowed down to see why
+"isdefn" wasn't returning a "true" flag (on PDP11). This helped narrow it down
+to ">=" not returning true. I verified that the values that were compared were
+sane by "print"ing them out using '.' so the only code left to check was ">="
+which was just a shim layer over '~' and just browsing the code and seeing the
+difference between the code and the comment was enough of a hint to figure out
+the bug - which was that the PDP11 implementation of '~' mistakenly used the
+constant 0xF000 instead of 0x8000.
+
+In hindsight, looking back at the other commits made on 15 Dec, it looks like
+it was, all in all, a pretty productive day with a lot of progress made for the
+PDP11 port, but doing too much on one day may have made me careless enough that
+I let this bug slip through. Note that the "proof comment" that accompanies the
+code was correct while the code itself was wrong (and the code had diverged
+from the comment). The simple test case used to exercise the code did pass so
+I could also attribute it to insufficient testing. In any case, it seems clear
+that the bug might have been just a typo - ie, not a "thinko".
