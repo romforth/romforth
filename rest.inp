@@ -163,3 +163,44 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 3ret
 #}ifdef
 #}if
+#{if step>=60
+[	// this is just a few dummy { to balance out the unbalanced braces
+[ // }until{ is just like }while{ except the jump condition is reversed
+: }until{
+	lit	[	// lit escapes the following byte(s)
+	jnz	[ jnz	// escaped by lit
+#{if offset==1
+	lit	[ jnz	// padding used for 1 byte offset, escaped by lit
+#}if
+	offset,	[ \ jnz
+	offset	[ h \ 0
+;
+immediate
+: ==		[ a b
+	-	[ a-b
+	0=	[ a==b
+;
+[	// this is just a few dummy } to balance out the unbalanced braces
+#{ifdef TESTROM
+: sum			[ n
+	0		[ n a:0
+	0		[ n a i:0
+	loop{		[ n a i
+		third	[ n a i n
+		over	[ n a i n i
+		==	[ n a i n==i
+	}until{		[ n a i		// n!=i
+		tuck	[ n i a i
+		+	[ n i a:a+i
+		swap	[ n a i
+		inc	[ n a i:i+1
+	}loop		[ n a i		// n==i
+	drop		[ n a
+	nip		[ a
+;
+10			[ 10
+sum			[ 45=10*9/2
+latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
+3ret
+#}ifdef
+#}if
