@@ -266,3 +266,43 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 3ret
 #}ifdef
 #}if
+#{if step>=62
+: def{ : ;
+: }def [compile] ; ; immediate
+def{ .			[ n
+	32 emit		[ n > SPACE
+	48 emit		[ n > 0
+	120 emit	[ n > x
+	cell 3 <<	[ n s:cell*8
+	loop{		[ n s
+		dup	[ n s s
+	}while{		[ n s
+		4 -	[ n s:s-4
+		2dup	[ n s n s
+		15	[ n s n s 0xf
+		swap	[ n s n 0xf s
+		<<	[ n s n m:0xf<<s
+		&	[ n s i:n&m
+		over	[ n s i s
+		>>	[ n s d:i>>s
+		15	[ n s d 0xf
+		&	[ n s d&0xf
+		dup	[ n s d d
+		10	[ n s d d 10
+		>=	[ n s d d>=10
+		if{			[ n s d // d>=10
+			10 - 65 +	[ n s D:d-10+'A'
+		}else{			[ n s d // d<10
+			48 +		[ n s D:d+'0'
+		}if	[ n s D
+		emit	[ n s > D
+	}loop		[ n s
+	2drop		[
+	32 emit		[ > SPACE
+}def
+#{ifdef TESTROM
+49406			[ 0xC0FE	// this could be used as a version #
+.			[ > 0xC0FE
+3ret
+#}ifdef
+#}if

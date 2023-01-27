@@ -1177,6 +1177,12 @@ if{		[	// not taken
 
 #}if
 
+#{if step>=62
+
+outer		[ > 0xC0FE
+
+#}if
+
 #}ifdef
 
 bye

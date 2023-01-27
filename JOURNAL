@@ -32,6 +32,7 @@ INDEX
 	* 17 Jan '23
 	* 18 Jan '23
 	* 23 Jan '23
+	* 26 Jan '23
 
 11 Nov '22
 ----------
@@ -1208,3 +1209,56 @@ code was correct while the code itself was wrong (and the code had diverged
 from the comment). The simple test case used to exercise the code did pass so
 I could also attribute it to insufficient testing. In any case, it seems clear
 that the bug might have been just a typo - ie, not a "thinko".
+
+26 Jan '23
+----------
+With all of the recent commits, the repl has been gaining a fair bit of
+functionality and so I'll consider the addition of '.' in today's commit as a
+good stopping point for a "feature freeze" since all of the features that have
+been added so far should be more than enough to get a decent amount of code
+written and debugged directly from within the repl.
+
+So I'll go out on a limb again and declare "fourforth" as officially complete,
+ignoring the earlier assertion in the JOURNAL entry of 16 Jan '23 when I had
+jumped the gun a bit and declared, a little too hastily perhaps, that it was
+complete. Between then and now, over the past ten days, I've added support to
+the repl for many of the control structures familiar to most programmers:
+# Conditionals:
+	* Forth's "if/then"	: if{ ... }if
+	* and "if/else/then"	: if{ ... }else{ ... }if
+# Various types of loops:
+	* Forth's "while" loops	: loop{ ... }while{ ... }loop
+	* and "until" loops	: loop{ ... }until{ ... }loop
+	* and "for" loops	: for{ ... }for
+Writing meaningful "stack picture" comments are enabled using '[' and
+"print based debugging" is possible using '.'
+
+Definitions can be created using the conventional ':' and ';' although in my
+own code, I prefer using the syntactic sugared def{ ... }def that I've been
+using using all along in defs.4th - I've enabled this in the repl as well by
+using a tiny shim that wraps over the existing defining words ':' and ';'
+
+Obviously I have no intention of adding a boatload of even more features and
+word definitions to make this implementation conform to any of the existing
+Forth standards since that will just result in bloating it up beyond any
+reasonable hopes of fitting it into small microcontrollers. So I expect
+feature additions to freeze here but I'll keep an open mind based on further
+testing and future experience gained on real hardware.
+
+Obviously this implementation can be extended to your heart's content in any
+way you see fit - but those changes belong in other "project specific" repos.
+
+Barring any other bugs that I may run into, I expect there will be no further
+changes to any of the existing files. The only changes I expect to make as I
+port this to newer architectures/microcontrollers/cpus will be to create new
+directories and add them to the top level makefile - perhaps even add them to
+the "allsteps" make target for regression test, in case that becomes necessary.
+
+So now that I'm clear in my mind about what not to do, the next question always
+goes back to what I should work on next? In the entry for 16 Jan '23 I tossed
+out SPARC as an option since it is big-endian. That still sounds reasonable so
+I'll start to look at what tools in terms of build and emulation are handy.
+Another option might be to look at any of the other architectures that are
+emulated on simh and also have binutils assembler support. Given my familiarity
+with that toolchain now, switching to one of those architectures might also be
+an option if the SPARC port starts to look like too much of a hassle.
