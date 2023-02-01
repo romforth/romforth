@@ -2,7 +2,7 @@
 
 # genrom : convert the .4th files into C code
 #
-# Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2022-2023 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -10,13 +10,18 @@ use strict;
 
 my $mf=shift;   # the map file to which new defs are written
 
+my $gendict=0;
+if ($mf eq "-d") {
+	$gendict=1;
+	$mf=shift;   # the map file to which new defs are written
+}
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
-my $map={};	# mapping from forth words to C switch labels
+my $map={};	# mapping from forth words to C labels
 my $varmap={};	# mapping from forth words to variables
 my $defs={};	# mapping from forth words to definition labels
 
-my ($t,$f,$l);	# the type($t), forth name($f) and the C switch label ($l)
+my ($t,$f,$l);	# the type($t), forth name($f) and the C label ($l)
 
 sub code {
 	my ($f,$l)=@_;
@@ -31,10 +36,17 @@ sub olddef {
 	$defs->{$f}=$l;
 }
 
+my $prev="0";
 my $label="lbl000";
 sub savelabel {
 	my ($f,$l)=@_;
-	$label=$l;
+	if ($f eq "fake") {
+		$label=$l;
+	} elsif ($f eq "prev") {
+		$prev=$l;
+	} else {
+		die "unknown label";
+	}
 }
 
 my $handle={
@@ -59,7 +71,7 @@ for my $a (@args) {
 
 my $state=0;
 
-my $mapjmp=$map->{'jmp'};
+my $mapjmp=$map->{'j'};
 my $mapjz=$map->{'jz'};
 my $mapjnz=$map->{'jnz'};
 
@@ -74,36 +86,36 @@ sub runbegin {
 }
 
 sub rununtil {
-	print "\t.byte ", $mapjnz, "-load # branch if not zero\n";
+	print "\t.word ", $mapjnz, " # branch if not zero\n";
 	my $ol=pop @labelstack;
-	print "\t.byte ", join('_', @$ol), '-.-1', "\n";
+	print "\t.word ", join('_', @$ol), '-.-2', "\n";
 	push @labelstack, $ol;
 }
 
 sub runwhile {
-	print "\t.byte ", $mapjz, "-load # branch if zero\n";
+	print "\t.word ", $mapjz, " # branch if zero\n";
 	my $ol=pop @labelstack;
-	print "\t.byte ", join('_', @$ol), '-.-1', "\n";
+	print "\t.word ", join('_', @$ol), '-.-2', "\n";
 	push @labelstack, $ol;
 }
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\t.byte ", $mapjmp, "-load # branch\n";
-	print "\t.byte ", $ol->[0], '_begin-.-1', "\n";
+	print "\t.word ", $mapjmp, " # branch\n";
+	print "\t.word ", $ol->[0], '_begin-.-2', "\n";
 	print join('_', @$ol), ":\n";
 }
 
 sub runif {
-	print "\t.byte ", $mapjz, "-load # branch if zero\n";
-	print "\t.byte ", $label, '_then-.-1', "\n";
+	print "\t.word ", $mapjz, " # branch if zero\n";
+	print "\t.word ", $label, '_then-.-2', "\n";
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\t.byte ", $mapjmp, "-load # branch\n";
-	print "\t.byte ", $ol->[0], '_endif-.-1', "\n";
+	print "\t.word ", $mapjmp, " # branch\n";
+	print "\t.word ", $ol->[0], '_endif-.-2', "\n";
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
 	$ol->[1]="endif";
@@ -119,7 +131,7 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\t.byte $m\n";
+	print "\t.word $m # $f\n";
 }
 
 sub runfor {
@@ -166,14 +178,26 @@ sub def {
 	if ($state == 1) {
 		$l=$label++;
 		print $mh "def $w $l\n"; # create mapping in "dictionary"
-		print "case $l:	# $w\n"; # and generate C switch code
+		if ($gendict) {
+			my $len=length($w);
+			print "\t.align 1\n";
+			if ($len%2==0) {
+				print "$l","_pad:\t.byte 0\n";
+			}
+			print qq{\t.ascii "$w"\n};
+			print "$l","_nfa:\t.byte $len\n";
+			print "$l","_lfa:\t.word $prev\n";
+			$prev="$l"."_lfa";
+		}
+		print "$l:	// $w\n"; # and generate the label
 		$defs->{$w}=$l;		 # for setting up a local mapping
+		print "\t.word 0x080c\n";
 		$state=2;
 		return 1;
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.byte exit-load\n";
+			print "\t.word exit\n";
 			$state=0;
 			return 1;
 		}
@@ -184,22 +208,19 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\tLIT,\n);
-	my $l=$o%256;
-	my $h=int $o/256;
-	print qq(\t$l,\n\t$h,\n);
+	print qq(\t.word lit\n);
+	print qq(\t.word $o\n);
 }
 
 my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
-			print "\t", $m, ",\n";
+			print "\t&&", $map->{$f}, "-&&next, // $f\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit($m);		# push their address
-		} elsif ($m=$defs->{$f}) { # definitions just need to
-			print "\t.byte enter-load\n";	# be enter'ed at their
-			print "\t.word $m\n";	# starting address
+		} elsif ($m=$defs->{$f}) { # definitions just need their
+			print "\t.word $m # $f\n";	# starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
@@ -214,10 +235,22 @@ while (<>) {				# map forth words in the standard input
 			} elsif ($f =~/^(-?0x[\dA-Fa-f]+)$/) {
 				lit(oct($1)); # hex conversion
 				next;
+			} elsif ($f=~/^\#(-?\d+)$/) {
+				my $i=int($1); # "immediate" assembly equivalent
+				print qq(\t.word $i\n);
+				next;
 			}
 			die "unknown word: $f"
 		}
 	}
 }
 print $mh "label fake $label\n";
+if ($gendict) {
+	open(my $lh, ">latest.s");
+	select $lh;
+	print "\t.word $prev\n";
+	print qq{.include "dict.s"\n};
+	close $lh;
+	print $mh "label prev $prev\n";
+}
 close $mh;

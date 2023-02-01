@@ -33,6 +33,7 @@ INDEX
 	* 18 Jan '23
 	* 23 Jan '23
 	* 26 Jan '23
+	* 01 Feb '23
 
 11 Nov '22
 ----------
@@ -1262,3 +1263,43 @@ Another option might be to look at any of the other architectures that are
 emulated on simh and also have binutils assembler support. Given my familiarity
 with that toolchain now, switching to one of those architectures might also be
 an option if the SPARC port starts to look like too much of a hassle.
+
+01 Feb '23
+----------
+After spending some time looking at a couple of big-endian architectures to
+come to a decision on the next porting target, SPARC and Motorola 68000 among
+them, I decided to pivot a bit and go back and fix up the C port which got
+stalled along the way, a while back.
+
+The rationale behind this approach is that C compilers exist for quite a few
+processors and I know that SPARC and the m68k architectures are well supported.
+So rather than try to write the bare metal assembly code directly from scratch,
+it makes more sense to generate the assembly code using the C compiler's "-S"
+option (for those processors that do have a C compiler) and then tweak that
+output to run on bare metal rather than try to do all of the heavy lifting all
+by myself.
+
+Instead of just continuing where I left off with the earlier version of the C
+porting attempt, I decided to just get rid of the old code and start from
+scratch so that I can start using the "step wise" approach that I had tested
+for the PDP11. This will give me yet another opportunity to debug any porting
+issues when using the "step wise" methodology. Since the PDP11 port was the
+first attempt at using the "step wise" approach, I've copied over all of the
+generator scripts from pdp11 and modified them to get a working version of the
+C port for step 0.
+
+Since the purpose of this exercise is to make the code as small as possible,
+I've used the -Os option to optimize for space and sprinkled a few "register"
+declarations in the hope that the compiler can do some "magic" with it although
+IIRC, "register" hints are ignored by most modern C compilers.
+
+This should also give me a good opportunity to see how well the latest and
+greatest versions of the C compilers fare compared to earlier versions versus
+my own hand coded assembler versions.
+
+The C compilers that I'll use for this exercise (tail output from cc -v) are:
+	gcc version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2)
+	clang version 3.8.0-2ubuntu1 (tags/RELEASE_380/final)
+since they are the versions that are available by default on the really ancient
+Ubuntu 16.04 distro that I have on my laptop. I'll compare these against the
+newer release versions of gcc (which seems to be 11.x) and clang (also at 11.x)
