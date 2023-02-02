@@ -7,6 +7,7 @@
  */
 
 #include <stdlib.h>	// atexit
+#include <stdio.h>	// getchar putchar
 
 void
 verify() {
@@ -18,6 +19,7 @@ main() {
 #include "rom.h"
 	};
 	const unsigned char register *ip=rom;
+	int register tos;
 
 	atexit(verify);
 #include "prims.h"
