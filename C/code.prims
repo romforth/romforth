@@ -6,5 +6,7 @@
 
 next	: goto *(&&next+*ip++)
 bye	: return 0
-key	: tos=getchar() ;
-emit	: putchar(tos) ;
+dup	: *d++=tos ;
+drop	: tos=*--d ;
+key	: dup ; tos=getchar() ;
+emit	: putchar(tos) ; drop ;

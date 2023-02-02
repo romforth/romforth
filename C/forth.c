@@ -20,6 +20,7 @@ main() {
 	};
 	const unsigned char register *ip=rom;
 	int register tos;
+	int datastk[100], *d=datastk;
 
 	atexit(verify);
 #include "prims.h"
