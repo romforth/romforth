@@ -208,8 +208,10 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\t.word lit\n);
-	print qq(\t.word $o\n);
+	print "\t&&lit-&&next, ";
+	# adapted from perldoc -f pack
+	printf("%#02x, ", $_) for unpack("S*", pack L=>$o);
+	print "\n";
 }
 
 my $m;					# cache for the map from name to label

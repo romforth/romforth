@@ -15,10 +15,10 @@ verify() {
 
 int
 main() {
-	static const unsigned char rom[] = {
+	static const unsigned short rom[] = {
 #include "rom.h"
 	};
-	const unsigned char register *ip=rom;
+	const unsigned short register *ip=rom;
 	int register tos;
 	int datastk[100], *d=datastk;
 
