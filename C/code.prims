@@ -12,3 +12,4 @@ key	: dup ; tos=getchar() ;
 emit	: putchar(tos) ; drop ;
 lit	: dup ; tos=*(int *)ip ; ip+=sizeof(int)/sizeof(*ip) ;
 neg	: tos=-tos ;
+j	: i=*ip++ ; ip+=i ;

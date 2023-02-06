@@ -53,7 +53,7 @@ while (<>) {
 	/^\#/ and next;
 	if (s/^\s*(\S+)\s+:\s+//) {
 		$f=$1;
-		if ($f=~/^[a-z]\w+$/) {
+		if ($f=~/^[a-z]\w*$/) {
 			mapnames($f, $f);
 		} else {
 			mapnames($f, $label++);

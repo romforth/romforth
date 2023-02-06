@@ -19,6 +19,7 @@ main() {
 #include "rom.h"
 	};
 	const unsigned short register *ip=rom;
+	unsigned short i;
 	int register tos;
 	int datastk[100], *d=datastk;
 
