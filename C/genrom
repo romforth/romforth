@@ -80,42 +80,42 @@ my @labelstack;
 sub runbegin {
 	push @labelstack, [$label++, "begin"];
 	my $ol=pop @labelstack;
-	print join('_', @$ol), ":\n";
+	print join('_', @$ol), ":	// loop{\n";
 	$ol->[1]="endloop";
 	push @labelstack, $ol;
 }
 
 sub rununtil {
-	print "\t.word ", $mapjnz, " # branch if not zero\n";
+	print "\t&&", $mapjnz, "-&&next,	// }until{\n";
 	my $ol=pop @labelstack;
-	print "\t.word ", join('_', @$ol), '-.-2', "\n";
+	print "\tPATCH ", join('_', @$ol), "\n";
 	push @labelstack, $ol;
 }
 
 sub runwhile {
-	print "\t.word ", $mapjz, " # branch if zero\n";
+	print "\t&&", $mapjz, "-&&next,	// }while{\n";
 	my $ol=pop @labelstack;
-	print "\t.word ", join('_', @$ol), '-.-2', "\n";
+	print "\tPATCH ", join('_', @$ol), "\n";
 	push @labelstack, $ol;
 }
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\t.word ", $mapjmp, " # branch\n";
-	print "\t.word ", $ol->[0], '_begin-.-2', "\n";
+	print "\t&&", $mapjmp, "-&&next,	// }loop\n";
+	print "\tPATCH ", $ol->[0], '_begin', "\n";
 	print join('_', @$ol), ":\n";
 }
 
 sub runif {
-	print "\t.word ", $mapjz, " # branch if zero\n";
-	print "\t.word ", $label, '_then-.-2', "\n";
+	print "\t&&", $mapjz, "-&&next,	// if{\n";
+	print "\tPATCH ", $label, '_then', "\n";
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\t.word ", $mapjmp, " # branch\n";
-	print "\t.word ", $ol->[0], '_endif-.-2', "\n";
+	print "\t&&", $mapjmp, "-&&next,	// }else{\n";
+	print "\tPATCH ", $ol->[0], '_endif', "\n";
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
 	$ol->[1]="endif";
@@ -124,7 +124,7 @@ sub runelse {
 
 sub runthen {
 	my $ol=pop @labelstack;
-	print join('_', @$ol), ":\n";
+	print join('_', @$ol), ":	// }if\n";
 }
 
 sub genprim {
