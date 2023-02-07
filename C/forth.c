@@ -20,7 +20,7 @@ main() {
 	};
 	const unsigned short register *ip=rom;
 	unsigned short i;
-	int register tos;
+	int register tos, nos;
 	int datastk[100], *d=datastk;
 
 	atexit(verify);
