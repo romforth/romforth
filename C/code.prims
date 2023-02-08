@@ -26,3 +26,5 @@ dip	: *d++=nos ;
 &	: nip ; bin(&) ;
 |	: nip ; bin(|) ;
 ^	: nip ; bin(^) ;
+swap	: nip ; dup
+t_n	: tos=nos ;
