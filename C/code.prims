@@ -20,3 +20,5 @@ dec	: tos-- ;
 inv	: tos=~tos ;
 nip	: nos=*--d ;
 dip	: *d++=nos ;
+-	: neg
++	: nip ; bin(+) ;

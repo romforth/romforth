@@ -9,6 +9,8 @@
 #include <stdlib.h>	// atexit
 #include <stdio.h>	// getchar putchar
 
+#define bin(op) tos = nos op tos;
+
 void
 verify() {
 }
