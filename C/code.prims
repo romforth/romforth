@@ -28,3 +28,4 @@ dip	: *d++=nos ;
 ^	: nip ; bin(^) ;
 swap	: nip ; dup
 t_n	: tos=nos ;
+@	: tos=*(int *)((char *)&ram+tos) ;

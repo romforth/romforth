@@ -15,6 +15,11 @@ void
 verify() {
 }
 
+struct ram {
+	int test;
+	unsigned char mem[1<<16];
+} ram;
+
 int
 main() {
 	static const unsigned short rom[] = {
@@ -25,6 +30,7 @@ main() {
 	int register tos, nos;
 	int datastk[100], *d=datastk;
 
+	ram.test=0x12345678;
 	atexit(verify);
 #include "prims.h"
 }
