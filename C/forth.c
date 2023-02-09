@@ -19,6 +19,7 @@ verify() {
 
 struct ram {
 	int here;
+	char state;
 	unsigned char mem[1<<16];
 } ram;
 
@@ -33,6 +34,7 @@ main() {
 	int datastk[100], *d=datastk;
 
 	ram.here=offsetof(struct ram, mem);
+	ram.state=1;
 	atexit(verify);
 #include "prims.h"
 }

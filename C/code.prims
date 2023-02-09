@@ -30,5 +30,8 @@ swap	: nip ; dup
 t_n	: tos=nos ;
 @	: tos=*(int *)((char *)&ram+tos) ;
 !	: nip ; *(int *)((char *)&ram+tos)=nos ; drop ;
+c@	: tos=*(char *)((char *)&ram+tos) ;
+c!	: nip ; *(char *)((char *)&ram+tos)=nos ; drop ;
 
 var here
+var state
