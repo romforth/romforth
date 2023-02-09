@@ -83,8 +83,6 @@ while (<>) {
 		if ($gendict) {
 			genheader($f,$f,0);
 		}
-		print "$f:\n";		# generate the label
-		print "\t$2\n";		# and allocation/initial value if any
 		next;
 	}
 	next if (/^\s*$/);

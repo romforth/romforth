@@ -214,13 +214,19 @@ sub lit {
 	print "\n";
 }
 
+sub variable {
+	my ($o)=@_;
+	print "\t&&lit-&&next, ";
+	print "\tVAR($o),\n";
+}
+
 my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
 			print "\t&&", $map->{$f}, "-&&next, // $f\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
-			lit($m);		# push their address
+			variable($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need their
 			print "\t.word $m # $f\n";	# starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run

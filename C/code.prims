@@ -29,3 +29,6 @@ dip	: *d++=nos ;
 swap	: nip ; dup
 t_n	: tos=nos ;
 @	: tos=*(int *)((char *)&ram+tos) ;
+!	: nip ; *(int *)((char *)&ram+tos)=nos ; drop ;
+
+var here

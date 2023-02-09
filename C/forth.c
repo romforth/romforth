@@ -8,15 +8,17 @@
 
 #include <stdlib.h>	// atexit
 #include <stdio.h>	// getchar putchar
+#include <stddef.h>	// offsetof
 
 #define bin(op) tos = nos op tos;
+#define VAR(x) offsetof(struct ram, x), 0
 
 void
 verify() {
 }
 
 struct ram {
-	int test;
+	int here;
 	unsigned char mem[1<<16];
 } ram;
 
@@ -30,7 +32,7 @@ main() {
 	int register tos, nos;
 	int datastk[100], *d=datastk;
 
-	ram.test=0x12345678;
+	ram.here=offsetof(struct ram, mem);
 	atexit(verify);
 #include "prims.h"
 }
