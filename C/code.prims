@@ -33,6 +33,7 @@ t_n	: tos=nos ;
 c@	: tos=*(char *)((char *)&ram+tos) ;
 c!	: nip ; *(char *)((char *)&ram+tos)=nos ; drop ;
 pick	: tos=*(d-tos-1) ;
+stick	: nip ; *(d-tos)=nos ; drop ;
 
 var here
 var state
