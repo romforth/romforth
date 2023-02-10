@@ -34,6 +34,7 @@ struct ram {
 } ram;
 
 #define ndstacks 10
+#define nrstacks 8
 
 int
 main() {
@@ -44,9 +45,13 @@ main() {
 	unsigned short i;
 	int register tos, nos;
 	int datastk[ndstacks][100], *d=&datastk[1][1];
+	int returnstk[nrstacks][100], *r=&returnstk[0][1];
 
 	for (int i=0; i<ndstacks; i++) {
 		datastk[i][0]=1; // use the 0'th element to save tos location
+	}
+	for (int i=0; i<nrstacks; i++) {
+		returnstk[i][0]=1; // use the 0'th element to save tos location
 	}
 	ram.here=offsetof(struct ram, mem);
 	ram.state=1;
