@@ -17,11 +17,30 @@
 // and after switching to the new stack, switch to the tos using saved value
 #define swapstk(t,s,stk) { \
 	int temp=t; \
-	t=(s-stk[0])/sizeof(stk[0]); \
+	t=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
 	stk[t][0]=s-stk[t]; \
 	s=stk[temp]; \
 	s+=s[0]; \
 }
+
+#ifdef DEBUG
+#define debugstk(t,s,stk,x,rstk) { \
+	int temp=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
+	printf("%d [", temp); \
+	for (int i=0; &stk[temp][i]!=s; i++) { \
+		printf(" 0x%x/%d", stk[temp][i], stk[temp][i]); \
+	} \
+	printf(" tos: 0x%x/%d |", t, t); \
+	temp=(x-rstk[0])/(sizeof(rstk[0])/sizeof(int)); \
+	int z, *y=x; \
+	for(z=*y; rstk[temp]!=y; y--) { \
+		printf(" 0x%x/%d", z, z); \
+	} \
+	printf("] %d\n",temp); \
+}
+#else
+#define debugstk(t,s,stk,x,rstk)
+#endif
 
 void
 verify() {
