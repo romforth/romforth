@@ -38,6 +38,7 @@ sp@!	: swapstk(tos, d, datastk) ;
 rp@!	: swapstk(tos, r, returnstk) ;
 >r	: *r++=tos ; drop ;
 r>	: dup ; tos=*--r ;
+exec	: i=tos ; drop ; goto *(&&next+i)
 
 var here
 var state

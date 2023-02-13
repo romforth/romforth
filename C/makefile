@@ -5,10 +5,10 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 CFLAGS=-Os
-oneforth : test.out
 twoforth : test.out
 threeforth : test.dict
 fourforth : test.dict
+oneforth : test.out
 test.dict : forth_dict test.inp test.exp
 	cat test.inp | perl -pe chomp | ./forth_dict > test.dict
 	cmp test.dict test.exp
