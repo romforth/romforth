@@ -10,6 +10,8 @@
 #include <stdio.h>	// getchar putchar
 #include <stddef.h>	// offsetof
 
+#define USEDEFS 0
+
 #define bin(op) tos = nos op tos;
 #define VAR(x) offsetof(struct ram, x), 0
 
@@ -60,11 +62,15 @@ main() {
 	static const unsigned short rom[] = {
 #include "rom.h"
 	};
+#ifdef USEDEFS
+#include "defs.h"
+#endif
 	const unsigned short register *ip=rom;
 	unsigned short i;
 	int register tos, nos;
 	int datastk[ndstacks][100], *d=&datastk[1][1];
 	int returnstk[nrstacks][100], *r=&returnstk[0][1];
+	const unsigned short *machinestk[100], **m=machinestk;
 
 	for (int i=0; i<ndstacks; i++) {
 		datastk[i][0]=1; // use the 0'th element to save tos location

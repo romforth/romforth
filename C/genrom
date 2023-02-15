@@ -8,18 +8,20 @@
 
 use strict;
 
-my $mf=shift;   # the map file to which new defs are written
+use Getopt::Long;
+my ($gendict,$gendefs)=(0,0);
+GetOptions(
+	'dict' => \$gendict,
+	'gendefs' => \$gendefs,
+);
 
-my $gendict=0;
-if ($mf eq "-d") {
-	$gendict=1;
-	$mf=shift;   # the map file to which new defs are written
-}
+my $mf=shift;	# the map file to which new defs are written
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my $map={};	# mapping from forth words to C labels
 my $varmap={};	# mapping from forth words to variables
 my $defs={};	# mapping from forth words to definition labels
+my $deford=[];	# ordered list of definitions
 
 my ($t,$f,$l);	# the type($t), forth name($f) and the C label ($l)
 
@@ -32,8 +34,9 @@ sub var {
 	$varmap->{$f}=$l;
 }
 sub olddef {
-	my ($f,$l)=@_;
-	$defs->{$f}=$l;
+	my ($f,$l,$d)=@_;
+	$defs->{$f}=$d;
+	push @$deford, [$l,$f];
 }
 
 my $prev="0";
@@ -55,12 +58,13 @@ my $handle={
 	'def' => \&olddef,
 	'label' => \&savelabel,
 };
+my @l;
 my @args=@ARGV;	# all the args are assumed to have name to label mappings
 for my $a (@args) {
 	@ARGV=($a);		# read each of the args passed in as a file
 	while(<>) {		# reading one line at a time
-		($t,$f,$l)=split;# split'ing the line into type, name and label
-		$handle->{$t}($f,$l); # and handle each type separately
+		($t,$f,@l)=split;# split'ing the line into type, name and label
+		$handle->{$t}($f,@l); # and handle each type separately
 	}
 }
 
@@ -131,7 +135,7 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\t.word $m # $f\n";
+	print "\t$m, // $f\n";
 }
 
 sub runfor {
@@ -166,6 +170,8 @@ my $imm={
 	'}for'		=> \&runendfor,
 };
 
+my $d=0;
+
 sub def {
 	my ($w)=@_;
 	if ($state == 0) {
@@ -177,7 +183,7 @@ sub def {
 	}
 	if ($state == 1) {
 		$l=$label++;
-		print $mh "def $w $l\n"; # create mapping in "dictionary"
+		print $mh "def $w $l $d\n"; # create mapping in "dictionary"
 		if ($gendict) {
 			my $len=length($w);
 			print "\t.align 1\n";
@@ -189,15 +195,16 @@ sub def {
 			print "$l","_lfa:\t.word $prev\n";
 			$prev="$l"."_lfa";
 		}
-		print "$l:	// $w\n"; # and generate the label
-		$defs->{$w}=$l;		 # for setting up a local mapping
-		print "\t.word 0x080c\n";
+		print "static const unsigned short ${l}[] = {";
+		print " // $w\n";	# and generate C code
+		$defs->{$w}=$d++;	# for setting up a local mapping
+		push @$deford, [$l,$w];
 		$state=2;
 		return 1;
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.word exit\n";
+			print "\t&&exit-&&next\n};\n";
 			$state=0;
 			return 1;
 		}
@@ -227,8 +234,8 @@ while (<>) {				# map forth words in the standard input
 			print "\t&&", $map->{$f}, "-&&next, // $f\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			variable($m);		# push their address
-		} elsif ($m=$defs->{$f}) { # definitions just need their
-			print "\t.word $m # $f\n";	# starting address
+		} elsif (defined($m=$defs->{$f})) { # definitions just need
+			print "\t&&enter-&&next, $m, // $f\n";	# their offset
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
@@ -251,6 +258,13 @@ while (<>) {				# map forth words in the standard input
 			die "unknown word: $f"
 		}
 	}
+}
+if ($gendefs) {
+	print 'static const unsigned short *fp[] = {', "\n";
+	for my $i (@$deford) {
+		print "\t$i->[0],	// $i->[1]\n";
+	}
+	print "};\n";
 }
 print $mh "label fake $label\n";
 if ($gendict) {

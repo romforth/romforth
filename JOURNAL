@@ -35,6 +35,7 @@ INDEX
 	* 26 Jan '23
 	* 01 Feb '23
 	* 03 Feb '23
+	* 15 Feb '23
 
 11 Nov '22
 ----------
@@ -1313,3 +1314,32 @@ the C compiler even with the -Os option. So in terms of code density, it is
 pretty clear that the compiler doesn't seem to be much of a match for a
 competent coder - even in this day and age. Perhaps ChatGPT can hallucinate
 better code - but only after it has ingested some of my code I guess ;)
+
+15 Feb '23
+----------
+I'm back at trying to find a new solution to the problem documented as the
+very first entry in this JOURNAL (see the entry dated 11 Nov '22 - note that my
+frustration at finding a solution then was part of the reason that I started
+this JOURNAL). Since this time around I've chosen to use GCC's "labeled gotos"
+for jumps, by necessity, the "rom" needed to be local to main (or whichever C
+function happened to contain the labels for the "primitive" operations). Since
+higher level "definitions" also need access to the "primitives", this implies
+that newer "definitions" (which need to be part of the "rom", in some sense)
+also need to be in data structures local to main (just like the "rom" array
+itself). Unlike assembly code, C does not provide any means of referring to
+individual array elements. One solution might be to do a second pass using
+objdump to parse the generated binary to get the addresses if they were outside
+the function (in the global name space). Since that sounds a bit too hacky, my
+solution is to put each of the "definitions" in its own "rom" array and then,
+(this is the clever part), add a layer of indirection using yet another array
+that contains pointers to the start of each of these "definition roms" and hope
+and pray that the C compiler does not insist on rearranging the ordering of the
+various "definition rom" array elements.
+
+With this setup, referring to definitions just needs the index into that array
+and the index can be passed around as an int on the data stack without having
+to do any casts between pointers and ints. Unfortunately this separation also
+means that I now need a third "machine" stack to hold the pointer sized return
+addresses. This change then triggers a domino effect change on the how rp@! is
+implemented but I'll defer that for now to minimize the amount of code that
+needs to go in as part of this change set.
