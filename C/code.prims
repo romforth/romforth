@@ -46,6 +46,8 @@ m>	: dup ; tos=*--m ;
 call	: *m++=ip ; ip=(unsigned short *)tos ; drop ;
 p@	: tos=getchar() ;
 p!	: nip ; putchar(nos) ; drop ;
+<<	: nip ; bin(<<) ;
+>>	: nip ; bin(>>) ;
 
 var here
 var state
