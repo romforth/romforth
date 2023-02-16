@@ -59,18 +59,18 @@ struct ram {
 
 int
 main() {
-	static const unsigned short rom[] = {
+	static const short rom[] = {
 #include "rom.h"
 	};
 #ifdef USEDEFS
 #include "defs.h"
 #endif
-	const unsigned short register *ip=rom;
-	unsigned short i;
+	const short register *ip=rom;
+	short i;
 	int register tos, nos;
 	int datastk[ndstacks][100], *d=&datastk[1][1];
 	int returnstk[nrstacks][100], *r=&returnstk[0][1];
-	const unsigned short *machinestk[100], **m=machinestk;
+	const short *machinestk[100], **m=machinestk;
 
 	for (int i=0; i<ndstacks; i++) {
 		datastk[i][0]=1; // use the 0'th element to save tos location
