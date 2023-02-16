@@ -41,6 +41,9 @@ r>	: dup ; tos=*--r ;
 exec	: i=tos ; drop ; goto *(&&next+i)
 enter	: i=*ip++ ; *m++=ip ; ip=fp[i] ;
 exit	: ip=*--m ;
+>m	: *m++=tos ; drop ;
+m>	: dup ; tos=*--m ;
+call	: *m++=ip ; ip=(unsigned short *)tos ; drop ;
 
 var here
 var state

@@ -20,7 +20,12 @@ def{ bl 32 }def
 #{if step>=23
 
 def{ 2ret	[	| r ]
+#{if machinestack==1
+	m>	[ r	|   ]
+#}if
+#{if machinestack==0
 	r>	[ r	|   ]
+#}if
 }def
 
 def{ testnest

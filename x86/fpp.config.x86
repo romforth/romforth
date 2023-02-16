@@ -11,3 +11,4 @@ JUMP=4
 RGROWLOW=0
 THREAD=1
 ALIGN=0
+machinestack=0
