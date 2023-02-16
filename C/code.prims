@@ -44,7 +44,7 @@ exit	: ip=*--m ;
 >m	: *m++=tos ; drop ;
 m>	: dup ; tos=*--m ;
 call	: *m++=ip ; ip=(unsigned short *)tos ; drop ;
-p@	: tos=getchar() ;
+p@	: if (tos==0xFF70) { tos=1<<7; } else { tos=getchar(); } ;
 p!	: nip ; putchar(nos) ; drop ;
 <<	: nip ; bin(<<) ;
 >>	: nip ; bin(>>) ;
