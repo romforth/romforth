@@ -44,6 +44,8 @@ exit	: ip=*--m ;
 >m	: *m++=tos ; drop ;
 m>	: dup ; tos=*--m ;
 call	: *m++=ip ; ip=(unsigned short *)tos ; drop ;
+p@	: tos=getchar() ;
+p!	: nip ; putchar(nos) ; drop ;
 
 var here
 var state
