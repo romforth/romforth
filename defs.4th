@@ -53,7 +53,8 @@ def{ fourth 3 pick }def
 
 #{if step>=32
 
-def{ i		[		| ret i n
+#{if machinestack==0
+def{ i		[		| ret i n ]
 	r>	[ ret		|     i n ]
 	r>	[ ret i		|       n ]
 	swap	[ i ret		|       n ]
@@ -61,6 +62,14 @@ def{ i		[		| ret i n
 	>r	[ i ret		|     i n ]
 	>r	[ i		| ret i n ]
 }def
+#}if
+#{if machinestack==1
+def{ i		[		| i n ]
+	r>	[ i		|   n ]
+	dup	[ i i		| i n ]
+	>r	[ i		| i n ]
+}def
+#}if
 
 #}if
 
