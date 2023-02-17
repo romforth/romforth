@@ -135,7 +135,7 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\t$m, // $f\n";
+	print "\t&&$m-&&next, // $f\n";
 }
 
 sub runfor {
