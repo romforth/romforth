@@ -1,0 +1,51 @@
+#!/usr/bin/perl -w
+use strict;
+
+my $step;
+my $x=`cat stepfile`;
+$x=~s/^/\$/;
+eval $x;
+
+my $hash={};
+my $list=[0..4,qw(4.1 4.2 4.3),5..9,qw(10.1 10.2 10.3),11..62];
+for my $i (@$list) {
+	$hash->{"$i"}="0x601080";
+}
+for my $i (13..22) {
+	$hash->{"$i"}="0x6020a0";
+}
+for my $i (23..28) {
+	$hash->{"$i"}="0x6020c0";
+}
+for my $i (29..31) {
+	$hash->{"$i"}="0x6020e0";
+}
+for my $i (32..33) {
+	$hash->{"$i"}="0x602100";
+}
+for my $i (34..36) {
+	$hash->{"$i"}="0x602120";
+}
+for my $i (37..38) {
+	$hash->{"$i"}="0x602140";
+}
+$hash->{"39"}="0x6021c0";
+$hash->{"40"}="0x6021e0";
+$hash->{"41"}="0x603220";
+for my $i (@$list) {
+	last if ($i>$step);
+	my $a=$hash->{"$i"};
+	@ARGV=("fpp.config.C");
+	open(my $fh, ">fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		s/^ADDR=.*/ADDR=$a/;
+		s/^VALUE=.*/VALUE=$a/;
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i\n";
+	system("make") == 0 or die "make failed at step $i with exit status $?"
+}

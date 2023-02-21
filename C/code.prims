@@ -28,28 +28,28 @@ dip	: *d++=nos ;
 ^	: nip ; bin(^) ;
 swap	: nip ; dup
 t_n	: tos=nos ;
-@	: tos=*(int *)((char *)&ram+tos) ;
-!	: nip ; *(int *)((char *)&ram+tos)=nos ; drop ;
-c@	: tos=*(char *)((char *)&ram+tos) ;
-c!	: nip ; *(char *)((char *)&ram+tos)=nos ; drop ;
+@	: tos=*(int *)tos ;
+!	: nip ; *(int *)tos=nos ; drop ;
+c@	: tos=*(char *)tos ;
+c!	: nip ; *(char *)tos=nos ; drop ;
 pick	: tos=*(d-tos-1) ;
 stick	: nip ; *(d-tos)=nos ; drop ;
 sp@!	: swapstk(tos, d, datastk) ;
-rp@!	: swapstk(tos, r, returnstk) ;
->r	: *r++=tos ; drop ;
+rp@!	: { int temp=tos; tos=(int)r; r=(int *)temp; } ;
+>r	: *r++=(int)tos ; drop ;
 r>	: dup ; tos=*--r ;
 exec	: i=tos ; drop ; goto *(&&next+i)
-enter	: i=*ip++ ; *m++=ip ; ip=fp[i] ;
-exit	: ip=*--m ;
->m	: *m++=tos ; drop ;
-m>	: dup ; tos=*--m ;
-call	: *m++=ip ; ip=(unsigned short *)tos ; drop ;
+enter	: i=*ip++ ; *r++=(int)ip ; ip=fp[i] ;
+exit	: ip=(short *)*--r ;
+call	: *r++=(int)ip ; ip=(short *)tos ; drop ;
 p@	: if (tos==0xFF70) { tos=1<<7; } else { tos=getchar(); } ;
 p!	: nip ; putchar(nos) ; drop ;
 <<	: nip ; bin(<<) ;
 >>	: nip ; bin(>>) ;
 over	: dup ; tos=*(d-2) ;
 0=	: tos=!tos ;
+var	: dup ; tos=(int)&varalias[*ip++] ;
 
 var here
 var state
+var latest

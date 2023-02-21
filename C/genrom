@@ -171,6 +171,7 @@ my $imm={
 };
 
 my $d=0;
+my $fas=[];
 
 sub def {
 	my ($w)=@_;
@@ -186,14 +187,22 @@ sub def {
 		print $mh "def $w $l $d\n"; # create mapping in "dictionary"
 		if ($gendict) {
 			my $len=length($w);
-			print "\t.align 1\n";
+			print "static const struct {\n";
 			if ($len%2==0) {
-				print "$l","_pad:\t.byte 0\n";
+				print "\tchar pad;\n";
 			}
-			print qq{\t.ascii "$w"\n};
-			print "$l","_nfa:\t.byte $len\n";
-			print "$l","_lfa:\t.word $prev\n";
-			$prev="$l"."_lfa";
+			print "\tchar name\[$len\];\n";
+			print "\tunsigned char nfa;\n";
+			print "\tlfa *prev;\n}";
+			print "__attribute__((packed)) ${l}_fa={\n";
+			if ($len%2==0) {
+				print "\t0,\n";
+			}
+			push @$fas, $l;
+			print "\t\"$w\",\n";
+			print "\t$len,\n";
+			print "\t(lfa *)\&$prev\.prev,\n};";
+			$prev=$l."_fa";
 		}
 		print "static const unsigned short ${l}[] = {";
 		print " // $w\n";	# and generate C code
@@ -221,9 +230,10 @@ sub lit {
 	print "\n";
 }
 
+my $ref=0;
 sub variable {
 	my ($o)=@_;
-	print "\t&&lit-&&next, ";
+	print "\t&&var-&&next, ";
 	print "\tVAR($o),\n";
 }
 
@@ -260,6 +270,11 @@ while (<>) {				# map forth words in the standard input
 	}
 }
 if ($gendefs) {
+	print 'static const char *star_fa[] = {(char *)&star_fa,', "\n";
+	for my $i (@$fas) {
+		print "\t(char *)&$i", "_fa, ", "(char *)&$i,\n";
+	}
+	print "};\n";
 	print 'static const unsigned short *fp[] = {', "\n";
 	for my $i (@$deford) {
 		print "\t$i->[0],	// $i->[1]\n";
@@ -268,10 +283,9 @@ if ($gendefs) {
 }
 print $mh "label fake $label\n";
 if ($gendict) {
-	open(my $lh, ">latest.s");
+	open(my $lh, ">latest.h");
 	select $lh;
-	print "\t.word $prev\n";
-	print qq{.include "dict.s"\n};
+	print "\tvars.latest=(lfa *)&$prev\.prev;\n";
 	close $lh;
 	print $mh "label prev $prev\n";
 }

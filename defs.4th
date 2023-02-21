@@ -20,12 +20,7 @@ def{ bl 32 }def
 #{if step>=23
 
 def{ 2ret	[	| r ]
-#{if machinestack==1
-	m>	[ r	|   ]
-#}if
-#{if machinestack==0
 	r>	[ r	|   ]
-#}if
 }def
 
 def{ testnest
@@ -53,7 +48,6 @@ def{ fourth 3 pick }def
 
 #{if step>=32
 
-#{if machinestack==0
 def{ i		[		| ret i n ]
 	r>	[ ret		|     i n ]
 	r>	[ ret i		|       n ]
@@ -62,15 +56,6 @@ def{ i		[		| ret i n ]
 	>r	[ i ret		|     i n ]
 	>r	[ i		| ret i n ]
 }def
-#}if
-#{if machinestack==1
-def{ i		[		| i n ]
-	r>	[ i		|   n ]
-	dup	[ i i		| i n ]
-	>r	[ i		| i n ]
-}def
-#}if
-
 #}if
 
 #{if step>=33

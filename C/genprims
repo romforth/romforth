@@ -17,6 +17,11 @@ if ($mf eq "-d") {
 }
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
+my $lh;
+if ($gendict) {
+	open($lh, ">dict.h");
+}
+
 my ($f,$l);	# the forth name($f) and the C goto label ($l)
 
 my $prev="0";
@@ -24,15 +29,33 @@ my $prev="0";
 sub genheader {
 	my ($f,$l,$flag)=@_;
 	my $len=length($f);
-	print "\t.align 1\n";
+	my $fh=select $lh;
+	print "static const struct {\n";
 	if ($len%2==0) {
-		print "$l","_pad:\t.byte 0\n";
+		print "\tchar pad;\n";
 	}
-	print qq{\t.ascii "$f"\n};
-	print "$l","_nfa:\t.byte $len\n";
-	print "$l","_lfa:\t.word $prev\n";
-	print "$l","_cfa:\t.word $l\n" if ($flag);
-	$prev="$l"."_lfa";
+	print "\tchar name\[$len\];\n";
+	print "\tunsigned char nfa;\n} ${l}_nfa = {\n";
+	if ($len%2==0) {
+		print "\t0,\n";
+	}
+	print "\t\"$f\",\n";
+	print "\t$len\n};\n";
+	print "static const struct lfa ${l}_lfa = {\n";
+	if ($prev) {
+		print "\t\&$prev,\n};\n";
+	} else {
+		print "\t0,\n};\n";
+	}
+	print "static const struct {\n";
+	print "\tshort cfa;\n} ${l}_cfa = {\n";
+	if ($flag) {	# not a variable
+		print "\t&&$l-&&next\n};\n";
+	} else {	# variable
+		print "\toffsetof(struct var, $l)\n};\n";
+	}
+	$prev=$l."_lfa";
+	select $fh;
 }
 
 my $headers=[];
@@ -92,17 +115,14 @@ while (<>) {
 
 print $mh "label fake $label\n";
 if ($gendict) {
-	my $lh;
-	open($lh, ">dict.s");
 	select $lh;
 	for my $h (@$headers) {
 		genheader(@$h,1);
 	}
 	close $lh;
-	open($lh, ">latest.s");
+	open($lh, ">latest.h");
 	select $lh;
-	print "\t.word $prev\n";
-	print qq{.include "dict.s"\n};
+	print "\tvars.latest=&$prev\.prev;\n";
 	close $lh;
 	print $mh "label prev $prev\n";
 }

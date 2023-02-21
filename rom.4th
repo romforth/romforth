@@ -776,9 +776,9 @@ atoi		[ 1000			// verify that repl returned "1000"
 if{		[			// not taken
 	#assert
 }if		[
-repl		[ addr 4 addr+4 name 1 (addr:"repl")	// lookup ok on "repl"
-dec		[ addr 4 addr+4 name 0	// 4 shows up since length("repl")==4
-if{		[ addr 4 addr+4 name	// not taken
+repl		[ addr 4 addr+4 name+4 1 (addr:"repl")	// lookup ok on "repl"
+dec		[ addr 4 addr+4 name+4 0 // 4 shows up since length("repl")==4
+if{		[ addr 4 addr+4 name+4	// not taken
 	#assert
 }if		[ addr 4 addr+4 name+4
 latest		[ addr 4 addr+4 name+4 latest (latest:l)

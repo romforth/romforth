@@ -9,11 +9,12 @@
 #include <stdlib.h>	// atexit
 #include <stdio.h>	// getchar putchar
 #include <stddef.h>	// offsetof
+#include <assert.h>	// assert
 
 #define USEDEFS 0
 
 #define bin(op) tos = nos op tos;
-#define VAR(x) offsetof(struct ram, x), 0
+#define VAR(x) offsetof(struct var, x)
 
 // when switching stacks, save the current tos location at the 0'th element
 // and after switching to the new stack, switch to the tos using saved value
@@ -28,6 +29,7 @@
 #ifdef DEBUG
 #define debugstk(t,s,stk,x,rstk) { \
 	int temp=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
+	printf("ip:%p *ip:%d ", ip, *ip); \
 	printf("%d [", temp); \
 	for (int i=0; &stk[temp][i]!=s; i++) { \
 		printf(" 0x%x/%d", stk[temp][i], stk[temp][i]); \
@@ -48,14 +50,26 @@ void
 verify() {
 }
 
-struct ram {
-	int here;
+typedef const struct lfa {
+	const struct lfa *prev;
+} lfa;
+
+unsigned char mem[1<<16];
+
+struct var {
+	char *test;
+	const struct lfa *latest;
+	unsigned char *here;
 	char state;
-	unsigned char mem[1<<16];
-} ram;
+} vars = {
+	(char *)&vars.test,
+	0,
+	(unsigned char *)mem,
+	1
+};
+char *varalias=(char *)&vars;
 
 #define ndstacks 10
-#define nrstacks 8
 
 int
 main() {
@@ -63,23 +77,25 @@ main() {
 #include "rom.h"
 	};
 #ifdef USEDEFS
+#include "dict.h"
 #include "defs.h"
+#include "latest.h"
 #endif
 	const short register *ip=rom;
 	short i;
 	int register tos, nos;
 	int datastk[ndstacks][100], *d=&datastk[1][1];
-	int returnstk[nrstacks][100], *r=&returnstk[0][1];
-	const short *machinestk[100], **m=machinestk;
+	int returnstk[100], *r=returnstk;
+
+	// this code is just a means of ensuring that the *_fa structs don't
+	// get tossed by the compiler space optimization. The call to rand()
+	// seems to be sufficient to make the compiler complacent enough to
+	// not attempt additional constant folding.
+	assert(star_fa[rand()&0]);
 
 	for (int i=0; i<ndstacks; i++) {
 		datastk[i][0]=1; // use the 0'th element to save tos location
 	}
-	for (int i=0; i<nrstacks; i++) {
-		returnstk[i][0]=1; // use the 0'th element to save tos location
-	}
-	ram.here=offsetof(struct ram, mem);
-	ram.state=1;
 	atexit(verify);
 #include "prims.h"
 }
