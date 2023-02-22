@@ -32,6 +32,7 @@ for my $i (37..38) {
 $hash->{"39"}="0x6021c0";
 $hash->{"40"}="0x6021e0";
 $hash->{"41"}="0x603220";
+$hash->{"42"}="0x603240";
 for my $i (@$list) {
 	last if ($i>$step);
 	my $a=$hash->{"$i"};
