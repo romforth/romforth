@@ -193,18 +193,19 @@ sub def {
 			}
 			print "\tchar name\[$len\];\n";
 			print "\tunsigned char nfa;\n";
-			print "\tlfa *prev;\n}";
-			print "__attribute__((packed)) ${l}_fa={\n";
+			print "\tlfa *prev;\n";
+			print "\tunsigned short cfa[];\n";
+			print "}";
+			print "__attribute__((packed)) ${l}={\n";
 			if ($len%2==0) {
 				print "\t0,\n";
 			}
 			push @$fas, $l;
 			print "\t\"$w\",\n";
 			print "\t$len,\n";
-			print "\t(lfa *)\&$prev\.prev,\n};";
-			$prev=$l."_fa";
+			print "\t(lfa *)\&$prev\.prev,\n";
+			$prev=$l;
 		}
-		print "static const unsigned short ${l}[] = {";
 		print " // $w\n";	# and generate C code
 		$defs->{$w}=$d++;	# for setting up a local mapping
 		push @$deford, [$l,$w];
@@ -270,14 +271,9 @@ while (<>) {				# map forth words in the standard input
 	}
 }
 if ($gendefs) {
-	print 'static const char *star_fa[] = {(char *)&star_fa,', "\n";
-	for my $i (@$fas) {
-		print "\t(char *)&$i", "_fa, ", "(char *)&$i,\n";
-	}
-	print "};\n";
 	print 'static const unsigned short *fp[] = {', "\n";
 	for my $i (@$deford) {
-		print "\t$i->[0],	// $i->[1]\n";
+		print "\t$i->[0]\.cfa,	// $i->[1]\n";
 	}
 	print "};\n";
 }

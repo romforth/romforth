@@ -9,7 +9,6 @@
 #include <stdlib.h>	// atexit
 #include <stdio.h>	// getchar putchar
 #include <stddef.h>	// offsetof
-#include <assert.h>	// assert
 
 #define USEDEFS 0
 
@@ -27,6 +26,8 @@
 }
 
 #ifdef DEBUG
+int rprint=0;
+
 #define debugstk(t,s,stk,x,rstk) { \
 	int temp=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
 	printf("ip:%p *ip:%d ", ip, *ip); \
@@ -35,10 +36,13 @@
 		printf(" 0x%x/%d", stk[temp][i], stk[temp][i]); \
 	} \
 	printf(" tos: 0x%x/%d |", t, t); \
-	temp=(x-rstk[0])/(sizeof(rstk[0])/sizeof(int)); \
-	int z, *y=x; \
-	for(z=*y; rstk[temp]!=y; y--) { \
-		printf(" 0x%x/%d", z, z); \
+	int z, *y; \
+	if (mem==x) rprint=1; \
+	if (rprint) { \
+		for(y=x; y!=mem; y--) { \
+			z=*y; \
+			printf(" 0x%x", z); \
+		} \
 	} \
 	printf("] %d\n",temp); \
 }
@@ -86,12 +90,6 @@ main() {
 	int register tos, nos;
 	int datastk[ndstacks][100], *d=&datastk[1][1];
 	int returnstk[100], *r=returnstk;
-
-	// this code is just a means of ensuring that the *_fa structs don't
-	// get tossed by the compiler space optimization. The call to rand()
-	// seems to be sufficient to make the compiler complacent enough to
-	// not attempt additional constant folding.
-	assert(star_fa[rand()&0]);
 
 	for (int i=0; i<ndstacks; i++) {
 		datastk[i][0]=1; // use the 0'th element to save tos location

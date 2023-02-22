@@ -35,26 +35,27 @@ sub genheader {
 		print "\tchar pad;\n";
 	}
 	print "\tchar name\[$len\];\n";
-	print "\tunsigned char nfa;\n} ${l}_nfa = {\n";
+	print "\tunsigned char nfa;\n";
+	print "\tlfa *prev;\n";
+	print "\tunsigned short cfa[];\n";
+	print "}";
+	print "__attribute__((packed)) ${l}={\n";
 	if ($len%2==0) {
 		print "\t0,\n";
 	}
 	print "\t\"$f\",\n";
-	print "\t$len\n};\n";
-	print "static const struct lfa ${l}_lfa = {\n";
+	print "\t$len,\n";
 	if ($prev) {
-		print "\t\&$prev,\n};\n";
+		print "\t(lfa *)\&$prev\.prev,\n";
 	} else {
-		print "\t0,\n};\n";
+		print "\t0,\n";
 	}
-	print "static const struct {\n";
-	print "\tshort cfa;\n} ${l}_cfa = {\n";
 	if ($flag) {	# not a variable
 		print "\t&&$l-&&next\n};\n";
 	} else {	# variable
 		print "\toffsetof(struct var, $l)\n};\n";
 	}
-	$prev=$l."_lfa";
+	$prev=$l;
 	select $fh;
 }
 
