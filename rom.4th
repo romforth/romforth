@@ -858,9 +858,6 @@ if{		[			// not taken
 	#assert
 }if		[
 repl		[ here (here:mem)	// repl should return the cfa of "here"
-#{if prim_var_deref==1
-@		[			// an extra deref for C variables
-#}if
 @		[ mem			// which is the variable's address
 here		[ mem here		// so we can use direct access to the
 @		[ mem mem		// variable as a primitive to verify

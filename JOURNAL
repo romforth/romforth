@@ -39,6 +39,7 @@ INDEX
 	* 21 Feb '23
 	* 22 Feb '23
 	* 23 Feb '23
+	* 24 Feb '23
 
 11 Nov '22
 ----------
@@ -1496,3 +1497,22 @@ and see if there is a neater way to encapsulate this mess.
 
 In any case, since the common code in rom.4th was modified, I ran the full
 regression using "make allsteps" and the earlier ports haven't rotted away yet.
+
+24 Feb '23
+----------
+While coding in assembly, I had the full freedom to intersperse code with data.
+Since C does not allow that freedom (for good reason), I needed to do a little
+backtracking to modify some of the older decisions made at step 45.
+
+With the placement of the dictionary header for variables in "ROM" (which was
+done at the previous step, step 44, yesterday), the older method of using the
+location of "latest" to distinguish between "primitive definitions" and
+"primitive variables" no longer works since the dictionary header is separate
+from the actual variable that it wraps. So I needed to fall back to a more
+traditional Forth like means of invoking the cfa contents (think DOVAR, DOCOL
+etc) from the dictionary. So I changed cfaexec to directly "call" the contents
+of the dictionary, thus restoring the earlier freedom of assembler code to mix
+data with code which C had taken away.
+
+Since common code was changed at this step as well, I ran the full regression
+using "make allsteps" to make sure that "all is well".

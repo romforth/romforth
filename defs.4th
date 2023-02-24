@@ -447,6 +447,10 @@ def{ repl
 [ as the boundary marker between primitive variables and definitions. The cfa
 [ of variables are returned as is but definitions are exec'ed
 def{ cfaexec		[ cfa
+#{if prim_var_deref==1
+	call
+	exit
+#}if
 	dup		[ cfa cfa
 	latest		[ cfa cfa latest
 	>		[ cfa cfa>latest

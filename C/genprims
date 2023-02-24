@@ -40,7 +40,9 @@ sub genheader {
 	if ($flag) {	# not a variable
 		print "\tunsigned short cfa[];\n";
 	} else {	# variable
-		print "\tvoid *cfa;\n";
+		print "\tshort cfa;\n";
+		print "\tvoid *var;\n";
+		print "\tshort exit;\n";
 	}
 	print "}";
 	print "__attribute__((packed)) ${l}={\n";
@@ -55,9 +57,12 @@ sub genheader {
 		print "\t0,\n";
 	}
 	if ($flag) {	# not a variable
-		print "\t&&$l-&&next\n};\n";
+		print "\t&&$l-&&next,\n";
+		print "\t&&exit-&&next\n};\n";
 	} else {	# variable
-		print "\t&vars.$l\n};\n";
+		print "\t&&lit-&&next,\n";
+		print "\t&vars.$l,\n";
+		print "\t&&exit-&&next\n};\n";
 	}
 	$prev=$l;
 	select $fh;

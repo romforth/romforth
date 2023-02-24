@@ -6,14 +6,27 @@ my $x=`cat stepfile`;
 $x=~s/^/\$/;
 eval $x;
 
+my $debug=0;
+@ARGV=("forth.c");
+while (<>) {
+	if (/^\#define DEBUG/) {
+		$debug=1;
+	}
+}
+
 my $hash={};
 my $list=[0..4,qw(4.1 4.2 4.3),5..9,qw(10.1 10.2 10.3),11..62];
 for my $i (@$list) {
-	last if ($i>=42);
+	last if ($i>=41);
 	$hash->{"$i"}="0x602080";
 }
-for my $i (42..62) {
+for my $i (41..62) {
 	$hash->{"$i"}="0x603080";
+}
+if ($debug) {
+	for my $i (@$list) {
+		$hash->{"$i"}="0x607080";
+	}
 }
 for my $i (@$list) {
 	last if ($i>$step);
@@ -30,5 +43,9 @@ for my $i (@$list) {
 	close $fh;
 	select STDOUT;
 	print "\nRunning step $i\n";
+	if ($debug) {
+		system("make 2>&1 | grep 'Segmentation fault .core dumped.'") ==0 and die "debug make failed at step $i with a segv";
+		next;
+	}
 	system("make") == 0 or die "make failed at step $i with exit status $?"
 }
