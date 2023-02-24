@@ -10,6 +10,8 @@
 #include <stdio.h>	// getchar putchar
 #include <stddef.h>	// offsetof
 
+// #define DEBUG
+
 #define USEDEFS 0
 
 #define bin(op) tos = nos op tos;
@@ -27,8 +29,10 @@
 
 #ifdef DEBUG
 int rprint=0;
+int tabs=0;
 
 #define debugstk(t,s,stk,x,rstk) { \
+	for (int i=0;i<tabs;i++) putchar(' '); \
 	int temp=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
 	printf("ip:%p *ip:%d ", ip, *ip); \
 	printf("%d [", temp); \
@@ -37,17 +41,33 @@ int rprint=0;
 	} \
 	printf(" tos: 0x%x/%d |", t, t); \
 	int z, *y; \
-	if (mem==x) rprint=1; \
+	if (mem==(unsigned char *)x) rprint=1; \
 	if (rprint) { \
-		for(y=x; y!=mem; y--) { \
+		for (y=x; (unsigned char *)y!=mem; y--) { \
 			z=*y; \
 			printf(" 0x%x", z); \
 		} \
 	} \
 	printf("] %d\n",temp); \
+	fflush(stdout); \
 }
+#define trace(n) \
+	if (n) { \
+		printf("{ "); \
+		char *p=(char *)ip; \
+		p-=sizeof(lfa *); \
+		char c=*--p; \
+		p-=c; \
+		for (int i=0;i<c;i++) putchar(*p++); \
+		putchar('\n'); \
+		tabs++;\
+	} else { \
+		printf("}\n"); \
+		if (tabs>0) tabs--; \
+	}
 #else
 #define debugstk(t,s,stk,x,rstk)
+#define trace(n)
 #endif
 
 void

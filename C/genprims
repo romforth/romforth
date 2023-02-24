@@ -37,7 +37,11 @@ sub genheader {
 	print "\tchar name\[$len\];\n";
 	print "\tunsigned char nfa;\n";
 	print "\tlfa *prev;\n";
-	print "\tunsigned short cfa[];\n";
+	if ($flag) {	# not a variable
+		print "\tunsigned short cfa[];\n";
+	} else {	# variable
+		print "\tvoid *cfa;\n";
+	}
 	print "}";
 	print "__attribute__((packed)) ${l}={\n";
 	if ($len%2==0) {
@@ -53,7 +57,7 @@ sub genheader {
 	if ($flag) {	# not a variable
 		print "\t&&$l-&&next\n};\n";
 	} else {	# variable
-		print "\toffsetof(struct var, $l)\n};\n";
+		print "\t&vars.$l\n};\n";
 	}
 	$prev=$l;
 	select $fh;

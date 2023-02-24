@@ -38,6 +38,7 @@ INDEX
 	* 15 Feb '23
 	* 21 Feb '23
 	* 22 Feb '23
+	* 23 Feb '23
 
 11 Nov '22
 ----------
@@ -1450,3 +1451,48 @@ the "latest" dictionary header pointer variable ensures that all the structs
 are marked as live by the C compiler so it does not try to strip them out.
 
 I'm happier with this version than the clunky hack that I'd coded up yesterday.
+
+23 Feb '23
+----------
+Compared to coding in assembly, coding Forth in C is actually turning into a
+real PITA. To debug the issues that cropped up at step 44, I needed to add even
+more debug printfs which helped to narrow down the issues.
+
+The first problem turned out to be that the current tests assume that the repl
+lookup of "here" returns an address which is writable. For the C port though,
+I've marked the statically generated dictionary headers as "const" which makes
+them readonly so that they can, in theory at least, be stored in a "ROM". So
+I needed to add another layer of indirection for "primitive variables" in C
+which have been wrapped in the dictionary header. Unlike traditional Forth, the
+"cfa" of these variables is readonly and only contain a pointer to the "real"
+variable's writable location.
+
+This is workable but requires changes to the tests in rom.4th when variables
+are accessed via the "repl". For now I've made an ugly band aid fix of adding
+yet another configuration parameter called "prim_var_deref". If that is set to
+1, it means that the repl needs to do an additional indirection on the cfa
+before fetching/storing a value to the address of the underlying variable.
+
+With that issue out of the way, the next issue I ran into was another segv.
+Tracking it down with the debug printfs showed that the problem was that the
+CELL size was still set to 2 (which was inherited from the PDP11 port). In this
+case since we are using CELL size to step over the lfa and since that is a
+pointer sized location in the C implementation, CELL needed to be configured to
+8 instead of 2. This is just yet another band aid fix rather than a "real fix"
+so that I can think through what exactly "CELL" should mean in this port.
+
+Traditionally, in Forth, the CELL size is the native "word" size of the CPU on
+which the Forth VM runs. But given the mix of "word" sizes I have used along
+the winding path to reach this point, I think I need at least 3 different CELL
+descriptors. The "short" bytecodes used in the VM proper need a CELL size of 2,
+the "int" sized stack entries (in the data stack and the return stack) need a
+CELL size of 4 and of course any "pointer" sized values need a CELL size of 8.
+Obviously the "one size fits all" philosophy of regular Forth is not going to
+fly well here.
+
+Since it is fairly late now, I'm going to commit this fix for now and continue
+to think about better options for a later commit. I think I'll just sleep on it
+and see if there is a neater way to encapsulate this mess.
+
+In any case, since the common code in rom.4th was modified, I ran the full
+regression using "make allsteps" and the earlier ports haven't rotted away yet.
