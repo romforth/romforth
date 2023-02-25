@@ -1516,3 +1516,10 @@ data with code which C had taken away.
 
 Since common code was changed at this step as well, I ran the full regression
 using "make allsteps" to make sure that "all is well".
+
+25 Feb '23
+----------
+The traditional Forth technique of directly "call"ing the cfa is a much better
+solution than the existing, (and in hindsight, pretty clunky) method that I'd
+implemented (for x86 and PDP11). I'll stick with the new change only for the C
+port for now and revisit the earlier implementations later as time permits.

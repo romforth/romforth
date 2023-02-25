@@ -560,6 +560,10 @@ def{ repl
 		nip	[ lfa		// in preparation to turn the
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
+#{if prim_var_deref==1
+		call
+		exit
+#}if
 		defexec	[ ?		// and then exec it
 	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
 		drop	[ addr n	// so drop the 0 value
