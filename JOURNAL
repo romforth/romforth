@@ -40,6 +40,8 @@ INDEX
 	* 22 Feb '23
 	* 23 Feb '23
 	* 24 Feb '23
+	* 25 Feb '23
+	* 27 Feb '23
 
 11 Nov '22
 ----------
@@ -1523,3 +1525,20 @@ The traditional Forth technique of directly "call"ing the cfa is a much better
 solution than the existing, (and in hindsight, pretty clunky) method that I'd
 implemented (for x86 and PDP11). I'll stick with the new change only for the C
 port for now and revisit the earlier implementations later as time permits.
+
+27 Feb '23
+----------
+The porting of steps 47, 48 and 49 were, for the most part, smooth sailing. At
+step 50 though, I needed to introduce yet another configuration parameter which
+I've denoted as THREAD type 3, for the C port which uses a short 2 byte offset
+for the "primitives". Although PDP11 also uses a 2 byte offset, the C port does
+not use a leading prefix at the start of definitions so I needed to distinguish
+between these configurations with yet another parameter. This also required the
+addition of yet another non-conventional Forth word which I've called "s," (for
+"short ,") to append a 2 byte little-endian short to the dictionary.
+
+While I was there, I realized that the machinestack configuration variable
+which was introduced a while back (and then removed later) was still hanging
+around in the x86 and PDP11 config files so I've cleaned that up as well.
+
+As usual, since common code was modified, I ran make allsteps as a sanity check

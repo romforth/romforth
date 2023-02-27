@@ -994,9 +994,12 @@ c,		[ \ exit	// append exit to the dictionary,
 		[		// on x86, for example
 #}if
 
-#{if THREAD!=1
+#{if THREAD==2
 defprefix	[ exit \ prefix	// ARCH appropriate prefix was added
 ,		[ \ exit	// finally, append exit to the dictionary
+#}if
+#{if THREAD==3
+s,		[ \ exit	// offset used by C is a short (2 bytes)
 #}if
 
 32		[ 32 < "foo "
@@ -1004,7 +1007,12 @@ parse		[ addr n (addr:"foo")
 find		[ addr n lfa	// expect that "foo" is found
 cell		[ addr n lfa cell
 +		[ addr n cfa:lfa+cell
+#{if prim_var_deref==1
+call		[ addr n	// since "foo" is currently just a nop
+#}if
+#{if prim_var_deref!=1
 defexec		[ addr n	// since "foo" is currently just a nop
+#}if
 3 -		[ addr n-3	// expect n==3
 if{		[ addr		// not taken
 	#assert

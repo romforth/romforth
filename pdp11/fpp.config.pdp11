@@ -13,4 +13,4 @@ NEEDROT=1
 THREAD=2
 ALIGN=1
 ARCH="PDP11"
-machinestack=0
+prim_var_deref=0

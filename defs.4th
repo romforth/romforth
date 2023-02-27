@@ -778,6 +778,26 @@ def{ c,		[ c
 	c!	[ (p:c) \ c
 }def
 
+#{if THREAD==3
+
+[ append the little-endian short "word" to the dictionary (with allocation)
+def{ s,		[ c
+	2	[ c 2
+	alloc	[ c p
+	2dup	[ c p c p
+	inc	[ c p c p+1
+	>r	[ c p c		| p+1 ]
+	>r	[ c p		| c p+1 ]
+	c!	[ 		| c p+1 ] (p:c) \ c
+	r>	[ c		| p+1 ]
+	8	[ c 8		| p+1 ]
+	>>	[ h:c>>8	| p+1 ]
+	r>	[ h p+1
+	c!	[ (p+1:h) \ h
+}def
+
+#}if
+
 [ append the "word" at the top of the stack to the dictionary (with allocation)
 [ the available dictionary entry is expected to be aligned
 def{ ,		[ n
@@ -786,14 +806,14 @@ def{ ,		[ n
 	!	[ (p:n) \ n
 }def
 
+#{if THREAD==2
+
 [ Implementations that use THREAD'ing type 2 need a prefix at the start of
 [ definitions. On the PDP11, for example, all definitions need to start with
 [ the "JSR ip, (nr)" linkage. The newly introduced "defprefix" is meant to be
 [ an arch specific means of adding such a prefix which abstracts away all of
 [ the arch specific details.
 def{ defprefix	[
-
-#{if THREAD==2
 
 [ The thinking behind having both THREAD and ARCH ifdef's is that any given
 [ ARCH may have more than one THREAD'ing implementation. TECHDEBT until I
@@ -804,9 +824,9 @@ def{ defprefix	[
 ,	[ \ 0x080c	// append it to the dictionary
 #}if
 
-#}if
-
 }def
+
+#}if
 
 #}if
 
@@ -822,7 +842,12 @@ def{ ]run
 [ start the definition of a new word (and switch to compilation mode)
 def{ :			[
 	create		[	\ nfa lfa
+
+#{if THREAD==2
+
 	defprefix	[	\ prefix	// to prefix the definition
+#}if
+
 	]run		[			// switch to compile mode
 }def
 
