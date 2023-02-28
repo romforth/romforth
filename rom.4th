@@ -1030,7 +1030,12 @@ parse		[ addr n (addr:"bar")
 find		[ addr n lfa	// expect that "bar" is found
 cell		[ addr n lfa cell
 +		[ addr n cfa:lfa+cell
+#{if prim_var_deref==1
+call		[ addr n	// since "bar" is currently just a nop
+#}if
+#{if prim_var_deref!=1
 defexec		[ addr n	// since "bar" is currently just a nop
+#}if
 3 -		[ addr n-3	// expect n==3
 if{		[ addr		// not taken
 	#assert

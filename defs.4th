@@ -868,6 +868,10 @@ def{ offset,	[ val
 	,	[ \ val	// PDP11/THREAD type2 exec token uses a full cell
 #}if
 
+#{if THREAD==3
+	s,	[ \ val	// C/THREAD type3 exec token uses a 2 byte short
+#}if
+
 }def
 
 [ finish up the definition of a new word (and switch to interpret mode)
