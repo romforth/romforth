@@ -42,6 +42,7 @@ INDEX
 	* 24 Feb '23
 	* 25 Feb '23
 	* 27 Feb '23
+	* 01 Mar '23
 
 11 Nov '22
 ----------
@@ -1542,3 +1543,21 @@ which was introduced a while back (and then removed later) was still hanging
 around in the x86 and PDP11 config files so I've cleaned that up as well.
 
 As usual, since common code was modified, I ran make allsteps as a sanity check
+
+01 Mar '23
+----------
+There was another SEGV that needed a fair bit of debugging at step 52. By
+dumping out the list of words in the dictionary, it was clear that some of the
+dictionary entries were getting corrupted. With additional tracing, I tracked
+the cause of the corruption down to an overrun of the return stack. Since C
+uses 4 bytes for each return stack entry which is twice the size used on x86
+(and PDP11), I've doubled the configured return stack size for C (from 30 bytes
+to 60 bytes). Although this change has fixed the sigsegv, I need to think of a
+better way to deal with issues like this longer term since I had run into the
+identical problem earlier as well (while doing the PDP11 port).
+
+Another long standing issue (which I've mentioned earlier on 23 Feb '23) is the
+usage of CELL for multiple/different things. Since C literals need 4 bytes (as
+opposed to 2 bytes for x86 and PDP11), I've created a new configuration param
+called LITC which needs to be set in the architecture specific fpp.config file
+and configured it for the C port to 4 and for x86 and PDP11, it is set to 2.

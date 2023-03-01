@@ -1,4 +1,5 @@
 CELL=2
+LITC=2
 offset=1
 ADDR=0x100
 VALUE=0x0cbf

@@ -801,7 +801,7 @@ def{ s,		[ c
 [ append the "word" at the top of the stack to the dictionary (with allocation)
 [ the available dictionary entry is expected to be aligned
 def{ ,		[ n
-	cell	[ n cell
+	$LITC	[ n cell
 	alloc	[ n p
 	!	[ (p:n) \ n
 }def
@@ -931,7 +931,12 @@ def{ repl
 		nip	[ lfa		// in preparation to turn the
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
+#{if prim_var_deref==1
+		call	[ ?		// and then exec it
+#}if
+#{if prim_var_deref!=1
 		defexec	[ ?		// and then exec it
+#}if
 	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
 		drop	[ addr n	// so drop the 0 value
 		atoi	[ 1000		// and turn the string into a number
