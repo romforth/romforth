@@ -13,13 +13,13 @@ test.defs : forth_defs test.inp test.exp
 	cat test.inp | perl -pe chomp | ./forth_defs > test.defs
 	cmp test.defs test.exp
 test.dict : forth_dict test.inp test.exp
-	cat test.inp | perl -pe chomp | ./forth_dict > test.dict
+	cat test.inp | ./forth_dict > test.dict
 	cmp test.dict test.exp
 test.out : forth test.inp test.exp
 	cat test.inp | perl -pe chomp | ./forth > test.out
 	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
-	cat ../test.inp | ../fpp -DTESTROM -c fpp.config > test.inp
+	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp
 	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config >> test.inp
 test.exp : ../test.expected ../fpp fpp.config
 	cat ../test.expected | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.exp
