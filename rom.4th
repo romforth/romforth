@@ -1059,8 +1059,7 @@ if{		[	// not taken
 
 #{if step>=53
 
-;immediate	[		// we start off by making ';' an immediate word
-0		[ 0		// next, initialize the
+0		[ 0		// start off by initializing the
 state		[ state		// state variable to
 c!		[ (state:0)	// interpreting/0, and finally,
 latest		[ latest	// clean up some clutter since 'foo' is reused

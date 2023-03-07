@@ -504,6 +504,10 @@ def{ isdefn		[ cfa
 [ All cfa's that are not defined words are passed through to cfaexec for
 [ exec'ution.
 def{ defexec		[ cfa
+#{if THREAD==3
+	call
+	exit
+#}if
 	isdefn		[ cfa flag
 	if{		[ cfa		// defined word
 #{if THREAD==1
@@ -875,7 +879,7 @@ def{ offset,	[ val
 }def
 
 [ finish up the definition of a new word (and switch to interpret mode)
-def{ ;		[
+imm{ ;		[
 	lit	[	// lit escapes the following byte(s)
 	exit	[ exit	// escaped by lit
 
@@ -884,7 +888,7 @@ def{ ;		[
 #}if
 	offset,	[ \ exit
 	run[
-}def
+}imm
 
 #}if
 
@@ -965,23 +969,14 @@ def{ compcfa		[ cfa	// cfa: var/prim, defs are handled in compdef
 
 #{if step>=53
 
-[ make ';' an immediate word
-def{ ;immediate		[
-	here		[ here (here:h)
-	@		[ h
-	dup		[ h h
-	';'		[ h h ';'
-	swap		[ h ';' h
-	c!		[ h (h:';')
-	1		[ h 1
-	find		[ h 1 lfa	// lfa of ';'
-	immediatelfa	[ h 1
-	2drop		[
-}def
-
 [ compile a definition (or a native definition/variable)
 def{ compdef		[ cfa		// cfa: var/prim/def
+#{if THREAD==3
+	1		[ cfa 1		// THREAD type 3 : always use the cfa
+#}if
+#{if THREAD!=3
 	isdefn		[ cfa flag
+#}if
 	if{		[ cfa		// defined word
 
 #{if THREAD==1
@@ -998,6 +993,15 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 		,	[ 	\ cfa	// on pdp11, just the cfa is sufficient
 #}if
 
+#{if THREAD==3
+		literal	[	\ lit cfa	// stash away the cfa
+		lit	[	// escape the next byte
+		call	[	// THREAD type 3 uses call to invoke the cfa
+#{if offset==1
+		lit	[	// padding, needed only when offset=1
+#}if
+		s,	[	\ call		// and then call it
+#}if
 	}else{		[ cfa		// variable or primitive,
 #{if step>=54
 		compcfa	[ \ cfa	// compile the variable or primitive's cfa
@@ -1013,7 +1017,12 @@ def{ cpl_ex_imm		[ cfa
 	dec		[ cfa nfa:lfa-1 (nfa:c)	// lfa2nfa
 	isimmediate	[ cfa c&0x80
 	if{		[ cfa			// immediate,
+#{if prim_var_deref==1
+		call	[ ?			// execute it
+#}if
+#{if prim_var_deref!=1
 		defexec	[ ?			// execute it
+#}if
 	}else{		[ cfa			// not immediate,
 		compdef	[			// compile the cfa definition
 	}if		[ ?
@@ -1031,7 +1040,12 @@ def{ cpl_ex			[ cfa
 	if{			[ cfa		// s==1, compiling
 		cpl_ex_imm	[ ?		// compile or exec if immediate
 	}else{			[ cfa		// s==0, interpreting
+#{if prim_var_deref==1
+		call		[ ?		// go ahead and exec it
+#}if
+#{if prim_var_deref!=1
 		defexec		[ ?		// go ahead and exec it
+#}if
 	}if			[ ?
 }def
 

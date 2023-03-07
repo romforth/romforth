@@ -70,10 +70,13 @@ for my $a (@args) {
 
 # state event next      action
 # 0     def{    1       -
+# 0     imm{    1       $immediate=1
 # 1     $w      2       $label: ; $w
-# 2     }def    0       .byte exit
+# 2     }def    0       exit
+# 2     }imm    0       exit ; $immediate=0
 
 my $state=0;
+my $immediate=0;
 
 my $mapjmp=$map->{'j'};
 my $mapjz=$map->{'jz'};
@@ -180,6 +183,11 @@ sub def {
 			$state=1;
 			return 1;
 		}
+		if ($w eq 'imm{') {
+			$state=1;
+			$immediate=1;
+			return 1;
+		}
 		return 0;
 	}
 	if ($state == 1) {
@@ -202,6 +210,7 @@ sub def {
 			}
 			push @$fas, $l;
 			print "\t\"$w\",\n";
+			$len |= 0x80 if ($immediate);
 			print "\t$len,\n";
 			print "\t(lfa *)\&$prev\.prev,\n";
 			$prev=$l;
@@ -216,6 +225,12 @@ sub def {
 		if ($w eq '}def') {
 			print "\t&&exit-&&next\n};\n";
 			$state=0;
+			return 1;
+		}
+		if ($w eq '}imm') {
+			print "\t&&exit-&&next\n};\n";
+			$state=0;
+			$immediate=0;
 			return 1;
 		}
 		return 0;

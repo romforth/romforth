@@ -43,6 +43,7 @@ INDEX
 	* 25 Feb '23
 	* 27 Feb '23
 	* 01 Mar '23
+	* 06 Mar '23
 
 11 Nov '22
 ----------
@@ -1561,3 +1562,66 @@ usage of CELL for multiple/different things. Since C literals need 4 bytes (as
 opposed to 2 bytes for x86 and PDP11), I've created a new configuration param
 called LITC which needs to be set in the architecture specific fpp.config file
 and configured it for the C port to 4 and for x86 and PDP11, it is set to 2.
+
+06 Mar '23
+----------
+I seem to be making progress on the C port one segv at a time. The latest segv
+came out of left field - primarily since I'd forgotten a relevant detail, which
+I'll blame on the distractions from real life (rains, roof leaks).
+
+Due to all of the recent rains (which were a welcome relief after a couple of
+years of fairly intense drought) here in California, the low slope roof on my
+patio decided to go ahead and spring a leak. I think it was last repaired about
+10 years ago so it was bound to fail any day now. As a short term fix, while
+browsing around in the nearby Home Depot, I found a "repair and seal" tape with
+an aluminum overlay called "Resisto" and used that to patch up the ripped seams
+(at least the ones that I could locate). Fingers crossed that all of it will
+hold up for the next batch of rains that are predicted soon.
+
+Anyway, coming back to the sigsegv, it turned out that the old way of marking
+the dictionary entry for ";" as an immediate word, "after the fact" as it were,
+does not really work since the dictionary headers are marked "const" (because
+they are stored on a read-only page). An obvious way to workaround this is to
+make the dictionary headers writable by removing the "const", but this requires
+them to be placed in RAM. Since one of the primary rationales that led to this
+project is minimizing RAM usage, moving the headers to RAM is not a very useful
+solution. So it is clear that making the headers "const" is obviously a "good"
+constraint to have since it allows more stuff to be held in ROM but it also
+implies that the "immediate" bit needs to be set in the dictionary header prior
+to the C compilation. So this required changes to the genrom script for the C
+port which then had the follow on effect that to maintain compatibility across
+the various ports, I need to repeat that same set of changes to genrom 3 more
+times for all of the other ports as well (ie x86, x86-as and PDP11).
+
+To mark words as "immediate", I went back to an approach I'd considered a while
+ago and rejected (see my earlier entry dated 18 Jan '23). I'd decided against
+doing it at that point in time but with hindsight, my mind is now made up that
+reversing that decision is the right thing to do. So this change introduces the
+keywords imm{ ... }imm to define immediate words (ie to create the dictionary
+headers marked with the "immediate" bit set)
+
+Making this change also involved changes to defs.4th (since the definition of
+";immediate" becomes superfluous and can be removed) and to rom.4th as well
+(since it no longer needs to call ";immediate"). As usual, since there were
+changes to common code, "make allsteps" was used to verify all that code churn
+did not introduce any regressions.
+
+With all of that restructuring out of the way, the rest of the work looked very
+simple: just "call" the cfa from the REPL when "interpreting" and prefix the
+cfa with "enter" when "compiling". So I went ahead and prototyped that only to
+find myself running into yet another SIGSEGV. Tracking that one down helped me
+realize that the leaky roof had led to stuff seemingly leak out of my brain as
+well. ;)
+
+I had to go look at the code to remind myself that "enter" in the C port was
+partially intended to abstract away the fact that I can't squirrel away a 32
+(or a 64) bit wide pointer into an array of 16 bit shorts. Although C by design
+cannot introspect on it's symbols at run time, Forth's dictionary allows it do
+just that. So instead of calling "enter", I've modified it to push the cfa onto
+the stack (by wrapping it with a "lit"eral) and issuing a "call" to that cfa.
+
+Now that I know that even a small context switch from working on code to other
+stuff is enough to make me forget tiny details, I hope that the prediction of
+even more of these rains (which will likely result in some more of these roof
+leaks) will not result in yet another round of the coding context in my head
+getting washed away as well.

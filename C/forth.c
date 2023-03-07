@@ -34,7 +34,7 @@ int tabs=0;
 #define debugstk(t,s,stk,x,rstk) { \
 	for (int i=0;i<tabs;i++) putchar(' '); \
 	int temp=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
-	printf("ip:%p *ip:%d ", ip, *ip); \
+	printf("ip:%p *ip:0x%x/%d ", ip, *ip, *ip); \
 	printf("%d [", temp); \
 	for (int i=0; &stk[temp][i]!=s; i++) { \
 		printf(" 0x%x/%d", stk[temp][i], stk[temp][i]); \
@@ -64,7 +64,8 @@ int tabs=0;
 	} else { \
 		printf("}\n"); \
 		if (tabs>0) tabs--; \
-	}
+	} \
+	fflush(stdout);
 #else
 #define debugstk(t,s,stk,x,rstk)
 #define trace(n)
