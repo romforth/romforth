@@ -44,6 +44,7 @@ INDEX
 	* 27 Feb '23
 	* 01 Mar '23
 	* 06 Mar '23
+	* 08 Mar '23
 
 11 Nov '22
 ----------
@@ -1625,3 +1626,30 @@ stuff is enough to make me forget tiny details, I hope that the prediction of
 even more of these rains (which will likely result in some more of these roof
 leaks) will not result in yet another round of the coding context in my head
 getting washed away as well.
+
+08 Mar '23
+----------
+Getting steps 54, 55 and 56 verified was pretty easy but I ran into a fair bit
+of trouble at step 57 : "support conditionals at the repl". The first issue was
+the fact that jump offsets are 16 bit. While this works fine on the PDP11 since
+16 bits happens to also be the CELL size, it doesn't work on C since ints are
+32 bit wide. So the first change was to introduce a definition to store shorts
+called "s!". Once that was sorted out, I ran into a second difficulty: since I
+use the cfa uniformly across variables, primitives and definitions, primitives
+such as lit and j/jz/jnz which use "immediate addressing" to get their operands
+will not work (unless I change the code to match, which would make them pretty
+inefficient). Since I just need a means of getting their values to store into
+the dictionary, I've used the workaround of adding a new word called "#jz" to
+do this - the '#' is meant to be a mnemonic that it is an absolute value (kinda
+like the equivalent denotation used in assembly). An alternative to this might
+be to define the conditionals in defs.4th where I won't need to jump through
+such hoops but I guess there might be some value in minimizing ROM usage unless
+absolutely necessary so I'll stick to the current approach. In any case, once
+that issue was sorted out, the third bug I ran into was that the jump offset
+wasn't calculated correctly. This turned out to be due to the fact that C does
+pointer addition which scales the offset by 2 (since it was a pointer to a
+short) so I needed to scale down the offset by the equivalent amount before
+storing it into the dictionary header. Once all these fixes were done,
+conditionals started to work as expected.
+
+Since common code was changed, I ran "make allsteps" to check for regressions.

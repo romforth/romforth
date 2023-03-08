@@ -952,6 +952,8 @@ def{ repl
 
 #{if step>=54
 
+#{if THREAD!=3
+
 [ compile the cfa of a variable or primitive
 def{ compcfa		[ cfa	// cfa: var/prim, defs are handled in compdef
 	dup		[ cfa cfa
@@ -964,6 +966,8 @@ def{ compcfa		[ cfa	// cfa: var/prim, defs are handled in compdef
 		literal	[ \ lit cfa	// variables push their address
 	}if
 }def
+
+#}if
 
 #}if
 
@@ -1004,7 +1008,10 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 #}if
 	}else{		[ cfa		// variable or primitive,
 #{if step>=54
+			[ // THREAD type 3 will never take this path
+#{if THREAD!=3
 		compcfa	[ \ cfa	// compile the variable or primitive's cfa
+#}if
 #}if
 	}if
 }def
@@ -1110,5 +1117,28 @@ def{ outer
 		repl
 	}loop
 }def
+
+#}if
+
+#{if step>=57
+
+#{if THREAD==3
+
+[ // primitives such as lit, j/jz/jnz etc which use "immediate addressing"
+[ // (where "immediate" refers not to the Forth meaning of the word but to the
+[ // "CPU architecture" meaning) cannot be invoked via the cfa since they work
+[ // only when used as a prefix to the byte(s) that they precede. So, this is
+[ // just a workaround to provide a means of getting their "primitive" values.
+def{ #jz
+	lit	[	// to escape the next "token"
+	jz	[ jz	// so as to get jz on the stack
+
+#{if offset==1
+	lit	[ lit	// additional padding in case lit grabs more bytes
+#}if
+
+}def
+
+#}if
 
 #}if
