@@ -106,10 +106,16 @@ immediate
 #{if step>=58
 [ "jump" compiles in the "j" operator and the placeholder for the offset
 : jump
+#{if THREAD!=3
 	lit	[	// lit escapes the following byte(s)
 	j	[ j	// escaped by lit
 #{if offset==1
 	lit	[ j	// padding used for 1 byte offset, escaped by lit
+#}if
+#}if
+
+#{if THREAD==3
+	#j	[ j	// since thread type3 cannot use the above trick
 #}if
 	offset,	[ \ j
 	offset	[ h \ 0

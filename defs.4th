@@ -1142,3 +1142,22 @@ def{ #jz
 #}if
 
 #}if
+
+#{if step>=58
+
+#{if THREAD==3
+
+[ // see the comment for #jz above for the details of why this is needed
+def{ #j
+	lit	[	// to escape the next "token"
+	j	[ j	// so as to get j on the stack
+
+#{if offset==1
+	lit	[ lit	// additional padding in case lit grabs more bytes
+#}if
+
+}def
+
+#}if
+
+#}if
