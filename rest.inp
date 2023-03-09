@@ -204,10 +204,16 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 [	// this is just a few dummy { to balance out the unbalanced braces
 [ // }until{ is just like }while{ except the jump condition is reversed
 : }until{
+#{if THREAD!=3
 	lit	[	// lit escapes the following byte(s)
 	jnz	[ jnz	// escaped by lit
 #{if offset==1
 	lit	[ jnz	// padding used for 1 byte offset, escaped by lit
+#}if
+#}if
+
+#{if THREAD==3
+	#jnz	[ jnz	// since thread type3 cannot use the above trick
 #}if
 	offset,	[ \ jnz
 	offset	[ h \ 0
