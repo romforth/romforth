@@ -248,28 +248,6 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 #}ifdef
 #}if
 #{if step>=61
-: compile	[	| w ]
-	r>	[ w	|   ] // get the next exec'utable address
-	dup	[ w w	|   ]
-#{if THREAD==1
-	c@	[ w o
-#}if
-#{if THREAD==2
-	@	[ w o
-#}if
-	swap	[ o w
-	inc	[ o w+1
-#{if THREAD==2
-	inc	[ o w+2		// XXX: any problems with assuming cell=2 here?
-#}if
-	>r	[ o	| w+d ]
-#{if THREAD==1
-	c,	[	| w+d ] \ o
-#}if
-#{if THREAD==2
-	,	[	| w+d ] \ o
-#}if
-;
 [ A definition of for{ ... }for loops in terms of regular while loops
 : for{				[ i:index n:limit	// for loop over [i:n)
 	[compile] loop{		[ i n			\ loop{

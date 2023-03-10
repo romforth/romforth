@@ -41,7 +41,7 @@ r>	: dup ; tos=*--r ;
 exec	: i=tos ; drop ; goto *(&&next+i)
 enter	: i=*ip++ ; *r++=(int)ip ; ip=fp[i] ; trace(1) ;
 exit	: ip=(short *)*--r ; trace(0) ;
-call	: *r++=(int)ip ; ip=(short *)tos ; drop ;
+call	: *r++=(int)ip ; ip=(short *)tos ; drop ; trace(1) ;
 p@	: if (tos==0xFF70) { tos=1<<7; } else { tos=getchar(); } ;
 p!	: nip ; putchar(nos) ; drop ;
 <<	: nip ; bin(<<) ;
@@ -49,6 +49,7 @@ p!	: nip ; putchar(nos) ; drop ;
 over	: dup ; tos=*(d-2) ;
 0=	: tos=!tos ;
 var	: dup ; tos=(int)&varalias[*ip++] ;
+# show	: showname((char *)tos) ;
 
 var here
 var state

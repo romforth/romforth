@@ -51,12 +51,24 @@ int tabs=0;
 	printf("] %d\n",temp); \
 	fflush(stdout); \
 }
+
+void showname(char *p) {
+       unsigned char c=*--p;
+       c &=~0x80;
+       p-=c;
+       putchar('"');
+       for (int i=0;i<c;i++) putchar(*p++);
+       putchar('"');
+       putchar('\n');
+}
+
 #define trace(n) \
 	if (n) { \
 		printf("{ "); \
 		char *p=(char *)ip; \
 		p-=sizeof(lfa *); \
 		char c=*--p; \
+		c&=~0x80; \
 		p-=c; \
 		for (int i=0;i<c;i++) putchar(*p++); \
 		putchar('\n'); \

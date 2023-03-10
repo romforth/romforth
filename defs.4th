@@ -1076,6 +1076,7 @@ def{ repl
 	if{		[ addr n lfa	// lfa!=0, so get rid of
 		nip	[ addr lfa	// unneeded elements
 		nip	[ lfa		// in preparation to turn the
+		[ show	// to debug
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
 		cpl_ex	[ ?		// and then compile/exec it
@@ -1180,3 +1181,41 @@ def{ #jnz
 #}if
 
 #}if
+
+#{if step>=61
+def{ compile	[	| w ]
+	r>	[ w	|   ] // get the next exec'utable address
+	dup	[ w w	|   ] (w:o)
+#{if THREAD==1
+	c@	[ w o
+#}if
+#{if THREAD==2
+	@	[ w o
+#}if
+#{if THREAD==3
+	inc	[ w w+1		// cfa's are coded as lit CFA call, so this
+	inc	[ w w+2		// is to skip past the lit which is a short
+	@	[ w cfa		// and from there, get the cfa to get to the
+	@	[ w o:primitive	// actual "bytecode" (which is a short)
+#}if
+	swap	[ o w
+	inc	[ o w+1
+#{if THREAD==2
+	inc	[ o w+2		// XXX: any problems with assuming cell=2 here?
+#}if
+#{if THREAD==3
+	inc	[ o w+2		// skip past the lit which is a short in C and
+	6	[ o w+2 4+2	// then skip past the cfa (int:4 bytes) and
+	+	[ o w+8		// also the call (short:2 bytes)
+#}if
+	>r	[ o	| w+d ]
+#{if THREAD==1
+	c,	[	| w+d ] \ o
+#}if
+#{if THREAD==2
+	,	[	| w+d ] \ o
+#}if
+#{if THREAD==3
+	s,	[	| w+d ] \ o
+#}if
+}def
