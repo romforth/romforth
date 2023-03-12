@@ -46,6 +46,7 @@ INDEX
 	* 06 Mar '23
 	* 08 Mar '23
 	* 10 Mar '23
+	* 11 Mar '23
 
 11 Nov '22
 ----------
@@ -1686,3 +1687,51 @@ handled by the outer interpreter which adds the "call" layer) to defs.4th
 was good enough to fix the bug. I'll call this out as TECHDEBT since this
 violates the law of least surprise and is going to bite "unwary me" somewhere
 down the line.
+
+11 Mar '23
+----------
+Looking back at the very first journal entry, it was exactly 4 months ago that
+I started this journal - primarily to vent about the fact that I was giving up
+on the very first attempt at a C port because of my frustration with how much
+of a struggle it had become to make Forth see eye to eye with the abstraction
+imposed on the baremetal by the C compiler.
+
+So now that I've successfully completed a "second system"/from scratch C port,
+this is as good a time as any to look back and figure out lessons learnt and
+what could be done better for the other upcoming ports.
+
+Although my second attempt at the C port took much longer than I ever expected,
+the end result gives me a deep sense of satisfaction since I think that it has
+resulted in a much better implementation overall since the read-only/ROM and
+read-write/RAM areas have well delineated boundaries now.
+
+It was also a bit more pleasant to test things out since I could debug things
+in userland instead of mucking around in a slow emulator. The protections that
+are offered by running it with MMU protected pages makes it more likely to die
+sooner with a SIGSEGV, in case of bugs, instead of chugging away and corrupting
+random locations in memory as happened in the case of the PDP11 port.
+
+One thing that is pretty clear is that the "step wise" approach that was begun
+as part of the PDP11 port turns out to be a really good idea. Some of the parts
+which took longer in the C port need to be examined to see if it is possible to
+break them up into smaller, more easily tested/debugged chunks.
+
+One thing that I'm surprised about is that it took me almost 6 weeks to get the
+C port done (despite it being a second attempt). Now that I've completed 4
+ports in ~5 months, I guess it might be reasonable to estimate that each new
+port will take ~5-6 weeks.
+
+Since this port felt like it was starting to take too long, I may have been a
+little too trigger happy in adding techdebt along the way. In particular, I'm
+unhappy with the addition of yet another THREAD'ing type (3) which has resulted
+in some parts of the code becoming even more cluttered with conditional compile
+directives than earlier. I also had to implement things a little differently
+from the older ports since the static part of the dictionary is now read-only.
+
+I hope to bring the other ports into sync with this implementation so I can get
+rid of at least some of the parameter types from the fpp.config configuration.
+
+Anyway, that's work for another day. Today, I'm just going to bask in the fact
+that I have yet another port under my belt, which I've completed successfully,
+and the quality of which is to my satisfaction, instead of being one of those
+rushed "just get it out the door" things that are common in many $DAYJOBs.
