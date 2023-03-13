@@ -1,0 +1,122 @@
+#!/usr/bin/perl -w
+use strict;
+
+my ($x, $step);
+
+my $c_step;
+$x=`cat C/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$c_step=$step;
+
+my $pdp11_step;
+$x=`cat pdp11/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$pdp11_step=$step;
+
+my $x86_step;
+$x=`cat x86/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$x86_step=$step;
+
+my $x86as_step;
+$x=`cat x86-as/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$x86as_step=$step;
+
+my $debug=0;
+@ARGV=("C/forth.c");
+while (<>) {
+	if (/^\#define DEBUG/) {
+		$debug=1;
+	}
+}
+
+my $hash={};
+my $list=[0..4,qw(4.1 4.2 4.3),5..9,qw(10.1 10.2 10.3),11..62];
+for my $i (@$list) {
+	last if ($i>=41);
+	$hash->{"$i"}="0x602080";
+}
+for my $i (41..62) {
+	$hash->{"$i"}="0x603080";
+}
+if ($debug) {
+	for my $i (@$list) {
+		$hash->{"$i"}="0x607080";
+	}
+}
+
+for my $i (@$list) {
+
+cport: {
+	last cport if ($i>$c_step);
+	my $a=$hash->{"$i"};
+	@ARGV=("C/fpp.config.C");
+	open(my $fh, ">C/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		s/^ADDR=.*/ADDR=$a/;
+		s/^VALUE=.*/VALUE=$a/;
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the C port\n";
+	if ($debug) {
+		system("make 2>&1 | grep 'Segmentation fault .core dumped.'") ==0 and die "debug make failed at step $i with a segv";
+		next;
+	}
+	system("cd C ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+pdp11port: {
+	last pdp11port if ($i>$pdp11_step);
+	@ARGV=("pdp11/fpp.config.pdp11");
+	open(my $fh, ">pdp11/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the PDP11 port\n";
+	system("cd pdp11 ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+x86port: {
+	last x86port if ($i>$x86_step);
+	@ARGV=("x86/fpp.config.x86");
+	open(my $fh, ">x86/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the x86 port\n";
+	system("cd x86 ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+x86asport: {
+	last x86asport if ($i>$x86as_step);
+	@ARGV=("x86/fpp.config.x86");
+	open(my $fh, ">x86-as/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the x86-as port\n";
+	system("cd x86-as ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+}

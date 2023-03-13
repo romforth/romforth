@@ -29,4 +29,4 @@ defs_dict.s : genrom ../defs.4th prims_dict.s ../fpp ../x86/fpp.config
 rom.s : genrom ../rom.4th prims.s defs.s
 	cat ../rom.4th | ../fpp -DTESTROM -c ../x86/fpp.config | ./genrom rom.map dict.map defs.map > rom.s
 clean :
-	rm -f forth.o forth prims.s dict.map rom.s rom.map test.out defs.s defs.map forth_dict forth_dict.o forth_dict.S defs_dict.s dict.s latest.s prims_dict.s test.dict
+	rm -f forth.o forth prims.s dict.map rom.s rom.map test.out defs.s defs.map forth_dict forth_dict.o forth_dict.S defs_dict.s dict.s latest.s prims_dict.s test.dict fpp.config
