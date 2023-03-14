@@ -70,10 +70,17 @@ sub genheader {
 
 my $headers=[];
 
+my $xl=0;
+my $cnames=[];
 sub mapnames {
 	($f,$l)=@_;		# which provides forth<->label mapping
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
 	print "$l:\n";	# generate the label
+	print "#ifdef PROFILE\n";
+	print "count\[$xl\]++;\n";
+	print "#endif\n";
+	$xl++;
+	push @$cnames, "$l,$f";
 	if ($gendict) {
 		push @$headers, [$f,$l];
 	}
@@ -138,3 +145,11 @@ if ($gendict) {
 }
 
 close $mh;
+my $pf="profile.names";
+open(my $ph, ">$pf") or die "can't open $pf for writing";
+my $x=0;
+for my $i (@$cnames) {
+	print $ph "$x $i\n";
+	$x++;
+}
+close $ph;

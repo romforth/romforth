@@ -47,6 +47,7 @@ INDEX
 	* 08 Mar '23
 	* 10 Mar '23
 	* 11 Mar '23
+	* 14 Mar '23
 
 11 Nov '22
 ----------
@@ -1735,3 +1736,104 @@ Anyway, that's work for another day. Today, I'm just going to bask in the fact
 that I have yet another port under my belt, which I've completed successfully,
 and the quality of which is to my satisfaction, instead of being one of those
 rushed "just get it out the door" things that are common in many $DAYJOBs.
+
+14 Mar '23
+----------
+Before starting on the next port I needed to do some research on how to setup
+all the tools (build+emulation/flash in case of real hardware) that will be
+required for that CPU. For x86 (and x86-as), the choice for the build tool was
+straightforward: nasm/binutils. For x86 emulation, I chose to code an emulator
+from scratch although using other existing tools might have been a workable
+solution. For the PDP11, binutils and simh turned out to be a good choice.
+
+For the next port, I have a choice of picking either SPARC or m68k since both
+of them are big-endian architectures and both of them have gcc/binutils and
+qemu support. Unfortunately, qemu does not provide a documented/simple means of
+exiting from the guest VM (other than generating a triple-fault and using the
+--no-reboot option). There doesn't seem to be an architecture neutral means of
+accessing the serial ports either. So my choices are to peek at the code for
+other guest OS'es to see how they manage to perform a graceful exit from QEMU
+or to take a look at the QEMU code itself. I don't relish either of these
+choices since it involves having to wade through the millions of lines of code
+that both choices have to offer.
+
+As an alternative, I've started to look at unicorn-engine which appears to be
+layered on top of qemu. libcpu might be yet another alternative although it
+appears to be dead since the code on github is marked as a read-only archive.
+
+Before going off to jump into the deep end on that research, I decided to try
+and see if I could generate a profile of the running code in the C port to see
+which primitives are heavily used and might be in need of optimization when I
+eventually start on the native code implementations. Rather than spend too long
+generating a well thought out design, I threw together a "quick and dirty"
+hacky prototype which seems to be good enough to get the job done.
+
+To get the profile (which was only enabled for the C port, since it was easy to
+get it done there), the following steps are needed:
+	1. Uncomment the "#define PROFILE" in forth.c
+	2. Run "make clean" in preparation for the next step
+	3. Run "make 2> prof.tmp ; tail -101 prof.tmp > profile.counts"
+	4. Run "join profile.counts profile.names | sort -nk 2 | less"
+	5. Clean up by running "rm profile.names profile.counts prof.tmp"
+	6. Comment out the "#define PROFILE" in forth.c
+
+Using the above list of instructions, I generated a profile from running the
+build+tests, the output of which is shown below. It is sorted on the second
+column (which tracks the number of times the primitive was called):
+{begin:profile
+	1 1 bye,bye
+	14 1 inv,inv
+	29 1 stick,stick
+	31 1 lbl011,rp@!
+	34 1 exec,exec
+	39 1 lbl015,p!
+	30 2 lbl010,sp@!
+	38 2 lbl014,p@
+	20 14 lbl004,|
+	6 18 emit,emit
+	43 19 lbl018,0=
+	8 32 neg,neg
+	0 79 next,next
+	40 107 lbl016,<<
+	21 337 lbl005,^
+	41 369 lbl017,>>
+	25 741 lbl007,!
+	37 1363 call,call
+	44 3308 var,var
+	9 5242 jnz,jnz
+	27 6165 lbl009,c!
+	5 6265 key,key
+	12 11263 inc,inc
+	28 16527 pick,pick
+	16 20377 dip,dip
+	15 21303 nip,nip
+	3 21336 lbl000,2drop
+	24 21744 lbl006,@
+	13 22702 dec,dec
+	19 26095 lbl003,&
+	4 27407 drop,drop
+	26 28766 lbl008,c@
+	32 29528 lbl012,>r
+	33 29553 lbl013,r>
+	17 47075 lbl001,-
+	18 53971 lbl002,+
+	11 70029 j,j
+	2 70224 dup,dup
+	42 75757 over,over
+	7 86147 lit,lit
+	22 86607 swap,swap
+	23 86607 t_n,t_n
+	10 95966 jz,jz
+	35 113738 enter,enter
+	36 115076 exit,exit
+}end:profile
+
+One surprising piece of info that shows up in this data is that there are 79
+jumps to offset 0 (the row "0 79 next,next" in the data above). That equates
+to a "nop" which isn't explicitly coded anywhere so I assume it indicates a
+bug of some kind, so I think I'll track that down next.
+
+Since this is not the profile of a real workload, it cannot really be used to
+make decisions. But it does highlight some of the big hitters that I'll need to
+be aware of when working on all of the future ports (or to optimize the earlier
+ones).

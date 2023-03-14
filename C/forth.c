@@ -11,6 +11,7 @@
 #include <stddef.h>	// offsetof
 
 // #define DEBUG
+// #define PROFILE
 
 #define USEDEFS 0
 
@@ -83,8 +84,18 @@ void showname(char *p) {
 #define trace(n)
 #endif
 
+#ifdef PROFILE
+#define NPRIMS 100
+int count[NPRIMS];
+#endif
+
 void
 verify() {
+#ifdef PROFILE
+	for (int i=0;i<NPRIMS;i++) {
+		fprintf(stderr, "%d %d\n",i,count[i]);
+	}
+#endif
 }
 
 typedef const struct lfa {
