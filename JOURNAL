@@ -48,6 +48,7 @@ INDEX
 	* 10 Mar '23
 	* 11 Mar '23
 	* 14 Mar '23
+	* 15 Mar '23
 
 11 Nov '22
 ----------
@@ -1837,3 +1838,25 @@ Since this is not the profile of a real workload, it cannot really be used to
 make decisions. But it does highlight some of the big hitters that I'll need to
 be aware of when working on all of the future ports (or to optimize the earlier
 ones).
+
+15 Mar '23
+----------
+I tracked down the cause of the NOPs that I found in the profile yesterday to
+the fact that variables are encoded in the dictionary using a pointer (within
+the CFA). There is no way other than to use a pointer sized encoding for this
+since the C compiler will error out, otherwise. Due to the little-endianness of
+x86, the "short" offsets to which it is cast sees a pair of NOP's (after the
+"lit" that precedes the variable address has already cast the pointer to an int
+and skipped over the leading 4 bytes which contain the address).
+
+I hope the following ascii diagram makes the situation clearer:
+	----------------------------------------
+	| lit     | address pointer   | exit    |
+	----------------------------------------
+	| 2 bytes | 4 bytes + 4 bytes | 2 bytes |
+
+These 4 bytes are 0 filled -----^----- since the address happens to fit in
+the preceding 4 bytes. Since these are 0's they are seen as 2 nops by the VM.
+
+Since the nops are harmless and are just an artifact of the C compilation, I'm
+going to ignore them and move on to the next port.
