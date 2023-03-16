@@ -49,6 +49,7 @@ INDEX
 	* 11 Mar '23
 	* 14 Mar '23
 	* 15 Mar '23
+	* 16 Mar '23
 
 11 Nov '22
 ----------
@@ -1860,3 +1861,29 @@ the preceding 4 bytes. Since these are 0's they are seen as 2 nops by the VM.
 
 Since the nops are harmless and are just an artifact of the C compilation, I'm
 going to ignore them and move on to the next port.
+
+16 Mar '23
+----------
+One pattern that I've seen repeated in this project is that at every place when
+I need to pick a new CPU, I agonize over the decision mostly because all of the
+alternatives have some blocker that makes every single one of the available
+choices fairly painful. My earlier choice of the PDP11 was in no small part due
+to simh/pdp11 "dwim"ming along to my intentions without turning into a blocker.
+
+So, here I am, at yet another fork in the road, and while I evaluate qemu vs
+unicorn vs libcpu vs whatever else may show up in my research, my gut instinct
+is telling me to pivot yet again - to something easier.
+
+Since the entire point of the C port was to be able to generate assembly code
+so that I could leverage that code without having to go through thousands of
+pages of CPU architecture manuals, for each CPU that I want to port to, my
+"light bulb" thought was: why not start with an x86 assembly language port?
+Obviously this will be different from the earlier x86/x86-as ports since
+1. It is a userland port and
+2. It will be 64 bit, not a 16 bit realmode implementation, and the best part
+3. It can run natively, with no emulators involved.
+
+As an additional bonus, it will give me a chance to compare the code generated
+by the compiler vs hand written code (in terms of both size and speed).
+So that's what I'm going to do next while I continue researching alternatives
+for how to easily emulate SPARC/m68k/other CPUs on my list.
