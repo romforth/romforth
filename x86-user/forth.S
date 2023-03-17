@@ -15,11 +15,7 @@ cold:
 	jmp *%rax
 
 	.align 256
-inner:
-	lodsb
-	jmp *%rax
-bye:
-	ret
+#include "prims.s"
 
 rom:
-	.byte bye-inner
+#include "rom.s"
