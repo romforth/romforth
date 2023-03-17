@@ -223,8 +223,8 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\t.word lit\n);
-	print qq(\t.word $o\n);
+	print qq(\t.byte lit-next\n);
+	print qq(\t.long $o\n);
 }
 
 my $m;					# cache for the map from name to label
