@@ -18,4 +18,5 @@ lit	: dup ; push w ; drop ; lodsl ; xchg tos, w ;
 neg	: neg tos ;
 j	: push w ; xor w, w ; lodsb ; add w, ip ; pop w ;
 jz	: neg tos ; drop ; jnc j ; inc ip ;
+jnz	: neg tos ; drop ; jc j ; inc ip ;
 bye	: ret
