@@ -134,7 +134,7 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\t.byte $m-inner # $f\n";
+	print "\t.byte $m-next # $f\n";
 }
 
 sub runfor {

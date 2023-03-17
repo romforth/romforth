@@ -11,7 +11,7 @@ main:
 	ret
 cold:
 	mov $rom, %rsi
-	mov $inner, %rax
+	mov $next, %rax
 	jmp *%rax
 
 	.align 256
