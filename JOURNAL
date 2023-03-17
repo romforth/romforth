@@ -50,6 +50,7 @@ INDEX
 	* 14 Mar '23
 	* 15 Mar '23
 	* 16 Mar '23
+	* 17 Mar '23
 
 11 Nov '22
 ----------
@@ -1887,3 +1888,19 @@ As an additional bonus, it will give me a chance to compare the code generated
 by the compiler vs hand written code (in terms of both size and speed).
 So that's what I'm going to do next while I continue researching alternatives
 for how to easily emulate SPARC/m68k/other CPUs on my list.
+
+17 Mar '23
+----------
+One of my observations about why it takes so long to do a port is that an
+inordinate amount of time is spent on updating the JOURNAL entries. While it
+certainly does help documenting various aspects of the design and also the bugs
+encountered along the way, it is a big time sink. So in this new x86 assembly
+"userland" port, I'm going radio silent until the port is complete.
+
+I'll just document this one piece of info, before I switch off JOURNAL updates,
+that I'm splitting up step 0 into smaller chunks since getting started can be
+very painful as you research tools and figure out how to build the code as well
+as fleshing out the infrastructure to do the emulation and test. This makes the
+"runallsteps" script the final arbiter of the actual "steps" and I'll note as a
+$TECHDEBT that at some future point in time, I'll need to update the steps that
+are outlined in pseudo/code so that they are in sync with what I do in reality.

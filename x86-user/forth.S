@@ -6,5 +6,20 @@
 
 	.globl main
 main:
+	call cold
 	mov $0, %rax
 	ret
+cold:
+	mov $rom, %rsi
+	mov $inner, %rax
+	jmp *%rax
+
+	.align 256
+inner:
+	lodsb
+	jmp *%rax
+bye:
+	ret
+
+rom:
+	.byte bye-inner
