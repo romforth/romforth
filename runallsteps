@@ -27,6 +27,12 @@ $x=~s/^/\$/;
 eval $x;
 $x86as_step=$step;
 
+my $x86user_step;
+$x=`cat x86-user/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$x86user_step=$step;
+
 my $debug=0;
 @ARGV=("C/forth.c");
 while (<>) {
@@ -36,7 +42,7 @@ while (<>) {
 }
 
 my $hash={};
-my $list=[0..4,qw(4.1 4.2 4.3),5..9,qw(10.1 10.2 10.3),11..62];
+my $list=[qw(0 0.1 0.2 1 1.1),2..4,qw(4.1 4.2 4.3),5..9,qw(10.1 10.2 10.3),11..62];
 for my $i (@$list) {
 	last if ($i>=41);
 	$hash->{"$i"}="0x602080";
@@ -117,6 +123,21 @@ x86asport: {
 	select STDOUT;
 	print "\nRunning step $i for the x86-as port\n";
 	system("cd x86-as ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+x86userport: {
+	last x86userport if ($i>$x86user_step);
+	@ARGV=("x86/fpp.config.x86");
+	open(my $fh, ">x86-user/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the x86-user port\n";
+	system("cd x86-user ; make") == 0 or die "make failed at step $i with exit status $?"
 }
 
 }

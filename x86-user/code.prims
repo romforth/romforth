@@ -5,10 +5,10 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 define next	jmp inner
-define tos	%rax
+define w	%rax
 define ip	%rsi
 
-inner	: lodsb ; jmp *%rax
-key	: nop ;
-emit	: push tos ; push ip ; mov $102, %rdi ; call putchar ; pop ip ; pop tos ;
+inner	: lodsb ; jmp *w
+key	: push w ; push ip ; call getchar ; mov w, %rdi ; pop ip ; pop w ;
+emit	: push w ; push ip ; call putchar ; pop ip ; pop w ;
 bye	: ret

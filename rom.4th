@@ -20,20 +20,15 @@
 
 #{ifdef TESTROM
 
-#{if step==1
 
-	[ < 'f'
-key	[ tos='f'
-emit	[ tos='f' > 'f'
-
-#}if
-
-#{if step>=2
+#{if step>=1
 
 	[ < 'f'
 key	[ 'f'
+#{if step>=2
 dup	[ 'f' 'f'
 drop	[ 'f'
+#}if
 emit	[ > 'f'
 
 #}if
