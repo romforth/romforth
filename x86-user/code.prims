@@ -15,4 +15,5 @@ drop	: pop tos ;
 key	: dup ; push w ; push ip ; call getchar ; mov w, tos ; pop ip ; pop w ;
 emit	: push w ; push ip ; dup ; pop out ; call putchar ; pop ip ; pop w ; drop ;
 lit	: dup ; push w ; drop ; lodsl ; xchg tos, w ;
+neg	: neg tos ;
 bye	: ret
