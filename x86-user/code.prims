@@ -27,4 +27,5 @@ nip	: pop nos ;
 dip	: push nos ;
 -	: neg tos
 +	: nip ; add nos, tos ;
+&	: nip ; and nos, tos ;
 bye	: ret
