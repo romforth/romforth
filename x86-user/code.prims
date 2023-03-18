@@ -34,4 +34,8 @@ dip	: push nos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
 @	: push w ; mov (tos), w ; cdqe ; mov w, tos ; pop w ;
+!	: pop (tos) ; drop ;
 bye	: ret
+
+rw	: .data
+var here .long mem

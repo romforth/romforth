@@ -14,8 +14,10 @@ cold:
 	mov $next, %rax
 	jmp *%rax
 
+rom:
+#include "rom.s"
+
 	.align 256
 #include "prims.s"
 
-rom:
-#include "rom.s"
+mem:
