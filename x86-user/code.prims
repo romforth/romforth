@@ -25,4 +25,6 @@ dec	: dec tos ;
 inv	: not tos ;
 nip	: pop nos ;
 dip	: push nos ;
+-	: neg tos
++	: nip ; add nos, tos ;
 bye	: ret
