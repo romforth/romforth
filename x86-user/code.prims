@@ -33,4 +33,5 @@ dip	: push nos ;
 ^	: nip ; xor nos, tos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
+@	: push w ; mov (tos), w ; cdqe ; mov w, tos ; pop w ;
 bye	: ret
