@@ -7,6 +7,7 @@
 define w	%rax
 define ip	%rsi
 define tos	%rbx
+define nos	%rcx
 define out	%rdi
 
 next	: lodsb ; jmp *w
@@ -22,4 +23,6 @@ jnz	: neg tos ; drop ; jc j ; inc ip ;
 inc	: inc tos ;
 dec	: dec tos ;
 inv	: not tos ;
+nip	: pop nos ;
+dip	: push nos ;
 bye	: ret
