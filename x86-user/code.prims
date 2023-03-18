@@ -29,4 +29,5 @@ dip	: push nos ;
 +	: nip ; add nos, tos ;
 &	: nip ; and nos, tos ;
 |	: nip ; or nos, tos ;
+^	: nip ; xor nos, tos ;
 bye	: ret
