@@ -379,6 +379,9 @@ swap		[ 1 2	// escaped by lit
 #{if offset==1
 lit		[ 1 2	// padding used for 1 byte offset, escaped by lit
 #}if
+#{if offset==7
+lit lit lit lit lit lit lit	[ 1 2	// padding escaped by lit
+#}if
 exec		[ 2 1
 -		[ 1
 dec		[ 0
