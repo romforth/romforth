@@ -42,6 +42,17 @@ emit1:
 	pop tos
 	jmp next
 
+rfrom:
+	push tos
+	sub $8, rp
+	mov (rp), tos
+	jmp next
+tor:
+	mov tos, (rp)
+	add $8, rp
+	pop tos
+	jmp next
+
 rom:
 #include "rom.s"
 
