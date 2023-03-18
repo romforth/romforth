@@ -16,7 +16,7 @@ dup	: push tos ;
 drop	: pop tos ;
 key	: dup ; push w ; push ip ; call getchar ; mov w, tos ; pop ip ; pop w ;
 emit	: push w ; push ip ; dup ; pop out ; call putchar ; pop ip ; pop w ; drop ;
-lit	: dup ; push w ; drop ; lodsl ; cdqe ; xchg tos, w ;
+lit	: dup ; xchg tos, w ; lodsq ; xchg tos, w ;
 neg	: neg tos ;
 j	: push w ; xor w, w ; lodsb ; add w, ip ; pop w ;
 jz	: neg tos ; drop ; jnc j ; inc ip ;
@@ -33,7 +33,7 @@ dip	: push nos ;
 ^	: nip ; xor nos, tos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
-@	: push w ; mov (tos), w ; cdqe ; mov w, tos ; pop w ;
+@	: mov (tos), tos ;
 !	: pop (tos) ; drop ;
 c@	: mov (tos), %bl ; and $0xFF, tos ;
 c!	: nip ; mov %cl, (tos) ; drop ;

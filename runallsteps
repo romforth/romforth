@@ -1,6 +1,26 @@
 #!/usr/bin/perl -w
 use strict;
 
+my $c_check=1;
+my $pdp11_check=1;
+my $x86_check=1;
+my $x86as_check=1;
+my $x86user_check=1;
+if (@ARGV) {
+	$c_check=0;
+	$pdp11_check=0;
+	$x86_check=0;
+	$x86as_check=0;
+	$x86user_check=0;
+	for my $d (@ARGV) {
+		$pdp11_check=1 if ( $d eq "pdp11");
+		$c_check=1 if ( $d eq "C");
+		$x86_check=1 if ( $d eq "x86");
+		$x86as_check=1 if ( $d eq "x86-as");
+		$x86user_check=1 if ( $d eq "x86-user");
+	}
+}
+
 my ($x, $step);
 
 my $c_step;
@@ -59,6 +79,7 @@ if ($debug) {
 for my $i (@$list) {
 
 cport: {
+	last cport unless ($c_check);
 	last cport if ($i>$c_step);
 	my $a=$hash->{"$i"};
 	@ARGV=("C/fpp.config.C");
@@ -81,6 +102,7 @@ cport: {
 }
 
 pdp11port: {
+	last pdp11port unless ($pdp11_check);
 	last pdp11port if ($i>$pdp11_step);
 	@ARGV=("pdp11/fpp.config.pdp11");
 	open(my $fh, ">pdp11/fpp.config");
@@ -96,6 +118,7 @@ pdp11port: {
 }
 
 x86port: {
+	last x86port unless ($x86_check);
 	last x86port if ($i>$x86_step);
 	@ARGV=("x86/fpp.config.x86");
 	open(my $fh, ">x86/fpp.config");
@@ -111,6 +134,7 @@ x86port: {
 }
 
 x86asport: {
+	last x86asport unless ($x86as_check);
 	last x86asport if ($i>$x86as_step);
 	@ARGV=("x86/fpp.config.x86");
 	open(my $fh, ">x86-as/fpp.config");
@@ -126,8 +150,9 @@ x86asport: {
 }
 
 x86userport: {
+	last x86userport unless ($x86user_check);
 	last x86userport if ($i>$x86user_step);
-	@ARGV=("x86/fpp.config.x86");
+	@ARGV=("x86-user/fpp.config.x86");
 	open(my $fh, ">x86-user/fpp.config");
 	select $fh;
 	print "step=$i\n";
