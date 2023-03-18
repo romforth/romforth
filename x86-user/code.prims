@@ -35,7 +35,10 @@ swap	: nip ; dup
 t_n	: mov nos, tos ;
 @	: push w ; mov (tos), w ; cdqe ; mov w, tos ; pop w ;
 !	: pop (tos) ; drop ;
+c@	: mov (tos), %bl ; and $0xFF, tos ;
+c!	: nip ; mov %cl, (tos) ; drop ;
 bye	: ret
 
 rw	: .data
-var here .long mem
+var here .quad mem
+var state .byte 1
