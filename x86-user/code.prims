@@ -21,4 +21,5 @@ jz	: neg tos ; drop ; jnc j ; inc ip ;
 jnz	: neg tos ; drop ; jc j ; inc ip ;
 inc	: inc tos ;
 dec	: dec tos ;
+inv	: not tos ;
 bye	: ret
