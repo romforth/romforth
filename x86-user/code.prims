@@ -4,20 +4,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-define w	%rax
-define ip	%rsi
-define sp	%rsp
-define rp	%rbp
-define tos	%rbx
-define nos	%rcx
-define out	%rdi
-
 next	: lodsb ; jmp *w
 dup	: push tos ;
 2drop	: pop tos
 drop	: pop tos ;
-key	: dup ; push w ; push ip ; call getchar ; mov w, tos ; pop ip ; pop w ;
-emit	: push w ; push ip ; dup ; pop out ; call putchar ; pop ip ; pop w ; drop ;
+key	: jmp key1
+emit	: jmp emit1
 lit	: dup ; xchg tos, w ; lodsq ; xchg tos, w ;
 neg	: neg tos ;
 j	: push w ; xor w, w ; lodsb ; add w, ip ; pop w ;

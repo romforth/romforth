@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+# primsize : measure the code size of each primitive
+#
+# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+# usage : $0 | sort -n
+
+@ARGV=("nm forth | sort |");
+my $flag=0;
+my $po=0;
+my ($o,$s,$v,$ps);
+while(<>) {
+	if (/rw$/) {
+		last;
+	}
+	if (/next$/) {
+		$flag=1;
+	}
+	next unless $flag;
+	($o,$t,$s)=split;
+	$v=oct("0x$o");
+	#print "$v,$s,";
+	if ($po) {
+		print $v-$po, " $ps\n";
+	}
+	($po,$ps)=($v,$s);
+}
