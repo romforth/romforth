@@ -6,6 +6,7 @@
 
 define w	%rax
 define ip	%rsi
+define sp	%rsp
 define tos	%rbx
 define nos	%rcx
 define out	%rdi
@@ -33,12 +34,13 @@ dip	: push nos ;
 ^	: nip ; xor nos, tos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
-pick	: shl $3, tos ; add %rsp, tos
+pick	: shl $3, tos ; add sp, tos
 @	: mov (tos), tos ;
-stick	: shl $3, tos ; add %rsp, tos
+stick	: shl $3, tos ; add sp, tos
 !	: pop (tos) ; drop ;
 c@	: mov (tos), %bl ; and $0xFF, tos ;
 c!	: nip ; mov %cl, (tos) ; drop ;
+sp@!	: xchg sp, tos ;
 bye	: ret
 
 rw	: .data
