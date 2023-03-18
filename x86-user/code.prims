@@ -43,6 +43,8 @@ c@	: mov (tos), %bl ; and $0xFF, tos ;
 c!	: nip ; mov %cl, (tos) ; drop ;
 sp@!	: xchg sp, tos ;
 rp@!	: xchg rp, tos ;
+>r	: mov tos, (rp) ; drop ; add $8, rp ;
+r>	: sub $8, rp ; dup ; mov (rp), tos ;
 bye	: ret
 
 rw	: .data
