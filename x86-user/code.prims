@@ -7,6 +7,7 @@
 define w	%rax
 define ip	%rsi
 define sp	%rsp
+define rp	%rbp
 define tos	%rbx
 define nos	%rcx
 define out	%rdi
@@ -41,6 +42,7 @@ stick	: shl $3, tos ; add sp, tos
 c@	: mov (tos), %bl ; and $0xFF, tos ;
 c!	: nip ; mov %cl, (tos) ; drop ;
 sp@!	: xchg sp, tos ;
+rp@!	: xchg rp, tos ;
 bye	: ret
 
 rw	: .data
