@@ -8,13 +8,15 @@
 
 use strict;
 
+use Getopt::Long;
+my ($gendict,$gendefs)=(0,0);
+GetOptions(
+	'dict' => \$gendict,
+	'gendefs' => \$gendefs,
+);
+
 my $mf=shift;   # the map file to which new defs are written
 
-my $gendict=0;
-if ($mf eq "-d") {
-	$gendict=1;
-	$mf=shift;   # the map file to which new defs are written
-}
 open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my $map={};	# mapping from forth words to assembly labels
@@ -200,18 +202,17 @@ sub def {
 		}
 		print "$l:	# $w\n"; # and generate assembly code
 		$defs->{$w}=$l;		 # for setting up a local mapping
-		print "\t.word 0x080c\n";
 		$state=2;
 		return 1;
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.word exit\n";
+			print "\t.byte exit-next\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\t.word exit\n";
+			print "\t.byte exit-next\n";
 			$state=0;
 			$immediate=0;
 			return 1;
@@ -234,8 +235,9 @@ while (<>) {				# map forth words in the standard input
 			genprim($f);
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit($m);		# push their address
-		} elsif ($m=$defs->{$f}) { # definitions just need their
-			print "\t.word $m # $f\n";	# starting address
+		} elsif ($m=$defs->{$f}) { # definitions just need to
+			print "\t.byte enter-next\n";   # be enter'ed at their
+			print "\t.quad $m # $f\n";	# starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist

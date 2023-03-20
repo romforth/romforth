@@ -56,6 +56,12 @@ tor:
 rom:
 #include "rom.s"
 
+#define USEDEFS 0
+
+#if USEDEFS
+#include "defs.s"
+#endif
+
 	.align 256
 #include "prims.s"
 
