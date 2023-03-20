@@ -62,6 +62,26 @@ realenter:
 	mov out, w
 	jmp next
 
+realcall:
+	mov ip, (rp)
+	add $8, rp
+	mov tos, ip
+	pop tos
+	jmp next
+
+cfetch:
+	mov (tos), %bl
+	and $0xFF, tos
+	jmp next
+
+branch:
+	push w
+	xor w, w
+	lodsb
+	add w, ip
+	pop w
+	jmp next
+
 rom:
 #include "rom.s"
 

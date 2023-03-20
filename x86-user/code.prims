@@ -12,7 +12,7 @@ key	: jmp key1
 emit	: jmp emit1
 lit	: dup ; xchg tos, w ; lodsq ; xchg tos, w ;
 neg	: neg tos ;
-j	: push w ; xor w, w ; lodsb ; add w, ip ; pop w ;
+j	: jmp branch
 jz	: neg tos ; drop ; jnc j ; inc ip ;
 jnz	: neg tos ; drop ; jc j ; inc ip ;
 inc	: inc tos ;
@@ -31,7 +31,7 @@ pick	: shl $3, tos ; add sp, tos
 @	: mov (tos), tos ;
 stick	: shl $3, tos ; add sp, tos
 !	: pop (tos) ; drop ;
-c@	: mov (tos), %bl ; and $0xFF, tos ;
+c@	: jmp cfetch
 c!	: nip ; mov %cl, (tos) ; drop ;
 sp@!	: xchg sp, tos ;
 rp@!	: xchg rp, tos ;
@@ -40,9 +40,11 @@ r>	: jmp rfrom
 exec	: mov %bl, %al ; drop ; jmp *w
 enter	: jmp realenter
 exit	: sub $8, rp ; mov (rp), ip ;
-call	: mov ip, (rp) ; add $8, rp ; mov tos, ip ; drop ;
+call	: jmp realcall
 p@	: drop ; jmp key1
 p!	: drop ; jmp emit1
+<<	: nip ; xchg tos, nos ; shl %cl, tos ;
+>>	: nip ; xchg tos, nos ; shr %cl, tos ;
 bye	: ret
 
 rw	: .data
