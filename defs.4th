@@ -109,6 +109,16 @@ def{ <=		[ a b
 
 #}if
 
+#{if step>=36
+
+#{if NEEDZEROEQ
+
+def{ 0= dup if{ dup - }else{ 1 + }if }def
+
+#}if
+
+#}if
+
 #{if step>=37
 
 def{ <		[ a b
