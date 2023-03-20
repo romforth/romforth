@@ -139,21 +139,37 @@ sub genprim {
 	print "\t.byte $m-next # $f\n";
 }
 
+sub gendef {
+	my ($m)=@_;
+	print "\t.byte enter-next\n";
+	print "\t.quad $m # $f\n";
+}
+
+sub gencode {
+	my ($f)=@_;
+	my $m=$defs->{$f};
+	if ($m) {
+		gendef($m);
+	} else {
+		genprim($f);
+	}
+}
+
 sub runfor {
 	runbegin();
 	for my $i (qw(over over >r >r -)) {
-		genprim($i);
+		gencode($i);
 	}
 	runwhile();
 }
 
 sub runendfor {
 	for my $i (qw(r> inc r>)) {
-		genprim($i);
+		gencode($i);
 	}
 	runrepeat();
 	for my $i (qw(r> r> 2drop)) {
-		genprim($i);
+		gencode($i);
 	}
 }
 
@@ -236,8 +252,7 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need to
-			print "\t.byte enter-next\n";   # be enter'ed at their
-			print "\t.quad $m # $f\n";	# starting address
+			gendef($m);	# be enter'ed at their starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
