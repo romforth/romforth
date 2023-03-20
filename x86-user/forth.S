@@ -22,9 +22,14 @@ cold:
 	mov $next, w
 	jmp *w
 
+pfetch:
+	cmp $0xFF70, tos
+	jne 1f
+	mov $0x80, tos
+	jmp next
 key1:
 	push tos
-	push w
+1:	push w
 	push ip
 	call getchar
 	mov w, tos
@@ -78,6 +83,8 @@ branch:
 	push w
 	xor w, w
 	lodsb
+	movsx %al, %eax
+	movsxd %eax, %rax
 	add w, ip
 	pop w
 	jmp next

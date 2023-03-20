@@ -41,7 +41,7 @@ exec	: mov %bl, %al ; drop ; jmp *w
 enter	: jmp realenter
 exit	: sub $8, rp ; mov (rp), ip ;
 call	: jmp realcall
-p@	: drop ; jmp key1
+p@	: jmp pfetch
 p!	: drop ; jmp emit1
 <<	: nip ; xchg tos, nos ; shl %cl, tos ;
 >>	: nip ; xchg tos, nos ; shr %cl, tos ;
