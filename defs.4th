@@ -34,6 +34,16 @@ def{ testnest
 
 #}ifdef
 
+#{if step>=28
+
+#{if NEEDOVER
+
+def{ over 1 pick }def
+
+#}if
+
+#}if
+
 #{if step>=29
 
 def{ third 2 pick }def
