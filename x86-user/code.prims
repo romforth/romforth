@@ -41,6 +41,8 @@ exec	: mov %bl, %al ; drop ; jmp *w
 enter	: jmp realenter
 exit	: sub $8, rp ; mov (rp), ip ;
 call	: mov ip, (rp) ; add $8, rp ; mov tos, ip ; drop ;
+p@	: drop ; jmp key1
+p!	: drop ; jmp emit1
 bye	: ret
 
 rw	: .data
