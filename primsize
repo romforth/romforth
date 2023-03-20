@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+use strict;
 
 # primsize : measure the code size of each primitive
 #
@@ -6,12 +7,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-# usage : $0 | sort -n
+# usage : $0 elf-binary | sort -n
 
-@ARGV=("nm forth | sort |");
+my $f=shift;
+
+@ARGV=("nm $f | sort |");
 my $flag=0;
 my $po=0;
-my ($o,$s,$v,$ps);
+my ($o,$s,$t,$v,$ps);
 while(<>) {
 	if (/rw$/) {
 		last;

@@ -38,8 +38,9 @@ rp@!	: xchg rp, tos ;
 >r	: jmp tor
 r>	: jmp rfrom
 exec	: mov %bl, %al ; drop ; jmp *w
-enter	: mov w, out ; lodsq ; mov ip, (rp) ; add $8, rp ; mov w, ip ; mov out, w ;
+enter	: jmp realenter
 exit	: sub $8, rp ; mov (rp), ip ;
+call	: mov ip, (rp) ; add $8, rp ; mov tos, ip ; drop ;
 bye	: ret
 
 rw	: .data

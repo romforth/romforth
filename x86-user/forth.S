@@ -53,6 +53,15 @@ tor:
 	pop tos
 	jmp next
 
+realenter:
+	mov w, out
+	lodsq
+	mov ip, (rp)
+	add $8, rp
+	mov w, ip
+	mov out, w
+	jmp next
+
 rom:
 #include "rom.s"
 
