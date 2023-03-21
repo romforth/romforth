@@ -925,6 +925,9 @@ def{ literal	[ n
 #{if offset==1
 	lit	[ n lit	// additional padding but only on x86, for now
 #}if
+#{if offset==7
+lit lit lit lit lit lit lit	[ n lit	// padding escaped by lit
+#}if
 
 	offset,	[ n \ lit
 	,	[ \ n		// in either case, the value needs a full cell
