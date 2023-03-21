@@ -50,3 +50,4 @@ bye	: ret
 rw	: .data
 var here .quad mem
 var state .byte 1
+var latest .include "latest.s"

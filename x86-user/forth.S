@@ -93,12 +93,21 @@ rom:
 #include "rom.s"
 
 #define USEDEFS 0
+#define USEDICT 0
 
 #if USEDEFS
+#if USEDICT
+#include "defs_dict.s"
+#else
 #include "defs.s"
+#endif
 #endif
 
 	.align 256
+#if USEDICT
+#include "prims_dict.s"
+#else
 #include "prims.s"
+#endif
 
 mem:
