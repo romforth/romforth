@@ -1016,6 +1016,9 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 #{if offset==1
 		lit	[ cfa enter	// padding, needed only on x86/offset=1
 #}if
+#{if offset==7
+lit lit lit lit lit lit lit	[ cfa enter	// padding escaped by lit
+#}if
 		c,	[ cfa	\ enter
 		,	[	\ cfa
 #}if
@@ -1029,7 +1032,10 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 		lit	[	// escape the next byte
 		call	[	// THREAD type 3 uses call to invoke the cfa
 #{if offset==1
-		lit	[	// padding, needed only when offset=1
+		lit	[	// padding escaped by lit
+#}if
+#{if offset==7
+lit lit lit lit lit lit lit	[ // padding escaped by lit
 #}if
 		s,	[	\ call		// and then call it
 #}if
