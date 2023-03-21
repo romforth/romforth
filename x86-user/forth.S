@@ -97,6 +97,7 @@ rom:
 
 #if USEDEFS
 #if USEDICT
+#include "dict.s"
 #include "defs_dict.s"
 #else
 #include "defs.s"

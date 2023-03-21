@@ -31,7 +31,15 @@ sub genheader {
 	print qq{\t.ascii "$f"\n};
 	print "$l","_nfa:\t.byte $len\n";
 	print "$l","_lfa:\t.quad $prev\n";
-	print "$l","_cfa:\t.quad $l\n" if ($flag);
+	print "$l","_cfa:\n";
+	if ($flag) {
+		print "\t.byte $l-next\n";
+		print "\t.byte exit-next\n";
+	} else {
+		print "\t.byte lit-next\n";
+		print "\t.quad $l\n";
+		print "\t.byte exit-next\n";
+	}
 	$prev="$l"."_lfa";
 }
 
@@ -42,7 +50,7 @@ sub mapnames {
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
 	print "$l:\n";	# generate the label for the assembler
 	if ($gendict) {
-		push @$headers, [$f,$l];
+		push @$headers, [$f,$l,1];
 	}
 }
 
@@ -81,7 +89,7 @@ while (<>) {
 		($f)=($1);
 		print $mh "var $f $f\n";# create dictionary entry for variables
 		if ($gendict) {
-			genheader($f,$f,0);
+			unshift @$headers, [$f,$f,0];
 		}
 		print "$f:\n";		# generate the label for the assembler
 		print "\t$2\n";		# and allocation/initial value if any
@@ -98,13 +106,12 @@ if ($gendict) {
 	open($lh, ">dict.s");
 	select $lh;
 	for my $h (@$headers) {
-		genheader(@$h,1);
+		genheader(@$h);
 	}
 	close $lh;
 	open($lh, ">latest.s");
 	select $lh;
 	print "\t.word $prev\n";
-	print qq{.include "dict.s"\n};
 	close $lh;
 	print $mh "label prev $prev\n";
 }

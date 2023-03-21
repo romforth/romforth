@@ -281,7 +281,6 @@ if ($gendict) {
 	open(my $lh, ">latest.s");
 	select $lh;
 	print "\t.quad $prev\n";
-	print qq{.include "dict.s"\n};
 	close $lh;
 	print $mh "label prev $prev\n";
 }

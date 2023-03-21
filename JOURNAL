@@ -51,6 +51,7 @@ INDEX
 	* 15 Mar '23
 	* 16 Mar '23
 	* 17 Mar '23
+	* 21 Mar '23
 
 11 Nov '22
 ----------
@@ -1904,3 +1905,65 @@ as fleshing out the infrastructure to do the emulation and test. This makes the
 "runallsteps" script the final arbiter of the actual "steps" and I'll note as a
 $TECHDEBT that at some future point in time, I'll need to update the steps that
 are outlined in pseudo/code so that they are in sync with what I do in reality.
+
+21 Mar '23
+----------
+This is an important enough piece of information that I'll break the radio
+silence that I'd promised in the previous JOURNAL entry and document this here.
+
+Since the x86 userland assembly port uses a dictionary layout that is aligned
+with the dictionary layout that was used as part of the C port (but breaks with
+tradition from the earlier ports which were done in assembly), I've decided to
+document it in some detail since I assume this will be the format used by all
+future ports.
+
+I'll start with the layout of ROM which contains these parts (in this order):
+- Start up/init code implemented in native/machine code
+       Assembled from forth.S
+- init and test "bytecodes"
+       Generated from rom.4th by genrom and assembled from rom.s
+- dictionary headers for the "primitive variables"
+       Generated from code.prims by genprims and assembled from dict.s
+       usual format: align; pad; nfa; lfa; cfa:{ lit ; $var_addr ; exit }
+       Note that "here" needs to be very first dictionary entry - this is
+       verified by the test code
+- dictionary headers for the "primitives"
+       Generated from code.prims by genprims and assembled from dict.s
+       usual format: align; pad; nfa; lfa; cfa:{ $prim ; exit }
+       There are no ordering constraints except that the dictionary entry
+       preceding the first one needs to be "latest"
+- dictionary headers for the defined words/"definitions"
+       Generated from defs.4th by genrom and assembled from defs[_dict].s
+       usual format: align; pad; nfa; lfa; cfa:{ ... ; exit }
+- Machine code for the primitives (usually starting on a 256 byte boundary)
+       Generated from code.prims by genprims and assembled from prims[_dict].s
+
+For now, RAM contains:
+- the datastack
+- the return stack
+- the "primitive" variables
+- the "memory area" (used by the return stack and the runtime dictionary)
+
+To summarize:
+        ROM: {
+                startup/init code : forth.s
+                init/test byte code : rom.4th
+                primitive variable dictionary headers : code.prims
+                        cfa : lit $var ; exit : {
+                                here
+                                ...
+                                latest
+                        }
+                primitive code dictionary headers : code.prims
+                        cfa : $prim ; exit
+                defined words dictionary headers : defs.4th
+                        cfa : ... ; exit
+                machine code for the primitives, starting on 256 byte boundary?
+                        assembled from code.prims
+        }
+        RAM: { // ordering and overlap of these sub components is undefined
+                data stack
+                return stack
+                "primitive" variables
+                available memory
+        }

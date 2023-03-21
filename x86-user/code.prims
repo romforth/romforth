@@ -45,9 +45,8 @@ p@	: jmp pfetch
 p!	: drop ; jmp emit1
 <<	: nip ; xchg tos, nos ; shl %cl, tos ;
 >>	: nip ; xchg tos, nos ; shr %cl, tos ;
-bye	: ret
+bye	: ret ; .data ;
 
-rw	: .data
-var here .quad mem
 var state .byte 1
 var latest .include "latest.s"
+var here .quad mem
