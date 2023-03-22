@@ -224,10 +224,19 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 [ // }until{ is just like }while{ except the jump condition is reversed
 : }until{
 #{if THREAD!=3
+#{if prim_var_deref==1
+[ THREAD==1 and prim_var_deref==1 => x86-user
+	#jnz
+#}if
+#{if prim_var_deref!=1
 	lit	[	// lit escapes the following byte(s)
 	jnz	[ jnz	// escaped by lit
 #{if offset==1
 	lit	[ jnz	// padding used for 1 byte offset, escaped by lit
+#}if
+#{if offset==7
+	lit lit lit lit lit lit lit	[ jnz	// padding escaped by lit
+#}if
 #}if
 #}if
 

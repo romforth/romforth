@@ -1218,7 +1218,7 @@ lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
 
 #{if step>=60
 
-#{if THREAD==3
+#{if THREAD==3 or THREAD==1
 
 [ // see the comment for #jz above for the details of why this is needed
 def{ #jnz
@@ -1227,6 +1227,9 @@ def{ #jnz
 
 #{if offset==1
 	lit	[ lit	// additional padding in case lit grabs more bytes
+#}if
+#{if offset==7
+lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
 #}if
 
 }def
