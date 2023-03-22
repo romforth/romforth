@@ -1000,12 +1000,40 @@ def{ compcfa		[ cfa	// cfa: var/prim, defs are handled in compdef
 
 #{if step>=53
 
+#{if THREAD==3
+
 [ compile a definition (or a native definition/variable)
 def{ compdef		[ cfa		// cfa: var/prim/def
-#{if THREAD==3
-	1		[ cfa 1		// THREAD type 3 : always use the cfa
+	literal	[	\ lit cfa	// stash away the cfa
+	lit	[	// escape the next byte
+	call	[	// THREAD type 3 uses call to invoke the cfa
+#{if offset==1
+	lit	[	// padding escaped by lit
 #}if
+#{if offset==7
+lit lit lit lit lit lit lit	[ // padding escaped by lit
+#}if
+	s,	[	\ call		// and then call it
+}def
+
+#}if
+
 #{if THREAD!=3
+
+[ compile a definition (or a native definition/variable)
+def{ compdef		[ cfa		// cfa: var/prim/def
+#{if THREAD==1
+#{if prim_var_deref==1
+[ THREAD==1 and prim_var_deref==1 => x86-user where all cfa's are uniform
+	1		[ cfa 1
+#}if
+#{if prim_var_deref!=1
+[ THREAD==1 and prim_var_deref!=1 => x86/x86-as where cfa's are non-uniform
+	isdefn		[ cfa flag
+#}if
+#}if
+#{if THREAD!=1
+[ THREAD!=1 and THREAD!=3 => THREAD==2, pdp11 where cfa's are non-uniform
 	isdefn		[ cfa flag
 #}if
 	if{		[ cfa		// defined word
@@ -1027,27 +1055,13 @@ lit lit lit lit lit lit lit	[ cfa enter	// padding escaped by lit
 		,	[ 	\ cfa	// on pdp11, just the cfa is sufficient
 #}if
 
-#{if THREAD==3
-		literal	[	\ lit cfa	// stash away the cfa
-		lit	[	// escape the next byte
-		call	[	// THREAD type 3 uses call to invoke the cfa
-#{if offset==1
-		lit	[	// padding escaped by lit
-#}if
-#{if offset==7
-lit lit lit lit lit lit lit	[ // padding escaped by lit
-#}if
-		s,	[	\ call		// and then call it
-#}if
 	}else{		[ cfa		// variable or primitive,
 #{if step>=54
-			[ // THREAD type 3 will never take this path
-#{if THREAD!=3
 		compcfa	[ \ cfa	// compile the variable or primitive's cfa
-#}if
 #}if
 	}if
 }def
+#}if
 
 [ cpl_ex_imm will either compile or execute the lfa based on "immediacy"
 def{ cpl_ex_imm		[ cfa
