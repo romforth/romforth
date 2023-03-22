@@ -1243,7 +1243,16 @@ def{ compile	[	| w ]
 	r>	[ w	|   ] // get the next exec'utable address
 	dup	[ w w	|   ] (w:o)
 #{if THREAD==1
+#{if prim_var_deref==1
+[ THREAD==1 and prim_var_deref==1 => x86-user where cfa's need an indirection
+	inc	[ w w+1	(w+1:d)	// cfa's are coded as enter CFA, so this
+	@	[ w d (d:o)	// is to skip past the enter and get the cfa
+	c@	[ w o		// and from there, get the actual bytecode
+#}if
+#{if prim_var_deref!=1
+[ THREAD==1 and prim_var_deref!=1 => x86/x86-as where cfa's are direct
 	c@	[ w o
+#}if
 #}if
 #{if THREAD==2
 	@	[ w o
@@ -1256,6 +1265,12 @@ def{ compile	[	| w ]
 #}if
 	swap	[ o w
 	inc	[ o w+1
+#{if THREAD==1
+#{if prim_var_deref==1
+[ THREAD==1 and prim_var_deref==1 => x86-user, skip past the indirect cfa
+	8 +	[ o w+1+8	//  pointer and the enter prefix before the cfa
+#}if
+#}if
 #{if THREAD==2
 	inc	[ o w+2		// XXX: any problems with assuming cell=2 here?
 #}if
@@ -1275,3 +1290,4 @@ def{ compile	[	| w ]
 	s,	[	| w+d ] \ o
 #}if
 }def
+#}if

@@ -16,7 +16,7 @@ my $flag=0;
 my $po=0;
 my ($o,$s,$t,$v,$ps);
 while(<>) {
-	if (/rw$/) {
+	if (/__libc_csu_fini$/) {
 		last;
 	}
 	if (/next$/) {
