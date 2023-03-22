@@ -10,7 +10,7 @@ twoforth : test.defs
 threeforth : test.dict
 fourforth : test.dict
 test.dict : forth_dict test.inp test.exp
-	cat test.inp | perl -pe chomp | ./forth_dict > test.dict
+	cat test.inp | ./forth_dict > test.dict
 	cmp test.dict test.exp
 test.defs : forth_defs test.inp test.exp
 	cat test.inp | perl -pe chomp | ./forth_defs > test.defs
