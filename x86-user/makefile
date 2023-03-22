@@ -4,10 +4,11 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-all : threeforth
+all : fourforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
+fourforth : test.dict
 test.dict : forth_dict test.inp test.exp
 	cat test.inp | perl -pe chomp | ./forth_dict > test.dict
 	cmp test.dict test.exp
@@ -19,6 +20,7 @@ test.out : forth test.inp test.exp
 	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp
+	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config >> test.inp
 test.exp : ../test.expected ../fpp fpp.config
 	cat ../test.expected | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.exp
 forth.o : forth.S prims.s rom.s
