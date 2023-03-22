@@ -26,10 +26,19 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 [ // if{ is just syntax sugar replacement for the traditional Forth IF keyword
 : if{
 #{if THREAD!=3
+#{if prim_var_deref==1
+[ THREAD==1 and prim_var_deref==1 => x86-user
+	#jz
+#}if
+#{if prim_var_deref!=1
 	lit	[	// lit escapes the following byte(s)
 	jz	[ jz	// escaped by lit
 #{if offset==1
 	lit	[ jz	// padding used for 1 byte offset, escaped by lit
+#}if
+#{if offset==7
+	lit lit lit lit lit lit lit	[ jz	// padding escaped by lit
+#}if
 #}if
 #}if
 

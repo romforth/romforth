@@ -1170,7 +1170,7 @@ def{ outer
 
 #{if step>=57
 
-#{if THREAD==3
+#{if THREAD==3 or THREAD==1
 
 [ // primitives such as lit, j/jz/jnz etc which use "immediate addressing"
 [ // (where "immediate" refers not to the Forth meaning of the word but to the
@@ -1182,7 +1182,10 @@ def{ #jz
 	jz	[ jz	// so as to get jz on the stack
 
 #{if offset==1
-	lit	[ lit	// additional padding in case lit grabs more bytes
+	lit	[ lit	// padding escaped by lit
+#}if
+#{if offset==7
+lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
 #}if
 
 }def
