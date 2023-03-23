@@ -315,9 +315,26 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 3ret
 #}ifdef
 #}if
+
 #{if step>=62
+
 : def{ : ;
 : }def [compile] ; ; immediate
+
+def{ nybble			[ d
+	15			[ d 0xf
+	&			[ d&0xf
+	dup			[ d d
+	10			[ d d 10
+	>=			[ d d>=10
+	if{			[ d // d>=10
+		10 - 65 +	[ D:d-10+'A'
+	}else{			[ d // d<10
+		48 +		[ D:d+'0'
+	}if			[ D
+	emit			[ > D
+}def
+
 def{ .			[ n
 	32 emit		[ n > SPACE
 	48 emit		[ n > 0
@@ -334,24 +351,16 @@ def{ .			[ n
 		&	[ n s i:n&m
 		over	[ n s i s
 		>>	[ n s d:i>>s
-		15	[ n s d 0xf
-		&	[ n s d&0xf
-		dup	[ n s d d
-		10	[ n s d d 10
-		>=	[ n s d d>=10
-		if{			[ n s d // d>=10
-			10 - 65 +	[ n s D:d-10+'A'
-		}else{			[ n s d // d<10
-			48 +		[ n s D:d+'0'
-		}if	[ n s D
-		emit	[ n s > D
+		nybble	[ n s > d
 	}loop		[ n s
 	2drop		[
 	32 emit		[ > SPACE
 }def
+
 #{ifdef TESTROM
 49406			[ 0xC0FE	// this could be used as a version #
 .			[ > 0xC0FE
 3ret
 #}ifdef
+
 #}if
