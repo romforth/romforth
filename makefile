@@ -3,6 +3,7 @@ all :
 	(cd x86-as ; make)
 	(cd pdp11 ; make)
 	(cd C ; make)
+	(cd x86-user ; make)
 
 allsteps :
 	./runallsteps
@@ -14,3 +15,4 @@ clean :
 	(cd x86-as ; make clean)
 	(cd pdp11 ; make clean)
 	(cd C ; make clean)
+	(cd x86-user ; make clean)

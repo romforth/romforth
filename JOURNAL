@@ -52,6 +52,7 @@ INDEX
 	* 16 Mar '23
 	* 17 Mar '23
 	* 21 Mar '23
+	* 23 Mar '23
 
 11 Nov '22
 ----------
@@ -1967,3 +1968,58 @@ To summarize:
                 "primitive" variables
                 available memory
         }
+
+23 Mar '23
+----------
+So now that the x86 assembly userland port has also been completed, I can now
+break my self imposed radio silence.
+
+This port took only about a week but that required me to work over the weekend
+and pretty much ignore everything else that was going on around me. So I still
+think a reasonable estimate for how long a port should take is 2-4 weeks if we
+can assume that all the other dependencies are resolved and there are no other
+blockers.
+
+The fact that the MMU on the x86 provides decent fault isolation and quickly
+generates a SIGSEGV instead of corrupting random locations in memory also
+helped a lot with the turnaround.
+
+In any case, being productive is a function of lots of environmental variables
+so being able to finish this in a week just goes to show the importance of
+having fairly good infrastructure to be able to build and test things quickly.
+All in all, I think I now have a good enough framework in place for porting all
+of this to other CPUs in the future.
+
+Since the C port and x86 assembly port both work in userland, running natively,
+it gives me an opportunity to compare compiler vs hand written code performance
+
+Running `perf stat`, I generated the following table comparing the two:
+
+.-------------------------------------------------------.
+| Metric		| C		| Assembly	|
++-----------------------+---------------+---------------+
+| Task-clock (msec)	| 4.439651	| 3.957470	|
+| CPUs utilized		| 0.884		| 0.861		|
+| Cycles		| 9,969,446	| 8,866,091	|
+| Instructions		| 10,365,760	| 6,413,838	|
+| Insns per cycle	| 1.04		| 0.72		|
+| Branches		| 2,374,783	| 1,734,081	|
+| Branches M/sec	| 534.903	| 438.179	|
+| Branch-misses		| 204,129	| 130,745	|
+| % of all branches	| 8.60% (56.95%)| 7.54% (41.86%)|
+| Time elapsed		| 0.005021309(s)| 0.004598909(s)|
+'-------------------------------------------------------'
+
+The hand written assembly version appears to be better on pretty much every
+metric, so I assume compilers still have some catching up to do ; gcc --version
+reports: gcc (Ubuntu 5.3.1-14ubuntu2) 5.3.1 20160413
+
+Looking forward, I still need to get to a conclusion on what tools to use for
+future CPU ports - unicorn appears to be the best choice I've found so far.
+But for now, this project goes on the backburner since I'll need to address my
+"real world" problems first (starting with my leaky patio roof for one, and tax
+season will soon be upon me, before I even know it).
+
+So the SPARC and m68k ports (and all the others), will just have to wait.
+
+Oh, and before I forget: Happy Birthday Shiji!
