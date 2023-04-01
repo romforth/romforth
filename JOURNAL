@@ -53,6 +53,7 @@ INDEX
 	* 17 Mar '23
 	* 21 Mar '23
 	* 23 Mar '23
+	* 01 Apr '23
 
 11 Nov '22
 ----------
@@ -2023,3 +2024,31 @@ season will soon be upon me, before I even know it).
 So the SPARC and m68k ports (and all the others), will just have to wait.
 
 Oh, and before I forget: Happy Birthday Shiji!
+
+01 Apr '23
+----------
+While researching SPARC32 emulation, I had one of my usual pivot ideas: rather
+than start directly on SPARC which needs emulation, why not first start with
+an x86 32 bit port which can run natively so that the x86 gets "full porting
+coverage" in some sense, and be done with it. The older x86 and x86-as ports
+provide 16-bit "realmode", if you will, coverage of the x86 and the x86-user
+(and the C port) were tested on 64 bits so this could be the last hurrah on
+x86 with a 32 bit port.
+
+Since I have a really ancient 32 bit x86 Toshiba laptop (which I think I bought
+new in 2003) which is still going strong, I decided to use it for the 32 bit
+port. The first issue with using it though was getting it to use a modern linux
+distro (I used to run Solaris on it). Ubuntu is my usual distro of choice but
+none of the recent versions of Ubuntu appear to be able to even boot up on the
+"puny" 256MB memory that this laptop has.
+
+After a bunch of research and experiments with various distros, I've settled
+on using it with NixOS 22.05, which according to Repology has the largest
+selection of package choices. I don't need a lot of stuff for development
+but it is nice to know I have choices, if I need it.
+
+Since GNOME is too bloated to run on 256MB of memory, I needed a slim window
+manager, so I've installed dwm on it for now although at some point I want to
+port olvwm to it as well. For actual development, I was able to pull in a
+fairly recent version of gcc (10.3.0) using nix-shell. So with all of those
+preliminaries out of the way, I can now start on the actual port.
