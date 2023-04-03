@@ -41,7 +41,9 @@ emit1:
 	pop out
 	push w
 	push ip
+	push out
 	call putchar
+	pop out
 	pop ip
 	pop w
 	pop tos

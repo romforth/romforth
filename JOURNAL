@@ -2068,3 +2068,11 @@ change and ran make/`runallsteps x86-32` until I had a passing "step 0".
 The primary changes required were to switch all the registers to use the 32 bit
 variants and to use the 32 bit "lodsl" instruction equivalent of the 64 bit
 "lodsq" instruction.
+
+03 Apr '23
+----------
+The API for calling putchar from assembly appears to have changed with the
+newer version of OS/glibc/gcc that I'm using for this port, so rather than
+try to parameterize that as well, I'm going to just document it here and
+quietly move on since this is just another userland port which I'm using
+only to sanity check the 32 bit port.
