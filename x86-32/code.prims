@@ -1,0 +1,53 @@
+# code.prims : mapping from the Forth primitives to x86 assembly userland code
+#
+# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+next	: lodsb ; jmp *w
+dup	: push tos ;
+2drop	: pop tos
+drop	: pop tos ;
+key	: jmp key1
+emit	: jmp emit1
+lit	: dup ; xchg tos, w ; lodsl ; xchg tos, w ;
+neg	: neg tos ;
+j	: jmp branch
+jz	: neg tos ; drop ; jnc j ; inc ip ;
+jnz	: neg tos ; drop ; jc j ; inc ip ;
+inc	: inc tos ;
+dec	: dec tos ;
+inv	: not tos ;
+nip	: pop nos ;
+dip	: push nos ;
+-	: neg tos
++	: nip ; add nos, tos ;
+&	: nip ; and nos, tos ;
+|	: nip ; or nos, tos ;
+^	: nip ; xor nos, tos ;
+swap	: nip ; dup
+t_n	: mov nos, tos ;
+pick	: shl $3, tos ; add sp, tos
+@	: mov (tos), tos ;
+stick	: shl $3, tos ; add sp, tos
+!	: pop (tos) ; drop ;
+c@	: jmp cfetch
+c!	: nip ; mov %cl, (tos) ; drop ;
+sp@!	: xchg sp, tos ;
+rp@!	: xchg rp, tos ;
+>r	: jmp tor
+r>	: jmp rfrom
+exec	: mov %bl, %al ; drop ; jmp *w
+enter	: jmp realenter
+exit	: sub $8, rp ; mov (rp), ip ;
+call	: jmp realcall
+p@	: jmp pfetch
+p!	: drop ; jmp emit1
+<<	: nip ; xchg tos, nos ; shl %cl, tos ;
+>>	: nip ; xchg tos, nos ; shr %cl, tos ;
+bye	: ret
+over	: nip ; dip ; dup ; t_n ; next ; .data
+
+var state .byte 1
+#var latest .include "latest.s"
+var here .long mem

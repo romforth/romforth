@@ -54,6 +54,7 @@ INDEX
 	* 21 Mar '23
 	* 23 Mar '23
 	* 01 Apr '23
+	* 03 Apr '23
 
 11 Nov '22
 ----------
@@ -2052,3 +2053,18 @@ manager, so I've installed dwm on it for now although at some point I want to
 port olvwm to it as well. For actual development, I was able to pull in a
 fairly recent version of gcc (10.3.0) using nix-shell. So with all of those
 preliminaries out of the way, I can now start on the actual port.
+
+03 Apr '23
+----------
+Rather than start from scratch, as I'd done with most of the earlier ports,
+this time, I'm using most of the code "as is" from the x86-user port since I
+assume most of the code can be common across these two ports.
+
+To start off, I've modified the runallsteps scripts since it makes it easy to
+run all the regression steps, if needed. Next I copied over files as needed
+from x86-user into x86-32 and made some small tweaks for the 64 bit to 32 bit
+change and ran make/`runallsteps x86-32` until I had a passing "step 0".
+
+The primary changes required were to switch all the registers to use the 32 bit
+variants and to use the 32 bit "lodsl" instruction equivalent of the 64 bit
+"lodsq" instruction.
