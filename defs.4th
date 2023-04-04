@@ -1219,7 +1219,10 @@ def{ #j
 	j	[ j	// so as to get j on the stack
 
 #{if offset==1
-	lit	[ lit	// additional padding in case lit grabs more bytes
+	lit	[ lit	// padding escaped by lit
+#}if
+#{if offset==3
+lit lit lit	[ lit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
