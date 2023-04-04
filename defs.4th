@@ -926,7 +926,10 @@ def{ literal	[ n
 	lit	[ n lit	// so as to get lit on the stack
 
 #{if offset==1
-	lit	[ n lit	// additional padding but only on x86, for now
+	lit	[ n lit	// padding escaped by lit
+#}if
+#{if offset==3
+lit lit lit	[ n lit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ n lit	// padding escaped by lit
