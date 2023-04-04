@@ -29,7 +29,7 @@ swap	: nip ; dup
 t_n	: mov nos, tos ;
 pick	: shl $2, tos ; add sp, tos
 @	: mov (tos), tos ;
-stick	: shl $3, tos ; add sp, tos
+stick	: shl $2, tos ; add sp, tos
 !	: pop (tos) ; drop ;
 c@	: jmp cfetch
 c!	: nip ; mov %cl, (tos) ; drop ;
