@@ -30,14 +30,14 @@ sub genheader {
 	}
 	print qq{\t.ascii "$f"\n};
 	print "$l","_nfa:\t.byte $len\n";
-	print "$l","_lfa:\t.quad $prev\n";
+	print "$l","_lfa:\t.long $prev\n";
 	print "$l","_cfa:\n";
 	if ($flag) {
 		print "\t.byte $l-next\n";
 		print "\t.byte exit-next\n";
 	} else {
 		print "\t.byte lit-next\n";
-		print "\t.quad $l\n";
+		print "\t.long $l\n";
 		print "\t.byte exit-next\n";
 	}
 	$prev="$l"."_lfa";

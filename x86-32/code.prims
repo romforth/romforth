@@ -49,5 +49,5 @@ bye	: ret
 over	: nip ; dip ; dup ; t_n ; next ; .data
 
 var state .byte 1
-#var latest .include "latest.s"
+var latest .include "latest.s"
 var here .long mem

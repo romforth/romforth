@@ -213,7 +213,7 @@ sub def {
 			print qq{\t.ascii "$w"\n};
 			$len |= 0x80 if ($immediate);
 			print "$l","_nfa:\t.byte $len\n";
-			print "$l","_lfa:\t.quad $prev\n";
+			print "$l","_lfa:\t.long $prev\n";
 			$prev="$l"."_lfa";
 		}
 		print "$l:	# $w\n"; # and generate assembly code
@@ -280,7 +280,7 @@ print $mh "label fake $label\n";
 if ($gendict) {
 	open(my $lh, ">latest.s");
 	select $lh;
-	print "\t.quad $prev\n";
+	print "\t.long $prev\n";
 	close $lh;
 	print $mh "label prev $prev\n";
 }
