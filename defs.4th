@@ -1196,6 +1196,9 @@ def{ #jz
 #{if offset==1
 	lit	[ lit	// padding escaped by lit
 #}if
+#{if offset==3
+lit lit lit	[ lit	// padding escaped by lit
+#}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
 #}if

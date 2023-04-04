@@ -34,7 +34,10 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	lit	[	// lit escapes the following byte(s)
 	jz	[ jz	// escaped by lit
 #{if offset==1
-	lit	[ jz	// padding used for 1 byte offset, escaped by lit
+	lit	[ jz	// padding escaped by lit
+#}if
+#{if offset==3
+	lit lit lit	[ jz	// padding escaped by lit
 #}if
 #{if offset==7
 	lit lit lit lit lit lit lit	[ jz	// padding escaped by lit
