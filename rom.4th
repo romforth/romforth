@@ -377,7 +377,10 @@ if{		[	// not taken
 lit		[ 1 2	// lit escapes the following byte(s)
 swap		[ 1 2	// escaped by lit
 #{if offset==1
-lit		[ 1 2	// padding used for 1 byte offset, escaped by lit
+lit		[ 1 2	// padding escaped by lit
+#}if
+#{if offset==3
+lit lit lit	[ 1 2	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ 1 2	// padding escaped by lit
