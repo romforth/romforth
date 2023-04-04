@@ -1289,7 +1289,7 @@ def{ compile	[	| w ]
 #{if THREAD==1
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user, skip past the indirect cfa
-	8 +	[ o w+1+8	//  pointer and the enter prefix before the cfa
+	$LITC +	[ o w+1+litc	//  pointer and the enter prefix before the cfa
 #}if
 #}if
 #{if THREAD==2
