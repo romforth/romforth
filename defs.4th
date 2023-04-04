@@ -1016,6 +1016,9 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 #{if offset==1
 	lit	[	// padding escaped by lit
 #}if
+#{if offset==3
+lit lit lit	[	// padding escaped by lit
+#}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ // padding escaped by lit
 #}if
@@ -1048,7 +1051,10 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 		lit	[ cfa		// escape the next byte
 		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
 #{if offset==1
-		lit	[ cfa enter	// padding, needed only on x86/offset=1
+		lit	[ cfa enter	// padding escaped by lit
+#}if
+#{if offset==3
+lit lit lit		[ cfa enter	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ cfa enter	// padding escaped by lit
