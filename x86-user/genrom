@@ -140,7 +140,7 @@ sub genprim {
 }
 
 sub gendef {
-	my ($m)=@_;
+	my ($m, $f)=@_;
 	print "\t.byte enter-next\n";
 	print "\t.quad $m # $f\n";
 }
@@ -149,7 +149,7 @@ sub gencode {
 	my ($f)=@_;
 	my $m=$defs->{$f};
 	if ($m) {
-		gendef($m);
+		gendef($m, $f);
 	} else {
 		genprim($f);
 	}
@@ -252,7 +252,7 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need to
-			gendef($m);	# be enter'ed at their starting address
+			gendef($m, $f);	# be enter'ed at their starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
