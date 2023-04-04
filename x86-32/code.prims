@@ -27,7 +27,7 @@ dip	: push nos ;
 ^	: nip ; xor nos, tos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
-pick	: shl $3, tos ; add sp, tos
+pick	: shl $2, tos ; add sp, tos
 @	: mov (tos), tos ;
 stick	: shl $3, tos ; add sp, tos
 !	: pop (tos) ; drop ;
