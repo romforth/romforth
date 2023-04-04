@@ -142,7 +142,7 @@ sub genprim {
 sub gendef {
 	my ($m)=@_;
 	print "\t.byte enter-next\n";
-	print "\t.quad $m # $f\n";
+	print "\t.long $m # $f\n";
 }
 
 sub gencode {
