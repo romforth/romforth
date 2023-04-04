@@ -987,7 +987,10 @@ if{		[ addr n	// not taken
 lit		[ 	// lit escapes the following byte(s)
 exit		[ exit	// escaped by lit
 #{if offset==1
-lit		[ exit	// padding used for 1 byte offset, escaped by lit
+lit		[ exit	// padding escaped by lit
+#}if
+#{if offset==3
+lit lit lit	[ exit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ exit	// padding escaped by lit
