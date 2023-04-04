@@ -1244,7 +1244,10 @@ def{ #jnz
 	jnz	[ jnz	// so as to get jnz on the stack
 
 #{if offset==1
-	lit	[ lit	// additional padding in case lit grabs more bytes
+	lit	[ lit	// padding escaped by lit
+#}if
+#{if offset==3
+lit lit lit	[ lit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
