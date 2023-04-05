@@ -55,6 +55,7 @@ INDEX
 	* 23 Mar '23
 	* 01 Apr '23
 	* 03 Apr '23
+	* 05 Apr '23
 
 11 Nov '22
 ----------
@@ -2069,10 +2070,100 @@ The primary changes required were to switch all the registers to use the 32 bit
 variants and to use the 32 bit "lodsl" instruction equivalent of the 64 bit
 "lodsq" instruction.
 
-03 Apr '23
 ----------
+
 The API for calling putchar from assembly appears to have changed with the
 newer version of OS/glibc/gcc that I'm using for this port, so rather than
 try to parameterize that as well, I'm going to just document it here and
 quietly move on since this is just another userland port which I'm using
 only to sanity check the 32 bit port.
+
+05 Apr '23
+----------
+I'm starting to realize that I should have named the directories better, but
+in my defense I'll just say that naming is hard.
+
+The just concluded "x86-32" port denotes an "x86 32 bit userland assembly" port
+which currently holds the record for how fast a port can be done mostly because
+it just needed a few fairly simple modifications to the "x86-user" port.
+
+The "x86-user" port in turn denoted the "x86 64 bit userland assembly" port
+which held the previous record for how soon a port could be done - at ~1 week.
+
+From the timestamps, starting from the beginning to the end of the port, it
+took ~3 days as per the git log (Apr 1 to Apr 4) but looking in detail at the
+git timestamps, the actual time spent appears to only have been ~5-6 hours.
+
+I guess that it helped that I used a script which automated much of the grunt
+work - since it updated the "step" used in the stepfile at each incremental
+step before running `make` and `git commit`ted the change on success.
+
+The script was setup to exit when the `make` invocation failed so that it let
+me intervene and fix up things manually whenever there was a failure. I feel
+that the script definitely helped speed things up since it got rid of all of
+the mundane work and allowed me to focus on just the new bugs that showed up.
+
+Unfortunately, this port hit a speed bump while trying to integrate it back
+into the existing regression test harness. Since this is an x86 32 bit port, I
+first tried to compile a 32 bit x86 binary on my 64 bit laptop by using the
+"-m32" option to cc but that failed with:
+	/usr/bin/ld: cannot find crt1.o: No such file or directory
+	/usr/bin/ld: cannot find crti.o: No such file or directory
+in addition to even more errors about an inability to find libgcc
+
+In an ideal world, the only thing needed to fix this is probably to run:
+	`apt update ; apt install libc6:i386 libgcc1:i386`
+
+Unfortunately, I'm running Ubuntu 16.04, a distro which is ancient and is no
+longer supported since it is past it's 5 year LTS. So I can't install the newer
+libraries using `apt`. I could upgrade to a newer Ubuntu distro but all of the
+newer distros, after 16.04, need atleast 4 GB of memory which my ancient laptop
+does not have and I'm definitely not going out to buy a newer laptop just to
+continue on the treadmill of never ending software bloat which appears to have
+become the hallmark of modern software. Do people even remember that we went to
+the moon (and returned back, safely) using ~70KB ROM and ~2KB RAM? Sorry this
+is turning into a rant, I just needed to vent.
+
+For the record, I'll note that the changes required in the makefile to run into
+the errors noted earlier was the addition of these directives in the makefile:
+	ASFLAGS=-m32
+	LDFLAGS=-m32
+
+I made a half-hearted attempt to see if clang fared any better by setting
+	CC=clang
+in the makefile and it came up with an even longer list of missing libraries:
+	/usr/bin/ld: cannot find crt1.o: No such file or directory
+	/usr/bin/ld: cannot find crti.o: No such file or directory
+	/usr/bin/ld: cannot find crtbegin.o: No such file or directory
+	/usr/bin/ld: cannot find -lgcc
+	/usr/bin/ld: cannot find -lgcc_s
+	/usr/bin/ld: cannot find -lc
+	/usr/bin/ld: cannot find -lgcc
+	/usr/bin/ld: cannot find -lgcc_s
+	/usr/bin/ld: cannot find crtend.o: No such file or directory
+	/usr/bin/ld: cannot find crtn.o: No such file or directory
+
+So now that I'm kind of stuck, I see a couple of choices to move forward.
+
+My knee jerk choice is to ignore this issue by not adding the 32-bit build as
+part of the regression test since I know that it was built and tested perfectly
+fine on a 32 bit system, but that would be just be me trying to weasel out of
+this stupid problem.
+
+Another alternative given that I know that NixOS can run without any issues
+on my ancient 32-bit laptop (with "only" 256MB of memory) would be to "upgrade"
+my laptop from Ubuntu 16.04 to the latest version of Nix. But I don't want to
+go through what appears to be an unnecessary hassle especially since this is
+the "primary" system on which I do all of my coding and I don't know what other
+problems will show up trying to do the upgrade to a completely alien distro.
+
+Since both the available choices don't appear too palatable, I'm going to be
+doing some more research trying to figure out what other solutions exist which
+might include the less invasive option of giving one of the newer "Debian lite"
+ISO images a whirl.
+
+Since it is starting to get close to tax time though, that is the high priority
+item on my todo list now, so I'll need to get that done before coming back to
+see what I can do about this stupid mess.
+
+For now I'm going to disable the regression test for the x86-32 port.
