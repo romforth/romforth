@@ -56,6 +56,7 @@ INDEX
 	* 01 Apr '23
 	* 03 Apr '23
 	* 05 Apr '23
+	* 18 Apr '23
 
 11 Nov '22
 ----------
@@ -2167,3 +2168,50 @@ item on my todo list now, so I'll need to get that done before coming back to
 see what I can do about this stupid mess.
 
 For now I'm going to disable the regression test for the x86-32 port.
+
+18 Apr '23
+----------
+I'm restarting from where I left off before tax time and spring break caused an
+interruption to my regular schedule.
+
+It did take a while to find a good solution to the cross compilation issue that
+I'd mentioned in the previous JOURNAL entry but the solution that I've found
+after all of the research done over the past couple of weeks is just too good
+to be true so all of the time spent reading up stuff on various internet forums
+(Stack Overflow, Ask Ubuntu, Reddit, etc) was well worth the effort.
+
+I'll start off with some background: rather than try to solve the immediate
+problem of figuring out how to run (or even build) 32 bit x86 binaries on an
+x86_64 system, which I was struggling with earlier (documented in the previous
+JOURNAL entry) I tried to find a solution to the older problem of how I could
+go about testing other architectures on my laptop. That research turned up
+QEMU user mode - I was aware of QEMU system emulation but QEMU user was new to
+me.
+
+So now that I'm no longer limited to just the older architectures supported by
+SIMH or having to do the equivalent of "DIY emulation" using Unicorn (which in
+turn is also layered over QEMU), I have the luxury of emulating ~43 different
+architectures using QEMU directly from my laptop without much effort.
+
+With that temporary resolution to the emulation problem out of the way, I could
+then go back to figuring out how to do cross compilation for all of the various
+architectures. The simplest (and quite possibly the absolute gem of a solution)
+which is beautifully documented in Andrew Kelley's blog about `zig cc`[1]
+[1] `zig cc` a Powerful Drop-In Replacement for GCC_Clang - Andrew Kelley.html
+is: just use `zig cc`. Of course it does add a dependency on `zig` but in some
+sense that may be a net win since, as Andrew points out in his blog, you are
+trading in clang using ~380 MiB for zig using just ~45 MiB for what is vastly
+more functionality. Note that using `zig cc` does come with a one-time cost in
+terms of building out the cache the very first time a build is done.
+
+I'm tempted to give zig - the language, a shot as well - especially since it
+has the `comptime` feature which mirrors the equivalent functionality of Forth.
+
+Some of the other options I looked before deciding on `zig cc` were:
+1. A bunch of VM/container/schroot/chroot alternatives, each seemingly more
+   complicated than the next.
+2. `cargo cross` (which wouldn't work for me due to the `apt` dependencies
+   mentioned in the previous entry, dated 05 Apr '23, of this JOURNAL)
+3. `cargo test` using the target.triple.runner (rust only? though, I think)
+4. Nix's pkgCross which I didn't investigate too deeply since it appears to be
+   tied at the hip to nixpkgs (and the documentation wasn't too clear either)
