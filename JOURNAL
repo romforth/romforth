@@ -57,6 +57,7 @@ INDEX
 	* 03 Apr '23
 	* 05 Apr '23
 	* 18 Apr '23
+	* 20 Apr '23
 
 11 Nov '22
 ----------
@@ -2215,3 +2216,59 @@ Some of the other options I looked before deciding on `zig cc` were:
 3. `cargo test` using the target.triple.runner (rust only? though, I think)
 4. Nix's pkgCross which I didn't investigate too deeply since it appears to be
    tied at the hip to nixpkgs (and the documentation wasn't too clear either)
+
+20 Apr '23
+----------
+As I mentioned in the previous JOURNAL entry, although `zig cc` is currently
+needed only to build and test the 32-bit x86 version on a 64-bit x86 system,
+I'm going to start cautiously and see how `zig cc` fares on the plain old C
+code in the `C` subdirectory before attempting more experiments with `zig cc`.
+
+Another advantage to doing it this way is that I can use the `target` option
+to generate code for other architectures easily (so I can have a look at the
+assembly before doing the actual port).
+
+I started off by running the usual regression test (running `./runallsteps C`),
+and hit the first issue which was that zig (or more likely clang, under the
+covers) allocates the variables at different locations compared to gcc. This
+resulted in requiring changes to the `runallsteps` regression script. For the
+most part the changes involved were:
+	- run the regression script (until a failure is seen)
+	- cd C ; objdump -dx ./forth_dict | grep 'vars$'
+	- copy paste the address into the right place in the runallsteps script
+	- rinse lather repeat
+But this started getting old pretty fast so I decided to bring the memory tests
+(starting at step 13) in parity with the x86 assembly versions by changing the
+load address to use the memory contents of init but this failed as well since
+`zig cc`/`clang` moves the locations of the functions around after each build
+(likely to improve security by using ASLR).
+
+After puzzling over this a bit, I ran objdump after compiling a couple of times
+and tried to see if there were any addresses that remained unchanged between
+the various runs and it appears that the only set of addresses that seem to
+remain unchanged between runs are the following:
+  SYMTAB               0x00000000002002e8
+  STRTAB               0x0000000000200400
+  GNU_HASH             0x00000000002003a8
+  HASH                 0x00000000002003c8
+  VERSYM               0x0000000000200378
+  VERNEED              0x0000000000200384
+
+For now I've just picked the very first address just to get this over with.
+
+Since the only reason for having a "test" field in the "var" struct was to be
+able to read it (using it's hardcoded address), that can now be removed.
+
+One nice result of this exercise is that the regression test for C is much
+simpler since all of the hardcoded constants that were stuck in there are now
+eliminated and may actually make this portable to other systems without any
+changes to the `fpp.config.C` configuration file.
+
+Just to check for portability between zig/clang vs gcc I compared the objdump
+between the zig generated binary and the gcc generated binary, and see that
+they have no addresses in common at all, so this code will SEGV if it is
+regression tested using gcc from step 13 onward. I could obviously solve that
+by splitting the C directory into C-gcc (which keeps the current semantics) and
+create something new, say C-zig-cc (to use zig cc), but I'm not going to bother
+with that for now. Although portability is the driving force behind this code,
+portability across CPU's, not compilers, is what I'm aiming for.

@@ -77,34 +77,18 @@ while (<>) {
 	}
 }
 
-my $hash={};
 my $list=[qw(0 0.1 0.2 1 1.1),2..4,qw(4.1 4.2 4.3),5..9,qw(10.1 10.2 10.3),11..62];
-for my $i (@$list) {
-	last if ($i>=41);
-	$hash->{"$i"}="0x602080";
-}
-for my $i (41..62) {
-	$hash->{"$i"}="0x603080";
-}
-if ($debug) {
-	for my $i (@$list) {
-		$hash->{"$i"}="0x607080";
-	}
-}
 
 for my $i (@$list) {
 
 cport: {
 	last cport unless ($c_check);
 	last cport if ($i>$c_step);
-	my $a=$hash->{"$i"};
 	@ARGV=("C/fpp.config.C");
 	open(my $fh, ">C/fpp.config");
 	select $fh;
 	print "step=$i\n";
 	while (<>) {
-		s/^ADDR=.*/ADDR=$a/;
-		s/^VALUE=.*/VALUE=$a/;
 		print;
 	}
 	close $fh;

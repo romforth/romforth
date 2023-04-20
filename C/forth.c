@@ -105,12 +105,10 @@ typedef const struct lfa {
 unsigned char mem[1<<16];
 
 struct var {
-	char *test;
 	const struct lfa *latest;
 	unsigned char *here;
 	char state;
 } vars = {
-	(char *)&vars.test,
 	0,
 	(unsigned char *)mem,
 	1
