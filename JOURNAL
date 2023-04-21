@@ -58,6 +58,7 @@ INDEX
 	* 05 Apr '23
 	* 18 Apr '23
 	* 20 Apr '23
+	* 21 Apr '23
 
 11 Nov '22
 ----------
@@ -2272,3 +2273,41 @@ by splitting the C directory into C-gcc (which keeps the current semantics) and
 create something new, say C-zig-cc (to use zig cc), but I'm not going to bother
 with that for now. Although portability is the driving force behind this code,
 portability across CPU's, not compilers, is what I'm aiming for.
+
+21 Apr '23
+----------
+Before moving on to focus on the remaining work, I decided to redo the earlier
+comparison that I had done on 23 Mar '23 to include the `zig cc` results as
+well. Since `zig cc` uses the newer clang version (zig cc --version reports
+"clang version 16.0.1"), it gives me a chance to compare the latest clang
+compiler version vs a gcc version from ~7 years ago vs hand written assembly
+code performance.
+
+The table below is a copy of the original table with the addition of another
+column to track the performance of the binary generated using `zig cc`/clang
+and all of the performance data is generated using `perf stat` as before.
+
+.-----------------------------------------------------------------------.
+| Metric		| GCC 5.3.1	| Assembly	| zig cc/clang	|
++-----------------------+---------------+---------------+---------------+
+| Task-clock (msec)	| 4.439651	| 3.957470	| 2.886195	|
+| CPUs utilized		| 0.884		| 0.861		| 0.831		|
+| Cycles		| 9,969,446	| 8,866,091	| 6,435,679	|
+| Instructions		| 10,365,760	| 6,413,838	| 8,338,773	|
+| Insns per cycle	| 1.04		| 0.72		| 1.30		|
+| Branches		| 2,374,783	| 1,734,081	| 1,297,254	|
+| Branches M/sec	| 534.903	| 438.179	| 449.469	|
+| Branch-misses		| 204,129	| 130,745	| 101,190	|
+| % of all branches	| 8.60% (56.95%)| 7.54% (41.86%)| 7.80% (28.73%)|
+| Time elapsed		| 0.005021309(s)| 0.004598909(s)| 0.003472718(s)|
+'-----------------------------------------------------------------------'
+
+So this time I can gracefully accept defeat at the hands of the latest compiler
+since it has me beat on almost every metric except for the total number of
+instructions executed (which I think is a proxy for how small the code can be).
+
+BTW, this was using the -Oz optimization option to clang so I assume that the
+only place compilers are still lagging (at least on x86, which I assume has
+received the bulk of the optimizations), is in generating compact code compared
+to what can be done manually. So I think there is still a reason to forge ahead
+with my hobby project since I'm targeting it for resource constrained systems.
