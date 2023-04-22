@@ -59,6 +59,7 @@ INDEX
 	* 18 Apr '23
 	* 20 Apr '23
 	* 21 Apr '23
+	* 22 Apr '23
 
 11 Nov '22
 ----------
@@ -2311,3 +2312,28 @@ only place compilers are still lagging (at least on x86, which I assume has
 received the bulk of the optimizations), is in generating compact code compared
 to what can be done manually. So I think there is still a reason to forge ahead
 with my hobby project since I'm targeting it for resource constrained systems.
+
+22 Apr '23
+----------
+Yesterday's journal entry about the large sizes of the generated binaries got
+me wondering about why they need to be that large. For example, the size of
+C/forth_dict generated using `zig cc -Oz` is ~31K/12K (before/after running
+`strip` on the generated binary). The size of the code generated for x86-user,
+which is generated from x86 assembly, but running in userland, is ~36K/14K
+(again, the sizes listed are before/after strip'ing). Since these sizes are
+~4-5x larger than the corresponding "baremetal" equivalents in x86/forth_dict
+it makes sense to assume that all of that bloat is probably coming from the
+libc/libgcc/libdl/crt* libraries.
+
+These libraries are required for the support of start/exit and getchar/putchar.
+So it sounds like I could try to shrink them down by coding to Linux's syscall
+layer directly instead of using any of the higher level libraries. Obviously,
+that comes with the risk of ABI changes that break that interface but since I
+just need SYS_{exit,read,write}, 3 constants total, I think I can live a little
+dangerously. I spent a fair bit of time researching how to do all that so I'm
+going to turn that into yet another x86 port which I'll call x86-sys.
+
+So that's what I'm going to be working on next. As a data point, the "step 0"
+implementation using the syscall interface to just halt, clocks in at only 664
+bytes compared to a minimal C/assembler code that needs more than ~10x that
+size due to all of the libraries mentioned above.
