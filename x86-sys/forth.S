@@ -6,6 +6,17 @@
 
 	.globl _start
 _start:
+	mov $rom, %rsi
+	mov $next, %rax
+	jmp *%rax
+
+	.align 256
+next:
+	lodsb
+	jmp *%rax
+bye:
 	mov $1, %eax
 	mov $0, %ebx
 	int $0x80
+rom:
+	.byte bye-next
