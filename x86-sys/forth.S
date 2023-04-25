@@ -97,6 +97,10 @@ branch:
 	add w, ip
 	pop w
 	jmp next
+bye1:
+	mov $1, %eax
+	mov $0, %ebx
+	int $0x80
 
 rom:
 #include "rom.s"
