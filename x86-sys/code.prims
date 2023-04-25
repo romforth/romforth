@@ -46,7 +46,7 @@ p@	: jmp pfetch
 p!	: drop ; jmp emit1
 <<	: nip ; xchg tos, nos ; shl %cl, tos ;
 >>	: nip ; xchg tos, nos ; shr %cl, tos ;
-over	: nip ; dip ; dup ; t_n ; next ; .data
+over	: nip ; dip ; dup ; t_n ; next ; .data ; buf: .quad 0
 
 var state .byte 1
 #{if step>=41

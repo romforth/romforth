@@ -28,16 +28,22 @@ key1:
 1:	push w
 	push ip
 	#call getchar
-	mov w, tos
+	mov $'f', tos
 	pop ip
 	pop w
 	jmp next
 emit1:
 	push tos
-	pop out
+	mov $buf, tos
+	pop (tos)
 	push w
 	push ip
 	#call putchar
+	mov $4, w
+	mov $1, tos
+	mov $buf, nos
+	mov $1, %rdx
+	int $0x80
 	pop ip
 	pop w
 	pop tos
