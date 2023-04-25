@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-all : threeforth
+all : fourforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict

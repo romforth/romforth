@@ -14,7 +14,7 @@ my $x86_check=1;
 my $x86as_check=1;
 my $x86user_check=1;
 my $x86_32_check=0;
-my $x86_sys_check=0;
+my $x86_sys_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
