@@ -5,6 +5,7 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 next	: lodsb ; jmp *w
+bye	: mov $1, %eax ; mov $0, %ebx ; int $0x80
 dup	: push tos ;
 2drop	: pop tos
 drop	: pop tos ;
@@ -45,7 +46,6 @@ p@	: jmp pfetch
 p!	: drop ; jmp emit1
 <<	: nip ; xchg tos, nos ; shl %cl, tos ;
 >>	: nip ; xchg tos, nos ; shr %cl, tos ;
-bye	: ret
 over	: nip ; dip ; dup ; t_n ; next ; .data
 
 var state .byte 1

@@ -14,6 +14,7 @@ my $x86_check=1;
 my $x86as_check=1;
 my $x86user_check=1;
 my $x86_32_check=0;
+my $x86_sys_check=0;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -21,6 +22,7 @@ if (@ARGV) {
 	$x86as_check=0;
 	$x86user_check=0;
 	$x86_32_check=0;
+	$x86_sys_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -28,6 +30,7 @@ if (@ARGV) {
 		$x86as_check=1 if ( $d eq "x86-as");
 		$x86user_check=1 if ( $d eq "x86-user");
 		$x86_32_check=1 if ( $d eq "x86-32");
+		$x86_sys_check=1 if ( $d eq "x86-sys");
 	}
 }
 
@@ -68,6 +71,12 @@ $x=`cat x86-32/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $x86_32_step=$step;
+
+my $x86_sys_step;
+$x=`cat x86-sys/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$x86_sys_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -179,6 +188,22 @@ x86_32port: {
 	select STDOUT;
 	print "\nRunning step $i for the x86-32 port\n";
 	system("cd x86-32 ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+x86_sysport: {
+	last x86_sysport unless ($x86_sys_check);
+	last x86_sysport if ($i>$x86_sys_step);
+	@ARGV=("x86-sys/fpp.config.x86");
+	open(my $fh, ">x86-sys/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the x86-sys port\n";
+	system("cd x86-sys ; make") == 0 or die "make failed at step $i with exit status $?"
 }
 
 }
