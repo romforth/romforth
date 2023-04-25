@@ -28,7 +28,14 @@ key1:
 1:	push w
 	push ip
 	#call getchar
-	mov $'f', tos
+	mov $3, w
+	mov $0, tos
+	mov $buf, nos
+	mov $1, %rdx
+	int $0x80
+	mov nos, tos
+	mov (tos), tos
+	and $0xff, tos
 	pop ip
 	pop w
 	jmp next
