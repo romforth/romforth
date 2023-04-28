@@ -171,6 +171,9 @@ x86userport: {
 	close $fh;
 	select STDOUT;
 	print "\nRunning step $i for the x86-user port\n";
+	unlink "$ENV{'HOME'}/.cache/zig/h/5134bb1b90884b80849a213dfb44f106.txt";
+	unlink "$ENV{'HOME'}/.cache/zig/h/93f4c4897e3cd0f00e758d6f40d7d236.txt";
+	unlink "$ENV{'HOME'}/.cache/zig/h/8f5a8616e05941829b2580084028e434.txt";
 	system("cd x86-user ; make") == 0 or die "make failed at step $i with exit status $?"
 }
 

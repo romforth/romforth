@@ -61,6 +61,7 @@ INDEX
 	* 21 Apr '23
 	* 22 Apr '23
 	* 25 Apr '23
+	* 27 Apr '23
 
 11 Nov '22
 ----------
@@ -2381,3 +2382,49 @@ I'll take a look at trying to build and test them using cross-compilation using
 `zig cc` (or any other available means if that runs into problems) along with
 emulation using qemu-user (or any other available alternatives) and see how far
 I can get.
+
+27 Apr '23
+----------
+Although I keep declaring that I'm finished with x86, for real this time, there
+seems to always be some new tiny little detail that crops up to remind me of
+unfinished business.
+
+Before starting out on using `zig cc` on SPARC or m68k, I wondered if it was
+safer to try it out on the x86 assembly ports first. Since I was able to
+successfully use it on the C port, it seemed sensible to try it on the x86-user
+assembly port which is also 64 bit and can run natively. So I went ahead and
+did that.
+
+The very first issue that I ran into with switching to using `zig cc` from GCC
+(or perhaps more correctly, gas) was that clang does not seem to be aware of
+the "movsxd" instruction and errors out. I worked around that by switching it
+to use the "movsbq" instruction instead, which had the nice effect of reducing
+the code by one line.
+
+After fixing that I ran into a really strange issue that took a while to debug.
+It turns out that `zig cc` internally uses a cache but the .o object file from
+assembling forth.S doesn't get marked as stale after the increment of each step
+value done by the runallsteps regression script, probably due to all of the
+preprocessing shenanigans that I do as part of the make. Rather than file a bug
+against `zig cc`, since I'm unsure for now, about exactly who is at fault here,
+I've just added a line in the runallsteps script to remove the stale entry
+before each build.
+
+Once I was past that, at step 13, there was the usual problem that the address
+and value that are fetch'ed and compared need to be modified since `zig cc`
+counts as a new "platform" on which this code is being run.
+
+The final issue that I ran into was at step 50 where I consistently hit a segv.
+This reminded of the earlier problem which I'd run into during the x86-sys port
+which I'd fixed by bumping up the memory allocation and that fixed the issue
+here as well.
+
+With all of those bugs fixed, `./runallsteps x86-user` runs through all of the
+62 steps successfully, regression testing each step along the way.
+
+Thinking about next steps, a useful follow up to this exercise might be try out
+`zig cc` for the 32 bit x86-32 assembly port as well so that I can enable
+regression tests for x86-32, which are currently disabled (see my earlier entry
+dated 5 Apr '23 for the reasons). Before venturing off into foreign lands by
+trying to see how `zig cc` handles non-x86 architectures, it seems prudent to
+check how a 32 bit x86 binary generated using `zig cc` fares on my 64 bit host.

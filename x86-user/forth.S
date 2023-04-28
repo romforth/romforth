@@ -83,8 +83,7 @@ branch:
 	push w
 	xor w, w
 	lodsb
-	movsx %al, %eax
-	movsxd %eax, %rax
+	movsbq %al, %rax
 	add w, ip
 	pop w
 	jmp next
@@ -111,4 +110,4 @@ rom:
 #include "prims.s"
 #endif
 
-mem:
+	.comm mem,1024
