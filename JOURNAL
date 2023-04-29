@@ -62,6 +62,7 @@ INDEX
 	* 22 Apr '23
 	* 25 Apr '23
 	* 27 Apr '23
+	* 29 Apr '23
 
 11 Nov '22
 ----------
@@ -2428,3 +2429,42 @@ regression tests for x86-32, which are currently disabled (see my earlier entry
 dated 5 Apr '23 for the reasons). Before venturing off into foreign lands by
 trying to see how `zig cc` handles non-x86 architectures, it seems prudent to
 check how a 32 bit x86 binary generated using `zig cc` fares on my 64 bit host.
+
+29 Apr '23
+----------
+I managed to get `zig cc` to build 32 bit binaries on the x86-32 port so it can
+now run natively on my 64-bit Ubuntu system. With this change, the x86-32 port,
+which was the one outlier that wasn't part of the regression tests, can also
+now be added to the set of ports which are regression tested.
+
+For the record, this testing was done using `zig version`
+	0.11.0-dev.2725+4374ce51b.
+
+`zig targets` lists two targets for 32-bit: x86-linux-gnu and x86-linux-musl
+these are listed under libc, which I assume means these targets are supported
+on Linux using libc. Since I'm using an ancient version of Ubuntu which uses
+glibc 2.23, my first attempt was to use the `x86-linux-gnu` target using:
+	zig cc -target x86-linux-gnu
+Although I was able to compile a binary, which is reported as having 32 bitness
+	ELF 32-bit LSB executable, Intel 80386
+(the above output was from `file`), it fails to run and even `strace` whines:
+	execve("./a.out", ["./a.out"], [/* 30 vars */]) = -1 ENOENT
+
+Rather than spend too much time debugging this, I decided to give the next
+available option, which was the `x86-linux-musl` target a shot using:
+	zig cc -target x86-linux-musl
+This was able to successfully generate a 32 bit binary which was runnable.
+
+From there, it was just a matter of removing the stale object from zig's cache
+(just like I'd mentioned in the previous JOURNAL entry), and then changing the
+ADDR and VALUE parameters in the `fpp` configuration file at step 13 and then
+bumping up the memory allocation at step 24 (and again all the way to 2K at
+step 62). With all of this sorted out, `./runallsteps x86-32` can now run to
+completion through all 62 regression steps.
+
+Despite my earlier claim that the 16-bit, 32-bit and 64-bit ports complete the
+x86 porting landscape, I realized while working on this change that each of the
+available APIs (such as baremetal, BIOS, UEFI, multiboot, various OS and
+library combos) are all viable porting targets. But I think I've ported x86
+enough times already so I'm going to give it a rest and move on from x86, for
+real this time.

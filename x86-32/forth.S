@@ -112,4 +112,4 @@ rom:
 #include "prims.s"
 #endif
 
-mem:
+	.comm mem,2048

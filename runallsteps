@@ -13,7 +13,7 @@ my $pdp11_check=1;
 my $x86_check=1;
 my $x86as_check=1;
 my $x86user_check=1;
-my $x86_32_check=0;
+my $x86_32_check=1;
 my $x86_sys_check=1;
 if (@ARGV) {
 	$c_check=0;
@@ -190,6 +190,9 @@ x86_32port: {
 	close $fh;
 	select STDOUT;
 	print "\nRunning step $i for the x86-32 port\n";
+	unlink "$ENV{'HOME'}/.cache/zig/h/13fe8c23266be3a61b408f548b60c2f3.txt";
+	unlink "$ENV{'HOME'}/.cache/zig/h/b142852685bf55dccd76d3d4d8328c3b.txt";
+	unlink "$ENV{'HOME'}/.cache/zig/h/9dab5533a8c48dc83366e6c0e33143ef.txt";
 	system("cd x86-32 ; make") == 0 or die "make failed at step $i with exit status $?"
 }
 
