@@ -63,6 +63,7 @@ INDEX
 	* 25 Apr '23
 	* 27 Apr '23
 	* 29 Apr '23
+	* 01 May '23
 
 11 Nov '22
 ----------
@@ -2468,3 +2469,49 @@ available APIs (such as baremetal, BIOS, UEFI, multiboot, various OS and
 library combos) are all viable porting targets. But I think I've ported x86
 enough times already so I'm going to give it a rest and move on from x86, for
 real this time.
+
+01 May '23
+----------
+I spent a fair bit of time trying to evaluate the list of architectures for
+which `zig cc` can generate executables and making sure that qemu-user can then
+actually run those binaries. So far, the tuples that work on my system are:
+	(aarch64-linux-musl, qemu-aarch64)
+	(mips64-linux-musl, qemu-mips64)
+	(mipsel-linux-musl, qemu-mipsel)
+	(mips-linux-musl, qemu-mips)
+	(powerpc64le-linux-musl, qemu-ppc64le)
+	(powerpc64-linux-musl, qemu-ppc64)
+	(powerpc-linux-musl, qemu-ppc64abi32)
+	(riscv64-linux-gnu, qemu-riscv64)
+Note that neither of the two architectures that I had planned for the next port
+(SPARC and Motorola 68000) are on this list so it looks like I will have to
+carry on without the support of all of the cross platform goodness of `zig cc`
+despite the fact that `zig targets | egrep -i 'sparc|m68k'` shows plenty of
+matches so it looks like things aren't working quite as advertised yet.
+
+I'm using a fairly recent version of zig (0.11.0-dev.2725+4374ce51b) so I'm not
+holding out hope that pulling in a newer version will magically add in this
+support. Since zig internally depends on clang/llvm I took a look at what is
+supported in there and can see that although SPARC support exists, the Motorola
+68000 appears to have fallen by the wayside. So that helped me make up my mind
+- I'm going to choose the m68k architecture for porting, especially since it is
+the older architecture.
+
+Binutils, (which I had used earlier for the PDP11 port) appears to have support
+for assembling and linking m68k binaries and qemu-m68k can be used to run the
+userland emulation of the generated binaries so that will be my toolchain of
+choice despite the fact that I'm adding yet another external dependency. `simh`
+which was used for the PDP11 emulation does not seem to have support for m68k
+although the code base has some references to m68k as part of the emulation for
+`sage`. Given how slow the pdp11 emulation using simh is though, I want to see
+if qemu performs better/faster.
+
+For looking up information about opcodes and instruction sets, I'll be using my
+trusty old "Computer Organization" textbook (see the earlier mention in the
+JOURNAL entry dated 30 Nov '22). Unlike the x86 ports where I could liberally
+borrow code between ports, most of the native code will need to be written
+from scratch so it will give a good measure of how long a "real" port takes.
+
+Just as before, I'll go mostly radio silent (see JOURNAL entry dated 17 Mar 23)
+until this port is complete unless something very technical needs to be talked
+about.
