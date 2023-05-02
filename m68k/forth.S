@@ -6,6 +6,14 @@
 
 	.globl _start
 _start:
+	move.l #rom, %a0
+next:
+	move.b (%a0)+, %d0
+	jmp next(%d0)
+bye:
 	move.l #247, %d0
 	move.l #0, %d1
 	trap #0
+
+rom:
+	.byte bye-next
