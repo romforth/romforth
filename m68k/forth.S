@@ -6,14 +6,24 @@
 
 	.globl _start
 _start:
-	move.l #rom, %a0
-next:
-	move.b (%a0)+, %d0
-	jmp next(%d0)
-bye:
-	move.l #247, %d0
-	move.l #0, %d1
-	trap #0
+
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
+#endif
 
 rom:
-	.byte bye-next
+#include "rom.s"
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif

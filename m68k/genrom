@@ -1,0 +1,287 @@
+#!/usr/bin/perl -w
+
+# genrom : convert the .4th files into GNU as friendly assembly code
+#
+# Copyright (c) 2022-2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+use Getopt::Long;
+my ($gendict,$gendefs)=(0,0);
+GetOptions(
+	'dict' => \$gendict,
+	'gendefs' => \$gendefs,
+);
+
+my $mf=shift;   # the map file to which new defs are written
+
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
+my $map={};	# mapping from forth words to assembly labels
+my $varmap={};	# mapping from forth words to variables
+my $defs={};	# mapping from forth words to definition labels
+
+my ($t,$f,$l);	# the type($t), forth name($f) and the assembler label ($l)
+
+sub code {
+	my ($f,$l)=@_;
+	$map->{$f}=$l;	# generate the mapping from name to label
+}
+sub var {
+	my ($f,$l)=@_;
+	$varmap->{$f}=$l;
+}
+sub olddef {
+	my ($f,$l)=@_;
+	$defs->{$f}=$l;
+}
+
+my $prev="0";
+my $label="lbl000";
+sub savelabel {
+	my ($f,$l)=@_;
+	if ($f eq "fake") {
+		$label=$l;
+	} elsif ($f eq "prev") {
+		$prev=$l;
+	} else {
+		die "unknown label";
+	}
+}
+
+my $handle={
+	'code' => \&code,
+	'var' => \&var,
+	'def' => \&olddef,
+	'label' => \&savelabel,
+};
+my @args=@ARGV;	# all the args are assumed to have name to label mappings
+for my $a (@args) {
+	@ARGV=($a);		# read each of the args passed in as a file
+	while(<>) {		# reading one line at a time
+		($t,$f,$l)=split;# split'ing the line into type, name and label
+		$handle->{$t}($f,$l); # and handle each type separately
+	}
+}
+
+# state event next      action
+# 0     def{    1       -
+# 0     imm{    1       $immediate=1
+# 1     $w      2       $label: ; $w
+# 2     }def    0       .byte exit
+# 2     }imm    0       .byte exit ; $immediate=0
+
+my $state=0;
+my $immediate=0;
+
+my $mapjmp=$map->{'j'};
+my $mapjz=$map->{'jz'};
+my $mapjnz=$map->{'jnz'};
+
+my @labelstack;
+
+sub runbegin {
+	push @labelstack, [$label++, "begin"];
+	my $ol=pop @labelstack;
+	print join('_', @$ol), ":\n";
+	$ol->[1]="endloop";
+	push @labelstack, $ol;
+}
+
+sub rununtil {
+	print "\t.byte ", $mapjnz, "-next # branch if not zero\n";
+	my $ol=pop @labelstack;
+	print "\t.byte ", join('_', @$ol), '-.-1', "\n";
+	push @labelstack, $ol;
+}
+
+sub runwhile {
+	print "\t.byte ", $mapjz, "-next # branch if zero\n";
+	my $ol=pop @labelstack;
+	print "\t.byte ", join('_', @$ol), '-.-1', "\n";
+	push @labelstack, $ol;
+}
+
+sub runrepeat {
+	my $ol=pop @labelstack;
+	print "\t.byte ", $mapjmp, "-next # branch\n";
+	print "\t.byte ", $ol->[0], '_begin-.-1', "\n";
+	print join('_', @$ol), ":\n";
+}
+
+sub runif {
+	print "\t.byte ", $mapjz, "-next # branch if zero\n";
+	print "\t.byte ", $label, '_then-.-1', "\n";
+	push @labelstack, [$label++, "then"];
+}
+
+sub runelse {
+	my $ol=pop @labelstack;
+	print "\t.byte ", $mapjmp, "-next # branch\n";
+	print "\t.byte ", $ol->[0], '_endif-.-1', "\n";
+	die unless ($ol->[1] eq "then");
+	print join('_', @$ol), ":\n";
+	$ol->[1]="endif";
+	push @labelstack, $ol;
+}
+
+sub runthen {
+	my $ol=pop @labelstack;
+	print join('_', @$ol), ":\n";
+}
+
+sub genprim {
+	my ($f)=@_;
+	my $m=$map->{$f};
+	die "$f has no mapping" unless $m;
+	print "\t.byte $m-next # $f\n";
+}
+
+sub gendef {
+	my ($m, $f)=@_;
+	print "\t.byte enter-next\n";
+	print "\t.long $m # $f\n";
+}
+
+sub gencode {
+	my ($f)=@_;
+	my $m=$defs->{$f};
+	if ($m) {
+		gendef($m, $f);
+	} else {
+		genprim($f);
+	}
+}
+
+sub runfor {
+	runbegin();
+	for my $i (qw(over over >r >r -)) {
+		gencode($i);
+	}
+	runwhile();
+}
+
+sub runendfor {
+	for my $i (qw(r> inc r>)) {
+		gencode($i);
+	}
+	runrepeat();
+	for my $i (qw(r> r> 2drop)) {
+		gencode($i);
+	}
+}
+
+my $imm={
+	'loop{'		=> \&runbegin,
+	'}until{'	=> \&rununtil,
+	'}while{'	=> \&runwhile,
+	'}loop'		=> \&runrepeat,
+
+	'if{'		=> \&runif,
+	'}else{'	=> \&runelse,
+	'}if'		=> \&runthen,
+
+	'for{'		=> \&runfor,
+	'}for'		=> \&runendfor,
+};
+
+sub def {
+	my ($w)=@_;
+	if ($state == 0) {
+		if ($w eq 'def{') {
+			$state=1;
+			return 1;
+		}
+		if ($w eq 'imm{') {
+			$state=1;
+			$immediate=1;
+			return 1;
+		}
+		return 0;
+	}
+	if ($state == 1) {
+		$l=$label++;
+		print $mh "def $w $l\n"; # create mapping in "dictionary"
+		if ($gendict) {
+			my $len=length($w);
+			print "\t.align 1\n";
+			if ($len%2==0) {
+				print "$l","_pad:\t.byte 0\n";
+			}
+			print qq{\t.ascii "$w"\n};
+			$len |= 0x80 if ($immediate);
+			print "$l","_nfa:\t.byte $len\n";
+			print "$l","_lfa:\t.long $prev\n";
+			$prev="$l"."_lfa";
+		}
+		print "$l:	# $w\n"; # and generate assembly code
+		$defs->{$w}=$l;		 # for setting up a local mapping
+		$state=2;
+		return 1;
+	}
+	if ($state == 2) {
+		if ($w eq '}def') {
+			print "\t.byte exit-next\n";
+			$state=0;
+			return 1;
+		}
+		if ($w eq '}imm') {
+			print "\t.byte exit-next\n";
+			$state=0;
+			$immediate=0;
+			return 1;
+		}
+		return 0;
+	}
+	die "received $w in state $state";
+}
+
+sub lit {
+	my ($o)=@_;
+	print qq(\t.byte lit-next\n);
+	print qq(\t.long $o\n);
+}
+
+my $m;					# cache for the map from name to label
+while (<>) {				# map forth words in the standard input
+	for $f (split) {		# for each word to their equivalent
+		if ($m=$map->{$f}) {	# byte offset within the binary
+			genprim($f);
+		} elsif ($m=$varmap->{$f}) {	# variables just need to
+			lit($m);		# push their address
+		} elsif ($m=$defs->{$f}) { # definitions just need to
+			gendef($m, $f);	# be enter'ed at their starting address
+		} elsif ($m=$imm->{$f}) { # immediates need to be run
+			$m->();		  # well, immediately
+		} else {		# or whine if the mapping doesn't exist
+			last if ($f eq '[');	# skip to end of line
+			next if def($f);
+			if ($f =~/^\'(.)\'$/) {	# char in single quotes
+				lit(ord($1)); # to get the ascii value
+				next;
+			} elsif ($f =~/^(-?\d+)$/) {
+				lit(int($1)); # atoi equivalent
+				next;
+			} elsif ($f =~/^(-?0x[\dA-Fa-f]+)$/) {
+				lit(oct($1)); # hex conversion
+				next;
+			} elsif ($f=~/^\#(-?\d+)$/) {
+				my $i=int($1); # "immediate" assembly equivalent
+				print qq(\t.byte $i\n);
+				next;
+			}
+			die "unknown word: $f"
+		}
+	}
+}
+print $mh "label fake $label\n";
+if ($gendict) {
+	open(my $lh, ">latest.s");
+	select $lh;
+	print "\t.long $prev\n";
+	close $lh;
+	print $mh "label prev $prev\n";
+}
+close $mh;

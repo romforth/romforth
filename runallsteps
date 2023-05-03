@@ -15,6 +15,7 @@ my $x86as_check=1;
 my $x86user_check=1;
 my $x86_32_check=1;
 my $x86_sys_check=1;
+my $m68k_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -23,6 +24,7 @@ if (@ARGV) {
 	$x86user_check=0;
 	$x86_32_check=0;
 	$x86_sys_check=0;
+	$m68k_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -31,6 +33,7 @@ if (@ARGV) {
 		$x86user_check=1 if ( $d eq "x86-user");
 		$x86_32_check=1 if ( $d eq "x86-32");
 		$x86_sys_check=1 if ( $d eq "x86-sys");
+		$m68k_check=1 if ( $d eq "m68k");
 	}
 }
 
@@ -77,6 +80,12 @@ $x=`cat x86-sys/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $x86_sys_step=$step;
+
+my $m68k_step;
+$x=`cat m68k/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$m68k_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -210,6 +219,22 @@ x86_sysport: {
 	select STDOUT;
 	print "\nRunning step $i for the x86-sys port\n";
 	system("cd x86-sys ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+m68k_port: {
+	last m68k_port unless ($m68k_check);
+	last m68k_port if ($i>$m68k_step);
+	@ARGV=("m68k/fpp.config.m68k");
+	open(my $fh, ">m68k/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the m68k port\n";
+	system("cd m68k ; make") == 0 or die "make failed at step $i with exit status $?"
 }
 
 }

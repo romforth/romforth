@@ -1,0 +1,12 @@
+# code.prims : mapping from the Forth primitives to native code (m68k assembly)
+#
+# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+define ip	%a0
+define w	%d0
+
+cold	: move.l #rom, ip
+next	: move.b (ip)+, w ; jmp next(w)
+bye	: move.l #247, w ; move.l #0, %d1 ; trap #0
