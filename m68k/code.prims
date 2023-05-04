@@ -16,3 +16,4 @@ dup	: move.l tos, -(sp) ;
 drop	: move.l (sp)+, tos ;
 key	: dup ; move.l #3, w ; move.l #0, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ; move.b buf, tos ;
 emit	: move.b tos, buf ; move.l #4, w ; move.l #1, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ; drop ;
+lit	: dup ; move.l (ip)+, tos ;
