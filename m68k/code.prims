@@ -7,6 +7,7 @@
 define ip	%a0
 define w	%d0
 define tos	%d1
+define temp	%d7
 define sp	%a7
 
 cold	: move.l #rom, ip
@@ -18,3 +19,4 @@ key	: dup ; move.l #3, w ; move.l #0, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; 
 emit	: move.b tos, buf ; move.l #4, w ; move.l #1, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ; drop ;
 lit	: dup ; move.l (ip)+, tos ;
 neg	: neg.l tos ;
+j	: move.b (ip)+, temp ; add.l temp, ip ;
