@@ -37,3 +37,4 @@ nip	: move.l (sp)+, nos ;
 ^	: nip ; eor.l nos, tos ;
 swap	: nip ; dup
 t_n	: move.l nos, tos ;
+@	: move.l (tos), tos ;
