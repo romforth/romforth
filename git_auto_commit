@@ -1,8 +1,15 @@
 #!/usr/bin/perl -w
 use strict;
 
+sub usage {
+	die "usage: $0 port\n";
+}
+
+my ($port)=@ARGV;
+usage() unless $port;
+
 my $max=-1;
-@ARGV="git log --reverse | grep 'x86-sys : step ' | ";
+@ARGV="git log --reverse | grep '$port : step ' | ";
 while (<>) {
 	if (/step\s+(\S+)\s*:\s*(.*)/) {
 		$max=$1;
@@ -10,19 +17,24 @@ while (<>) {
 }
 print "last commit was : $max\n";
 my ($fh);
-@ARGV="git log --reverse | grep 'x86-user : step ' | ";
+@ARGV="git log --reverse | grep 'x86-sys : step ' | ";
+
+use Cwd;
+my $dir = cwd;
+chdir $port unless ($dir=~/\/$port$/);
+
 while (<>) {
 	if (/step\s+(\S+)\s*:\s*(.*)/) {
 		my ($s,$c)=($1,$2);
 		next if ($s<=$max);
 		system "echo step=$s > stepfile ; make";
 		last unless ($? eq 0);
-		print "make clean ; git commit -a -m 'x86-sys : step $s : $c'\n";
+		print "make clean ; git commit -a -m '$port : step $s : $c'\n";
 		system "make clean";
 		open($fh, ">/tmp/commit_msg") or die "can't open commit msg";
-		print $fh "x86-sys : step $s : $c\n";
+		print $fh "$port : step $s : $c\n";
 		close $fh;
-		system "git status";
+		system "git diff ; git status";
 		system "echo ready to commit? ; read x </dev/tty && git commit -a -F /tmp/commit_msg";
 		last unless ($? eq 0);
 	}
