@@ -13,6 +13,7 @@ _start:
 #include "prims.s"
 #endif
 
+	.align 2
 key1:
 	move.l tos, -(sp)
 	move.l #3, w
@@ -32,6 +33,7 @@ emit1:
 	trap #0
 	move.l (sp)+, tos
 	jmp next
+
 rom:
 #include "rom.s"
 

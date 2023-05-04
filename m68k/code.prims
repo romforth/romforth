@@ -9,11 +9,11 @@ define w	%d0
 define tos	%d1
 define nos	%d2
 define temp	%d7
+define cache	%a1
 define sp	%a7
 
-cold	: move.l #rom, ip
-next	: move.b (ip)+, w ; jmp next(w)
-bye	: move.l #247, w ; move.l #0, tos ; trap #0
+cold	: move.l #rom, ip ; move.l #next, cache
+next	: move.b (ip)+, w ; jmp (cache,w)
 dup	: move.l tos, -(sp) ;
 2drop	: move.l (sp)+, tos
 drop	: move.l (sp)+, tos ;
@@ -39,8 +39,9 @@ swap	: nip ; dup
 t_n	: move.l nos, tos ;
 @	: move.l (tos), tos ;
 !	: move.l (sp)+, (tos) ; drop ;
-c@	: move.b (tos), tos ;
+c@	: move.b (tos), tos ; and.l #0xff, tos ;
 c!	: nip ; move.b nos, (tos) ; drop ;
+bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var here	.long mem
 var state	.byte 1
