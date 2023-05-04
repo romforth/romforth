@@ -38,3 +38,6 @@ nip	: move.l (sp)+, nos ;
 swap	: nip ; dup
 t_n	: move.l nos, tos ;
 @	: move.l (tos), tos ;
+!	: move.l (sp)+, (tos) ; drop ;
+
+var here	.long mem
