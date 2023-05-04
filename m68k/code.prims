@@ -39,6 +39,7 @@ swap	: nip ; dup
 t_n	: move.l nos, tos ;
 pick	: asl.l #2, tos ; add.l sp, tos
 @	: move.l (tos), tos ;
+stick	: asl.l #2, tos ; add.l sp, tos
 !	: move.l (sp)+, (tos) ; drop ;
 c@	: move.b (tos), tos ; and.l #0xff, tos ;
 c!	: nip ; move.b nos, (tos) ; drop ;
