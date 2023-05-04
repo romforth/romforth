@@ -39,5 +39,8 @@ swap	: nip ; dup
 t_n	: move.l nos, tos ;
 @	: move.l (tos), tos ;
 !	: move.l (sp)+, (tos) ; drop ;
+c@	: move.b (tos), tos ;
+c!	: nip ; move.b nos, (tos) ; drop ;
 
 var here	.long mem
+var state	.byte 1
