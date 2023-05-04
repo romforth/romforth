@@ -29,3 +29,5 @@ dec	: sub.l #1, tos ;
 inv	: not.l tos ;
 dip	: move.l nos, -(sp) ;
 nip	: move.l (sp)+, nos ;
+-	: neg
++	: nip ; add.l nos, tos ;
