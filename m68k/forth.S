@@ -13,6 +13,16 @@ _start:
 #include "prims.s"
 #endif
 
+key1:
+	move.l tos, -(sp)
+	move.l #3, w
+	move.l #0, tos
+	move.l #buf, nos
+	move.l #1, %d3
+	trap #0
+	move.b buf, tos
+	jmp next
+
 rom:
 #include "rom.s"
 
