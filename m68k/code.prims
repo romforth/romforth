@@ -17,7 +17,7 @@ bye	: move.l #247, w ; move.l #0, tos ; trap #0
 dup	: move.l tos, -(sp) ;
 drop	: move.l (sp)+, tos ;
 key	: bra key1
-emit	: move.b tos, buf ; move.l #4, w ; move.l #1, tos ; move.l #buf, nos ; move.l #1, %d3 ; trap #0 ; drop ;
+emit	: bra emit1
 lit	: dup ; move.l (ip)+, tos ;
 neg	: neg.l tos ;
 jdrop	: drop
@@ -33,3 +33,4 @@ nip	: move.l (sp)+, nos ;
 +	: nip ; add.l nos, tos ;
 &	: nip ; and.l nos, tos ;
 |	: nip ; or.l nos, tos ;
+^	: nip ; eor.l nos, tos ;

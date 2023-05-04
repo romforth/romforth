@@ -23,6 +23,15 @@ key1:
 	move.b buf, tos
 	jmp next
 
+emit1:
+	move.b tos, buf
+	move.l #4, w
+	move.l #1, tos
+	move.l #buf, nos
+	move.l #1, %d3
+	trap #0
+	move.l (sp)+, tos
+	jmp next
 rom:
 #include "rom.s"
 
