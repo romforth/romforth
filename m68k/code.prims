@@ -6,9 +6,13 @@
 
 define ip	%a0
 define w	%d0
+define tos	%d1
+define sp	%a7
 
 cold	: move.l #rom, ip
 next	: move.b (ip)+, w ; jmp next(w)
-bye	: move.l #247, w ; move.l #0, %d1 ; trap #0
-key	: move.l #3, w ; move.l #0, %d1 ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ;
-emit	: move.l #4, w ; move.l #1, %d1 ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ;
+bye	: move.l #247, w ; move.l #0, tos ; trap #0
+dup	: move.l tos, -(sp) ;
+drop	: move.l (sp)+, tos ;
+key	: dup ; move.l #3, w ; move.l #0, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ; move.b buf, tos ;
+emit	: move.b tos, buf ; move.l #4, w ; move.l #1, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ; drop ;
