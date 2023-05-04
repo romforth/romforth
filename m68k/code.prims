@@ -7,6 +7,7 @@
 define ip	%a0
 define w	%d0
 define tos	%d1
+define nos	%d2
 define temp	%d7
 define sp	%a7
 
@@ -15,8 +16,8 @@ next	: move.b (ip)+, w ; jmp next(w)
 bye	: move.l #247, w ; move.l #0, tos ; trap #0
 dup	: move.l tos, -(sp) ;
 drop	: move.l (sp)+, tos ;
-key	: dup ; move.l #3, w ; move.l #0, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ; move.b buf, tos ;
-emit	: move.b tos, buf ; move.l #4, w ; move.l #1, tos ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ; drop ;
+key	: dup ; move.l #3, w ; move.l #0, tos ; move.l #buf, nos ; move.l #1, %d3 ; trap #0 ; move.b buf, tos ;
+emit	: move.b tos, buf ; move.l #4, w ; move.l #1, tos ; move.l #buf, nos ; move.l #1, %d3 ; trap #0 ; drop ;
 lit	: dup ; move.l (ip)+, tos ;
 neg	: neg.l tos ;
 jdrop	: drop
@@ -26,3 +27,5 @@ jnz	: neg.l tos ; bcs jdrop ; add.l #1, ip ;
 inc	: add.l #1, tos ;
 dec	: sub.l #1, tos ;
 inv	: not.l tos ;
+dip	: move.l nos, -(sp) ;
+nip	: move.l (sp)+, nos ;
