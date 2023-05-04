@@ -20,3 +20,4 @@ emit	: move.b tos, buf ; move.l #4, w ; move.l #1, tos ; move.l #buf, %d2 ; move
 lit	: dup ; move.l (ip)+, tos ;
 neg	: neg.l tos ;
 j	: move.b (ip)+, temp ; add.l temp, ip ;
+jz	: neg.l tos ; drop ; bcc j ; add.l #1, ip ;
