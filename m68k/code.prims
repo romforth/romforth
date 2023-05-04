@@ -23,3 +23,5 @@ jdrop	: drop
 j	: move.b (ip)+, temp ; add.l temp, ip ;
 jz	: neg.l tos ; bcc jdrop ; add.l #1, ip ;
 jnz	: neg.l tos ; bcs jdrop ; add.l #1, ip ;
+inc	: add.l #1, tos ;
+dec	: sub.l #1, tos ;
