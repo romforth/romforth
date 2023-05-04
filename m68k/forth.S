@@ -27,3 +27,5 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+	.comm buf,4

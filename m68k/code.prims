@@ -10,3 +10,5 @@ define w	%d0
 cold	: move.l #rom, ip
 next	: move.b (ip)+, w ; jmp next(w)
 bye	: move.l #247, w ; move.l #0, %d1 ; trap #0
+key	: nop ;
+emit	: move.b #102, buf ; move.l #4, w ; move.l #1, %d1 ; move.l #buf, %d2 ; move.l #1, %d3 ; trap #0 ;
