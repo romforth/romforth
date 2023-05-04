@@ -35,3 +35,5 @@ nip	: move.l (sp)+, nos ;
 &	: nip ; and.l nos, tos ;
 |	: nip ; or.l nos, tos ;
 ^	: nip ; eor.l nos, tos ;
+swap	: nip ; dup
+t_n	: move.l nos, tos ;
