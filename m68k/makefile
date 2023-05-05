@@ -39,6 +39,7 @@ forth_defs.S : forth.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
 forth_defs.s : forth_defs.S prims.s rom.s
 	./fix_comments rom.s
+	./fix_comments defs.s
 	cpp -E forth_defs.S > forth_defs.s
 forth_dict : forth_dict.o
 	$(LD) -o forth_dict forth_dict.o
