@@ -13,7 +13,8 @@ define cache	%a1
 define sp	%a7
 
 cold	: move.l #rom, ip ; move.l #next, cache
-next	: move.b (ip)+, w ; jmp (cache,w)
+inner	: move.b (ip)+, w ; jmp (cache,w)
+next	: bras inner
 dup	: move.l tos, -(sp) ;
 2drop	: move.l (sp)+, tos
 drop	: move.l (sp)+, tos ;
@@ -40,10 +41,10 @@ t_n	: move.l nos, tos ;
 pick	: asl.l #2, tos ; add.l sp, tos
 @	: move.l (tos), tos ;
 stick	: asl.l #2, tos ; add.l sp, tos
-!	: move.l (sp)+, (tos) ; drop ;
-c@	: move.b (tos), tos ; and.l #0xff, tos ;
-c!	: nip ; move.b nos, (tos) ; drop ;
-sp@!	: exg sp, tos ;
+!	: move.l (sp)+, (tos) ; drop ; bra inner
+c@	: move.b (tos), tos ; and.l #0xff, tos ; bra inner
+c!	: nip ; move.b nos, (tos) ; drop ; bra inner
+sp@!	: exg sp, tos ; bra inner
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var here	.long mem
