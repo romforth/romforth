@@ -13,7 +13,7 @@ define cache	%a1
 define rp	%a6
 define sp	%a7
 
-cold	: move.l #rom, ip ; move.l #next, cache
+cold	: move.l #rom, ip ; move.l #next, cache ; eor.l w, w
 inner	: move.b (ip)+, w ; jmp (cache,w)
 next	: bras inner
 dup	: move.l tos, -(sp) ;
@@ -49,6 +49,7 @@ sp@!	: exg sp, tos ; bra inner
 rp@!	: exg rp, tos ; bra inner
 >r	: bra tor
 r>	: bra rfrom
+exec	: move.b tos, w ; drop ; jmp (cache,w)
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var here	.long mem

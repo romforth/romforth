@@ -3,6 +3,7 @@ ADDR=0x400110
 VALUE=0x750000ff70fb8148
 RGROWLOW=0
 RSTKSZ=120
+big_endian=0
 offset=7
 prim_var_deref=1
 CELL=8

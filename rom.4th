@@ -375,7 +375,9 @@ if{		[	// not taken
 1		[ 1
 2		[ 1 2
 lit		[ 1 2	// lit escapes the following byte(s)
+#{if big_endian==0
 swap		[ 1 2	// escaped by lit
+#}if
 #{if offset==1
 lit		[ 1 2	// padding escaped by lit
 #}if
@@ -384,6 +386,9 @@ lit lit lit	[ 1 2	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ 1 2	// padding escaped by lit
+#}if
+#{if big_endian==1
+swap		[ 1 2	// escaped by lit
 #}if
 exec		[ 2 1
 -		[ 1
