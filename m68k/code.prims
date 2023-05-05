@@ -47,6 +47,8 @@ c@	: move.b (tos), tos ; and.l #0xff, tos ; bra inner
 c!	: nip ; move.b nos, (tos) ; drop ; bra inner
 sp@!	: exg sp, tos ; bra inner
 rp@!	: exg rp, tos ; bra inner
+>r	: bra tor
+r>	: bra rfrom
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var here	.long mem

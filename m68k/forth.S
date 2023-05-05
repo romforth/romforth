@@ -33,6 +33,14 @@ emit1:
 	trap #0
 	move.l (sp)+, tos
 	jmp next
+tor:
+	move.l tos, (rp)+
+	move.l (sp)+, tos
+	jmp next
+rfrom:
+	move.l tos, -(sp)
+	move.l -(rp), tos
+	jmp next
 
 rom:
 #include "rom.s"
