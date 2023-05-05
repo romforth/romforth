@@ -34,6 +34,16 @@ def{ testnest
 
 #}ifdef
 
+#{if step>=24
+
+#{if NEEDPFETCH
+
+def{ p@ 0xFF70 - if{ key }else{ 0x80 }if }def
+
+#}if
+
+#}if
+
 #{if step>=28
 
 #{if NEEDOVER

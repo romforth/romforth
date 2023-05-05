@@ -54,6 +54,7 @@ exec	: move.b tos, w ; drop ; jmp (cache,w)
 enter	: bra realenter
 exit	: move.l -(rp), ip ; bra inner
 call	: move.l ip, (rp)+ ; move.l tos, ip ; drop ; bra inner
+p!	: drop ; bra emit1
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var here	.long mem
