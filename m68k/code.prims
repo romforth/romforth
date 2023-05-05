@@ -10,10 +10,11 @@ define tos	%d1
 define nos	%d2
 define temp	%d7
 define cache	%a1
+define i	%a5
 define rp	%a6
 define sp	%a7
 
-cold	: move.l #rom, ip ; move.l #next, cache ; eor.l w, w
+cold	: move.l #rom, ip ; move.l #next, cache ; eor.l w, w ; eor.l temp, temp
 inner	: move.b (ip)+, w ; jmp (cache,w)
 next	: bras inner
 dup	: move.l tos, -(sp) ;
@@ -50,6 +51,8 @@ rp@!	: exg rp, tos ; bra inner
 >r	: bra tor
 r>	: bra rfrom
 exec	: move.b tos, w ; drop ; jmp (cache,w)
+enter	: bra realenter
+exit	: move.l -(rp), ip ; bra inner
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var here	.long mem

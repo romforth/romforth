@@ -6,7 +6,7 @@
 
 AS=m68k-unknown-linux-gnu-as
 LD=m68k-unknown-linux-gnu-ld
-all : oneforth
+all : twoforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
@@ -33,10 +33,13 @@ forth.s : forth.S prims.s rom.s
 forth.o : forth.s
 forth_defs : forth_defs.o
 	$(LD) -o forth_defs forth_defs.o
-forth_defs.o : forth_defs.S defs.s rom.s
+forth_defs.o : forth_defs.s
 forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
+forth_defs.s : forth_defs.S prims.s rom.s
+	./fix_comments rom.s
+	cpp -E forth_defs.S > forth_defs.s
 forth_dict : forth_dict.o
 	$(LD) -o forth_dict forth_dict.o
 forth_dict.o : forth_dict.S prims_dict.s defs_dict.s rom.s
@@ -56,4 +59,4 @@ fpp.config : stepfile fpp.config.m68k
 rom.s : ../rom.4th ../fpp fpp.config prims.s genrom defs.s
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
 clean :
-	rm -f forth dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.o forth_defs.S forth_defs.o forth_defs defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.o forth_dict test.dict forth.s
+	rm -f forth dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.o forth_defs.S forth_defs.o forth_defs defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.o forth_dict test.dict forth.s forth_defs.s

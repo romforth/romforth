@@ -41,6 +41,11 @@ rfrom:
 	move.l tos, -(sp)
 	move.l -(rp), tos
 	jmp next
+realenter:
+	move.l (ip)+, i
+	move.l ip, (rp)+
+	move.l i, ip
+	bra inner
 
 rom:
 #include "rom.s"
