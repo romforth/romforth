@@ -4,14 +4,19 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+#define ip	%a0
+#define w	%d0
+#define tos	%d1
+#define nos	%d2
+#define temp	%d7
+#define cache	%a1
+#define i	%a5
+#define rp	%a6
+#define sp	%a7
+
 	.globl _start
 _start:
-
-#if USEDICT
-#include "prims_dict.s"
-#else
-#include "prims.s"
-#endif
+	bra cold
 
 	.align 2
 key1:
@@ -46,6 +51,16 @@ realenter:
 	move.l ip, (rp)+
 	move.l i, ip
 	bra inner
+lshift:
+	move.l (sp)+, nos
+	exg tos, nos
+	lsl.l nos, tos
+	bra inner
+rshift:
+	move.l (sp)+, nos
+	exg tos, nos
+	lsr.l nos, tos
+	bra inner
 
 rom:
 #include "rom.s"
@@ -60,6 +75,13 @@ rom:
 #else
 #include "defs.s"
 #endif
+#endif
+
+	.align 2
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
 #endif
 
 	.comm buf,4
