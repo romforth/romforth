@@ -50,4 +50,5 @@ p!	: drop ; bra emit1
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var here	.long mem
+var latest	.include "latest.s"
 var state	.byte 1
