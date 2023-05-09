@@ -47,6 +47,7 @@ call	: move.l ip, (rp)+ ; move.l tos, ip ; drop ; bra inner
 p!	: drop ; bra emit1
 <<	: bra lshift
 >>	: bra rshift
+over	: dup ; move.l 4(sp), tos ; bra inner
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
 var state	.byte 1
