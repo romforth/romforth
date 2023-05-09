@@ -49,6 +49,8 @@ p!	: drop ; bra emit1
 >>	: bra rshift
 bye	: move.l #247, w ; move.l #0, tos ; trap #0 ; .data
 
-var here	.long mem
-var latest	.include "latest.s"
 var state	.byte 1
+#{if step>=41
+var latest	.include "latest.s"
+#}if
+var here	.long mem
