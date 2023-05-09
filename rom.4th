@@ -990,7 +990,9 @@ if{		[ addr n	// not taken
 [ need to add the linkage instruction 0x080c ("JSR ip, (nr)"). On x86, the
 [ "exit" token on its own is sufficient.
 lit		[ 	// lit escapes the following byte(s)
+#{if big_endian==0
 exit		[ exit	// escaped by lit
+#}if
 #{if offset==1
 lit		[ exit	// padding escaped by lit
 #}if
@@ -999,6 +1001,9 @@ lit lit lit	[ exit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ exit	// padding escaped by lit
+#}if
+#{if big_endian==1
+exit		[ exit	// escaped by lit
 #}if
 
 #{if THREAD==1
