@@ -1277,8 +1277,9 @@ lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
 [ // see the comment for #jz above for the details of why this is needed
 def{ #jnz
 	lit	[	// to escape the next "token"
+#{if big_endian==0
 	jnz	[ jnz	// so as to get jnz on the stack
-
+#}if
 #{if offset==1
 	lit	[ lit	// padding escaped by lit
 #}if
@@ -1287,6 +1288,9 @@ lit lit lit	[ lit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
+#}if
+#{if big_endian==1
+	jnz	[ jnz	// so as to get jnz on the stack
 #}if
 
 }def
