@@ -64,6 +64,7 @@ INDEX
 	* 27 Apr '23
 	* 29 Apr '23
 	* 01 May '23
+	* 09 May '23
 
 11 Nov '22
 ----------
@@ -2515,3 +2516,12 @@ from scratch so it will give a good measure of how long a "real" port takes.
 Just as before, I'll go mostly radio silent (see JOURNAL entry dated 17 Mar 23)
 until this port is complete unless something very technical needs to be talked
 about.
+
+09 May '23
+----------
+This entry marks the completion of the Motorola 68000 `m68k` port. It needed
+almost a week because of some bugs that I hit along the way and also due to the
+fact that this is the first port to a big-endian architecture. One thing that I
+realized over the course of this port is that I need some kind of a porting
+guide since it is hard to remember various minutiae which I keep rediscovering
+when I run into bugs as part of the porting exercise. So I'll work on that next

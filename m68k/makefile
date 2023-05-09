@@ -6,7 +6,7 @@
 
 AS=m68k-unknown-linux-gnu-as
 LD=m68k-unknown-linux-gnu-ld
-all : threeforth
+all : fourforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
