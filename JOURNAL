@@ -1,5 +1,6 @@
 INDEX
 -----
+	* 04 Nov '22
 	* 11 Nov '22
 	* 13 Nov '22
 	* 15 Nov '22
@@ -65,6 +66,87 @@ INDEX
 	* 29 Apr '23
 	* 01 May '23
 	* 09 May '23
+
+04 Nov '22
+----------
+These are just some notes to keep track of the changes made during porting.
+
+For the initial bootstrap, I used nasm+x86 and coded up the Perl scripts
+"genprims" and "genrom" to help with the bootstrap. Having those scripts handy
+turned out to be pretty helpful, or at least ease some parts of the very first
+"porting" exercise (if you want to call it that), which was to support an
+additional assembler, again on x86 - the GNU "as" assembler.
+
+The following were the main changes in assembler code that were needed:
+- Comments start with ';' on nasm, it needs to be '#' in GNU "as"
+- Registers need to be prefixed with the '%' character in GNU "as"
+- Register indirect jumps needs an additional '*' prefix in GNU "as"
+- Memory access indexed via a register is denoted with [] in nasm and () in "as"
+- Source and destination ops are reversed, source is to the left, in GNU "as"
+- byte allocation on nasm uses "db", it is ".byte" on GNU "as"
+- word allocation on nasm uses "dw", it is ".word" on GNU "as"
+- nasm uses %ifdef ... %endif whereas #ifdef ... #endif is used in GNU "as"
+- nasm uses %define whereas #define is used in GNU "as"
+
+During the port, to GNU "as", it helped that I already had a working emulator
+and the scripts to generate x86 assembly equivalents from the Forth DSL.
+
+I could have used the existing regression tests as is, but I decided to
+change the ordering in which the Forth primitives were added so as to include
+the branch operators early so that the testsuite could use the if{ ... }if
+construct instead of writing out bytes to stdin and comparing them against
+an "expected" set of bytes.
+
+So due to the change in the ordering in which primitives were added and the
+use of if{ ... }if for the regression tests, there is now an all new regression
+testsuite (in addition to the previous one) either of which can be used during
+any additional porting work.
+
+This port from the nasm assembler to GNU assembler could have been done all
+in one shot, using say, yet another Perl script, that translated from the nasm
+style assembly code to the GNU "as" format, based on the changes in assembly
+code format that were called out above. Instead, I chose to do it in a step
+wise fashion so that each word could be regression tested, one at a time,
+as it was being added, rather than having to troubleshoot one big blob
+of code, at the very end. Doing it this way also serves as a good practice run
+for what I expect will be the same process which will need to be repeated for
+each new architecture to which this code will need to be ported.
+
+So, now that I'm ready to call the x86 port done, I have a choice of which
+architecture to pick next and some of the options I've listed below are in
+the order in which I learnt about them (starting from the time I first came
+across them as a kid)
+- Z80 (ZX Spectrum)
+- PDP11 ("Computer Organization" by Hamacher, Vranesic and Zaky)
+- MIX (Knuth's Ye Olde Computer)
+- 8085 (or was it an 8080? not sure anymore - a box with keypad for m/c code)
+- x86 (IBM PC) : I'll consider this bootstrap/port already complete
+- 68000 (Sun Microsystems?)
+- SPARC (Sun Microsystems)
+- MSP430 (TI dev board)
+- ARM (ST's STM discovery board)
+- RISC-V (just because it is the new hotness)
+
+Initially I thought of doing the ports in the order listed above, starting with
+Z80. One reason for giving the Z80 port a shot first is just for old times sake
+since it was the first processor on which I tried to code Forth and also since
+it has fewer registers than x86 and I assume it will be interesting to see how
+things pan out with those tighter constraints. To be frank though, I'm torn as
+to whether I should try my hand at the MIX CPU first, simply to see what fun
+ensues on an arcane CPU which no one cares for anymore.
+
+Finally I decided on going down a completely different path, to take what might
+be a retrogressive step backwards (or is it sideways?) and create the next port
+for C/POSIX. Obviously, the resulting implementation of Forth may then end up
+being neither small nor baremetal but it does give a massive boost in terms of
+portability so long as a C compiler for that given architecture exists and it
+also gives me a data point for comparison with the other baremetal ported
+implementation both in terms of size and speed (if I ever get around to start
+performance benchmarking all of this). I assume it might also help with some
+of the porting work since I could take a peek at what C generates on that
+architecture (assuming the C compiler does a passable job of generating good
+code for that architecture) and use that as a guide to shorten the time spent
+reading data sheets and instruction set docs.
 
 11 Nov '22
 ----------
@@ -2525,3 +2607,7 @@ fact that this is the first port to a big-endian architecture. One thing that I
 realized over the course of this port is that I need some kind of a porting
 guide since it is hard to remember various minutiae which I keep rediscovering
 when I run into bugs as part of the porting exercise. So I'll work on that next
+and add that information to the PORTING file. Since a file called PORTING was
+already created a while back and contains stuff that seems to belong to this
+JOURNAL, I've moved those contents over to this file and added it as the very
+first JOURNAL entry.
