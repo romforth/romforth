@@ -15,9 +15,9 @@ emit	: bra emit1
 lit	: dup ; move.l (ip)+, tos ;
 neg	: neg.l tos ;
 jdrop	: drop
-j	: move.b (ip)+, temp ; add.l temp, ip ;
-jz	: neg.l tos ; bcc jdrop ; add.l #1, ip ;
-jnz	: neg.l tos ; bcs jdrop ; add.l #1, ip ;
+j	: move.b (ip)+, temp ; extw temp ; extl temp ; add.l temp, ip ;
+jz	: neg.l tos ; bcc jdrop ; drop ; add.l #1, ip ;
+jnz	: neg.l tos ; bcs jdrop ; drop ; add.l #1, ip ;
 inc	: add.l #1, tos ;
 dec	: sub.l #1, tos ;
 inv	: not.l tos ;
@@ -31,7 +31,7 @@ nip	: move.l (sp)+, nos ;
 swap	: nip ; dup
 t_n	: move.l nos, tos ;
 pick	: asl.l #2, tos ; add.l sp, tos
-@	: move.l (tos), tos ;
+@	: move.l (tos), tos ; bra inner
 stick	: asl.l #2, tos ; add.l sp, tos
 !	: move.l (sp)+, (tos) ; drop ; bra inner
 c@	: move.b (tos), tos ; and.l #0xff, tos ; bra inner
