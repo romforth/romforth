@@ -73,6 +73,15 @@ emit	[ > 'h'
 
 #{if step>=4.3
 
+1		[ 1
+0		[ 1 0
+jz		[	// raw opcode test of the 'jz' operator
+#JUMPBACK	[	// negative jump
+
+#}if
+
+#{if step>=4.4
+
 1	[ 1
 jnz	[	// raw opcode test of the 'jnz' operator
 #JUMP	[	// the byte offset to skip over the assert below
@@ -80,6 +89,15 @@ jnz	[	// raw opcode test of the 'jnz' operator
 
 32	[ ' '
 emit	[ > ' '
+
+#}if
+
+#{if step>=4.5
+
+0		[ 0
+1		[ 0 1
+jnz		[	// raw opcode test of the 'jnz' operator
+#JUMPBACK	[	// negative jump
 
 #}if
 
