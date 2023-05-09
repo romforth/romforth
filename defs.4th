@@ -1219,8 +1219,9 @@ def{ outer
 [ // just a workaround to provide a means of getting their "primitive" values.
 def{ #jz
 	lit	[	// to escape the next "token"
+#{if big_endian==0
 	jz	[ jz	// so as to get jz on the stack
-
+#}if
 #{if offset==1
 	lit	[ lit	// padding escaped by lit
 #}if
@@ -1229,6 +1230,9 @@ lit lit lit	[ lit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
+#}if
+#{if big_endian==1
+	jz	[ jz	// so as to get jz on the stack
 #}if
 
 }def
@@ -1244,8 +1248,9 @@ lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
 [ // see the comment for #jz above for the details of why this is needed
 def{ #j
 	lit	[	// to escape the next "token"
+#{if big_endian==0
 	j	[ j	// so as to get j on the stack
-
+#}if
 #{if offset==1
 	lit	[ lit	// padding escaped by lit
 #}if
@@ -1254,6 +1259,9 @@ lit lit lit	[ lit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
+#}if
+#{if big_endian==1
+	j	[ j	// so as to get j on the stack
 #}if
 
 }def
