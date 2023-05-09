@@ -937,8 +937,9 @@ lit lit lit lit lit lit lit	[ exit	// padding escaped by lit
 
 def{ literal	[ n
 	lit	[ n	// to escape the next "token"
+#{if big_endian==0
 	lit	[ n lit	// so as to get lit on the stack
-
+#}if
 #{if offset==1
 	lit	[ n lit	// padding escaped by lit
 #}if
@@ -947,6 +948,9 @@ lit lit lit	[ n lit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ n lit	// padding escaped by lit
+#}if
+#{if big_endian==1
+	lit	[ n lit	// so as to get lit on the stack
 #}if
 
 	offset,	[ n \ lit
@@ -1026,7 +1030,9 @@ def{ compcfa		[ cfa	// cfa: var/prim, defs are handled in compdef
 def{ compdef		[ cfa		// cfa: var/prim/def
 	literal	[	\ lit cfa	// stash away the cfa
 	lit	[	// escape the next byte
+#{if big_endian==0
 	call	[	// THREAD type 3 uses call to invoke the cfa
+#}if
 #{if offset==1
 	lit	[	// padding escaped by lit
 #}if
@@ -1035,6 +1041,9 @@ lit lit lit	[	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ // padding escaped by lit
+#}if
+#{if big_endian==1
+	call	[	// THREAD type 3 uses call to invoke the cfa
 #}if
 	s,	[	\ call		// and then call it
 }def
@@ -1063,7 +1072,9 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 
 #{if THREAD==1
 		lit	[ cfa		// escape the next byte
+#{if big_endian==0
 		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
+#}if
 #{if offset==1
 		lit	[ cfa enter	// padding escaped by lit
 #}if
@@ -1072,6 +1083,9 @@ lit lit lit		[ cfa enter	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ cfa enter	// padding escaped by lit
+#}if
+#{if big_endian==1
+		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
 #}if
 		c,	[ cfa	\ enter
 		,	[	\ cfa
