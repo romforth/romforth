@@ -911,8 +911,9 @@ def{ offset,	[ val
 [ finish up the definition of a new word (and switch to interpret mode)
 imm{ ;		[
 	lit	[	// lit escapes the following byte(s)
+#{if big_endian==0
 	exit	[ exit	// escaped by lit
-
+#}if
 #{if offset==1
 	lit	[ exit	// padding escaped by lit
 #}if
@@ -921,6 +922,9 @@ lit lit lit	[ exit	// padding escaped by lit
 #}if
 #{if offset==7
 lit lit lit lit lit lit lit	[ exit	// padding escaped by lit
+#}if
+#{if big_endian==1
+	exit	[ exit	// escaped by lit
 #}if
 
 	offset,	[ \ exit
