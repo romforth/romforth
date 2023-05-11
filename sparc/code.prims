@@ -1,0 +1,8 @@
+# code.prims : mapping from the Forth primitives to native sparc assembly
+#
+# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+next	: ldub [ip], w ; jmp i+w ; inc ip
+bye	: jmpl link+8,%g0 ; nop

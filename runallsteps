@@ -16,6 +16,7 @@ my $x86user_check=1;
 my $x86_32_check=1;
 my $x86_sys_check=1;
 my $m68k_check=1;
+my $sparc_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -25,6 +26,7 @@ if (@ARGV) {
 	$x86_32_check=0;
 	$x86_sys_check=0;
 	$m68k_check=0;
+	$sparc_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -34,6 +36,7 @@ if (@ARGV) {
 		$x86_32_check=1 if ( $d eq "x86-32");
 		$x86_sys_check=1 if ( $d eq "x86-sys");
 		$m68k_check=1 if ( $d eq "m68k");
+		$sparc_check=1 if ( $d eq "sparc");
 	}
 }
 
@@ -86,6 +89,12 @@ $x=`cat m68k/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $m68k_step=$step;
+
+my $sparc_step;
+$x=`cat sparc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$sparc_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -235,6 +244,22 @@ m68k_port: {
 	select STDOUT;
 	print "\nRunning step $i for the m68k port\n";
 	system("cd m68k ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+sparc_port: {
+	last sparc_port unless ($sparc_check);
+	last sparc_port if ($i>$sparc_step);
+	@ARGV=("sparc/fpp.config.sparc");
+	open(my $fh, ">sparc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the sparc port\n";
+	system("cd sparc ; make") == 0 or die "make failed at step $i with exit status $?"
 }
 
 }
