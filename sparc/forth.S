@@ -41,4 +41,4 @@ rom:
 #endif
 #endif
 
-buf:	.byte 'f'
+	.comm iobuf,4
