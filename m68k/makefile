@@ -28,7 +28,7 @@ test.exp : ../test.expected ../fpp fpp.config
 forth : forth.o
 	$(LD) -o forth forth.o
 forth.s : forth.S prims.s rom.s
-	./fix_comments rom.s
+	../fix_comments rom.s
 	cpp -E forth.S > forth.s
 forth.o : forth.s
 forth_defs : forth_defs.o
@@ -38,16 +38,16 @@ forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
 forth_defs.s : forth_defs.S prims.s rom.s
-	./fix_comments rom.s
-	./fix_comments defs.s
+	../fix_comments rom.s
+	../fix_comments defs.s
 	cpp -E forth_defs.S > forth_defs.s
 forth_dict : forth_dict.o
 	$(LD) -o forth_dict forth_dict.o
 forth_dict.o : forth_dict.s
 forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
-	./fix_comments rom.s
-	./fix_comments defs_dict.s
-	./fix_comments prims_dict.s
+	../fix_comments rom.s
+	../fix_comments defs_dict.s
+	../fix_comments prims_dict.s
 	cpp -E forth_dict.S > forth_dict.s
 forth_dict.S : forth.S forth_defs.S rom.s
 	cp forth_defs.S forth_dict.S
