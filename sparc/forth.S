@@ -40,3 +40,5 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+buf:	.byte 'f'

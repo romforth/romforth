@@ -6,3 +6,5 @@
 
 next	: ldub [ip], w ; jmp i+w ; inc ip
 bye	: jmpl link+8,%g0 ; nop
+key	: jmp i ; nop
+emit	: mov 4, %g1 ; mov 1, %o0 ; set buf, %o1 ; mov 1, %o2 ; ta 0x10 ;
