@@ -8,11 +8,16 @@
 #define i	%l1
 #define w	%l2
 #define link	%i7
+#define tos	%l3
+#define sp	%l4
+#define buf	%l5
 
 	.globl _start
 _start:
 	set rom, ip
 	set next, i
+	set dstk, sp
+	set iobuf, buf
 	jmpl i,link
 	nop
 quit:
@@ -41,4 +46,5 @@ rom:
 #endif
 #endif
 
+	.comm dstk,100
 	.comm iobuf,4
