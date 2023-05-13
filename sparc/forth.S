@@ -11,6 +11,7 @@
 #define tos	%l3
 #define sp	%l4
 #define buf	%l5
+#define temp	%l6
 
 	.globl _start
 _start:
