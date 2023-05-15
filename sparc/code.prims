@@ -10,9 +10,11 @@ dup	: st tos, [sp] ; jmp i ; add sp, 4, sp
 drop	: add sp, -4, sp ; jmp i ; ld [sp], tos
 key	: st tos, [sp] ; add sp, 4, sp ; mov 3, %g1 ; mov 0, %o0 ; mov buf, %o1 ; mov 1, %o2 ; ta 0x10 ; mov %g0, tos ; jmp i ; ldub [buf], tos
 emit	: stub tos, [buf] ; mov 4, %g1 ; mov 1, %o0 ; mov buf, %o1 ; mov 1, %o2 ; ta 0x10 ; add sp, -4, sp ; jmp i ; ld [sp], tos
-lit	: st tos, [sp] ; add sp, 4, sp ; ldub [ip], tos ; sll tos, 8, tos ; ldub [ip+1], temp ; or tos, temp, tos ; sll tos, 8, tos ; ldub [ip+2], temp ; or tos, temp, tos ; sll tos, 8, tos ; ldub [ip+3], temp ; or tos, temp, tos ; jmp i ; add ip, 4, ip
+lit	: b reallit ; st tos, [sp]
 neg	: jmp i ; neg tos
 jdrop	: ld [sp], tos
 j	: ldsb [ip], offset ; inc ip ; jmp i ; add ip, offset, ip
 jz	: tst tos ; be jdrop ; add sp, -4, sp ; ld [sp], tos ; jmp i ; inc ip
 jnz	: tst tos ; bne jdrop ; add sp, -4, sp ; ld [sp], tos ; jmp i ; inc ip
+inc	: jmp i ; inc tos
+dec	: jmp i ; dec tos

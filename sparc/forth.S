@@ -27,6 +27,25 @@ quit:
 	mov 0, %o0
 	ta 0x10
 
+reallit:
+	add sp, 4, sp
+	ldub [ip], tos
+
+	sll tos, 8, tos
+	ldub [ip+1], temp
+	or tos, temp, tos
+
+	sll tos, 8, tos
+	ldub [ip+2], temp
+	or tos, temp, tos
+
+	sll tos, 8, tos
+	ldub [ip+3], temp
+	or tos, temp, tos
+
+	jmp i
+	add ip, 4, ip
+
 #if USEDICT
 #include "prims_dict.s"
 #else
