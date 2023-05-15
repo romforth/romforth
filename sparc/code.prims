@@ -15,3 +15,4 @@ neg	: jmp i ; neg tos
 jdrop	: ld [sp], tos
 j	: ldsb [ip], offset ; inc ip ; jmp i ; add ip, offset, ip
 jz	: tst tos ; be jdrop ; add sp, -4, sp ; ld [sp], tos ; jmp i ; inc ip
+jnz	: tst tos ; bne jdrop ; add sp, -4, sp ; ld [sp], tos ; jmp i ; inc ip
