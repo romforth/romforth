@@ -12,6 +12,7 @@
 #define sp	%l4
 #define buf	%l5
 #define temp	%l6
+#define offset	%l7
 
 	.globl _start
 _start:
