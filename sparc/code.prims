@@ -18,3 +18,4 @@ jz	: tst tos ; be jdrop ; add sp, -4, sp ; ld [sp], tos ; jmp i ; inc ip
 jnz	: tst tos ; bne jdrop ; add sp, -4, sp ; ld [sp], tos ; jmp i ; inc ip
 inc	: jmp i ; inc tos
 dec	: jmp i ; dec tos
+inv	: jmp i ; not tos
