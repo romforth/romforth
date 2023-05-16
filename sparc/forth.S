@@ -13,6 +13,7 @@
 #define buf	%l5
 #define temp	%l6
 #define offset	%l7
+#define nos	%i0
 
 	.globl _start
 _start:
