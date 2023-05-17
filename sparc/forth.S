@@ -14,6 +14,7 @@
 #define temp	%l6
 #define offset	%l7
 #define nos	%i0
+#define addr	%i1
 
 	.globl _start
 _start:
@@ -78,6 +79,23 @@ jcommon:
 	ld [sp], tos
 	jmp i
 	inc ip
+
+fetch:
+	mov tos, addr
+	ldub [addr], tos
+
+	sll tos, 8, tos
+	ldub [addr+1], temp
+	or tos, temp, tos
+
+	sll tos, 8, tos
+	ldub [addr+2], temp
+	or tos, temp, tos
+
+	sll tos, 8, tos
+	ldub [addr+3], temp
+	jmp i
+	or tos, temp, tos
 
 #if USEDICT
 #include "prims_dict.s"
