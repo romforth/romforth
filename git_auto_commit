@@ -17,7 +17,7 @@ while (<>) {
 }
 print "last commit was : $max\n";
 my ($fh);
-@ARGV="git log --reverse | grep 'x86-sys : step ' | ";
+@ARGV="git log --reverse | grep 'sparc \: step ' | ";
 
 use Cwd;
 my $dir = cwd;
