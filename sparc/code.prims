@@ -45,5 +45,8 @@ call	: b,a realcall
 over	: b,a realover
 bye	: jmpl link+8,%g0 ; nop ; .data
 
-var here .long mem
-var state .byte 1
+var here	.long mem
+#{if step>=41
+var latest	.include "latest.s"
+#}if
+var state	.byte 1
