@@ -15,6 +15,7 @@
 #define offset	%l7
 #define nos	%i0
 #define addr	%i1
+#define rp	%i2
 
 	.globl _start
 _start:
@@ -158,6 +159,14 @@ spswap:
 	mov tos, sp
 	jmp i
 	mov temp, tos
+rpswap:
+	mov tos, rp
+	jmp i
+	mov temp, tos
+realxor:
+	ld [sp], nos
+	jmp i
+	xor tos, nos, tos
 
 #if USEDICT
 #include "prims_dict.s"
