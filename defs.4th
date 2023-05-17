@@ -42,6 +42,12 @@ def{ p@ 0xFF70 - if{ key }else{ 0x80 }if }def
 
 #}if
 
+#{if NEEDPSTORE
+
+def{ p! drop emit }def
+
+#}if
+
 #}if
 
 #{if step>=28
