@@ -61,6 +61,19 @@ key1:
 	jmp i
 	ldub [buf], tos
 
+emit1:
+	stub tos, [buf]
+
+	mov 4, %g1
+	mov 1, %o0
+	mov buf, %o1
+	mov 1, %o2
+	ta 0x10
+
+	add sp, -4, sp
+	jmp i
+	ld [sp], tos
+
 #if USEDICT
 #include "prims_dict.s"
 #else

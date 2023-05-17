@@ -7,9 +7,10 @@
 next	: ldub [ip], w ; jmp i+w ; inc ip
 bye	: jmpl link+8,%g0 ; nop
 dup	: st tos, [sp] ; jmp i ; add sp, 4, sp
+2drop	: add sp, -4, sp
 drop	: add sp, -4, sp ; jmp i ; ld [sp], tos
 key	: b,a key1
-emit	: stub tos, [buf] ; mov 4, %g1 ; mov 1, %o0 ; mov buf, %o1 ; mov 1, %o2 ; ta 0x10 ; add sp, -4, sp ; jmp i ; ld [sp], tos
+emit	: b,a emit1
 lit	: b reallit ; st tos, [sp]
 neg	: jmp i ; neg tos
 jdrop	: ld [sp], tos
