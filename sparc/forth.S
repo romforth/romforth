@@ -131,6 +131,10 @@ brz:
 	add sp, -4, sp
 	b jcommon
 	nop
+brnz:
+	bne jdrop
+	add sp, -4, sp
+	b,a jcommon
 
 #if USEDICT
 #include "prims_dict.s"

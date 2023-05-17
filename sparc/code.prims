@@ -15,7 +15,7 @@ neg	: jmp i ; neg tos
 jdrop	: ld [sp], tos
 j	: ldsb [ip], offset ; inc ip ; jmp i ; add ip, offset, ip
 jz	: b brz ; tst tos
-jnz	: tst tos ; bne jdrop ; add sp, -4, sp ; b,a jcommon
+jnz	: b brnz ; tst tos
 inc	: jmp i ; inc tos
 dec	: jmp i ; dec tos
 inv	: jmp i ; not tos
@@ -27,6 +27,7 @@ nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
 |	: add sp, -4, sp ; ld [sp], nos ; jmp i ; or tos, nos, tos
 ^	: add sp, -4, sp ; ld [sp], nos ; jmp i ; xor tos, nos, tos
 swap	: jmp i ; swap [sp-4], tos
+pick	: inc tos ; sll tos, 2, tos ; sub sp, tos, tos
 @	: b,a fetch
 !	: b,a store
 c@	: b,a cfetch
