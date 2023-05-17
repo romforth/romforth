@@ -6,7 +6,7 @@
 
 AS=sparc-unknown-linux-gnu-as
 LD=sparc-unknown-linux-gnu-ld
-all : oneforth
+all : twoforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict

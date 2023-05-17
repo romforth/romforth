@@ -175,6 +175,10 @@ realand:
 	ld [sp], nos
 	jmp i
 	and tos, nos, tos
+realadd:
+	ld [sp], nos
+	jmp i
+	add tos, nos, tos
 tor:
 	st tos, [rp]
 	add rp, 4, rp
@@ -191,6 +195,31 @@ realexec:
 	and w, 0xff, w
 	jmp i+w
 	ld [sp], tos
+realenter:
+	ldub [ip], w
+
+	sll w, 8, w
+	ldub [ip+1], temp
+	or w, temp, w
+
+	sll w, 8, w
+	ldub [ip+2], temp
+	or w, temp, w
+
+	sll w, 8, w
+	ldub [ip+3], temp
+	or w, temp, w
+
+	add ip, 4, ip
+	st ip, [rp]
+	add rp, 4, rp
+	mov w, ip
+	jmp i
+	clr w
+realexit:
+	sub rp, 4, rp
+	jmp i
+	ld [rp], ip
 
 #if USEDICT
 #include "prims_dict.s"
