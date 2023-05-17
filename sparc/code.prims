@@ -24,3 +24,4 @@ nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
 -	: neg tos
 +	: add sp, -4, sp ; ld [sp], nos ; jmp i ; add tos, nos, tos
 &	: add sp, -4, sp ; ld [sp], nos ; jmp i ; and tos, nos, tos
+|	: add sp, -4, sp ; ld [sp], nos ; jmp i ; or tos, nos, tos
