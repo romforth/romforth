@@ -126,6 +126,13 @@ store:
 	jmp i
 	stb nos, [addr]
 
+jdrop:
+	ld [sp], tos
+branch:
+	ldsb [ip], offset
+	inc ip
+	jmp i
+	add ip, offset, ip
 brz:
 	be jdrop
 	add sp, -4, sp
@@ -135,6 +142,14 @@ brnz:
 	bne jdrop
 	add sp, -4, sp
 	b,a jcommon
+
+realstick:
+	sll tos, 2, tos
+	sub sp, tos, tos
+	ld [sp-4], temp
+	st temp, [tos]
+	jmp i
+	ld [sp-8], tos
 
 #if USEDICT
 #include "prims_dict.s"

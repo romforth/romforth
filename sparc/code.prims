@@ -12,8 +12,7 @@ key	: b,a key1
 emit	: b,a emit1
 lit	: b reallit ; st tos, [sp]
 neg	: jmp i ; neg tos
-jdrop	: ld [sp], tos
-j	: ldsb [ip], offset ; inc ip ; jmp i ; add ip, offset, ip
+j	: b,a branch
 jz	: b brz ; tst tos
 jnz	: b brnz ; tst tos
 inc	: jmp i ; inc tos
@@ -29,6 +28,7 @@ nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
 swap	: jmp i ; swap [sp-4], tos
 pick	: inc tos ; sll tos, 2, tos ; sub sp, tos, tos
 @	: b,a fetch
+stick	: b realstick ; inc tos
 !	: b,a store
 c@	: b,a cfetch
 c!	: b,a cstore
