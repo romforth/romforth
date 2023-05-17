@@ -97,6 +97,23 @@ fetch:
 	jmp i
 	or tos, temp, tos
 
+store:
+	mov tos, addr
+	ld [sp-4], nos
+	ld [sp-8], tos
+	add sp, -8, sp
+	stb nos, [addr+3]
+
+	srl nos, 8, nos
+	stb nos, [addr+2]
+
+	srl nos, 8, nos
+	stb nos, [addr+1]
+
+	srl nos, 8, nos
+	jmp i
+	stb nos, [addr]
+
 #if USEDICT
 #include "prims_dict.s"
 #else
@@ -120,3 +137,4 @@ rom:
 
 	.comm dstk,100
 	.comm iobuf,4
+	.comm mem,2048

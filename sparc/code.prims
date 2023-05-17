@@ -29,3 +29,6 @@ nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
 ^	: add sp, -4, sp ; ld [sp], nos ; jmp i ; xor tos, nos, tos
 swap	: jmp i ; swap [sp-4], tos
 @	: b,a fetch
+!	: b,a store ; .data
+
+var here .long mem
