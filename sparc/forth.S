@@ -171,6 +171,10 @@ realor:
 	ld [sp], nos
 	jmp i
 	or tos, nos, tos
+realand:
+	ld [sp], nos
+	jmp i
+	and tos, nos, tos
 tor:
 	st tos, [rp]
 	add rp, 4, rp
@@ -182,6 +186,11 @@ fromr:
 	sub rp, 4, rp
 	jmp i
 	ld [rp], tos
+realexec:
+	mov tos, w
+	and w, 0xff, w
+	jmp i+w
+	ld [sp], tos
 
 #if USEDICT
 #include "prims_dict.s"

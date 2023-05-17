@@ -22,7 +22,7 @@ dip	: st nos, [sp] ; jmp i ; add sp, 4, sp
 nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
 -	: neg tos
 +	: add sp, -4, sp ; ld [sp], nos ; jmp i ; add tos, nos, tos
-&	: add sp, -4, sp ; ld [sp], nos ; jmp i ; and tos, nos, tos
+&	: b realand ; add sp, -4, sp
 |	: b realor ; add sp, -4, sp
 ^	: b realxor ; add sp, -4, sp
 swap	: jmp i ; swap [sp-4], tos
@@ -36,6 +36,7 @@ sp@!	: b spswap ; mov sp, temp
 rp@!	: b rpswap ; mov rp, temp
 >r	: b tor ; add sp, -4, sp
 r>	: b,a fromr
+exec	: b realexec ; add sp, -4, sp
 bye	: jmpl link+8,%g0 ; nop ; .data
 
 var here .long mem
