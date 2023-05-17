@@ -74,6 +74,11 @@ emit1:
 	jmp i
 	ld [sp], tos
 
+jcommon:
+	ld [sp], tos
+	jmp i
+	inc ip
+
 #if USEDICT
 #include "prims_dict.s"
 #else
