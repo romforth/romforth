@@ -19,7 +19,7 @@ inc	: jmp i ; inc tos
 dec	: jmp i ; dec tos
 inv	: jmp i ; not tos
 dip	: st nos, [sp] ; jmp i ; add sp, 4, sp
-nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
+nip	: b realnip ; add sp, -4, sp
 -	: neg tos
 +	: b realadd ; add sp, -4, sp
 &	: b realand ; add sp, -4, sp
@@ -39,6 +39,7 @@ r>	: b,a fromr
 exec	: b realexec ; add sp, -4, sp
 enter	: b,a realenter
 exit	: b,a realexit
+call	: b,a realcall
 bye	: jmpl link+8,%g0 ; nop ; .data
 
 var here .long mem

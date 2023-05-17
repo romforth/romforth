@@ -179,6 +179,9 @@ realadd:
 	ld [sp], nos
 	jmp i
 	add tos, nos, tos
+realnip:
+	jmp i
+	ld [sp], nos
 tor:
 	st tos, [rp]
 	add rp, 4, rp
@@ -220,6 +223,13 @@ realexit:
 	sub rp, 4, rp
 	jmp i
 	ld [rp], ip
+realcall:
+	st ip, [rp]
+	add rp, 4, rp
+	mov tos, ip
+	add sp, -4, sp
+	jmp i
+	ld [sp], tos
 
 #if USEDICT
 #include "prims_dict.s"
