@@ -84,6 +84,9 @@ cfetch:
 	jmp i
 	ldub [tos], tos
 
+realpick:
+	sll tos, 2, tos
+	sub sp, tos, tos
 fetch:
 	mov tos, addr
 	ldub [addr], tos
@@ -150,6 +153,11 @@ realstick:
 	st temp, [tos]
 	jmp i
 	ld [sp-8], tos
+
+spswap:
+	mov tos, sp
+	jmp i
+	mov temp, tos
 
 #if USEDICT
 #include "prims_dict.s"
