@@ -5,7 +5,6 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 next	: ldub [ip], w ; jmp i+w ; inc ip
-bye	: jmpl link+8,%g0 ; nop
 dup	: st tos, [sp] ; jmp i ; add sp, 4, sp
 2drop	: add sp, -4, sp
 drop	: add sp, -4, sp ; jmp i ; ld [sp], tos
@@ -15,7 +14,7 @@ lit	: b reallit ; st tos, [sp]
 neg	: jmp i ; neg tos
 jdrop	: ld [sp], tos
 j	: ldsb [ip], offset ; inc ip ; jmp i ; add ip, offset, ip
-jz	: tst tos ; be jdrop ; add sp, -4, sp ; b,a jcommon
+jz	: b brz ; tst tos
 jnz	: tst tos ; bne jdrop ; add sp, -4, sp ; b,a jcommon
 inc	: jmp i ; inc tos
 dec	: jmp i ; dec tos
@@ -29,6 +28,10 @@ nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
 ^	: add sp, -4, sp ; ld [sp], nos ; jmp i ; xor tos, nos, tos
 swap	: jmp i ; swap [sp-4], tos
 @	: b,a fetch
-!	: b,a store ; .data
+!	: b,a store
+c@	: b,a cfetch
+c!	: b,a cstore
+bye	: jmpl link+8,%g0 ; nop ; .data
 
 var here .long mem
+var state .byte 1

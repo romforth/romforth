@@ -80,6 +80,10 @@ jcommon:
 	jmp i
 	inc ip
 
+cfetch:
+	jmp i
+	ldub [tos], tos
+
 fetch:
 	mov tos, addr
 	ldub [addr], tos
@@ -97,6 +101,14 @@ fetch:
 	jmp i
 	or tos, temp, tos
 
+cstore:
+	mov tos, addr
+	ld [sp-4], nos
+	ld [sp-8], tos
+	add sp, -8, sp
+	jmp i
+	stb nos, [addr]
+
 store:
 	mov tos, addr
 	ld [sp-4], nos
@@ -113,6 +125,12 @@ store:
 	srl nos, 8, nos
 	jmp i
 	stb nos, [addr]
+
+brz:
+	be jdrop
+	add sp, -4, sp
+	b jcommon
+	nop
 
 #if USEDICT
 #include "prims_dict.s"
