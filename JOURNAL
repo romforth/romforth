@@ -67,6 +67,7 @@ INDEX
 	* 01 May '23
 	* 09 May '23
 	* 10 May '23
+	* 17 May '23
 
 04 Nov '22
 ----------
@@ -2646,3 +2647,54 @@ As in the case of the m68k port, QEMU(qemu-sparc) will be used for testing.
 Just as before, I'll go mostly radio silent (see JOURNAL entry dated 17 Mar 23)
 until this port is complete unless something very technical needs to be talked
 about.
+
+17 May '23
+----------
+This entry marks the conclusion of the SPARC port. Like the m68k port, this one
+also took about a week. I'll use this as an opportunity to go over some of the
+bugs that I ran into.
+
+The latest one, and the one that took me almost a couple of hours today was in
+the implementation of `stick`. Unlike the earlier architectures, I couldn't
+just fall through to invoking `store` since there was a bit of pointer aliasing
+that screwed things up. The implementation of `enter`/`exit` also took a bit of
+time to get working since I got the ordering of the increment/decrement pairs
+incorrect. And having things in the delay slot obviously makes code invisible!
+
+Another such bug that took me a while to figure out was in using the opcode to
+set a flag in the delay slot of a conditional branch. Despite my resolution to
+not look at the SPARC Architecture manual, (see the previous JOURNAL entry for
+the reason for that piece of masochism), I had to go looking for those details
+in the manual for what happens in that particular case but eventually decided
+to just write the code in as simple a way as possible since I didn't want to
+spend even more time debugging.
+
+Anyway, coding in assembly can be pretty brutal and unforgiving, despite the
+fact that I'm not even dealing with the really difficult stuff, so I just can't
+wait for our new GPT overlords to do their thing and make this easier. I guess
+we will all see soon enough see whether all of that is really going to pan out.
+
+Looking back at the older bugs/design choices, I spent a fair bit of time on
+`lit`, agonizing over whether I should enforce alignment (at 4 bytes/2 bytes)
+and ultimately settled on assuming that there were no alignment guarantees so
+I read the data a byte at a time so I expect that will have performance impacts
+but none of this code is meant for performance so it might be mediocre at best.
+
+One constant source of irritation during this port was the rework that needed
+to be done every time that the 256 byte primitive area became full and this was
+happening for almost each one of the primitives that was added. In hindsight, I
+should have just chosen to use a different scheme since the opcode is uniformly
+4 bytes wide. If I were to redo this, I might choose an implementation closer
+to the PDP11 scheme instead of the current version.
+
+In my mind though, the primary purpose of this port was mostly to see if the
+big-endian changes done for m68k were sufficient for other ports and it appears
+that it has successfully met that requirement since I now have 2 big-endian CPU
+ports under my belt.
+
+Looking back at the landscape I've covered so far, it spans 16/32/64 bit CPUs
+and also little and big-endian architectures. So the obvious missing piece is a
+port to an 8-bit architecture (and it makes sense that those CPUs will be the
+primary niche that this project attempts to cater to anyway given that they are
+the ones that are the most resource constrained), so I think I'll pick one of
+them next. Z80, perhaps?
