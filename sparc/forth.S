@@ -182,6 +182,10 @@ realadd:
 realnip:
 	jmp i
 	ld [sp], nos
+realdip:
+	st nos, [sp]
+	jmp i
+	add sp, 4, sp
 tor:
 	st tos, [rp]
 	add rp, 4, rp
@@ -230,6 +234,16 @@ realcall:
 	add sp, -4, sp
 	jmp i
 	ld [sp], tos
+lshift:
+	add sp, -4, sp
+	ld [sp], nos
+	jmp i
+	sll nos, tos, tos
+rshift:
+	add sp, -4, sp
+	ld [sp], nos
+	jmp i
+	srl nos, tos, tos
 
 #if USEDICT
 #include "prims_dict.s"

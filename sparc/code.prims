@@ -18,7 +18,7 @@ jnz	: b brnz ; tst tos
 inc	: jmp i ; inc tos
 dec	: jmp i ; dec tos
 inv	: jmp i ; not tos
-dip	: st nos, [sp] ; jmp i ; add sp, 4, sp
+dip	: b,a realdip
 nip	: b realnip ; add sp, -4, sp
 -	: neg tos
 +	: b realadd ; add sp, -4, sp
@@ -40,6 +40,8 @@ exec	: b realexec ; add sp, -4, sp
 enter	: b,a realenter
 exit	: b,a realexit
 call	: b,a realcall
+<<	: b,a lshift
+>>	: b,a rshift
 bye	: jmpl link+8,%g0 ; nop ; .data
 
 var here .long mem
