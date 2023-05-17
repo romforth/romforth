@@ -47,6 +47,20 @@ reallit:
 	jmp i
 	add ip, 4, ip
 
+key1:
+	st tos, [sp]
+	add sp, 4, sp
+
+	mov 3, %g1
+	mov 0, %o0
+	mov buf, %o1
+	mov 1, %o2
+	ta 0x10
+
+	mov %g0, tos
+	jmp i
+	ldub [buf], tos
+
 #if USEDICT
 #include "prims_dict.s"
 #else
