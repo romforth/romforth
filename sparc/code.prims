@@ -23,7 +23,7 @@ nip	: add sp, -4, sp ; jmp i ; ld [sp], nos
 -	: neg tos
 +	: add sp, -4, sp ; ld [sp], nos ; jmp i ; add tos, nos, tos
 &	: add sp, -4, sp ; ld [sp], nos ; jmp i ; and tos, nos, tos
-|	: add sp, -4, sp ; ld [sp], nos ; jmp i ; or tos, nos, tos
+|	: b realor ; add sp, -4, sp
 ^	: b realxor ; add sp, -4, sp
 swap	: jmp i ; swap [sp-4], tos
 pick	: b realpick ; inc tos
@@ -34,6 +34,8 @@ c@	: b,a cfetch
 c!	: b,a cstore
 sp@!	: b spswap ; mov sp, temp
 rp@!	: b rpswap ; mov rp, temp
+>r	: b tor ; add sp, -4, sp
+r>	: b,a fromr
 bye	: jmpl link+8,%g0 ; nop ; .data
 
 var here .long mem

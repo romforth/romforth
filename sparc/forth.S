@@ -167,6 +167,21 @@ realxor:
 	ld [sp], nos
 	jmp i
 	xor tos, nos, tos
+realor:
+	ld [sp], nos
+	jmp i
+	or tos, nos, tos
+tor:
+	st tos, [rp]
+	add rp, 4, rp
+	jmp i
+	ld [sp], tos
+fromr:
+	st tos, [sp]
+	add sp, 4, sp
+	sub rp, 4, rp
+	jmp i
+	ld [rp], tos
 
 #if USEDICT
 #include "prims_dict.s"
