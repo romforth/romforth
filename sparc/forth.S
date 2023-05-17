@@ -180,6 +180,7 @@ realadd:
 	jmp i
 	add tos, nos, tos
 realnip:
+	add sp, -4, sp
 	jmp i
 	ld [sp], nos
 realdip:
@@ -244,6 +245,11 @@ rshift:
 	ld [sp], nos
 	jmp i
 	srl nos, tos, tos
+realover:
+	st tos, [sp]
+	ld [sp-4], tos
+	jmp i
+	add sp, 4, sp
 
 #if USEDICT
 #include "prims_dict.s"
