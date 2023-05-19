@@ -68,6 +68,7 @@ INDEX
 	* 09 May '23
 	* 10 May '23
 	* 17 May '23
+	* 19 May '23
 
 04 Nov '22
 ----------
@@ -2698,3 +2699,55 @@ port to an 8-bit architecture (and it makes sense that those CPUs will be the
 primary niche that this project attempts to cater to anyway given that they are
 the ones that are the most resource constrained), so I think I'll pick one of
 them next. Z80, perhaps?
+
+19 May '23
+----------
+Before I can start on a port, I need three essential tools:
+	(1) Something to build the binaries ie build tools
+	(2) Something to test the generated binaries (ie emulator/simulator)
+	(3) Documentation about the target ISA
+
+For the Z80, I started looking for an emulator first since it turns out that
+of the seemingly endless number of systems that QEMU supports, the Z80 is,
+surprisingly enough, not one of them.
+
+Searching for other open source Z80 emulators that work on Linux brought up a
+lot of choices both for emulators and the build systems around it:
+  yaze/MAME/z80e/z88dk/z80emu/z80pack etc and a bunch of suggestions centered
+around running CP/M or Fuse/Speccy and using that as the development system.
+
+There was also a Hackaday link to Uzi/Fuzix to get Unix running on a Z80 which
+didn't sound as appetizing as running say, Turbo Pascal (1.0, 2.0?) on CP/M as
+the development environment. Now, that would be a real trip down memory lane.
+
+The one that the internet search engines don't seem to be able to find despite
+all their much vaunted AI intelligence, is the sdcc/ucsim combination which I'm
+aware of from previous usage. I particularly prefer this combination since it
+comes with a C compiler (even if I don't currently need it). So I'm going to
+start off with that. To summarize, the tools that I'll be using are:
+	- "sdcc -mz80" for turning C into Z80 binaries
+	- "sdasz80" for turning Z80 assembly into Z80 binaries
+	- "sz80" for emulating Z80 binaries generated using the above tools
+
+The versions of the above tools that I'm using are:
+	- SDCC : mcs51/z80/z180/r2k/r2ka/r3ka/sm83/tlcs90/ez80_z80/z80n/ds390/TININative/ds400/hc08/s08/stm8/pdk13/pdk14/pdk15/mos6502 4.2.0 #13081 (Linux)
+	- sdas Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80)
+	- sdld Linker V03.00 + NoICE + sdld
+	- uCsim 0.5.4
+
+For documentation about the Z80, I'm starting to dust off and leaf through my
+ancient Z80 book "Z80 Assembly Language Programming" by Lance A. Leventhal.
+Strangely enough, this book doesn't have overall page numbers, just per chapter
+page numbers and since the chapter on the instruction set is ~170 pages, I'll
+estimate that I'll have to do a quick browse through atleast half of it to look
+at the stuff relevant to my work and also refresh my memory about the Z80 in
+general. Just like my trusty old "Computer Organization" textbook (see my
+earlier mention in the JOURNAL entry dated 30 Nov '22), I've carried this book
+with me for well over 30 years so I might as well put it to some use now.
+The back page has the store keepers note about the price of the book: $5.95
+(I'll assume it is Singapore $, since it is the Asian edition) and I bought it
+for Indian Rs 81.50, which in my student days, would have paid for a couple of
+months of lunch. I'll always be ever grateful to my parents for spending their
+hard earned money to buy these books and for everything they have done for me.
+
+Thank you Apai & Mom! :RIP: :heart:

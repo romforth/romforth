@@ -5,27 +5,55 @@ Forth is a perfect fit for small, resource constrained systems.
 romforth is yet another Forth-like implementation meant to (eventually)
 run on most "low end" (ie ROM and RAM constrained) microcontrollers.
 
-By design, this implementation is limited to use just a little over ~256 bytes
-of native code with the rest of the functionality implemented in machine
-independent code. Currently, ~100 bytes of machine independent Forth related
-functionality is used in the x86 implementation. So the overall Flash/ROM
-requirement on x86 is currently about ~350 bytes. There is also a regression
-test suite which is called at boot as part of init (which can be optionally
-#ifdef'ed out) and that currently takes an additional ~500 bytes.
-For now, I'll consider the initial bringup/proof of concept on x86 as,
-for the most part, done.
+See PORTING for a list of architectures to which romforth has been ported
+as well as all the steps that are required for porting to a new architecture.
+
+Unlike many Forth implementations which require a large number of "words" to
+be implemented before you can do anything with it, romforth is meant to be a
+"shrink to fit" implementation where the user decides how much of the Forth
+functionality they really need and only implement what they really require.
+
+There are four "levels" of Forth that could be implemented in this way.
+For lack of better names, I'll refer to these "levels" as:
+1/4 : "oneforth" (pun intended), which has only primitives and a data stack
+      ROM : ~256 bytes, RAM : in the single digit byte range?
+2/4 : "twoforth" which has definitions and a return stack (in addition to
+      the primitives and data stack that "oneforth" has)
+      ROM : ~256 bytes, RAM : 16 bytes (or thereabouts in two digit byte range)
+3/4 : "threeforth" which has a static dictionary (in addition to the primitives
+      and definitions and the two stacks that "twoforth" has)
+      ROM : ~512 bytes, RAM : 16 bytes (or thereabouts in two digit byte range)
+4/4 : a full fledged "fourforth"/full/regular Forth with a dynamic dictionary
+      in addition to the rest of the bells and whistles from "threeforth".
+      ROM : ~1024 bytes, RAM : 512 bytes or more - to hold the dictionary
+
+These levels are further broken down into a total of ~73 individual steps which
+implement incremental pieces of Forth functionality. Each of these steps comes
+with tests that can be run to verify each additional piece of functionality as
+it is added, one at a time, which helps in having a working implementation at
+each and every step along the way.
+
+By design, the most compact implementation is limited to use just a little over
+~256 bytes of native code with the rest of the functionality implemented in
+machine independent code. Currently, ~100 bytes of machine independent Forth
+related functionality is used in the x86 implementation. So the overall
+Flash/ROM requirement on x86 is currently about ~350 bytes.
+
+As mentioned earlier, there is also a regression test suite which is called at
+boot as part of init (which can be optionally #ifdef'ed out) and that currently
+takes an additional ~500 bytes of machine independent code.
 
 romforth is meant to be extended using new "purpose built" Forth words which
 can be defined in terms of existing Forth words. The new definitions can be
-added in the machine independent "defs.4th" (although architecture specific
-definitions should ideally go into "port.4th")
+added in the machine independent "defs.4th".
 
 The new words that have been defined can then be called directly as part of
 the CPU boot code/initialization by adding them to "rom.4th".
 
 Running "make" will generate a "forth" binary which can be flashed into ROM
-(although in the current x86 implementation, all of the native code is only
-run within a home grown emulator).
+(although in all of the implementations that have been completed so far, the
+testing is done using emulation, not actual hardware). I hope to run this on
+actual hardware real soon now.
 
 The following (mostly) traditional Forth runtime words are available:
 Data Stack operators	: dup drop nip dip swap over rot 2drop third fourth
@@ -49,11 +77,14 @@ while loop		: loop{ ... }while{ ... }loop
 until loop		: loop{ ... }until{ ... }loop
 for loop		: for{ ... }for
 
-What is not available, compared to regular Forth, is the dictionary. We make
-up for that by providing an "umbilical host"ed solution using a set of scripts,
-which runs on the host, and will turn the Forth code into byte code which
-can be run on top of the ~350 byte "runtime". This "umbilical host" provides
-control flow structures such as conditionals and loop structures.
+At the "oneforth" and "twoforth" levels of the implementation, compared to
+regular Forth, what is not available is the dictionary. We make up for that by
+providing an "umbilical host"ed solution using a set of scripts, which runs on
+the host, and will turn the Forth code into byte code which can be run on top
+of the ~350 byte "runtime". This "umbilical host" provides control flow
+structures such as conditionals and loop structures which are identical to
+the ones available at runtime in the dictionary at the "threeforth"/"fourforth"
+levels of the implementation.
 
 So, using about ~350 bytes of "runtime", we can write architecture independent
 loops (while, until, for), conditionals (if, else), allocate memory, and even
@@ -62,11 +93,12 @@ run threads or invoke semi/full-coroutines (if your proclivities tend that way)
 It is reasonable to ask what distinguishes this Forth implementation from
 the zillion other implementations that already exist. I think the main
 distinguishing features are that it is portable, small and runs baremetal:
-1. Portable : Although the current "proof of concept" implementation is
-	targeted only for x86, it was designed with portability in mind so
-	as to eventually be able to run on "most" microcontrollers. The
+1. Portable : romforth currently runs on 16/32/64 bits architectures as well
+	as little and big endian CPUs. It was designed with portability in mind
+	so as to eventually be able to run on "most" microcontrollers. The
 	primitives implemented in native code are only a few instructions
-	each. At most, ~256 bytes of native code will need to be converted.
+	each. For a compact implementation, only ~256 bytes of native code
+	will need to be ported to a new architecture.
 2. Small : Designed for low end microcontrollers
 	On x86, a minimal init needs ~350 bytes of code and 7 bytes of RAM
 	As a proof of concept, for even smaller systems, I've coded up an
@@ -74,7 +106,7 @@ distinguishing features are that it is portable, small and runs baremetal:
 	to load the additional bytes in via any available serial interface
 	- either from an "umbilical host" during testing or from, say, an
 	external SPI flash part.
-3. Baremetal : Runs directly on the hardware, doesn't require any other
+3. Baremetal : Can run directly on the hardware, doesn't require any other
 	underlying runtime or OS support.
 
 License
@@ -86,3 +118,14 @@ thinking/intent behind the choice of AGPL, see LICENSE.README
 Rationale
 =========
 For a long winded explanation of why this project exists, see RATIONALE
+
+Installation
+============
+To make a local copy:
+	git clone https://github.com/romforth/romforth
+
+To build/test, the following dependencies need to be installed:
+	perl nasm gcc binutils(pdp11,m68k,sparc) simh zig qemu sdcc(ucsim)
+
+After installing all the above dependencies, running `make` will build each of
+the ports and run each of them in an emulator and should complete successfully.
