@@ -17,6 +17,7 @@ my $x86_32_check=1;
 my $x86_sys_check=1;
 my $m68k_check=1;
 my $sparc_check=1;
+my $z80_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -27,6 +28,7 @@ if (@ARGV) {
 	$x86_sys_check=0;
 	$m68k_check=0;
 	$sparc_check=0;
+	$z80_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -37,6 +39,7 @@ if (@ARGV) {
 		$x86_sys_check=1 if ( $d eq "x86-sys");
 		$m68k_check=1 if ( $d eq "m68k");
 		$sparc_check=1 if ( $d eq "sparc");
+		$z80_check=1 if ( $d eq "z80");
 	}
 }
 
@@ -95,6 +98,12 @@ $x=`cat sparc/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $sparc_step=$step;
+
+my $z80_step;
+$x=`cat z80/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$z80_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -260,6 +269,22 @@ sparc_port: {
 	select STDOUT;
 	print "\nRunning step $i for the sparc port\n";
 	system("cd sparc ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+z80_port: {
+	last z80_port unless ($z80_check);
+	last z80_port if ($i>$z80_step);
+	@ARGV=("z80/fpp.config.z80");
+	open(my $fh, ">z80/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) {
+		print;
+	}
+	close $fh;
+	select STDOUT;
+	print "\nRunning step $i for the z80 port\n";
+	system("cd z80 ; make") == 0 or die "make failed at step $i with exit status $?"
 }
 
 }

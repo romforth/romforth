@@ -69,6 +69,7 @@ INDEX
 	* 10 May '23
 	* 17 May '23
 	* 19 May '23
+	* 22 May '23
 
 04 Nov '22
 ----------
@@ -2751,3 +2752,18 @@ months of lunch. I'll always be ever grateful to my parents for spending their
 hard earned money to buy these books and for everything they have done for me.
 
 Thank you Apai & Mom! :RIP: :heart:
+
+22 May '23
+----------
+As with the earlier ports, I'm continuing to take on even more $TECHDEBT by
+copying the genrom and genprims scripts for yet another port. For now I've used
+the sparc version as the template since that's the latest I have. genrom needed
+to be modified from the sparc version but the genprims code was kept as is. The
+makefile is also a heavily modified copy of the sparc version. fpp.config.z80
+is also a copy from the sparc version since I don't plan to change the THREAD
+model but since this is a step down from 32 bits to an 8 bit architecture, many
+other changes may be necessary in the future.
+
+Unlike qemu, since the success criteria that the sdcc/ucsim emulator uses for
+termination is unclear, I've used a `grep` to check for successful termination
+just as I'd done earlier for the PDP11 port.

@@ -5,12 +5,25 @@
 cold:
 	ld ip, #rom
 	ld w, #cold
-	ld wl, (ip)
-	inc ip
-	jp (w)
 
-hlt:
-	halt
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
+#endif
 
 rom:
-	.db hlt-cold
+
+#include "rom.s"
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
