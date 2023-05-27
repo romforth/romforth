@@ -6,3 +6,5 @@
 
 next	: ld wl, (ip) ; inc ip ; jp (w)
 bye	: halt
+key	: nop ;
+emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), #'f' ; ld w, #cold ;

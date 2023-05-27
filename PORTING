@@ -23,3 +23,7 @@ Porting Guide
 =============
 At a very high level, the steps required for porting are to look at one of the
 existing ports (say, the SPARC port) and follow each step until all steps pass.
+
+Currently there are a total of about 73 "bite size" steps. The first few steps
+can be summarized as getting the equivalent of the following code in C running
+on your target system: int main() { putchar( getchar() ); exit(0); }

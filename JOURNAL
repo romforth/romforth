@@ -70,6 +70,7 @@ INDEX
 	* 17 May '23
 	* 19 May '23
 	* 22 May '23
+	* 26 May '23
 
 04 Nov '22
 ----------
@@ -2767,3 +2768,78 @@ other changes may be necessary in the future.
 Unlike qemu, since the success criteria that the sdcc/ucsim emulator uses for
 termination is unclear, I've used a `grep` to check for successful termination
 just as I'd done earlier for the PDP11 port.
+
+26 May '23
+----------
+I got stuck for a while with sdcc/ucsim trying to figure out how to redirect
+the emit/key output/input to/from named files since those are the necessary
+beginning baby steps of any new porting exercise. In my quick look through the
+docs, the information in simif.html appears to make it clear that doing the
+redirection should be trivial, but for the life of me I couldn't find code
+samples searching for it on the internet or any clear description of what
+exactly needed to be done to get it to work.
+
+I was now at a fork in the road, and my choices were to either continue with
+sdcc/ucsim or choose one of the zillion other implementations of Z80 emulators
+that an internet search surfaces. Given the lack of adequate documentation in
+sdcc/ucsim, I decided to do a survey of the Z80 emulation landscape. My first
+stop was to see if a port of qemu user for the Z80 exists since I had used QEMU
+earlier for both the m68k and SPARC ports. It looks like there is a Z80 port
+but it appears to still be work in progress and has not been merged upstream so
+I decided to give that a pass. From all the research that I had done as part of
+that work, I found that the simplest approach might be to roll out yet another
+wrapper over libz80 and call it a day. But that approach also needed a package
+that could assemble the Z80 code and since I was using sdcc for that I finally
+decided to revisit ucsim again, but not before giving a once over for a bunch
+of other choices: z88dk, z80pack, iz80 in Rust and z80emu in zig
+
+Like sdcc/ucsim the z88dk package also comes complete with a compiler (zcc) but
+it appeared to be a wrapper over sdcc so I was afraid I'd have the same issues
+with ucsim that I was running into. Yet another option I evaluated was z80pack
+which comes with an assembler and simulator bundled together just like sdcc. It
+also has a simple test that shows how to redirect to stdin/stdout but like lz80
+it is a "roll your own Z80 CPU" solution.
+
+Wandering farther out, I also took a cursory glance at the Rust cargo module
+iz80 which has the nice property that it could be built without any external
+dependencies and which comes with code samples that are easily understandable
+along with the emulator for a simple CPU (which they have called "cpuville"). I
+was extremely tempted to roll with the iz80 solution except for the fact that
+the compile times were occasionally pretty glacial - sometimes even slower than
+the simh/pdp11 emulator which is currently the long pole in the tests. So I
+reluctantly decided to put that off for later consideration since, like the
+libz80 solution, it also has the requirement of needing a separate package for
+the Z80 assembler.
+
+There are some solutions out there that are based on zig as well but those seem
+to be based on an out of date version (0.6.0) and I didn't want to add yet
+another zig dependency especially to an out of date version which no longer
+builds with the current version(0.11.0). Just like the libz80 and the Rust iz80
+implementations, the zig version also will need an additional package for the
+Z80 assembler.
+
+In the meantime, I had the additional distraction of getting a copy of Samuel
+Butler's translation of Homer's Illiad and Odyssey so I spent a bunch of time
+reading that in the middle of the analysis paralysis induced by the plethora of
+available choices for the Z80 emulation.
+
+The conclusion that I reached after about a week of surveying the Z80 landscape
+while taking a crash course on Greek mythology (funnily enough, about a guy who
+keeps getting carried away from his destination), was that I should just bite
+the bullet and stick to sdcc/ucsim and perhaps just grovel through the source
+code to figure out how to get putchar/getchar working with file redirection.
+
+The sdcc/ucsim code is in C++, which is a language that I detest, for the
+really simple (and probably inane) reason that the language reference clocks in
+at thousands of pages: 2000 and counting when I last looked at it, so my
+preferred language for low level stuff is C, which I think I can comfortably
+hold in my head, without even really trying.
+
+But life is what it is so I had to convince myself to go ahead and just hold my
+nose long enough to browse through the C++ ucsim code and figure out how to get
+the putchar/getchar with file redirection working. After a week of digressions
+into looking at a bunch of other solutions, among other g(r)eeky distractions,
+I've decided to stick to my original approach and continue with sdcc/ucsim, for
+now at least, since I finally have something that works to show for all of the
+effort that I put into it. I'm not sure if the time I spent on this research
+should be counted as "wasted" or "learning" though.
