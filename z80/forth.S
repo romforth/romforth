@@ -1,6 +1,7 @@
 #define ip	ix
 #define w	hl
 #define wl	l
+#define tos	a
 
 cold:
 	ld ip, #rom
