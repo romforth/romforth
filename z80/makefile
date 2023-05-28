@@ -15,18 +15,18 @@ fourforth : test.dict
 test.dict : forth_dict test.inp test.exp
 	cp test.inp test.in
 	cat cmds.ucsim | ucsim_z80 -I in=test.in,out=test.dict,if=rom'[0x7fff]' forth_dict > test.log
-	grep 'Stop at 0x00000e: (101) Halted' test.log > /dev/null
+	grep 'Stop at 0x000011: (101) Halted' test.log > /dev/null
 	cmp test.dict test.exp
 test.defs : forth_defs test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	cat cmds.ucsim | ucsim_z80 -I in=test.in,out=test.defs,if=rom'[0x7fff]' forth_defs > test.log
-	grep 'Stop at 0x00000e: (101) Halted' test.log > /dev/null
+	grep 'Stop at 0x000011: (101) Halted' test.log > /dev/null
 	cmp test.defs test.exp
 test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	touch test.out
 	cat cmds.ucsim | ucsim_z80 -I in=test.in,out=test.out,if=rom'[0x7fff]' forth.ihx > test.log
-	grep 'Stop at 0x00000e: (101) Halted' test.log > /dev/null
+	grep 'Stop at 0x000011: (101) Halted' test.log > /dev/null
 	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp

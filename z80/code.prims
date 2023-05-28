@@ -6,5 +6,7 @@
 
 next	: ld wl, (ip) ; inc ip ; jp (w)
 bye	: halt
-key	: ld w, #0x7fff ; ld (w), #'r' ; ld tos, (w) ; ld w, #cold ;
-emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tos ; ld w, #cold ;
+dup	: push tos ;
+drop	: pop tos ;
+key	: ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld w, #cold ;
+emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ;

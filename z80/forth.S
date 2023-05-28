@@ -1,9 +1,11 @@
 #define ip	ix
 #define w	hl
 #define wl	l
-#define tos	a
+#define tos	bc
+#define tosl	c
 
 cold:
+	ld sp, #0xffff
 	ld ip, #rom
 	ld w, #cold
 
