@@ -11,3 +11,5 @@ drop	: pop tos ;
 key	: dup ; ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld w, #cold ;
 emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ; drop ;
 lit	: dup ; ld a, (ip) ; inc ip ; ld tosl, a ; ld a, (ip) ; inc ip ; ld tosh, a ;
+inv	: ld a, tosh ; cpl ; ld tosh, a ; ld a, tosl ; cpl ; ld tosl, a ;
+neg	: inv ; inc tos ;
