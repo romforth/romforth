@@ -142,7 +142,7 @@ sub genprim {
 sub gendef {
 	my ($m, $f)=@_;
 	print "\t.db enter-cold\n";
-	print "\t.long $m # $f\n";
+	print "\t.dw $m # $f\n";
 }
 
 sub gencode {
@@ -213,7 +213,7 @@ sub def {
 			print qq{\t.ascii "$w"\n};
 			$len |= 0x80 if ($immediate);
 			print "$l","_nfa:\t.db $len\n";
-			print "$l","_lfa:\t.long $prev\n";
+			print "$l","_lfa:\t.dw $prev\n";
 			$prev="$l"."_lfa";
 		}
 		print "$l:	# $w\n"; # and generate assembly code
@@ -241,7 +241,7 @@ sub def {
 sub lit {
 	my ($o)=@_;
 	print qq(\t.db lit-cold\n);
-	print qq(\t.long $o\n);
+	print qq(\t.dw $o\n);
 }
 
 my $m;					# cache for the map from name to label
@@ -280,7 +280,7 @@ print $mh "label fake $label\n";
 if ($gendict) {
 	open(my $lh, ">latest.s");
 	select $lh;
-	print "\t.long $prev\n";
+	print "\t.dw $prev\n";
 	close $lh;
 	print $mh "label prev $prev\n";
 }

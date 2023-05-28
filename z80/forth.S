@@ -3,6 +3,7 @@
 #define wl	l
 #define tos	bc
 #define tosl	c
+#define tosh	b
 
 cold:
 	ld sp, #0xffff
