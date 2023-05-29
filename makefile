@@ -9,6 +9,7 @@ all :
 	(cd m68k ; make)
 	(cd sparc ; make)
 	(cd z80 ; make)
+	(cd z80-c ; make)
 
 allsteps :
 	./runallsteps
@@ -26,3 +27,4 @@ clean :
 	(cd m68k ; make clean)
 	(cd sparc ; make clean)
 	(cd z80 ; make clean)
+	(cd z80-c ; make clean)
