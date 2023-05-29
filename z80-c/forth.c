@@ -27,6 +27,7 @@ void putchar(unsigned char c) {
 }
 
 int tos;
+int datastk[100], *d=datastk;
 
 int main() {
 	char rom[]={
