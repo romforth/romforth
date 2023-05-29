@@ -242,7 +242,7 @@ sub lit {
 	my ($o)=@_;
 	print "\tlit, ";
 	# adapted from perldoc -f pack
-	printf("%#02x, ", $_) for unpack("S*", pack L=>$o);
+	printf("%#02x, ", $_) for unpack("W*", pack s=>$o);
 	print "\n";
 }
 

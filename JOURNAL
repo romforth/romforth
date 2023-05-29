@@ -71,6 +71,7 @@ INDEX
 	* 19 May '23
 	* 22 May '23
 	* 26 May '23
+	* 29 May '23
 
 04 Nov '22
 ----------
@@ -2843,3 +2844,19 @@ I've decided to stick to my original approach and continue with sdcc/ucsim, for
 now at least, since I finally have something that works to show for all of the
 effort that I put into it. I'm not sure if the time I spent on this research
 should be counted as "wasted" or "learning" though.
+
+29 May '23
+----------
+Now that the z80 assembly code implementation and the z80-c version coded in C
+have reached "step 4 feature parity", it is as good a time as any to do a quick
+code space utilization comparison. The assembly version clocks in at 0x73 bytes
+while the C version needs all of 0x156 bytes which is almost a savings of ~3x
+for coding it in assembly. Despite the fact that the Z80 assembly code feels a
+lot like grunt work, it seems like it is meaningful to keep working on it.
+
+In any case, now that I've picked up steam on the Z80 C porting exercise, I
+could try keeping parity at each step between the two implementations. My hope
+is that much of the x86 C code can be used as is. But since I'm afraid that the
+context switch between the assembly and C for each step might be high, my plan
+is to go full bore on the C implementation first since that is the easy path
+and then after that is complete, I can revisit the version in assembly.

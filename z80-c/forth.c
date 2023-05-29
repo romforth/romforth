@@ -46,5 +46,6 @@ int main() {
 		}
 	}
 error:
+	putchar(w);
 	return 1;
 }
