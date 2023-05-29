@@ -16,10 +16,17 @@ enum {
 #include "enum.h"
 };
 
+int getchar() {
+	*sif= 'r';
+	return *sif;
+}
+
 void putchar(unsigned char c) {
 	*sif= 'w';
 	*sif= c;
 }
+
+int tos;
 
 int main() {
 	char rom[]={
