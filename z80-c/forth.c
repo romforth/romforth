@@ -6,6 +6,8 @@
  * Please see the LICENSE file for the Affero GPL 3.0 license details
  */
 
+static unsigned char * volatile sif= (unsigned char *)0x7fff;
+
 typedef const struct lfa {
 	const struct lfa *prev;
 } lfa;
@@ -13,6 +15,11 @@ typedef const struct lfa {
 enum {
 #include "enum.h"
 };
+
+void putchar(unsigned char c) {
+	*sif= 'w';
+	*sif= c;
+}
 
 int main() {
 	char rom[]={

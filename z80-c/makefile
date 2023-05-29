@@ -19,9 +19,10 @@ test.dict : forth_dict test.inp test.exp
 	cmp test.dict test.exp
 test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
-	cat cmds.ucsim | ucsim_z80 forth.ihx > test.out
-	grep 'Stop at 0x000208: (101) Halted' test.out > /dev/null
-	grep 'DE= 0x0000 \[DE\]= c3 195 \.' test.out > /dev/null
+	cat cmds.ucsim | ucsim_z80 -I in=test.in,out=test.out,if=rom'[0x7fff]' ./forth.ihx > test.log
+	grep 'Stop at 0x000208: (101) Halted' test.log > /dev/null
+	grep 'DE= 0x0000 \[DE\]= c3 195 \.' test.log > /dev/null
+	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp
 	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config >> test.inp
