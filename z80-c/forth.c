@@ -26,7 +26,7 @@ void putchar(unsigned char c) {
 	*sif= c;
 }
 
-int tos;
+int tos, nos;
 int datastk[100], *d=datastk;
 
 int main() {

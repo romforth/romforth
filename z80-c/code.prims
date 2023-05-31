@@ -17,3 +17,5 @@ j	: i=*ip++ ; ip+=i ; } else { ip++ ; drop ; } ;
 inc	: tos++ ;
 dec	: tos-- ;
 inv	: tos=~tos ;
+nip	: nos=*--d ;
+dip	: *d++=nos ;
