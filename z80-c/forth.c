@@ -33,6 +33,7 @@ int main() {
 	char rom[]={
 #include "rom.h"
 	}, w, *ip=rom;
+	signed char i;
 #ifdef USEDEFS
 #include "dict.h"
 #include "defs.h"
