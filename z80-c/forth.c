@@ -6,6 +6,8 @@
  * Please see the LICENSE file for the Affero GPL 3.0 license details
  */
 
+#define bin(op) tos = nos op tos;
+
 static unsigned char * volatile sif= (unsigned char *)0x7fff;
 
 typedef const struct lfa {
