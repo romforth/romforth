@@ -16,3 +16,4 @@ jz	: if (tos==0) {{} ; drop
 j	: i=*ip++ ; ip+=i ; } else { ip++ ; drop ; } ;
 inc	: tos++ ;
 dec	: tos-- ;
+inv	: tos=~tos ;
