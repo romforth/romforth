@@ -21,3 +21,4 @@ nip	: nos=*--d ;
 dip	: *d++=nos ;
 -	: neg
 +	: nip ; bin(+) ;
+&	: nip ; bin(&) ;
