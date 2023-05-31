@@ -6,6 +6,7 @@
 
 bye	: return 0
 dup	: *d++=tos ;
+2drop	: tos=*--d
 drop	: tos=*--d ;
 key	: dup ; tos=getchar() ;
 emit	: putchar(tos) ; drop ;
