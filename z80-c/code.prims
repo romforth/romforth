@@ -35,6 +35,7 @@ c!	: nip ; *(char *)tos=nos ; drop ;
 pick	: tos=*(d-tos-1) ;
 stick	: nip ; *(d-tos)=nos ; drop ;
 sp@!	: swapstk(tos, d, datastk) ;
+rp@!	: { int temp=tos; tos=(int)r; r=(int *)temp; } ;
 
 var here
 var state

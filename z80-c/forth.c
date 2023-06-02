@@ -46,6 +46,7 @@ void putchar(unsigned char c) {
 
 int tos, nos;
 int datastk[ndstacks][100], *d=&datastk[1][1];
+int returnstk[100], *r=returnstk;
 
 unsigned char mem[2048];
 
