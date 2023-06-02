@@ -6,6 +6,10 @@
  * Please see the LICENSE file for the Affero GPL 3.0 license details
  */
 
+#include <stddef.h>
+
+#define VAR(x) offsetof(struct var, x)
+
 #define bin(op) tos = nos op tos;
 
 static unsigned char * volatile sif= (unsigned char *)0x7fff;
@@ -30,6 +34,16 @@ void putchar(unsigned char c) {
 
 int tos, nos;
 int datastk[100], *d=datastk;
+
+unsigned char mem[2048];
+
+struct var {
+	unsigned char *here;
+} vars = {
+	(unsigned char *)mem,
+};
+
+char *varalias=(char *)&vars;
 
 int main() {
 	char rom[]={

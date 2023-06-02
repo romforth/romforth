@@ -28,3 +28,7 @@ dip	: *d++=nos ;
 swap	: nip ; dup
 t_n	: tos=nos ;
 @	: tos=*(int *)tos ;
+!	: nip ; *(int *)tos=nos ; drop ;
+var	: dup ; tos=(int)&varalias[*ip++] ;
+
+var here
