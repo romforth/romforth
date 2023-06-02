@@ -49,3 +49,4 @@ over	: dup ; tos=*(d-2) ;
 
 var here
 var state
+var latest
