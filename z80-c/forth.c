@@ -32,8 +32,20 @@ void putchar(unsigned char c) {
 	*sif= c;
 }
 
+// when switching stacks, save the current tos location at the 0'th element
+// and after switching to the new stack, switch to the tos using saved value
+#define swapstk(t,s,stk) { \
+	int temp=t; \
+	t=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
+	stk[t][0]=s-stk[t]; \
+	s=stk[temp]; \
+	s+=s[0]; \
+}
+
+#define ndstacks 2
+
 int tos, nos;
-int datastk[100], *d=datastk;
+int datastk[ndstacks][100], *d=&datastk[1][1];
 
 unsigned char mem[2048];
 
