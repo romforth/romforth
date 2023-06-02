@@ -290,7 +290,7 @@ if ($gendefs) {
 	for my $i (@$deford) {
 		print "\t$i->[0]", "_dict\.cfa,	// $i->[1]\n";
 	}
-	print "};\n";
+	print "0};\n";
 }
 print $mh "label fake $label\n";
 if ($gendict) {
