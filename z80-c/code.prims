@@ -38,6 +38,7 @@ sp@!	: swapstk(tos, d, datastk) ;
 rp@!	: { int temp=tos; tos=(int)r; r=(int *)temp; } ;
 >r	: *r++=(int)tos ; drop ;
 r>	: dup ; tos=*--r ;
+exec	: w=tos ; drop ; goto next
 
 var here
 var state

@@ -60,19 +60,25 @@ struct var {
 
 char *varalias=(char *)&vars;
 
-int main() {
-	char rom[]={
+const char rom[]={
 #include "rom.h"
-	}, w, *ip=rom;
-	signed char i;
+}, *ip=rom;
+char w;
+signed char i;
+
 #ifdef USEDEFS
 #include "dict.h"
 #include "defs.h"
 #include "latest.h"
 #endif
 
+int
+main()
+{
 	for (;;) {
-		switch (w=*ip++) {
+		w=*ip++;
+next:
+		switch (w) {
 #include "prims.h"
 		default : goto error;
 		}
