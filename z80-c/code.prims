@@ -33,6 +33,7 @@ var	: dup ; tos=(int)&varalias[*ip++] ;
 c@	: tos=*(char *)tos ;
 c!	: nip ; *(char *)tos=nos ; drop ;
 pick	: tos=*(d-tos-1) ;
+stick	: nip ; *(d-tos)=nos ; drop ;
 
 var here
 var state
