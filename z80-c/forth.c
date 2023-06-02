@@ -39,8 +39,10 @@ unsigned char mem[2048];
 
 struct var {
 	unsigned char *here;
+	char state;
 } vars = {
 	(unsigned char *)mem,
+	1
 };
 
 char *varalias=(char *)&vars;

@@ -30,5 +30,8 @@ t_n	: tos=nos ;
 @	: tos=*(int *)tos ;
 !	: nip ; *(int *)tos=nos ; drop ;
 var	: dup ; tos=(int)&varalias[*ip++] ;
+c@	: tos=*(char *)tos ;
+c!	: nip ; *(char *)tos=nos ; drop ;
 
 var here
+var state
