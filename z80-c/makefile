@@ -47,7 +47,7 @@ forth_dict.c : forth.c
 	sed -i 's/include \"prims/include \"prims_dict/' forth_dict.c
 	sed -i 's/include \"defs/include \"defs_dict/' forth_dict.c
 rom.h : ../rom.4th ../fpp fpp.config prims.h genrom defs.h
-	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map | ./patchrom > rom.h
+	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map | ./patchrom --sdcc > rom.h
 	test -s rom.h
 fpp.config : stepfile fpp.config.C
 	cat stepfile fpp.config.C > fpp.config
@@ -56,9 +56,9 @@ prims.h : genprims code.prims ../fpp fpp.config
 prims_dict.h : prims.h genprims code.prims ../fpp fpp.config
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims -d dict.map > prims_dict.h
 defs.h : ../defs.4th ../fpp fpp.config prims.h genrom
-	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g defs.map dict.map | ./patchrom > defs.h
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g defs.map dict.map | ./patchrom --sdcc > defs.h
 defs_dict.h : ../defs.4th ../fpp fpp.config prims_dict.h genrom
-	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map | ./patchrom > defs_dict.h
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map | ./patchrom --sdcc > defs_dict.h
 clean :
 	rm -f forth.o forth test.out forth.lst rom.h rom.map fpp.config prims.h dict.map test.inp test.exp defs.h defs.map sim forth_dict forth_dict.o defs_dict.h dict.h latest.h prims_dict.h test.dict forth_dict.c test.defs forth_defs forth_defs.o forth_defs.c profile.names enum.h test.in test.log
 	bash -c "rm -f forth.{asm,ihx,lk,lst,map,noi,rel,sym}"

@@ -25,6 +25,12 @@
 #	4. Each element in the rom array is delimited by a comma(,)
 
 use strict;
+
+use Getopt::Long;
+
+my $sdcc=0;
+GetOptions("sdcc" => \$sdcc);
+
 my ($v,$vv,$expr);
 my $dot=0;	# this is the equivalent of the '.' in assembler code
 my $label={};	# to store label -> dot location mapping
@@ -48,7 +54,16 @@ while(<>) {
 		$dot++;			# patch locations use a 1 byte offset
 		$v=\$label->{$1};	# see if this label was seen already
 		if ($vv=$$v) {		# and if so,
-			push @$agg, $vv-$dot . ",\n";	# patch a backward jump
+			if ($vv-$dot < 0) {	# patch a backward jump
+				if ($sdcc) {	# sdcc 4.2.0 does not handle -ve
+						# values well. Do it ourselves.
+					push @$agg, (256+($vv-$dot)) . ",\n";
+				} else {
+					push @$agg, $vv-$dot . ",\n";
+				}
+			} else {
+				push @$agg, $vv-$dot . ",\n";
+			}
 		} else {		# otherwise, if it is a new label
 			$v=\$want->{$1};	# see if it was wanted already
 			unless ($vv=$$v) {	# if not
