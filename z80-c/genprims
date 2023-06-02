@@ -146,7 +146,7 @@ if ($gendict) {
 	close $lh;
 	open($lh, ">latest.h");
 	select $lh;
-	print "\tvars.latest=&$prev\.prev;\n";
+	print "\tvars.latest=&${prev}_dict\.prev;\n";
 	close $lh;
 	print $mh "label prev $prev\n";
 }

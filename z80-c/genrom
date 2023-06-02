@@ -204,7 +204,7 @@ sub def {
 			print "\tlfa *prev;\n";
 			print "\tunsigned char cfa[];\n";
 			print "}";
-			print " ${l}={\n";
+			print " ${l}_dict={\n";
 			if ($len%2==0) {
 				print "\t0,\n";
 			}
@@ -288,7 +288,7 @@ while (<>) {				# map forth words in the standard input
 if ($gendefs) {
 	print 'static const unsigned short *fp[] = {', "\n";
 	for my $i (@$deford) {
-		print "\t$i->[0]\.cfa,	// $i->[1]\n";
+		print "\t$i->[0]", "_dict\.cfa,	// $i->[1]\n";
 	}
 	print "};\n";
 }
@@ -296,7 +296,7 @@ print $mh "label fake $label\n";
 if ($gendict) {
 	open(my $lh, ">latest.h");
 	select $lh;
-	print "\tvars.latest=(lfa *)&$prev\.prev;\n";
+	print "\tvars.latest=(lfa *)&${prev}_dict\.prev;\n";
 	close $lh;
 	print $mh "label prev $prev\n";
 }
