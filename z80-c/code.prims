@@ -45,6 +45,7 @@ call	: *r++=(int)ip ; ip=(short *)tos ; drop ;
 <<	: nip ; bin(<<) ;
 >>	: nip ; bin(>>) ;
 over	: dup ; tos=*(d-2) ;
+0=	: tos=!tos ;
 
 var here
 var state
