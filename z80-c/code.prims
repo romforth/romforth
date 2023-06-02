@@ -39,6 +39,8 @@ rp@!	: { int temp=tos; tos=(int)r; r=(int *)temp; } ;
 >r	: *r++=(int)tos ; drop ;
 r>	: dup ; tos=*--r ;
 exec	: w=tos ; drop ; goto next
+enter	: w=*ip++ ; *r++=(int)ip ; ip=fp[w] ;
+exit	: ip=(short *)*--r ;
 
 var here
 var state

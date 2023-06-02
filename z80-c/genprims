@@ -48,23 +48,23 @@ sub genheader {
 		print "\tshort exit;\n";
 	}
 	print "}";
-	print " ${l}={\n";
+	print " ${l}_dict={\n";
 	if ($len%2==0) {
 		print "\t0,\n";
 	}
-	print "\t\"$f\",\n";
+	print "\t\{\'", join("','", split(//,$f)) , "\'\},\n";
 	print "\t$len,\n";
 	if ($prev) {
-		print "\t(lfa *)\&$prev\.prev,\n";
+		print "\t(lfa *)\&${prev}_dict\.prev,\n";
 	} else {
 		print "\t0,\n";
 	}
 	if ($flag) {	# not a variable
-		print "\t$l,\n";
+		print "\t\{$l\},\n";
 		print "\texit\n};\n";
 	} else {	# variable
 		print "\tlit,\n";
-		print "\t&vars.$l,\n";
+		print "\t\{&vars.$l\},\n";
 		print "\texit\n};\n";
 	}
 	$prev=$l;

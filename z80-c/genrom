@@ -202,17 +202,17 @@ sub def {
 			print "\tchar name\[$len\];\n";
 			print "\tunsigned char nfa;\n";
 			print "\tlfa *prev;\n";
-			print "\tunsigned short cfa[];\n";
+			print "\tunsigned char cfa[];\n";
 			print "}";
 			print " ${l}={\n";
 			if ($len%2==0) {
 				print "\t0,\n";
 			}
 			push @$fas, $l;
-			print "\t\"$w\",\n";
+			print "\t\{\'", join("','", split(//,$w)), "\'\},\n";
 			$len |= 0x80 if ($immediate);
 			print "\t$len,\n";
-			print "\t(lfa *)\&$prev\.prev,\n";
+			print "\t\{(lfa *)\&${prev}_dict\.prev\},\n\t{\n";
 			$prev=$l;
 		}
 		print " // $w\n";	# and generate C code
@@ -223,7 +223,7 @@ sub def {
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\texit\n};\n";
+			print "\texit}\n};\n";
 			$state=0;
 			return 1;
 		}

@@ -8,6 +8,8 @@
 
 #include <stddef.h>
 
+#define USEDEFS 0
+
 #define VAR(x) offsetof(struct var, x)
 
 #define bin(op) tos = nos op tos;
@@ -51,9 +53,11 @@ int returnstk[100], *r=returnstk;
 unsigned char mem[2048];
 
 struct var {
+	const struct lfa *latest;
 	unsigned char *here;
 	char state;
 } vars = {
+	0,
 	(unsigned char *)mem,
 	1
 };
@@ -69,12 +73,15 @@ signed char i;
 #ifdef USEDEFS
 #include "dict.h"
 #include "defs.h"
-#include "latest.h"
 #endif
 
 int
 main()
 {
+#ifdef USEDEFS
+#include "latest.h"
+#endif
+
 	for (;;) {
 		w=*ip++;
 next:
