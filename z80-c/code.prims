@@ -42,6 +42,8 @@ exec	: w=tos ; drop ; goto next
 enter	: w=*ip++ ; *r++=(int)ip ; ip=fp[w] ;
 exit	: ip=(short *)*--r ;
 call	: *r++=(int)ip ; ip=(short *)tos ; drop ;
+<<	: nip ; bin(<<) ;
+>>	: nip ; bin(>>) ;
 
 var here
 var state
