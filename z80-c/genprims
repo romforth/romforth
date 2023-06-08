@@ -41,11 +41,11 @@ sub genheader {
 	print "\tunsigned char nfa;\n";
 	print "\tlfa *prev;\n";
 	if ($flag) {	# not a variable
-		print "\tunsigned short cfa[];\n";
+		print "\tunsigned char cfa[];\n";
 	} else {	# variable
-		print "\tshort cfa;\n";
+		print "\tunsigned char cfa;\n";
 		print "\tvoid *var;\n";
-		print "\tshort exit;\n";
+		print "\tunsigned char exit;\n";
 	}
 	print "}";
 	print " ${l}_dict={\n";

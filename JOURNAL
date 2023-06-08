@@ -72,6 +72,7 @@ INDEX
 	* 22 May '23
 	* 26 May '23
 	* 29 May '23
+	* 08 Jun '23
 
 04 Nov '22
 ----------
@@ -2860,3 +2861,24 @@ is that much of the x86 C code can be used as is. But since I'm afraid that the
 context switch between the assembly and C for each step might be high, my plan
 is to go full bore on the C implementation first since that is the easy path
 and then after that is complete, I can revisit the version in assembly.
+
+08 Jun '23
+----------
+Between hosting visitors, attending various anniversary parties and the start
+of my kid's summer vacation I had enough distractions to keep me from making
+progress for almost a week.
+
+Anyway, after spending a fair bit of time trying to figure out the failure that
+was happening at step 44, I was able to track things down to configuration file
+changes that I had not changed after copy pasting them from the older C config.
+
+The first bug that was that CELL was set to 8 which was a holdover from the
+initial port to C which was implemented on x86_64 which uses 8 bytes. In the
+case of sdcc/z80, that needs to be trimmed down to 2.
+
+The next bug was that LITC was set to 4 and that needed to be bumped down to 2
+as well, but while looking through the code under THREAD==3, I realized that
+in my hurry to get the C port completed, I'd left a lot of hardcoded footguns
+behind which are going to blow up in my face as this port progresses.
+
+I guess it is time for all of that $TECHDEBT to be repaid, with interest, now.
