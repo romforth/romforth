@@ -60,8 +60,7 @@ sub genheader {
 		print "\t0,\n";
 	}
 	if ($flag) {	# not a variable
-		print "\t\{$l\},\n";
-		print "\texit\n};\n";
+		print "\t\{$l,exit\}};\n";
 	} else {	# variable
 		print "\tlit,\n";
 		print "\t\{&vars.$l\},\n";
