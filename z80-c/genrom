@@ -228,7 +228,7 @@ sub def {
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\texit\n};\n";
+			print "\texit}\n};\n";
 			$state=0;
 			$immediate=0;
 			return 1;
