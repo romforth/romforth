@@ -909,7 +909,12 @@ def{ offset,	[ val
 #}if
 
 #{if THREAD==3
+#{if PRIMSZ==1
+	c,	[ \ val // sdcc type3 exec token uses an enum (fits in 1 byte)
+#}if
+#{if PRIMSZ==2
 	s,	[ \ val	// C/THREAD type3 exec token uses a 2 byte short
+#}if
 #}if
 
 }def

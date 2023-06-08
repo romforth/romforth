@@ -1034,7 +1034,12 @@ defprefix	[ exit \ prefix	// ARCH appropriate prefix was added
 ,		[ \ exit	// finally, append exit to the dictionary
 #}if
 #{if THREAD==3
-s,		[ \ exit	// offset used by C is a short (2 bytes)
+#{if PRIMSZ==1
+c,		[ \ exit	// sdcc/z80 uses an enum which fits in a byte
+#}if
+#{if PRIMSZ==2
+s,		[ \ exit	// gcc/clang uses jump offset (short, 2 bytes)
+#}if
 #}if
 
 32		[ 32 < "foo "
