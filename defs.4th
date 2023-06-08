@@ -1056,7 +1056,12 @@ lit lit lit lit lit lit lit	[ // padding escaped by lit
 #{if big_endian==1
 	call	[	// THREAD type 3 uses call to invoke the cfa
 #}if
+#{if PRIMSZ==1
+	c,	[	\ call		// and then call it
+#}if
+#{if PRIMSZ==2
 	s,	[	\ call		// and then call it
+#}if
 }def
 
 #}if
