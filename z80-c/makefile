@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-all : twoforth
+all : threeforth
 
 oneforth : test.out
 twoforth : test.defs
@@ -17,8 +17,10 @@ test.defs : forth_defs.ihx test.inp test.exp
 	grep 'Stop at 0x000208: (101) Halted' test.log > /dev/null
 	grep 'DE= 0x0000 \[DE\]= c3 195 \.' test.log > /dev/null
 	cmp test.defs test.exp
-test.dict : forth_dict test.inp test.exp
-	cat test.inp | ./forth_dict > test.dict
+test.dict : forth_dict.ihx test.inp test.exp
+	cat cmds.ucsim | ucsim_z80 -I in=test.inp,out=test.dict,if=rom'[0x7fff]' ./forth_dict.ihx > test.log
+	grep 'Stop at 0x000208: (101) Halted' test.log > /dev/null
+	grep 'DE= 0x0000 \[DE\]= c3 195 \.' test.log > /dev/null
 	cmp test.dict test.exp
 test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
@@ -34,7 +36,7 @@ test.exp : ../test.expected ../fpp fpp.config
 forth : forth.ihx
 forth.ihx : forth.c prims.h rom.h
 	sdcc -mz80 forth.c
-forth_dict : forth_dict.c prims_dict.h rom.h defs_dict.h
+forth_dict.ihx : forth_dict.c prims_dict.h rom.h defs_dict.h
 	sdcc -mz80 forth_dict.c
 forth_defs.ihx : forth_defs.c defs_dict.h rom.h
 	sdcc -mz80 forth_defs.c
@@ -63,3 +65,4 @@ clean :
 	rm -f forth.o forth test.out forth.lst rom.h rom.map fpp.config prims.h dict.map test.inp test.exp defs.h defs.map sim forth_dict forth_dict.o defs_dict.h dict.h latest.h prims_dict.h test.dict forth_dict.c test.defs forth_defs forth_defs.o forth_defs.c profile.names enum.h test.in test.log
 	bash -c "rm -f forth.{asm,ihx,lk,lst,map,noi,rel,sym}"
 	bash -c "rm -f forth_defs.{asm,ihx,lk,lst,map,noi,rel,sym}"
+	bash -c "rm -f forth_dict.{asm,ihx,lk,lst,map,noi,rel,sym}"
