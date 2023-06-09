@@ -4,6 +4,7 @@
 #define tos	bc
 #define tosl	c
 #define tosh	b
+#define nos	de
 
 cold:
 	ld sp, #0xffff
