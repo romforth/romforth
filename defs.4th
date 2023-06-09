@@ -819,6 +819,7 @@ def{ c,		[ c
 }def
 
 #{if THREAD==3
+#{if PRIMSZ==2
 
 [ append the little-endian short "word" to the dictionary (with allocation)
 def{ s,		[ c
@@ -836,6 +837,7 @@ def{ s,		[ c
 	c!	[ (p+1:h) \ h
 }def
 
+#}if
 #}if
 
 [ append the "word" at the top of the stack to the dictionary (with allocation)
@@ -1179,10 +1181,12 @@ def{ repl
 	if{		[ addr n lfa	// lfa!=0, so get rid of
 		nip	[ addr lfa	// unneeded elements
 		nip	[ lfa		// in preparation to turn the
-		[ show	// to debug
+[		show	[	// to debug, uncomment "show" in code.prims
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
+[ 1 debug !		[	// to debug, uncomment DEBUG in forth.c
 		cpl_ex	[ ?		// and then compile/exec it
+[ 0 debug !		[	// to debug, uncomment DEBUG in forth.c
 	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
 		drop	[ addr n	// so drop the 0 value
 		atoi	[ 1000		// and turn the string into a number
@@ -1335,10 +1339,18 @@ def{ compile	[	| w ]
 	@	[ w o
 #}if
 #{if THREAD==3
+#{if PRIMSZ==1
+		[ w w		// cfa's are coded as lit CFA call, so this
+	inc	[ w w+1		// is to skip past the lit which is a byte
+	@	[ w cfa		// and from there, get the cfa to get to the
+	c@	[ w o:primitive	// actual "bytecode" (which is a byte)
+#}if
+#{if PRIMSZ==2
 	inc	[ w w+1		// cfa's are coded as lit CFA call, so this
 	inc	[ w w+2		// is to skip past the lit which is a short
 	@	[ w cfa		// and from there, get the cfa to get to the
 	@	[ w o:primitive	// actual "bytecode" (which is a short)
+#}if
 #}if
 	swap	[ o w
 	inc	[ o w+1
@@ -1352,9 +1364,16 @@ def{ compile	[	| w ]
 	inc	[ o w+2		// XXX: any problems with assuming cell=2 here?
 #}if
 #{if THREAD==3
+#{if PRIMSZ==1
+		[ o w+1		// we are already past the lit which is a byte
+	3	[ o w+1 2+1	// then skip past the cfa (int:2 bytes) and
+	+	[ o w+4		// also the call (char:1 byte)
+#}if
+#{if PRIMSZ==2
 	inc	[ o w+2		// skip past the lit which is a short in C and
 	6	[ o w+2 4+2	// then skip past the cfa (int:4 bytes) and
 	+	[ o w+8		// also the call (short:2 bytes)
+#}if
 #}if
 	>r	[ o	| w+d ]
 #{if THREAD==1
@@ -1364,7 +1383,12 @@ def{ compile	[	| w ]
 	,	[	| w+d ] \ o
 #}if
 #{if THREAD==3
+#{if PRIMSZ==1
+	c,	[	| w+d ] \ o
+#}if
+#{if PRIMSZ==2
 	s,	[	| w+d ] \ o
+#}if
 #}if
 }def
 #}if

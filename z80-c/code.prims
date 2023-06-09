@@ -39,14 +39,16 @@ rp@!	: { int temp=tos; tos=(int)r; r=(int *)temp; } ;
 >r	: *r++=(int)tos ; drop ;
 r>	: dup ; tos=*--r ;
 exec	: w=tos ; drop ; goto next
-enter	: w=*ip++ ; *r++=(int)ip ; ip=fp[w] ;
-exit	: ip=(short *)*--r ;
-call	: *r++=(int)ip ; ip=(short *)tos ; drop ;
+enter	: w=*ip++ ; *r++=(int)ip ; ip=fp[w] ; trace(1) ;
+exit	: ip=(short *)*--r ; trace(0) ;
+call	: *r++=(int)ip ; ip=(short *)tos ; drop ; trace(1) ;
 <<	: nip ; bin(<<) ;
 >>	: nip ; bin(>>) ;
 over	: dup ; tos=*(d-2) ;
 0=	: tos=!tos ;
+#show	: showname(tos) ;
 
 var here
+#var debug
 var state
 var latest

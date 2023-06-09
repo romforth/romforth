@@ -6,6 +6,7 @@
  * Please see the LICENSE file for the Affero GPL 3.0 license details
  */
 
+#include <stdio.h>
 #include <stddef.h>
 
 #define USEDEFS 0
@@ -29,10 +30,63 @@ int getchar() {
 	return *sif;
 }
 
-void putchar(unsigned char c) {
+int putchar(int c) {
 	*sif= 'w';
 	*sif= c;
+	return c;
 }
+
+// #define DEBUG
+
+#ifdef DEBUG
+
+int rprint=0;
+int tabs=0;
+
+void showname(char *p) {
+       unsigned char c=*--p;
+       c &=~0x80;
+       p-=c;
+       putchar('"');
+       for (int i=0;i<c;i++) putchar(*p++);
+       putchar('"');
+       putchar('\n');
+}
+
+#define debugstk(t,s,stk,x,rstk) { \
+	if (vars.debug) { \
+		for (int i=0;i<tabs;i++) putchar(' '); \
+		int temp=(s-stk[0])/(sizeof(stk[0])/sizeof(int)); \
+		printf("ip:%p *ip:0x%x/%d ", ip, *ip, *ip); \
+		printf("%d [", temp); \
+		for (int i=0; &stk[temp][i]!=(int)s; i++) { \
+			printf(" 0x%x/%d", stk[temp][i], stk[temp][i]); \
+		} \
+		printf(" tos: 0x%x/%d |", t, t); \
+		printf("] %d\n",temp); \
+	} \
+}
+
+#define trace(n) \
+	if (n) { \
+		putchar('{'); putchar(' '); \
+		char *p=(char *)ip; \
+		p-=sizeof(lfa *); \
+		char c=*--p; \
+		c&=~0x80; \
+		p-=c; \
+		for (int i=0;i<c;i++) putchar(*p++); \
+		putchar('\n'); \
+		tabs++;\
+	} else { \
+		putchar('}'); putchar('\n'); \
+		if (tabs>0) tabs--; \
+	} \
+	// fflush(stdout);
+#else
+#define debugstk(t,s,stk,x,rstk)
+#define trace(n)
+#endif
 
 // when switching stacks, save the current tos location at the 0'th element
 // and after switching to the new stack, switch to the tos using saved value
@@ -56,10 +110,16 @@ struct var {
 	const struct lfa *latest;
 	unsigned char *here;
 	char state;
+#ifdef DEBUG
+	int debug;
+#endif
 } vars = {
 	0,
 	(unsigned char *)mem,
 	1
+#ifdef DEBUG
+	,0
+#endif
 };
 
 char *varalias=(char *)&vars;
@@ -85,6 +145,7 @@ main()
 	for (;;) {
 		w=*ip++;
 next:
+		debugstk(tos, d, datastk, r, returnstk);
 		switch (w) {
 #include "prims.h"
 		default : goto error;
