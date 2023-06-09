@@ -1,0 +1,73 @@
+    z80-c : step 0 : A halting interpreter, exit only
+    z80-c : step 0.1 : A halting interpreter, with bytecodes
+    z80-c : step 0.2 : start with "oneforth"
+    z80-c : step 1 : Implement emit, and fake key for now
+    z80-c : step 1.1 : Implement key
+    z80-c : step 2 : Implement dup and drop
+    z80-c : step 3 : Implement literals
+    z80-c : step 4 : Implement neg'ate
+    z80-c : step 4.1 : Implement unconditional j'umps
+    z80-c : step 4.2 : Implement jump if zero (jz)
+    z80-c : step 4.3 : Verify that jz works for -ve offsets
+    z80-c : step 4.4 : Implement jump if non-zero (jnz)
+    z80-c : step 4.5 : Verify that jnz works for -ve offsets
+    z80-c : step 5 : Implement support for control stuctures
+    z80-c : step 6 : Implement inc'rement and dec'rement
+    z80-c : step 7 : Implement inv'ert
+    z80-c : step 8 : Implement nip and dip
+    z80-c : step 9 : Implement addition/+ and subtraction/-
+    z80-c : step 10.1 : Implement bitwise and(&)
+    z80-c : step 10.2 : Implement bitwise or(|)
+    z80-c : step 10.3 : Implement bitwise xor(^)
+    z80-c : step 11 : Implement 2drop
+    z80-c : step 12 : Implement swap (and t_n)
+    z80-c : step 13 : Implement fetch(@)
+    z80-c : step 14 : Implement store(!)
+    z80-c : step 15 : Implement c@ and c!
+    z80-c : step 16 : Implement pick
+    z80-c : step 17 : Implement stick
+    z80-c : step 18 : Implement sp@!
+    z80-c : step 19 : Implement rp@!
+    z80-c : step 20 : Implement >r and r>
+    z80-c : step 21 : Implement exec
+    z80-c : step 22 : Implement enter and exit
+    z80-c : step 23 : Implement call
+    z80-c : step 24 : Implement p@ and p! (just fake them, for now)
+    z80-c : step 25 : Implement << and >>
+    z80-c : step 26 : Verify "until" loops
+    z80-c : step 27 : Verify "while" loops
+    z80-c : step 28 : Implement "over"
+    z80-c : step 29 : Verify "third" works
+    z80-c : step 30 : Verify "fourth" works
+    z80-c : step 31 : Support "for" loops
+    z80-c : step 32 : Verify that "i" works inside a "for" loop
+    z80-c : step 33 : Verify signum(~) works
+    z80-c : step 34 : Verify ">=" works
+    z80-c : step 35 : Verify "<=" works
+    z80-c : step 36 : Implement 0=
+    z80-c : step 37 : Verify "<" works
+    z80-c : step 38 : Verify ">" works
+    z80-c : step 39 : Verify token parsing works
+    z80-c : step 40 : Verify number parsing works
+    z80-c : step 41 : Implement a dictionary
+    z80-c : step 42 : sanity check dictionary's first entry
+    z80-c : step 43 : Verify that dictionary lookup works
+    z80-c : step 44 : Verify variables work from the repl
+    z80-c : step 45 : Verify that primitives can be exec'ed from the cfa
+    z80-c : step 46 : Verify definitions can be run from the repl
+    z80-c : step 47 : Verify alloc/alloca returns aligned addresses
+    z80-c : step 48 : Verify new dictionary headers can be added
+    z80-c : step 49 : Verify that immediate words can be added (and found)
+    z80-c : step 50 : Verify that run time definitions can be exec'ed
+    z80-c : step 51 : Verify ':' and ';' work as expected
+    z80-c : step 52 : Verify that definitions using literals work in the repl
+    z80-c : step 53 : Verify that words can be defined and run from the repl
+    z80-c : step 54 : Verify that definitions can use primitives and variables
+    z80-c : step 55 : Verify that the outer interpreter works
+    z80-c : step 56 : Verify that comments work in the repl
+    z80-c : step 57 : Enable conditionals at the repl
+    z80-c : step 58 : Conditionals : enable }else{
+    z80-c : step 59 : Enable loop{ ... }while{ ... }loop in the repl
+    z80-c : step 60 : Enable loop{ ... }until{ ... }loop in the repl
+    z80-c : step 61 : Enable for{ ... }for loop support in the repl
+    z80-c : step 62 : Implement '.' to conclude the x86 assembly syscall port

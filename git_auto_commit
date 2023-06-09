@@ -9,19 +9,26 @@ my ($port)=@ARGV;
 usage() unless $port;
 
 my $max=-1;
-@ARGV="git log --reverse | grep '$port : step ' | ";
+@ARGV="git log --oneline --grep='$port : step ' | ";
 while (<>) {
 	if (/step\s+(\S+)\s*:\s*(.*)/) {
 		$max=$1;
+		last;
 	}
 }
+die "no such port" unless ($max>=0);
 print "last commit was : $max\n";
 my ($fh);
-@ARGV="git log --reverse | grep 'sparc \: step ' | ";
 
 use Cwd;
 my $dir = cwd;
 chdir $port unless ($dir=~/\/$port$/);
+$dir = cwd;
+if (-f "$dir/../pseudo/steps") {
+	@ARGV="$dir/../pseudo/steps";
+} else {
+	@ARGV="git log --reverse --oneline --grep='z80-c \: step ' | ";
+}
 
 while (<>) {
 	if (/step\s+(\S+)\s*:\s*(.*)/) {

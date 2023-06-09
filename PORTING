@@ -22,10 +22,40 @@ Notes for the table above:
 
 Porting Guide
 =============
-At a very high level, the steps required for porting are to look at one of the
-existing ports (say, the SPARC or Z80 port) and follow each step until all
-steps pass.
+This is just a high level summary of the more detailed steps outlined in
+pseudo/code. The very first "preamble" step is to pick a porting target and
+figure out the build/emulate/test toolchain.
+
+If you prefer to look at an existing implementation as a guide, you could pick
+any one of the completed ports and follow each of those steps until all steps
+are complete.
+
+Instead, if you prefer to get a more abstract view, you can look at the steps
+outlined in pseudo/code (NOTE: the steps in pseudo/code are independent of the
+"steps" used in the real ports, I need to sync them up RSN).
 
 Currently there are a total of about 73 "bite size" steps. The first few steps
 can be summarized as getting the equivalent of the following code in C running
 on your target system: int main() { putchar( getchar() ); exit(0); }
+
+These represent the external/environmental dependencies of your implementation.
+
+From an operational point of view, after you have setup the directory for
+a new port, you just need to make the appropriate changes at each step and
+then keep running ../git_auto_commit `basename $PWD` inside that directory
+which will take care of creating a git commit with the appropriate subject
+line for each step.
+
+Since the makefile is very target dependent, you could make a copy of any one
+of the existing ports and modify as appropriate.
+
+At step 22, you will need to switch from oneforth to twoforth in the makefile
+At step 56, you will need to switch from twoforth to threeforth in the makefile
+After step 62, you can switch from threeforth to fourforth in the makefile.
+See the corresponding changes that were made in the commit history of the z80-c
+port for details (ignore the earlier ports where these changes were made kinda
+helter-skelter)
+
+To make porting easier, the machine independent code in Forth uses a bunch of
+configuration settings which are stored in the fpp.config.* files. These need
+to be modified as appropriate.
