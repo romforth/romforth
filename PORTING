@@ -13,6 +13,7 @@ The following ports are complete:
 | x86-sys   |  64  | little | 1 | Linux/sys | GNU as     | Host/Native   |
 | m68k      |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-m68k     |
 | sparc     |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-sparc    |
+| z80-c     |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
 '-----------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
@@ -22,7 +23,8 @@ Notes for the table above:
 Porting Guide
 =============
 At a very high level, the steps required for porting are to look at one of the
-existing ports (say, the SPARC port) and follow each step until all steps pass.
+existing ports (say, the SPARC or Z80 port) and follow each step until all
+steps pass.
 
 Currently there are a total of about 73 "bite size" steps. The first few steps
 can be summarized as getting the equivalent of the following code in C running
