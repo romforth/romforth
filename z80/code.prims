@@ -20,3 +20,5 @@ inc	: inc tos ;
 dec	: dec tos ;
 nip	: pop nos ;
 dip	: push nos ;
+-	: neg
++	: nip ; ld a, nosl ; add a, tosl ; ld tosl, a ; ld a, nosh ; adc a, tosh ; ld tosh, a ;

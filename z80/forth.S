@@ -5,6 +5,8 @@
 #define tosl	c
 #define tosh	b
 #define nos	de
+#define nosl	e
+#define nosh	d
 
 cold:
 	ld sp, #0xffff
