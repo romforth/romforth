@@ -16,3 +16,5 @@ neg	: inv ; inc tos ;
 jnz	: ld a, tosl ; or a, tosh ; pop tos ; jr nz, j ; inc ip ;
 jz	: ld a, tosl ; or a, tosh ; pop tos ; jr z, j ; inc ip ;
 j	: ld a, (ip) ; inc ip ; ld e, a ; rlca ; sbc a, a ; ld d, a ; add ip, de ;
+inc	: inc tos ;
+dec	: dec tos ;
