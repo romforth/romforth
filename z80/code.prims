@@ -13,4 +13,5 @@ emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ; drop ;
 lit	: dup ; ld a, (ip) ; inc ip ; ld tosl, a ; ld a, (ip) ; inc ip ; ld tosh, a ;
 inv	: ld a, tosh ; cpl ; ld tosh, a ; ld a, tosl ; cpl ; ld tosl, a ;
 neg	: inv ; inc tos ;
+jz	: ld a, tosl ; or a, tosh ; pop tos ; jr z, j ; inc ip ;
 j	: ld a, (ip) ; inc ip ; ld e, a ; rlca ; sbc a, a ; ld d, a ; add ip, de ;
