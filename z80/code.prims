@@ -23,3 +23,4 @@ dip	: push nos ;
 -	: neg
 +	: nip ; ld a, nosl ; add a, tosl ; ld tosl, a ; ld a, nosh ; adc a, tosh ; ld tosh, a ;
 &	: nip ; ld a, nosl ; and a, tosl ; ld tosl, a ; ld a, nosh ; and a, tosh ; ld tosh, a ;
+|	: nip ; ld a, nosl ; or a, tosl ; ld tosl, a ; ld a, nosh ; or a, tosh ; ld tosh, a ;
