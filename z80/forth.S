@@ -35,3 +35,5 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+mem:	.ds 2048

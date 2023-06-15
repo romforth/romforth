@@ -9,22 +9,25 @@ bye	: halt
 dup	: push tos ;
 2drop	: pop tos
 drop	: pop tos ;
-key	: dup ; ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld w, #cold ;
-emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ; drop ;
-lit	: dup ; ld a, (ip) ; inc ip ; ld tosl, a ; ld a, (ip) ; inc ip ; ld tosh, a ;
+key	: dup ; ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld w, #cold ; jp next
+emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ; jp drop
+lit	: dup ; ld a, (ip) ; inc ip ; ld tosl, a ; ld a, (ip) ; inc ip ; ld tosh, a ; jp next
 inv	: ld a, tosh ; cpl ; ld tosh, a ; ld a, tosl ; cpl ; ld tosl, a ;
 neg	: inv ; inc tos ;
-jnz	: ld a, tosl ; or a, tosh ; pop tos ; jr nz, j ; inc ip ;
-jz	: ld a, tosl ; or a, tosh ; pop tos ; jr z, j ; inc ip ;
-j	: ld a, (ip) ; inc ip ; ld e, a ; rlca ; sbc a, a ; ld d, a ; add ip, de ;
-inc	: inc tos ;
-dec	: dec tos ;
+jnz	: ld a, tosl ; or a, tosh ; pop tos ; jr nz, j ; inc ip ; jp next
+jz	: ld a, tosl ; or a, tosh ; pop tos ; jr z, j ; inc ip ; jp next
+j	: ld a, (ip) ; inc ip ; ld e, a ; rlca ; sbc a, a ; ld d, a ; add ip, de ; jp next
+inc	: inc tos ; jp next
+dec	: dec tos ; jp next
 nip	: pop nos ;
 dip	: push nos ;
 -	: neg
-+	: nip ; ld a, nosl ; add a, tosl ; ld tosl, a ; ld a, nosh ; adc a, tosh ; ld tosh, a ;
-&	: nip ; ld a, nosl ; and a, tosl ; ld tosl, a ; ld a, nosh ; and a, tosh ; ld tosh, a ;
-|	: nip ; ld a, nosl ; or a, tosl ; ld tosl, a ; ld a, nosh ; or a, tosh ; ld tosh, a ;
-^	: nip ; ld a, nosl ; xor a, tosl ; ld tosl, a ; ld a, nosh ; xor a, tosh ; ld tosh, a ;
-swap	: nip ; dup ; ld tosl, nosl ; ld tosh, nosh ;
-@	: dup ; pop rp ; ld tosl, (rp) ; inc rp ; ld tosh, (rp) ;
++	: nip ; ld a, nosl ; add a, tosl ; ld tosl, a ; ld a, nosh ; adc a, tosh ; ld tosh, a ; jp next
+&	: nip ; ld a, nosl ; and a, tosl ; ld tosl, a ; ld a, nosh ; and a, tosh ; ld tosh, a ; jp next
+|	: nip ; ld a, nosl ; or a, tosl ; ld tosl, a ; ld a, nosh ; or a, tosh ; ld tosh, a ; jp next
+^	: nip ; ld a, nosl ; xor a, tosl ; ld tosl, a ; ld a, nosh ; xor a, tosh ; ld tosh, a ; jp next
+swap	: nip ; dup ; ld tosl, nosl ; ld tosh, nosh ; jp next
+@	: dup ; pop rp ; ld tosl, (rp) ; inc rp ; ld tosh, (rp) ; jp next
+!	: nip ; dup ; pop rp ; ld (rp), nosl ; inc rp ; ld (rp), nosh ; drop ; jp next
+
+var here	.dw mem
