@@ -7,6 +7,7 @@
 #define nos	de
 #define nosl	e
 #define nosh	d
+#define rp	iy
 
 cold:
 	ld sp, #0xffff

@@ -27,3 +27,4 @@ dip	: push nos ;
 |	: nip ; ld a, nosl ; or a, tosl ; ld tosl, a ; ld a, nosh ; or a, tosh ; ld tosh, a ;
 ^	: nip ; ld a, nosl ; xor a, tosl ; ld tosl, a ; ld a, nosh ; xor a, tosh ; ld tosh, a ;
 swap	: nip ; dup ; ld tosl, nosl ; ld tosh, nosh ;
+@	: dup ; pop rp ; ld tosl, (rp) ; inc rp ; ld tosh, (rp) ;
