@@ -12,7 +12,7 @@ dup	: push tos ;
 drop	: pop tos ;
 key	: dup ; ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld w, #cold ;
 emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ; jp drop
-lit	: dup ; ld a, (ip) ; inc ip ; ld tosl, a ; ld a, (ip) ; inc ip ; ld tosh, a ;
+lit	: dup ; ld tosl, (ip) ; inc ip ; ld tosh, (ip) ; inc ip ;
 inv	: ld a, tosh ; cpl ; ld tosh, a ; ld a, tosl ; cpl ; ld tosl, a ;
 neg	: inv ; inc tos ;
 jnz	: ld a, tosl ; or a, tosh ; pop tos ; jr nz, j ; inc ip ;
