@@ -20,6 +20,27 @@ cold:
 #include "prims.s"
 #endif
 
+realenter:			; tos:A   ip:X   *ip=B.C [
+	push tos		; tos:A   ip:X   *ip=B.C [ A
+	ld tosl, (ip)		; tos:B   ip:X   *ip=B.C [ A
+	inc ip			; tos:B   ip:X+1 *ip=C   [ A
+	ld tosh, (ip)		; tos:B.C ip:X+1 *ip=C   [ A
+	inc ip			; tos:B.C ip:X+2 *ip=?   [ A
+	push tos		; tos:B.C ip:X+2 *ip=?   [ A B.C
+	ex (sp), ip		; tos:B.C ip:B.C *ip=??  [ A X+2
+	pop tos			; tos:X+2 ip:B.C *ip=??  [ A
+	jr tor			; tos:A   ip:B.C *ip=??  [   | X+2 ]
+
+realexit:			; tos:A   ip:?           [   | X+2 ]
+	push tos		; tos:A   ip:?           [ A | X+2 ]
+	dec rp			; tos:A   ip:?           [ A | X+2 ]
+	ld tosh, (rp)		; tos:?   ip:?           [ A | X+2 ]
+	dec rp			; tos:?   ip:?           [ A |     ]
+	ld tosl, (rp)		; tos:X+2 ip:?           [ A |     ]
+	push tos		; tos:X+2 ip:?           [ A X+2
+	pop ip			; tos:X+2 ip:X+2         [ A
+	pop tos			; tos:A   ip:X+2         [
+	jp inner
 tor:
 	ld (rp), tosl
 	inc rp

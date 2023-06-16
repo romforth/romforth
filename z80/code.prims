@@ -39,6 +39,8 @@ rp@!	: jp rpfs
 >r	: jp tor
 r>	: jp fromr
 exec	: ld wl, tosl ; drop ; jp (w)
+enter	: jp realenter
+exit	: jp realexit
 
 var state	.db 1
 var here	.dw mem
