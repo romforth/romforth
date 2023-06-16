@@ -36,6 +36,7 @@ stick	: dup ; pop rp ; add rp, rp ; add rp, sp ; jp mstore
 mstore	: ld (rp), nosl ; inc rp ; ld (rp), nosh ; drop ; jp inner
 c@	: dup ; pop rp ; ld tosl, (rp) ; xor a, a ; ld tosh, a ; jp inner
 c!	: nip ; dup ; pop rp ; ld (rp), nosl ; jp inner
+sp@!	: ld rp, #0 ; add rp, sp ; push rp ; dup ; pop rp ; drop ; ld sp, rp ; jp inner
 
 var state	.db 1
 var here	.dw mem
