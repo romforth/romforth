@@ -12,12 +12,12 @@ dup	: push tos ;
 drop	: pop tos ;
 key	: dup ; ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld w, #cold ;
 emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ; jp drop
-lit	: dup ; ld tosl, (ip) ; inc ip ; ld tosh, (ip) ; inc ip ;
+lit	: jp reallit
 inv	: ld a, tosh ; cpl ; ld tosh, a ; ld a, tosl ; cpl ; ld tosl, a ;
 neg	: inv ; inc tos ;
-jnz	: ld a, tosl ; or a, tosh ; pop tos ; jr nz, j ; inc ip ;
-jz	: ld a, tosl ; or a, tosh ; pop tos ; jr z, j ; inc ip ;
-j	: ld a, (ip) ; inc ip ; ld e, a ; rlca ; sbc a, a ; ld d, a ; add ip, de ;
+jnz	: ld a, tosl ; or a, tosh ; pop tos ; jp nz, realj ; inc ip ;
+jz	: ld a, tosl ; or a, tosh ; pop tos ; jp z, realj ; inc ip ;
+j	: jp realj
 inc	: inc tos ;
 dec	: dec tos ;
 nip	: pop nos ;

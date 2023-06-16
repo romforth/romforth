@@ -29,6 +29,22 @@ spfs:
 	pop tos
 	ld sp, rp
 	jp inner
+reallit:
+	push tos
+	ld tosl, (ip)
+	inc ip
+	ld tosh, (ip)
+	inc ip
+	jp inner
+realj:
+	ld a, (ip)
+	inc ip
+	ld e, a
+	rlca
+	sbc a, a
+	ld d, a
+	add ip, de
+	jp inner
 rom:
 
 #include "rom.s"
