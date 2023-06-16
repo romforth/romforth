@@ -28,7 +28,9 @@ dip	: push nos ;
 |	: nip ; ld a, nosl ; or a, tosl ; ld tosl, a ; ld a, nosh ; or a, tosh ; ld tosh, a ; jp inner
 ^	: nip ; ld a, nosl ; xor a, tosl ; ld tosl, a ; ld a, nosh ; xor a, tosh ; ld tosh, a ; jp inner
 swap	: nip ; dup ; ld tosl, nosl ; ld tosh, nosh ; jp inner
-@	: dup ; pop rp ; ld tosl, (rp) ; inc rp ; ld tosh, (rp) ; jp inner
+pick	: dup ; pop rp ; add rp, rp ; add rp, sp ; jp mfetch
+@	: dup ; pop rp
+mfetch	: ld tosl, (rp) ; inc rp ; ld tosh, (rp) ; jp inner
 !	: nip ; dup ; pop rp ; ld (rp), nosl ; inc rp ; ld (rp), nosh ; drop ; jp inner
 c@	: dup ; pop rp ; ld tosl, (rp) ; xor a, a ; ld tosh, a ; jp inner
 c!	: nip ; dup ; pop rp ; ld (rp), nosl ; jp inner
