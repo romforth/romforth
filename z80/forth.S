@@ -20,6 +20,17 @@ cold:
 #include "prims.s"
 #endif
 
+realcall:			; tos:A   ip:X  [ B
+	push tos		; tos:A   ip:X  [ B A
+	push ip			; tos:A   ip:X  [ B A X
+	pop tos			; tos:X   ip:X  [ B A
+	ld (rp), tosl		; tos:X   ip:X  [ B A | X.l ]
+	inc rp
+	ld (rp), tosh		; tos:X   ip:X  [ B A | X ]
+	inc rp
+	pop ip			; tos:X   ip:A  [ B   | X ]
+	pop tos			; tos:B	  ip:A  [     | X ]
+	jp inner
 realenter:			; tos:A   ip:X   *ip=B.C [
 	push tos		; tos:A   ip:X   *ip=B.C [ A
 	ld tosl, (ip)		; tos:B   ip:X   *ip=B.C [ A

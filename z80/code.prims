@@ -41,6 +41,7 @@ r>	: jp fromr
 exec	: ld wl, tosl ; drop ; jp (w)
 enter	: jp realenter
 exit	: jp realexit
+call	: jp realcall
 
 var state	.db 1
 var here	.dw mem
