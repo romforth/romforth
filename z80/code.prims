@@ -31,7 +31,9 @@ swap	: nip ; dup ; ld tosl, nosl ; ld tosh, nosh ; jp inner
 pick	: dup ; pop rp ; add rp, rp ; add rp, sp ; jp mfetch
 @	: dup ; pop rp
 mfetch	: ld tosl, (rp) ; inc rp ; ld tosh, (rp) ; jp inner
-!	: nip ; dup ; pop rp ; ld (rp), nosl ; inc rp ; ld (rp), nosh ; drop ; jp inner
+stick	: dup ; pop rp ; add rp, rp ; add rp, sp ; jp mstore
+!	: nip ; dup ; pop rp
+mstore	: ld (rp), nosl ; inc rp ; ld (rp), nosh ; drop ; jp inner
 c@	: dup ; pop rp ; ld tosl, (rp) ; xor a, a ; ld tosh, a ; jp inner
 c!	: nip ; dup ; pop rp ; ld (rp), nosl ; jp inner
 
