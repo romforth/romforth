@@ -20,7 +20,38 @@ cold:
 #include "prims.s"
 #endif
 
+cfetch:
+	ld (rpsave), rp
+	push tos
+	pop rp
+	ld tosl, (rp)
+	xor a, a
+	ld tosh, a
+	ld rp, (rpsave)
+	jp inner
+cstore:
+	ld (rpsave), rp
+	pop nos
+	push tos
+	pop rp
+	ld (rp), nosl
+	ld rp, (rpsave)
+	jp inner
+mfetch:
+	ld tosl, (rp)
+	inc rp
+	ld tosh, (rp)
+	ld rp, (rpsave)
+	jp inner
+mstore:
+	ld (rp), nosl
+	inc rp
+	ld (rp), nosh
+	pop tos
+	ld rp, (rpsave)
+	jp inner
 spfs:
+	ld (rpsave), rp
 	ld rp, #0
 	add rp, sp
 	push rp
@@ -28,6 +59,7 @@ spfs:
 	pop rp
 	pop tos
 	ld sp, rp
+	ld rp, (rpsave)
 	jp inner
 reallit:
 	push tos
@@ -61,4 +93,5 @@ rom:
 #endif
 #endif
 
+rpsave: .ds 2
 mem:	.ds 2048
