@@ -20,6 +20,15 @@ cold:
 #include "prims.s"
 #endif
 
+spfs:
+	ld rp, #0
+	add rp, sp
+	push rp
+	push tos
+	pop rp
+	pop tos
+	ld sp, rp
+	jp inner
 rom:
 
 #include "rom.s"

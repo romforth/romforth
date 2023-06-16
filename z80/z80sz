@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+# usage: ./z80sz forth.lst | sort -nk2
+
+use strict;
+
+my $sym=[];
+while (<>) {
+	if (/^\s+000([0-9A-F]+)\s+\d+\s+(\S+):$/) {
+		#print "$1 $2\n";
+		push @$sym, {name=>$2, start=>oct("0x$1")};
+	}
+	last if (/\.db/);
+}
+my ($sp,$sc,$len);
+$sp=$sym->[0];
+for my $i (1..@$sym-1) {
+	$sc=$sym->[$i];
+	print $sp->{name}, " ",  $sc->{start}-$sp->{start}, "\n";
+	$sp=$sc;
+}
