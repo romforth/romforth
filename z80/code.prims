@@ -38,6 +38,7 @@ sp@!	: jp spfs
 rp@!	: jp rpfs
 >r	: jp tor
 r>	: jp fromr
+exec	: ld wl, tosl ; drop ; jp (w)
 
 var state	.db 1
 var here	.dw mem
