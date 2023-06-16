@@ -20,6 +20,20 @@ cold:
 #include "prims.s"
 #endif
 
+tor:
+	ld (rp), tosl
+	inc rp
+	ld (rp), tosh
+	inc rp
+	pop tos
+	jp inner
+fromr:
+	push tos
+	dec rp
+	ld tosh, (rp)
+	dec rp
+	ld tosl, (rp)
+	jp inner
 rpfs:
 	push tos
 	ex (sp), rp

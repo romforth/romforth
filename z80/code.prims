@@ -36,6 +36,8 @@ c@	: jp cfetch
 c!	: jp cstore
 sp@!	: jp spfs
 rp@!	: jp rpfs
+>r	: jp tor
+r>	: jp fromr
 
 var state	.db 1
 var here	.dw mem
