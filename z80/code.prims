@@ -35,6 +35,7 @@ stick	: ld (rpsave), rp ; dup ; pop rp ; add rp, rp ; add rp, sp ; jp mstore
 c@	: jp cfetch
 c!	: jp cstore
 sp@!	: jp spfs
+rp@!	: jp rpfs
 
 var state	.db 1
 var here	.dw mem

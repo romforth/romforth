@@ -20,6 +20,11 @@ cold:
 #include "prims.s"
 #endif
 
+rpfs:
+	push tos
+	ex (sp), rp
+	pop tos
+	jp inner
 cfetch:
 	ld (rpsave), rp
 	push tos
