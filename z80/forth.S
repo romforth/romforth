@@ -104,23 +104,22 @@ rpfs:
 	ex (sp), rp
 	pop tos
 	jp inner
-cfetch:
-	ld (rpsave), rp
-	push tos
-	pop rp
-	ld tosl, (rp)
-	xor a, a
-	ld tosh, a
-	ld rp, (rpsave)
-	jp inner
-cstore:
-	ld (rpsave), rp
-	pop nos
-	push tos
-	pop rp
-	ld (rp), nosl
-	ld rp, (rpsave)
-	jp inner
+cfetch:                         ; [     // tos:a rp:x a:v
+        push tos                ; [ a   // tos:a rp:x
+        ex (sp), rp             ; [ x   // tos:a rp:a
+        ld tosl, (rp)           ; [ x   // tos:?.v rp:a
+        xor a, a                ; [ x   // tos:?.v rp:a
+        ld tosh, a              ; [ x   // tos:v rp:a
+        pop rp                  ; [     // tos:v rp:x
+        jp inner
+cstore:                         ; [ b v // tos:a rp:x a:?
+        pop nos                 ; [ b   // tos:a rp:x a:? nos:v
+        push tos                ; [ b a // tos:a rp:x a:? nos:v
+        ex (sp), rp             ; [ b x // tos:a rp:a a:? nos:v
+        ld (rp), nosl           ; [ b x // tos:a rp:a a:v nos:v
+        pop rp                  ; [ b   // tos:a rp:x
+        pop tos                 ; [     // tos:b
+        jp inner
 mfetch:
 	ld tosl, (rp)
 	inc rp
