@@ -10,7 +10,7 @@ bye	: halt
 dup	: push tos ;
 2drop	: pop tos
 drop	: pop tos ;
-key	: dup ; ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld w, #cold ;
+key	: dup ; ld w, #0x7fff ; ld (w), #'r' ; ld tosl, (w) ; ld tosh, #0 ; ld w, #cold ;
 emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tosl ; ld w, #cold ; jp drop
 lit	: jp reallit
 inv	: ld a, tosh ; cpl ; ld tosh, a ; ld a, tosl ; cpl ; ld tosl, a ;

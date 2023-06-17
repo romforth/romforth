@@ -494,6 +494,8 @@ loop{		[
 	&	[ ready&(1<<$BIT)
 }until{		[ ready&(1<<$BIT)==0
 }loop		[ ready&(1<<$BIT)!=0
+0xff00		[ 0xff00
+drop		[		// verify that key zeroes out high byte
 key		[ 'x'
 'x'		[ 'x' 'x'
 -		[ 0
