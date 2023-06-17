@@ -20,6 +20,13 @@ cold:
 #include "prims.s"
 #endif
 
+realover:
+	pop nos
+	push nos
+	push tos
+	ld tosl, nosl
+	ld tosh, nosh
+	jp inner
 shiftleft:			; a:?   tos:n nos:?	[ m // want: m<<n
 	pop nos			; a:?   tos:n nos:m	[
 	ld a, tosl		; a:n   tos:n nos:m	[

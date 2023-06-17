@@ -44,6 +44,7 @@ exit	: jp realexit
 call	: jp realcall
 <<	: jp shiftleft
 >>	: jp shiftright
+over	: jp realover
 
 var state	.db 1
 var here	.dw mem
