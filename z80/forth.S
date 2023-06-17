@@ -20,6 +20,32 @@ cold:
 #include "prims.s"
 #endif
 
+shiftleft:			; a:?   tos:n nos:?	[ m // want: m<<n
+	pop nos			; a:?   tos:n nos:m	[
+	ld a, tosl		; a:n   tos:n nos:m	[
+	or a, a			; a:n   tos:n nos:m	[
+	jr z, doneleft		; while{ (n--!=0)
+moreleft:
+	sla nosl		; a:n   tos:n nos:m<<1	[
+	dec a			; a:n-1 tos:n nos:m<<1	[
+	jr nz, moreleft		; a:0   tos:n nos:m<<n	[
+doneleft:			; }while
+	push nos		; a:0   tos:n nos:m<<n	[ m<<n
+	pop tos			; a:0   tos:m<<n	[
+	jp inner
+shiftright:			; a:?   tos:n   nos:?	[ m // want: [ m>>n
+	pop nos			; a:?   tos:n nos:m	[
+	ld a, tosl		; a:n   tos:n nos:m	[
+	or a, a			; a:n   tos:n nos:m	[
+	jr z, doneright		; while{ (n--!=0)
+moreright:
+	srl nosl		; a:n   tos:n nos:m>>1	[
+	dec a			; a:n-1 tos:n nos:m>>1	[
+	jr nz, moreright	; a:0   tos:n nos:m>>n	[
+doneright:			; }while
+	push nos		; a:0   tos:n nos:m>>n	[ m>>n
+	pop tos			; a:0   tos:m>>n
+	jp inner
 realcall:			; tos:A   ip:X  [ B
 	push tos		; tos:A   ip:X  [ B A
 	push ip			; tos:A   ip:X  [ B A X
