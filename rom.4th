@@ -253,14 +253,20 @@ if{		[	// not taken
 
 here		[ here (here:h)
 @		[ h
-1234		[ h 1234
-here		[ h 1234 here
-!		[ h (here:1234)
-here		[ h here
-@		[ h 1234
-1234		[ h 1234 1234
+4567		[ h 4567
+1234		[ h 4567 1234
+here		[ h 4567 1234 here
+!		[ h 4567 (here:1234)
+here		[ h 4567 here
+@		[ h 4567 1234
+1234		[ h 4567 1234 1234
+-		[ h 4567 0
+if{		[ h 4567	// not taken
+	#assert
+}if		[ h 4567
+4567		[ h 4567 4567
 -		[ h 0
-if{		[ h	// not taken
+if{		[ h		// not taken
 	#assert
 }if		[ h
 here		[ h here
@@ -279,12 +285,18 @@ if{		[	// not taken
 
 state		[ state (state:s)
 c@		[ s
-123		[ s 123
-state		[ s 123 state
-c!		[ s (state:123)
-state		[ s state
-c@		[ s 123
-123		[ s 123 123
+456		[ s 456
+123		[ s 456 123
+state		[ s 456 123 state
+c!		[ s 456 (state:123)
+state		[ s 456 state
+c@		[ s 456 123
+123		[ s 456 123 123
+-		[ s 456 0
+if{		[ s 456	// not taken
+	#assert
+}if		[ s 456
+456		[ s 456 456
 -		[ s 0
 if{		[ s	// not taken
 	#assert
