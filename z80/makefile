@@ -7,12 +7,12 @@
 AS=sdasz80
 ASFLAGS=-l
 LD=sdldz80
-all : twoforth
+all : threeforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
 fourforth : test.dict
-test.dict : forth_dict test.inp test.exp
+test.dict : forth_dict.ihx test.inp test.exp
 	cp test.inp test.in
 	cat cmds.ucsim | ucsim_z80 -I in=test.in,out=test.dict,if=rom'[0x7fff]' forth_dict > test.log
 	grep 'Stop at 0x000013: (101) Halted' test.log > /dev/null
@@ -76,4 +76,4 @@ fpp.config : stepfile fpp.config.z80
 rom.s : ../rom.4th ../fpp fpp.config prims.s genrom defs.s
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
 clean :
-	rm -f forth.ihx dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.rel forth_defs.S forth_defs.rel forth_defs.ihx forth_defs.lst defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.rel forth_dict.ihx test.dict forth.s forth_defs.s forth_dict.s test.in test.log forth.lst
+	rm -f forth.ihx dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.rel forth_defs.S forth_defs.rel forth_defs.ihx forth_defs.lst defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.rel forth_dict.ihx forth_dict.lst test.dict forth.s forth_defs.s forth_dict.s test.in test.log forth.lst

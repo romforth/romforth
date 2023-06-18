@@ -206,7 +206,7 @@ sub def {
 		print $mh "def $w $l\n"; # create mapping in "dictionary"
 		if ($gendict) {
 			my $len=length($w);
-			print "\t.align 1\n";
+			# print "\t.align 1\n";
 			if ($len%2==0) {
 				print "$l","_pad:\t.db 0\n";
 			}

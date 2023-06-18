@@ -50,7 +50,7 @@ Since the makefile is very target dependent, you could make a copy of any one
 of the existing ports and modify as appropriate.
 
 At step 22, you will need to switch from oneforth to twoforth in the makefile
-At step 56, you will need to switch from twoforth to threeforth in the makefile
+At step 41, you will need to switch from twoforth to threeforth in the makefile
 After step 62, you can switch from threeforth to fourforth in the makefile.
 See the corresponding changes that were made in the commit history of the z80-c
 port for details (ignore the earlier ports where these changes were made kinda

@@ -47,4 +47,7 @@ call	: jp realcall
 over	: jp realover
 
 var state	.db 1
+#{if step>=41
+var latest	#include "latest.s"
+#}if
 var here	.dw mem

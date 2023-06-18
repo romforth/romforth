@@ -24,21 +24,21 @@ my $prev="0";
 sub genheader {
 	my ($f,$l,$flag)=@_;
 	my $len=length($f);
-	print "\t.align 1\n";
+	# print "\t.align 1\n";
 	if ($len%2==0) {
-		print "$l","_pad:\t.byte 0\n";
+		print "$l","_pad:\t.db 0\n";
 	}
 	print qq{\t.ascii "$f"\n};
-	print "$l","_nfa:\t.byte $len\n";
-	print "$l","_lfa:\t.long $prev\n";
+	print "$l","_nfa:\t.db $len\n";
+	print "$l","_lfa:\t.dw $prev\n";
 	print "$l","_cfa:\n";
 	if ($flag) {
-		print "\t.byte $l-next\n";
-		print "\t.byte exit-next\n";
+		print "\t.db $l-next\n";
+		print "\t.db exit-next\n";
 	} else {
-		print "\t.byte lit-next\n";
-		print "\t.long $l\n";
-		print "\t.byte exit-next\n";
+		print "\t.db lit-next\n";
+		print "\t.dw $l\n";
+		print "\t.db exit-next\n";
 	}
 	$prev="$l"."_lfa";
 }
