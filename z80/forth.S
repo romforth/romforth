@@ -27,30 +27,31 @@ realover:
 	ld tosl, nosl
 	ld tosh, nosh
 	jp inner
-shiftleft:			; a:?   tos:n nos:?	[ m // want: m<<n
-	pop nos			; a:?   tos:n nos:m	[
-	ld a, tosl		; a:n   tos:n nos:m	[
-	or a, a			; a:n   tos:n nos:m	[
-	jr z, doneleft		; while{ (n--!=0)
-moreleft:
-	sla nosl		; a:n   tos:n nos:m<<1	[
-	dec a			; a:n-1 tos:n nos:m<<1	[
-	jr nz, moreleft		; a:0   tos:n nos:m<<n	[
-doneleft:			; }while
-	push nos		; a:0   tos:n nos:m<<n	[ m<<n
+shiftleft:			; a:?   tos:n rp:x	[ m // want: [ m<<n
+	ld a, tosl		; a:n   tos:n rp:x	[ m
+	or a, a			; a:n   tos:n rp:x	[ m
+	jr z, doneleft		; if (n!=0) {		[ m // n != 0
+	ex (sp), rp		; a:n   tos:n rp:m	[ x
+moreleft:			; do {			[ x // n >= 0
+	add rp, rp		; a:n   tos:n rp:m<<1	[ x
+	dec a			; a:n-1 tos:n rp:m<<1	[ x
+	jr nz, moreleft		; } while (--n!=0)	[ x
+	ex (sp), rp		; a:0   tos:n rp:x	[ m<<n
+doneleft:			; }if			[ x // n == 0
 	pop tos			; a:0   tos:m<<n	[
 	jp inner
-shiftright:			; a:?   tos:n   nos:?	[ m // want: [ m>>n
-	pop nos			; a:?   tos:n nos:m	[
-	ld a, tosl		; a:n   tos:n nos:m	[
-	or a, a			; a:n   tos:n nos:m	[
-	jr z, doneright		; while{ (n--!=0)
-moreright:
-	srl nosl		; a:n   tos:n nos:m>>1	[
+shiftright:			; a:?   tos:n nos:?	[ m // want: [ m>>n
+	ld a, tosl		; a:n   tos:n nos:?	[ m
+	or a, a			; a:n   tos:n nos:?	[ m
+	jr z, doneright		; if (n!=0) {		[ m // n != 0
+	pop nos			; a:n   tos:n nos:m	[
+moreright:			; do {		[
+	srl nosh		; a:n   tos:n nos:m>>1	[
+	rr nosl			; a:n   tos:n nos:m>>1	[
 	dec a			; a:n-1 tos:n nos:m>>1	[
-	jr nz, moreright	; a:0   tos:n nos:m>>n	[
-doneright:			; }while
+	jr nz, moreright	; } while (--n!=0)	[   // n == 0
 	push nos		; a:0   tos:n nos:m>>n	[ m>>n
+doneright:			; }if			[
 	pop tos			; a:0   tos:m>>n
 	jp inner
 realcall:			; tos:A   ip:X  [ B
