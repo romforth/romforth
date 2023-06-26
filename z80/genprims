@@ -33,12 +33,12 @@ sub genheader {
 	print "$l","_lfa:\t.dw $prev\n";
 	print "$l","_cfa:\n";
 	if ($flag) {
-		print "\t.db $l-next\n";
-		print "\t.db exit-next\n";
+		print "\t.db $l-cold\n";
+		print "\t.db exit-cold\n";
 	} else {
-		print "\t.db lit-next\n";
+		print "\t.db lit-cold\n";
 		print "\t.dw $l\n";
-		print "\t.db exit-next\n";
+		print "\t.db exit-cold\n";
 	}
 	$prev="$l"."_lfa";
 }
