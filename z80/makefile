@@ -7,7 +7,7 @@
 AS=sdasz80
 ASFLAGS=-l
 LD=sdldz80
-all : threeforth
+all : fourforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict

@@ -73,6 +73,7 @@ INDEX
 	* 26 May '23
 	* 29 May '23
 	* 08 Jun '23
+	* 26 Jun '23
 
 04 Nov '22
 ----------
@@ -2882,3 +2883,57 @@ in my hurry to get the C port completed, I'd left a lot of hardcoded footguns
 behind which are going to blow up in my face as this port progresses.
 
 I guess it is time for all of that $TECHDEBT to be repaid, with interest, now.
+
+26 Jun '23
+----------
+Completing the z80 assembly code port took much longer than I ever expected.
+Some of that delay was obviously due to bugs slowing me down but the major part
+of it was due to various distractions. Everyone is on their summer break and
+obviously that comes with its share of distractions - who wants to sit in front
+of the computer debugging when Half Moon Bay is belting out its siren songs! ;)
+
+After taking a break of about a week, I restarted work on the z80 assembly port
+in earnest on Jun 15, and I was able to make fairly rapid progress until I hit
+a very weird bug at step 39 which turned out to be a bug in the implementation
+of `c!` (the implementation of which was done all the way back at step 15)
+where the stack wasn't being popped which resulted in a stack overflow. Running
+a regression test at that step resulted in an all new failure at step 26 which
+was very laboriously tracked down to the fact that `key` was not clearing the
+high byte. Unlike my usual knee-jerk response of using `printf` debugging, (or
+the Forth equivalent of `emit` based debugging), I actually used ucsim/sz80's
+neat data breakpoint facility by running: `break rom r 0x42D` followed by `run`
+which was all I needed to get to the point of failure and then single stepping
+the rest of the way while keeping an eye on the registers after each step was
+enough to troubleshoot and figure out this bug.
+
+The next bug after that was at step 40 where atoi was not turning "1000 " into
+0x03E8 - instead, using ucsim single stepping after breaking at read access
+to 0x5C6, I saw it was getting 0xE8. Since the only thing that couldn't have
+been working here was the `<<` operator, I could figure out the bug without
+much difficulty and figured out a bug fix which went into `shiftleft`. I'm
+unsure though if this was an actual bug caused by my misunderstanding of the
+diagrams in the book or if this is a bug in ucsim which should not happen on
+"real hardware" which works as per the diagrams in the book. In any case, the
+new fix should work in all cases.
+
+The next bug to pop up was at step 44 but then various social engagements were
+taking priority resulting in a delay of yet another week before I could get
+around to getting that fixed. Since that bug was in the code generation scripts
+it was mostly a lucky break that I noticed that the .lst files contained the
+wrong offset due to using the wrong subtrahend (`next`, instead of `cold`) and
+with that fix out of the way, the rest of the steps were polished off in a
+matter of minutes.
+
+As usual, since I have a compiled version as well as the hand crafted version,
+it is straightforward to make comparisons between the two. The SDCC generated
+code takes ~1600 bytes while the hand coded version needs just ~500 bytes of
+code (ie the compiler generated code is ~3x larger). Running it under the ucsim
+emulator shows that the running time reported is also about ~3x larger (~15 sec
+vs ~5 sec). So for resource constrained devices, it may still make sense to
+craft things by hand. The nice advantage of using SDCC though, is that the code
+is now portable to every CPU that SDCC supports. So if ROM/RAM resources are
+not a constraint, I should be able to have ports for all of those architectures
+with almost no effort. Running `sdcc --version` reports support for the
+following architectures so I think I'll try each of them in turn next:
+mcs51/z80/z180/r2k/r2ka/r3ka/sm83/tlcs90/ez80_z80/z80n/ds390/TININative/ds400/
+hc08/s08/stm8/pdk13/pdk14/pdk15/mos6502
