@@ -74,6 +74,7 @@ INDEX
 	* 29 May '23
 	* 08 Jun '23
 	* 26 Jun '23
+	* 27 Jun '23
 
 04 Nov '22
 ----------
@@ -2937,3 +2938,12 @@ with almost no effort. Running `sdcc --version` reports support for the
 following architectures so I think I'll try each of them in turn next:
 mcs51/z80/z180/r2k/r2ka/r3ka/sm83/tlcs90/ez80_z80/z80n/ds390/TININative/ds400/
 hc08/s08/stm8/pdk13/pdk14/pdk15/mos6502
+
+27 Jun '23
+----------
+I decided to give the "z80 adjacent" processors that sdcc supports a whirl
+first before moving on to other architectures. Experimenting with the z180
+option to sdcc gives me a working port so I'll chalk that up as yet another
+working port. Since I didn't need to make any changes to any of the files
+except the makefiles, I've added them in as symlinks rather than as copies
+and git appears to be able to handle that without any problems, so far.

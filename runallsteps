@@ -19,6 +19,7 @@ my $m68k_check=1;
 my $sparc_check=1;
 my $z80_check=1;
 my $z80c_check=1;
+my $z180c_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -31,6 +32,7 @@ if (@ARGV) {
 	$sparc_check=0;
 	$z80_check=0;
 	$z80c_check=0;
+	$z180c_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -43,6 +45,7 @@ if (@ARGV) {
 		$sparc_check=1 if ( $d eq "sparc");
 		$z80_check=1 if ( $d eq "z80");
 		$z80c_check=1 if ( $d eq "z80-c");
+		$z180c_check=1 if ( $d eq "z180-sdcc");
 	}
 }
 
@@ -113,6 +116,12 @@ $x=`cat z80-c/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $z80c_step=$step;
+
+my $z180c_step;
+$x=`cat z180-sdcc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$z180c_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -310,6 +319,19 @@ z80c_port: {
 	select STDOUT;
 	print "\nRunning step $i for the z80-c port\n";
 	system("cd z80-c ; make") == 0 or die "make failed at step $i with exit status $?"
+}
+
+z180c_port: {
+	last z180c_port unless ($z180c_check);
+	last z180c_port if ($i>$z180c_step);
+	@ARGV=("z180-sdcc/fpp.config.C");
+	open(my $fh, ">z180-sdcc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the z180 port\n";
+	system("cd z180-sdcc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

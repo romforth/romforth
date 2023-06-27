@@ -15,6 +15,7 @@ The following ports are complete:
 | sparc     |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-sparc    |
 | z80-c     |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
 | z80       |  16  | little | 1 | Baremetal | sdasz80    | ucsim/sz80    |
+| z180-sdcc |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
 '-----------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
