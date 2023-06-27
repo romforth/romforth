@@ -59,4 +59,79 @@ helter-skelter)
 
 To make porting easier, the machine independent code in Forth uses a bunch of
 configuration settings which are stored in the fpp.config.* files. These need
-to be modified as appropriate.
+to be modified as appropriate. Although some of the config parameters need to
+be cleaned up since they represent $TECHDEBT from the path dependent evolution
+of the code, I'll go ahead and document them here, for now. Note that any/all
+of these parameters may be removed/cleaned up as the porting progresses.
+
+ARCH is a descriptive string to denote the architecture.
+
+PRIMSZ is the number of bytes required to denote a primitive. If the jump offset
+requires just a byte like most architectures, use 1. If it needs a short like
+the initial C port or uses a physical 16-bit address like the PDP11, use 2.
+A 2 byte offset should be more than sufficient for a primitive.
+
+JUMP is the jump offset required for the 'j' opcode
+JUMPBACK is the negative jump offset required for the 'jz'/'jnz' opcode tests
+These are currently used starting at step 4.2
+Assume that the code is:
+	j       [       // raw opcode test of the 'j' operator
+	#JUMP   [       // the byte offset to skip over the assert below
+	#assert
+and assume that it translates to the following bytecode sequence
+	j #JUMP lit $litl $lith emit
+It is obvious that #JUMP must be 4 to skip past the assert code sequence which
+consists of a lit followed by emit, if we assume each of the space separated
+tokens is one byte long and the IP was incremented before the jump.
+
+Similarly, assume that the test code at step 4.3
+	jz              [       // raw opcode test of the 'jz' operator
+	#JUMPBACK       [       // negative jump
+expands to the following bytecode:
+	jz #JUMPBACK
+If the IP is incremented before the jump, it is quite clear that #JUMPBACK
+must be -2 (254) for the test to be effective, assuming each of the space
+separated tokens needs one byte.
+
+ADDR and VALUE are used in the memory tests starting at step 13
+
+RGROWLOW is used starting at step 19 and is just a flag denoting the direction
+of the growth of the return stack. Set RGROWLOW=0 if the return stack grows to
+higher addresses. Use RGROWLOW=1 if the the return stack grows to low addresses.
+
+RSTKSZ is the size (in bytes) required for the return stack. It is currently
+sized at ~25 entries so this needs to be multiplied with the size of an entry
+to get the appropriate value.
+
+big_endian denotes the endianness of the architecture. Little endian archs such
+as x86 set big_endian=0 and SPARC/m68k use big_endian=1
+
+offset is set to a value 1 less than the size of a lit. Ideally given LITC,
+offset is superfluous, but it was added before LITC so it persists vestigially
+so it all sounds straightforward until you get to the C port where LITC==4,
+but offset is 1 which I need to understand better.
+
+prim_var_deref was added as a band-aid during the C port as well. If it is set
+to 1 it means the dictionary layout of the primitive CFA is along the lines of:
+	lit $priml $primh call exit
+which was used to distinguish it from the earlier CFA layout which contained
+just the offset of the primitive.
+
+CELL denotes the length of a pointer value (in bytes)
+
+SERIALIN, SERIALOUT, TTYCSR and BIT are vestigeal holdovers from the PDP11 port.
+These have been shoehorned into the later ports for compatibility but are not
+strictly required, depending on how p@/p! are implemented.
+
+The NEEDPFETCH, NEEDPSTORE, NEEDSIGNUM, NEEDZEROEQ, NEEDROT are set to 1 if
+the corresponding definition should use the machine independent definition from
+defs.4th. If these are defined as primitives (or by other means), these can be
+set to 0 (or removed).
+
+THREAD denotes the type of Forth "threading" used by the interpreter. The
+current options are 1, 2 and 3.
+
+ALIGN is used to denote alignment requirements. Architectures that don't have
+alignment restrictions can use ALIGN=0. ALIGN=4 denotes a 32 bit alignment.
+
+LITC denotes the size of literals in bytes and must match the size of a store.
