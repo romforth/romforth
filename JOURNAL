@@ -2947,3 +2947,6 @@ option to sdcc gives me a working port so I'll chalk that up as yet another
 working port. Since I didn't need to make any changes to any of the files
 except the makefiles, I've added them in as symlinks rather than as copies
 and git appears to be able to handle that without any problems, so far.
+
+A recompile using `sdcc -mz80n` also worked without any problems. So I'll
+chalk that up as yet another port.
