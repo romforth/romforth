@@ -75,6 +75,7 @@ INDEX
 	* 08 Jun '23
 	* 26 Jun '23
 	* 27 Jun '23
+	* 28 Jun '23
 
 04 Nov '22
 ----------
@@ -2950,3 +2951,88 @@ and git appears to be able to handle that without any problems, so far.
 
 A recompile using `sdcc -mz80n` also worked without any problems. So I'll
 chalk that up as yet another port.
+
+28 Jun '23
+----------
+One thing I forgot to mention while finishing up the z80n port was that the
+ZX Spectrum was one of the first computers that I ever had access to. My uncle,
+Paul had bought it in Dubai where he had worked in Sony and brought it with him
+during one of his vacations (this was in the late 80's I think). I remember
+typing in computer games from a book and playing them and trying to save them
+to audio cassettes to avoid having to type them in all over again the next time
+around. This was on a 48KB system, I think.
+
+More important than the games themselves was the Forth manual of a version of
+Forth (from ID Software?) which came in a tiny book written in a tiny font
+which was my introduction to Forth. I taught myself Forth by poring over that
+manual just as I had taught myself BASIC by typing in games.
+
+During the course of my engineering classes (again this was in the late 80's),
+I got an opportunity to implement a Forth interpreter during my final semester.
+I had implemented a Lisp interpreter before this during the 6'th semester, so
+it was interesting to see the differences in the difficulty of implementation
+between two "little languages" that have had an outsized influence on the world
+
+So that concludes my trip down memory lane which gives some context for how I
+got started on my journey with Forth, all thanks to my uncle bringing home a
+computer which was a new fangled thing at that time. Thank you, Paul Uncle!
+
+So, what about my current journey with "romforth"?
+
+While I could continue with the busywork of "porting" to even more of the
+architectures supported by SDCC, I've decided to give that tangent a rest and
+focus on something that is more interesting to me.
+
+Going over the initial list of targets that I'd listed at the beginning of this
+project, I see that the remaining ones on the list that are not yet done are:
+(the below list is a copy/paste+edited list from the 04 Nov 2022 JOURNAL entry)
+- MIX (Knuth's Ye Olde Computer)
+- 8085 (or was it an 8080? not sure anymore - a box with keypad for m/c code)
+- MSP430 (TI dev board)
+- ARM (ST's STM discovery board)
+- RISC-V (just because it is the new hotness)
+
+MIX is clunky and outdated and probably consigned to the junk heap of history
+to be replaced by MMIX, so I may only take a look at it later, as time permits.
+
+The 8080 is just an underpowered Z80, for most intents and purposes, so I think
+I'll give that also a pass since the Z80 is pretty well covered by the assembly
+and sdcc/C ports.
+
+So the next one down that list brings me to the MSP430 and I guess that is
+enough reason to make it the one I'll work on next.
+
+I'd purchased an MSP430 "Launchpad dev kit" for $4.30 (cute marketing, TI guys)
+almost 10 years ago. It promptly went on a shelf soon after I got it since it
+needed boatloads of "developer kit software blobs" which involved downloading
+gigabytes of software to a Windows box. Those logistical difficulties with
+trying to do something as simple as blink an LED on that board triggered the
+entire raison'd etre for romforth (but see also the RATIONALE file).
+
+Things have become more civilized over the past decade and msp430-gcc exists
+as does mspdebug both of which work fine on Linux. So if all I wanted to do
+was blink the LED on the board, I should be able to do it without booting up
+the Windows partition or downloading gigabytes of TI MSP specific build kits.
+
+But now my sights are set beyond just blinking the LED and I want to see if
+romforth will be able to fit the constraints of these relatively popular chips.
+Since I have real hardware to run it on, this will be the first port which can
+be truthfully declared to run baremetal, as opposed to running "baremetal, but
+on an emulator".
+
+The MSP430 Launchpad developer kit came with 2 included CPUs: MSP430G2231IN14
+and MSP430G2211IN14. Both have 2KB ROM, 128 byte RAM, 10GPIO pins, 1x16 bit
+timer, among various other peripherals. The MSP430G2231 has a 10 bit ADC which
+the MSP430G2211 doesn't have.
+
+Searching for an existing version of Forth which runs on the MSP430 led me to
+CamelForth but the Readme says: "CamelForth should also be adaptable to any
+MSP430 device having at least 512 bytes of RAM, 8K of ROM, and one USART/USCI"
+Given the smaller ROM and RAM constraints for the microcontroller that I have,
+ it is clear that CamelForth won't be able to work on it, as is.
+
+Rather than try to shrink fit CamelForth, I'm going to take on the challenge of
+trying to get romforth to work on the two MSP430 CPUs that I have. As usual,
+I'll start off by doing a survey of the existing build and emulation tools that
+are available that can be shoehorned into the existing build framework so that
+I can run things under emulation before moving to real hardware.
