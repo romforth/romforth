@@ -16,7 +16,7 @@ while (<>) {
 		last;
 	}
 }
-die "no such port" unless ($max>=0);
+#die "no such port" unless ($max>=0);
 print "last commit was : $max\n";
 my ($fh);
 

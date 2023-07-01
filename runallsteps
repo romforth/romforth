@@ -21,6 +21,7 @@ my $z80_check=1;
 my $z80c_check=1;
 my $z180c_check=1;
 my $z80n_c_check=1;
+my $msp430as_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -35,6 +36,7 @@ if (@ARGV) {
 	$z80c_check=0;
 	$z180c_check=0;
 	$z80n_c_check=0;
+	$msp430as_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -49,6 +51,7 @@ if (@ARGV) {
 		$z80c_check=1 if ( $d eq "z80-c");
 		$z180c_check=1 if ( $d eq "z180-sdcc");
 		$z80n_c_check=1 if ( $d eq "z80n-sdcc");
+		$msp430as_check=1 if ( $d eq "msp430-as");
 	}
 }
 
@@ -131,6 +134,12 @@ $x=`cat z80n-sdcc/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $z80n_c_step=$step;
+
+my $msp430as_step;
+$x=`cat msp430-as/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$msp430as_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -354,6 +363,19 @@ z80n_c_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the C port\n";
 	system("cd z80n-sdcc ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+msp430as_port: {
+	last msp430as_port unless ($msp430as_check);
+	last msp430as_port if ($i>$msp430as_step);
+	@ARGV=("msp430-as/fpp.config.msp430");
+	open(my $fh, ">msp430-as/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the msp430 port\n";
+	system("cd msp430-as ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

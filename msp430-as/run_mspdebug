@@ -1,0 +1,9 @@
+#!/bin/bash
+halt=$(nm forth | grep 't halt' | awk '{print $1}' | sed 's/^00*/0x/')
+start=$(nm forth | grep 't start' | awk '{print $1}' | sed 's/^00*/0x/')
+cat <<EOF | mspdebug -n sim | grep 'Breakpoint 0 triggered'
+load forth
+set PC $start
+setbreak $halt
+run
+EOF

@@ -12,6 +12,7 @@ all :
 	(cd z80-c ; make)
 	(cd z180-sdcc ; make)
 	(cd z80n-sdcc ; make)
+	(cd msp430-as ; make)
 
 allsteps :
 	./runallsteps
@@ -32,3 +33,4 @@ clean :
 	(cd z80-c ; make clean)
 	(cd z180-sdcc ; make clean)
 	(cd z80n-sdcc ; make clean)
+	(cd msp430-as ; make clean)

@@ -76,6 +76,7 @@ INDEX
 	* 26 Jun '23
 	* 27 Jun '23
 	* 28 Jun '23
+	* 01 Jul '23
 
 04 Nov '22
 ----------
@@ -3036,3 +3037,32 @@ trying to get romforth to work on the two MSP430 CPUs that I have. As usual,
 I'll start off by doing a survey of the existing build and emulation tools that
 are available that can be shoehorned into the existing build framework so that
 I can run things under emulation before moving to real hardware.
+
+01 Jul '23
+----------
+I wasn't too successful trying to build an MSP430 binary using the msp430-gcc
+compiler since it needs other support files (memory.x and periph.x) which don't
+appear to be installed on my system. Trying a couple of variations for the
+`-target msp430-freestanding` option to clang didn't go anywhere since it
+complained about a missing crt0.o and that led me to try zig with `-target
+msp430-freestanding` but that failed (error: unknown target CPU 'generic') and
+since the MSP430 is at the bottom of the support list for Zig, I'll assume that
+I need to stick to msp430-gcc.
+
+So while I'm researching msp430-gcc some more, I tried to see if the binutils
+support for MSP430 would "just work" and it did, so for the very first step of
+this port, I'm just using binutils but that comes with its own set of quirks.
+
+Since I'm trying to keep things as simple as possible and not use a linker
+script, the msp430-elf-ld linker sticks the code at 0x8000 by default. So for
+the emulation I need to explicitly set the PC to that address. Also, since
+there is no halt or other exit mechanism I've chosen the clunky hack of setting
+a breakpoint and exiting when that breakpoint is hit within mspdebug. And
+talking about emulation, I did find a qemu port for the MSP at:
+	github.com/draperlaboratory/qemu-msp
+but I ran into difficulties trying to build it so I've moved on with just using
+mspdebug which could be easily built from the source.
+
+All these build/test issues are a reminder to me of why people just stick to
+their one favorite microcontroller and never move from their winning combo
+especially if they have the hardware and software fully debugged and working.
