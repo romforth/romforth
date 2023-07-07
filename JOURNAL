@@ -77,6 +77,7 @@ INDEX
 	* 27 Jun '23
 	* 28 Jun '23
 	* 01 Jul '23
+	* 07 Jul '23
 
 04 Nov '22
 ----------
@@ -3066,3 +3067,24 @@ mspdebug which could be easily built from the source.
 All these build/test issues are a reminder to me of why people just stick to
 their one favorite microcontroller and never move from their winning combo
 especially if they have the hardware and software fully debugged and working.
+
+07 Jul '23
+----------
+After a bunch of research I finally figured out that the memory.x and periph.x
+files that msp430-gcc was looking for during compilation are in the `msp430mcu`
+package. Although that package was installed, msp430-gcc cannot know which
+target device you are compiling for unless it is specified explicitly and since
+I couldn't quite figure out what options to use to specify the directory, for
+now, I've just hardcoded the path by symlinking the two files directly. So this
+may work only on ubuntu (or any other debian flavor distro) and I'll need to
+fix this up later. Anyway, with that issue out of the way, I was successfully
+able to build an MSP430 binary using msp430-gcc so I've changed the makefile to
+use the msp430-gcc compiler instead of binutils.
+
+Given the architectural similarities and how close the instruction set of the
+MSP430 is to the PDP11, it makes sense to use the same threading type that was
+used for the PDP11 for this port. I'm a bit worried that it will result in a
+larger footprint which may not fit into the small 2KB ROM of the MSP430
+microcontrollers that I have. I'll worry about that problem when I get there,
+so for now I've gone ahead and used a copy of the PDP11 genrom script with some
+mods to make it work within the current build scheme.

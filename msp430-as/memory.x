@@ -1,0 +1,1 @@
+/usr/msp430/lib/ldscripts/msp430g2231/memory.x
