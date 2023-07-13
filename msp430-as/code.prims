@@ -10,6 +10,7 @@ bye	: jmp halt
 key	: mov #0xff, w ; mov.b @w, tos ;
 emit	: mov #0xff, w ; mov.b tos, @w ;
 dup	: push tos ;
+2drop	: pop tos
 drop	: pop tos ;
 lit	: dup ; mov @ip+, tos ;
 neg	: inv tos ; inc tos ;
