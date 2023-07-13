@@ -16,3 +16,5 @@ neg	: inv tos ; inc tos ;
 j	: add @ip+, ip ;
 jz	: and tos, tos ; drop ; jz j ; add #2, ip ;
 jnz	: and tos, tos ; drop ; jnz j ; add #2, ip ;
+inc	: inc tos ;
+dec	: dec tos ;
