@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+#define sp	R1
 #define ip	R4
 #define w	R5
 #define tos	R6
@@ -35,3 +36,7 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+	.data
+	.org 32
+spbase:
