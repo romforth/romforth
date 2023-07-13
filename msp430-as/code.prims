@@ -37,6 +37,8 @@ c@	: mov.b @tos, tos ;
 c!	: pop.b @tos ; drop ;
 sp@!	: mov sp, nos ; mov tos, sp ; t_n ;
 rp@!	: mov rp, nos ; mov tos, rp ; t_n ;
+>r	: mov tos, @rp ; incd rp ; drop ;
+r>	: dup ; decd rp ; mov @rp, tos ;
 
 _fa_ke_	: .data
 
