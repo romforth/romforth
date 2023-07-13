@@ -9,6 +9,7 @@
 #define w	R5
 #define tos	R6
 #define nos	R7
+#define rp	R8
 
 	.cpu 430
 start:
