@@ -11,3 +11,4 @@ key	: mov #0xff, w ; mov.b @w, tos ;
 emit	: mov #0xff, w ; mov.b tos, @w ;
 dup	: push tos ;
 drop	: pop tos ;
+lit	: dup ; mov @ip+, tos ;
