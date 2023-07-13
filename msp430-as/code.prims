@@ -19,3 +19,5 @@ jnz	: and tos, tos ; drop ; jnz j ; add #2, ip ;
 inc	: inc tos ;
 dec	: dec tos ;
 inv	: inv tos ;
+nip	: pop nos ;
+dip	: push nos ;
