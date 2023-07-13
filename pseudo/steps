@@ -11,7 +11,7 @@
     z80-c : step 4.3 : Verify that jz works for -ve offsets
     z80-c : step 4.4 : Implement jump if non-zero (jnz)
     z80-c : step 4.5 : Verify that jnz works for -ve offsets
-    z80-c : step 5 : Implement support for control stuctures
+    z80-c : step 5 : Implement support for control structures
     z80-c : step 6 : Implement inc'rement and dec'rement
     z80-c : step 7 : Implement inv'ert
     z80-c : step 8 : Implement nip and dip
