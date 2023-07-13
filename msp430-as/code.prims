@@ -14,4 +14,4 @@ drop	: pop tos ;
 lit	: dup ; mov @ip+, tos ;
 neg	: inv tos ; inc tos ;
 j	: add @ip+, ip ;
-jz	: and tos, tos ; drop ; jz j ;
+jz	: and tos, tos ; drop ; jz j ; add #2, ip ;
