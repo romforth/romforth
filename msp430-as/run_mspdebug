@@ -12,7 +12,8 @@ start=$(nm $arg | grep 't start' | awk '{print $1}' | sed 's/^00*/0x/')
 cat <<EOF | mspdebug -n sim
 simio add console serial
 simio config serial output test.out
-load forth
+simio config serial input test.in
+load $arg
 set PC $start
 setbreak $halt
 run

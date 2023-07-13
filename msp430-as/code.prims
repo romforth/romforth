@@ -7,5 +7,5 @@
 cold	: mov #rom, ip
 next	: br @ip+
 bye	: jmp halt
-key	: mov #'f', tos ;
+key	: mov #0xff, w ; mov.b @w, tos ;
 emit	: mov #0xff, w ; mov.b tos, @w ;

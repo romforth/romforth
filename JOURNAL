@@ -78,6 +78,7 @@ INDEX
 	* 28 Jun '23
 	* 01 Jul '23
 	* 07 Jul '23
+	* 13 Jul '23
 
 04 Nov '22
 ----------
@@ -3088,3 +3089,25 @@ larger footprint which may not fit into the small 2KB ROM of the MSP430
 microcontrollers that I have. I'll worry about that problem when I get there,
 so for now I've gone ahead and used a copy of the PDP11 genrom script with some
 mods to make it work within the current build scheme.
+
+13 Jul '23
+----------
+Figuring out how to get simulated input working on the console took a while.
+
+Since I couldn't get github.com/draperlaboratory/qemu-msp to even build due to
+build dependency hell on the ancient Ubuntu distro that I run on my laptop, I
+was left with no choice but to figure out a way to get console input working on
+mspdebug. For now, I've gone ahead and patched the mspdebug code to be able to
+handle input from the console. Console output using simio is supported (by
+default) in mspdebug so that didn't need any special handling (well, except for
+actually figuring out how to enable it using the simio commands).
+
+The commands to enable input on the console are structured almost identically
+to that for output. The forked version of mspdebug with support for console
+input (via simio) will be uploaded to https://github.com/romforth/mspdebug
+
+I'll also need to figure out how to send a pull request to
+	https://github.com/dlbeer/mspdebug
+from which this code has been forked. This will be my first pull request on
+github since this is first time I've had to change any code that I've cloned
+from github.
