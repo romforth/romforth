@@ -31,5 +31,10 @@ swap	: nip ; dup
 t_n	: mov nos, tos ;
 @	: mov @tos, tos ;
 !	: pop @tos ; drop ;
+c@	: mov.b @tos, tos ;
+c!	: pop.b @tos ; drop ;
+
+_fa_ke_	: .data
 
 var here .word mem
+var state .byte 1

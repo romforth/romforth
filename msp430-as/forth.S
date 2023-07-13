@@ -12,16 +12,14 @@
 
 	.cpu 430
 start:
+	mov #4, r15 ; count must be even
+data_copy:
+	mov _unexpected_+2(r15),__data_start(r15)
+	decd r15
+	jnz data_copy
 	jmp cold
 halt:
 	nop
-
-#if USEDICT
-#include "prims_dict.s"
-#else
-#include "prims.s"
-#endif
-
 rom:
 
 #include "rom.s"
@@ -38,7 +36,12 @@ rom:
 #endif
 #endif
 
-	.data
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
+#endif
+
 	.org 32
 spbase:
 mem:
