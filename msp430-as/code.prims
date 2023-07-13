@@ -35,6 +35,7 @@ stick	: rla tos ; add sp, tos
 !	: pop @tos ; drop ;
 c@	: mov.b @tos, tos ;
 c!	: pop.b @tos ; drop ;
+sp@!	: mov sp, nos ; mov tos, sp ; t_n ;
 
 _fa_ke_	: .data
 
