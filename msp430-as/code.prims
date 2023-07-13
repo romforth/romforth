@@ -31,6 +31,7 @@ swap	: nip ; dup
 t_n	: mov nos, tos ;
 pick	: rla tos ; add sp, tos
 @	: mov @tos, tos ;
+stick	: rla tos ; add sp, tos
 !	: pop @tos ; drop ;
 c@	: mov.b @tos, tos ;
 c!	: pop.b @tos ; drop ;
