@@ -30,3 +30,6 @@ dip	: push nos ;
 swap	: nip ; dup
 t_n	: mov nos, tos ;
 @	: mov @tos, tos ;
+!	: pop @tos ; drop ;
+
+var here .word mem
