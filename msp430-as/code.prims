@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-cold	: mov #rom, ip ; mov #spbase, sp
+cold	: call #init ; mov #rom, ip
 next	: br @ip+
-bye	: jmp halt
-key	: mov #0xff, w ; mov.b @w, tos ;
-emit	: mov #0xff, w ; mov.b tos, @w ;
+bye	: ret
 dup	: push tos ;
 2drop	: pop tos
 drop	: pop tos ;
+key	: dup ; mov #0xff, w ; mov.b @w, tos ;
+emit	: mov #0xff, w ; mov.b tos, @w ; drop ;
 lit	: dup ; mov @ip+, tos ;
 neg	: inv tos ; inc tos ;
 j	: add @ip+, ip ;

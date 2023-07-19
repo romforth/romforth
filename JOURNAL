@@ -3140,3 +3140,16 @@ of why "we can't have nice things".
 While trying to implement `call` for the MSP430, I ran into a pretty weird bug
 and after some debugging found that the data segment initialization code had an
 off-by-one bug. Fixing that gives me a working call implementation as well.
+
+Things went rather smoothly after that until at step 27 I hit two issues. The
+first problem was that the code has grown enough that a 512 byte jump offset
+used in the MSP430 instruction encoding is no longer sufficient. So I recoded
+the jump into a call with the corresponding followup adjustments that became
+necessary to deal with that modification. With that out of the way I then hit
+the second problem which was a failure at step 27 which I debugged to the fact
+that key was not saving the tos before clobbering it with a new value. While I
+was there I fixed the corresponding bug in emit as well so it now drops the tos
+after it has printed it. I have a memory of having run into this bug some time
+before this as part of some other port so I think I'll fix up the early tests
+for key/emit to catch this much sooner. Since this set of changes is fairly big
+enough already, I'll do that next as a separate commit.

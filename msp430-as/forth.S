@@ -14,16 +14,19 @@
 
 	.cpu 430
 start:
+	mov #spbase, sp
+	call #cold
+halt:
+	nop
+init:
 	mov #0, r15
 	mov #linkage, nr
 data_copy:
 	mov _unexpected_+2(r15), __data_start(r15)
 	incd r15
 	cmp #4, r15
-	jz cold
-	jmp data_copy
-halt:
-	nop
+	jnz data_copy
+	ret
 linkage:
 	mov ip, @rp
 	incd rp
