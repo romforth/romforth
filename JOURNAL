@@ -79,6 +79,7 @@ INDEX
 	* 01 Jul '23
 	* 07 Jul '23
 	* 13 Jul '23
+	* 18 Jul '23
 
 04 Nov '22
 ----------
@@ -3111,3 +3112,24 @@ I'll also need to figure out how to send a pull request to
 from which this code has been forked. This will be my first pull request on
 github since this is first time I've had to change any code that I've cloned
 from github.
+
+18 Jul '23
+----------
+I struggled my way through some design mistakes and then some coding mistakes
+but I think I finally have an acceptable implementation for invoking defined
+words.
+
+For the call/return linkage, I've decided to use an additional register R9 so
+that I can skimp on the bytes required to encode "call linkage" from 4 to 2.
+
+The linkage itself just uses the call instruction to push the next ip on the
+data stack and this is restored by the code in "linkage" which first saves the
+current ip on the return stack. Symmetrically, the return stack is then unwound
+by the code in "return". This design is the same as the one I used on the PDP11
+
+The lack of post increment addressing modes for the destination register in the
+MSP430 (and pre/post decrement addressing modes as well), considering that it
+is in the lineage of the PDP11 seems to be a tad disappointing. I guess there
+must have been various tradeoffs involved when these decisions were being made
+at the CPU architecture level, but ultimately it boils down to yet another case
+of why "we can't have nice things".

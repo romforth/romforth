@@ -10,10 +10,12 @@
 #define tos	R6
 #define nos	R7
 #define rp	R8
+#define nr	R9
 
 	.cpu 430
 start:
 	mov #4, r15 ; count must be even
+	mov #linkage, nr
 data_copy:
 	mov _unexpected_+2(r15),__data_start(r15)
 	decd r15
@@ -21,6 +23,11 @@ data_copy:
 	jmp cold
 halt:
 	nop
+linkage:
+	mov ip, @rp
+	incd rp
+	pop ip
+	br @ip+
 rom:
 
 #include "rom.s"

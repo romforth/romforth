@@ -40,6 +40,7 @@ rp@!	: mov rp, nos ; mov tos, rp ; t_n ;
 >r	: mov tos, @rp ; incd rp ; drop ;
 r>	: dup ; decd rp ; mov @rp, tos ;
 exec	: mov tos, nos ; drop ; br nos
+return	: decd rp ; mov @rp, ip ;
 
 _fa_ke_	: .data
 

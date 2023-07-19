@@ -10,7 +10,7 @@ CC=msp430-gcc
 #ASFLAGS=-al=forth.lst
 #LD=msp430-unknown-elf-ld
 
-all : oneforth
+all : twoforth
 
 oneforth : test.out
 twoforth : test.defs
@@ -23,9 +23,9 @@ test.dict : forth_dict test.inp test.exp
 	cmp test.dict test.exp
 test.defs : forth_defs test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
-	./run_mspdebug forth_defs > test.log
+	./run_mspdebug forth_defs > test.log 2>&1
 	grep 'Breakpoint 0 triggered' test.log > /dev/null
-	cmp test.defs test.exp
+	cmp test.out test.exp
 test.out : forth test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	./run_mspdebug forth > test.log 2>&1
@@ -39,11 +39,6 @@ test.exp : ../test.expected ../fpp fpp.config
 forth.s : forth.S prims.s rom.s
 	../fix_comments rom.s
 	cpp -P forth.S > forth.s
-forth_defs : forth_defs.o
-	$(LD) -o forth_defs forth_defs.o
-forth_defs.o : forth_defs.s
-	#$(AS) $(ASFLAGS) -o forth_defs.o forth_defs.s
-	$(CC) $(CFLAGS) -o forth.o forth.s
 forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
@@ -51,6 +46,7 @@ forth_defs.s : forth_defs.S prims.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs.s
 	cpp -P forth_defs.S > forth_defs.s
+forth_defs : forth_defs.s
 forth_dict : forth_dict.o
 	$(LD) -o forth_dict forth_dict.o
 forth_dict.o : forth_dict.s
