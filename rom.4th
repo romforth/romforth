@@ -23,19 +23,28 @@
 
 #{if step>=1
 
+#{if step>=3
+
+'o'	[ 'o'
+
+#}if
+
 	[ < 'f'
 key	[ 'f'
+
 #{if step>=2
+
 dup	[ 'f' 'f'
 drop	[ 'f'
+
 #}if
+
 emit	[ > 'f'
 
 #}if
 
 #{if step>=3
 
-'o'	[ 'o'
 emit	[ > 'o'
 
 #}if
