@@ -10,7 +10,7 @@ CC=msp430-gcc
 #ASFLAGS=-al=forth.lst
 #LD=msp430-unknown-elf-ld
 
-all : twoforth
+all : threeforth
 
 oneforth : test.out
 twoforth : test.defs
@@ -20,7 +20,7 @@ test.dict : forth_dict test.inp test.exp
 	cp test.inp test.in
 	./run_mspdebug forth_dict > test.log 2>&1
 	grep 'Breakpoint 0 triggered' test.log > /dev/null
-	cmp test.dict test.exp
+	cmp test.out test.exp
 test.defs : forth_defs test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	./run_mspdebug forth_defs > test.log 2>&1
@@ -47,11 +47,6 @@ forth_defs.s : forth_defs.S prims.s rom.s
 	../fix_comments defs.s
 	cpp -P forth_defs.S > forth_defs.s
 forth_defs : forth_defs.s
-forth_dict : forth_dict.o
-	$(LD) -o forth_dict forth_dict.o
-forth_dict.o : forth_dict.s
-	#$(AS) $(ASFLAGS) -o forth_dict.o forth_dict.s
-	$(CC) $(CFLAGS) -o forth.o forth.s
 forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs_dict.s
@@ -60,6 +55,7 @@ forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
 forth_dict.S : forth.S forth_defs.S rom.s
 	cp forth_defs.S forth_dict.S
 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S
+forth_dict : forth_dict.s
 defs_dict.s : ../defs.4th ../fpp fpp.config prims_dict.s genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map > defs_dict.s
 defs.s : ../defs.4th ../fpp fpp.config prims.s genrom

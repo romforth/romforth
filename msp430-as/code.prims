@@ -49,4 +49,7 @@ over	: dup ; mov 2(sp), tos ;
 _fa_ke_	: .data
 
 var here .word mem
+#{if step>=41
+var latest	#include "latest.s"
+#}if
 var state .byte 1

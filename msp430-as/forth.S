@@ -24,7 +24,7 @@ init:
 data_copy:
 	mov _unexpected_+2(r15), __data_start(r15)
 	incd r15
-	cmp #4, r15
+	cmp #6, r15
 	jnz data_copy
 	ret
 linkage:
