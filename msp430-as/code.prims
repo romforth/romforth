@@ -40,7 +40,7 @@ rp@!	: mov rp, nos ; mov tos, rp ; t_n ;
 >r	: mov tos, @rp ; incd rp ; drop ;
 r>	: dup ; decd rp ; mov @rp, tos ;
 exec	: mov tos, nos ; drop ; br nos
-return	: decd rp ; mov @rp, ip ;
+exit	: decd rp ; mov @rp, ip ;
 call	: mov ip, @rp ; incd rp ; mov tos, ip ; drop ;
 <<	: nip ; 1 : rla nos ; dec tos ; jnz 1b ; t_n ;
 >>	: nip ; 1 : rra nos ; dec tos ; jnz 1b ; t_n ;

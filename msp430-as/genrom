@@ -208,12 +208,12 @@ sub def {
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.word return\n";
+			print "\t.word exit\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\t.word return\n";
+			print "\t.word exit\n";
 			$state=0;
 			$immediate=0;
 			return 1;
