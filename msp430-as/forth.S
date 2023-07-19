@@ -28,8 +28,8 @@ data_copy:
 	jnz data_copy
 	ret
 linkage:
+	decd rp
 	mov ip, @rp
-	incd rp
 	pop ip
 	br @ip+
 rom:

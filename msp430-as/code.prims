@@ -37,11 +37,11 @@ c@	: mov.b @tos, tos ;
 c!	: pop.b @tos ; drop ;
 sp@!	: mov sp, nos ; mov tos, sp ; t_n ;
 rp@!	: mov rp, nos ; mov tos, rp ; t_n ;
->r	: mov tos, @rp ; incd rp ; drop ;
-r>	: dup ; decd rp ; mov @rp, tos ;
+>r	: decd rp ; mov tos, @rp ; drop ;
+r>	: dup ; mov @rp+, tos ;
 exec	: mov tos, nos ; drop ; br nos
-exit	: decd rp ; mov @rp, ip ;
-call	: mov ip, @rp ; incd rp ; mov tos, ip ; drop ;
+exit	: mov @rp+, ip ;
+call	: decd rp ; mov ip, @rp ; mov tos, ip ; drop ;
 <<	: nip ; 1 : rla nos ; dec tos ; jnz 1b ; t_n ;
 >>	: nip ; 1 : rra nos ; dec tos ; jnz 1b ; t_n ;
 over	: dup ; mov 2(sp), tos ;
