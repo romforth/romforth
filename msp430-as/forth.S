@@ -14,13 +14,14 @@
 
 	.cpu 430
 start:
-	mov #4, r15 ; count must be even
+	mov #0, r15
 	mov #linkage, nr
 data_copy:
-	mov _unexpected_+2(r15),__data_start(r15)
-	decd r15
-	jnz data_copy
-	jmp cold
+	mov _unexpected_+2(r15), __data_start(r15)
+	incd r15
+	cmp #4, r15
+	jz cold
+	jmp data_copy
 halt:
 	nop
 linkage:

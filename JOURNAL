@@ -80,6 +80,7 @@ INDEX
 	* 07 Jul '23
 	* 13 Jul '23
 	* 18 Jul '23
+	* 19 Jul '23
 
 04 Nov '22
 ----------
@@ -3133,3 +3134,9 @@ is in the lineage of the PDP11 seems to be a tad disappointing. I guess there
 must have been various tradeoffs involved when these decisions were being made
 at the CPU architecture level, but ultimately it boils down to yet another case
 of why "we can't have nice things".
+
+19 Jul '23
+----------
+While trying to implement `call` for the MSP430, I ran into a pretty weird bug
+and after some debugging found that the data segment initialization code had an
+off-by-one bug. Fixing that gives me a working call implementation as well.

@@ -41,6 +41,7 @@ rp@!	: mov rp, nos ; mov tos, rp ; t_n ;
 r>	: dup ; decd rp ; mov @rp, tos ;
 exec	: mov tos, nos ; drop ; br nos
 return	: decd rp ; mov @rp, ip ;
+call	: mov ip, @rp ; incd rp ; mov tos, ip ; drop ;
 
 _fa_ke_	: .data
 
