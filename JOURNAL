@@ -81,6 +81,7 @@ INDEX
 	* 13 Jul '23
 	* 18 Jul '23
 	* 19 Jul '23
+	* 20 Jul '23
 
 04 Nov '22
 ----------
@@ -3153,3 +3154,11 @@ after it has printed it. I have a memory of having run into this bug some time
 before this as part of some other port so I think I'll fix up the early tests
 for key/emit to catch this much sooner. Since this set of changes is fairly big
 enough already, I'll do that next as a separate commit.
+
+20 Jul '23
+----------
+At step 43 I found out (the hard way, again) that `here` needs to be the last
+of the variables defined in code.prims since the tests in step 43 assert that.
+I wasted a bunch of time debugging this since it was overshadowed by a couple
+of other problems. I'll defer describing all of that investigation until I get
+to commit those changes.
