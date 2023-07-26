@@ -33,9 +33,11 @@ sub genheader {
 	print "$l","_lfa:\t.word $prev\n";
 	print "$l","_cfa:\n";
 	if ($flag) {
+		print "\t.word 0x1289\n";
 		print "\t.word $l\n";
 		print "\t.word exit\n";
 	} else {
+		print "\t.word 0x1289\n";
 		print "\t.word lit\n";
 		print "\t.word $l\n";
 		print "\t.word exit\n";

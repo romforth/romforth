@@ -483,10 +483,17 @@ def{ repl
 [ as the boundary marker between primitive variables and definitions. The cfa
 [ of variables are returned as is but definitions are exec'ed
 def{ cfaexec		[ cfa
+
 #{if prim_var_deref==1
-	call
-	exit
+#{if THREAD==2
+	exec
 #}if
+#{if THREAD!=2
+	call
+#}if
+#}if
+
+#{if prim_var_deref!=1
 	dup		[ cfa cfa
 	latest		[ cfa cfa latest
 	>		[ cfa cfa>latest
@@ -494,6 +501,8 @@ def{ cfaexec		[ cfa
 		@	[ exe		// get the address to execute
 		exec	[ ?		// and exec it
 	}if		[ ?|cfa		// cfa<=latest : variable, leave as is
+#}if
+
 }def
 
 #}if
@@ -601,7 +610,12 @@ def{ repl
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
 #{if prim_var_deref==1
+#{if THREAD==2
+		exec
+#}if
+#{if THREAD!=2
 		call
+#}if
 		exit
 #}if
 		defexec	[ ?		// and then exec it
