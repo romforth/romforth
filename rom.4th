@@ -1123,7 +1123,12 @@ find		[ addr n lfa	// expect that "foo" is found
 cell		[ addr n lfa cell
 +		[ addr n cfa:lfa+cell
 #{if prim_var_deref==1
+#{if THREAD==2
+defexec		[ addr n	// since "foo" is currently just a nop
+#}if
+#{if THREAD!=2
 call		[ addr n	// since "foo" is currently just a nop
+#}if
 #}if
 #{if prim_var_deref!=1
 defexec		[ addr n	// since "foo" is currently just a nop

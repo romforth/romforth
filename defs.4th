@@ -610,13 +610,10 @@ def{ repl
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
 #{if prim_var_deref==1
-#{if THREAD==2
-		exec
-#}if
 #{if THREAD!=2
 		call
-#}if
 		exit
+#}if
 #}if
 		defexec	[ ?		// and then exec it
 	}else{		[ addr n lfa	// lfa==0, it is not in the dictionary
@@ -878,6 +875,11 @@ def{ defprefix	[
 #{if ARCH eq "PDP11"
 0x080c	[ 0x080c	// definitions start with "JSR ip, (nr)" on PDP11
 ,	[ \ 0x080c	// append it to the dictionary
+#}if
+
+#{if ARCH eq "msp430"
+0x1289	[ 0x1289	// definitions start with "call nr" on MSP430
+,	[ \ 0x1289	// append it to the dictionary
 #}if
 
 }def
