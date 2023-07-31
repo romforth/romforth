@@ -42,8 +42,8 @@ r>	: dup ; mov @rp+, tos ;
 exec	: mov tos, nos ; drop ; br nos
 exit	: mov @rp+, ip ;
 call	: decd rp ; mov ip, @rp ; mov tos, ip ; drop ;
-<<	: nip ; 1 : rla nos ; dec tos ; jnz 1b ; t_n ;
->>	: nip ; 1 : rra nos ; dec tos ; jnz 1b ; t_n ;
+<<	: and tos, tos ; jz 2f ; nip ; 1 : rla nos ; dec tos ; jnz 1b ; t_n ; next ; 2: ; drop ;
+>>	: and tos, tos ; jz 2f ; nip ; 1 : rra nos ; dec tos ; jnz 1b ; t_n ; next ; 2: ; drop ;
 over	: dup ; mov 2(sp), tos ;
 
 _fa_ke_	: .data

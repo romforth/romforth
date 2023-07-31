@@ -160,6 +160,46 @@ def{ 2dup	[ a b
 	over	[ a b a b
 }def
 
+#{if debug==1
+
+def{ nybble			[ d
+	15			[ d 0xf
+	&			[ d&0xf
+	dup			[ d d
+	10			[ d d 10
+	>=			[ d d>=10
+	if{			[ d // d>=10
+		10 - 65 +	[ D:d-10+'A'
+	}else{			[ d // d<10
+		48 +		[ D:d+'0'
+	}if			[ D
+	emit			[ > D
+}def
+
+def{ .			[ n
+	32 emit		[ n > SPACE
+	48 emit		[ n > 0
+	120 emit	[ n > x
+	2 3 <<		[ n s:2*8 // length of the display is fixed at 16 bits
+	loop{		[ n s
+		dup	[ n s s
+	}while{		[ n s
+		4 -	[ n s:s-4
+		2dup	[ n s n s
+		15	[ n s n s 0xf
+		swap	[ n s n 0xf s
+		<<	[ n s n m:0xf<<s
+		&	[ n s i:n&m
+		over	[ n s i s
+		>>	[ n s d:i>>s
+		nybble	[ n s > d
+	}loop		[ n s
+	2drop		[
+	32 emit		[ > SPACE
+}def
+
+#}if
+
 def{ tuck	[ a b
 	nip	[ b	// nos:a
 	dup	[ b b
@@ -170,6 +210,11 @@ def{ tuck	[ a b
 [ usually writes to the un-alloc'ated area in memory beyond the dictionary. By
 [ design, allocation is not done, but we write to the unallocated space anyway
 def{ append		[ a o d c
+
+#{if debug==1
+dup emit
+#}if
+
 	fourth		[ a o d c a
 	fourth		[ a o d c a o
 	+		[ a o d c a+o
@@ -442,7 +487,18 @@ def{ repl
 def{ find			[ addr n
 	latest			[ addr n (latest:lfa)
 	@			[ addr n lfa
+
+#{if debug==1
+'|' emit
+'f' emit
+'i' emit
+'n' emit
+'d' emit
+#}if
 	loop{			[ addr n lfa
+#{if debug==1
+dup .
+#}if
 		dup		[ addr n lfa lfa
 	}while{			[ addr n lfa		// lfa != 0
 		match		[ addr n lfa flag	// see if it matches
@@ -630,6 +686,15 @@ def{ repl
 def{ alloc		[ n
 	here		[ n here (here:h)
 	@		[ n h
+#{if debug==1
+'|' emit
+'a' emit
+'l' emit
+'l' emit
+'o' emit
+'c' emit
+dup .
+#}if
 	swap		[ h n
 	over		[ h n h
 	+		[ h n+h
@@ -746,7 +811,19 @@ def{ create		[
 	drop		[ lfa
 	latest		[ lfa latest (latest:prev)
 	@		[ lfa prev
+#{if debug==1
+'c' emit
+'r' emit
+'1' emit
+dup .
+#}if
 	over		[ lfa prev lfa
+#{if debug==1
+'c' emit
+'r' emit
+'2' emit
+dup .
+#}if
 	!		[ lfa (lfa:prev)	// hook up to previous link
 	latest		[ lfa latest
 	!		[ (latest:lfa)		// and update to the latest
@@ -824,6 +901,11 @@ def{ immediate	[
 
 [ append the byte at the top of the stack to the dictionary (with allocation)
 def{ c,		[ c
+#{if debug==1
+dup .
+'c' emit
+',' emit
+#}if
 	1	[ c 1
 	alloc	[ c p
 	c!	[ (p:c) \ c
@@ -854,6 +936,10 @@ def{ s,		[ c
 [ append the "word" at the top of the stack to the dictionary (with allocation)
 [ the available dictionary entry is expected to be aligned
 def{ ,		[ n
+#{if debug==1
+dup .
+',' emit
+#}if
 	$LITC	[ n cell
 	alloc	[ n p
 	!	[ (p:n) \ n
