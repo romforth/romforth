@@ -1151,7 +1151,12 @@ find		[ addr n lfa	// expect that "bar" is found
 cell		[ addr n lfa cell
 +		[ addr n cfa:lfa+cell
 #{if prim_var_deref==1
+#{if THREAD==2
+defexec		[ addr n	// since "bar" is currently just a nop
+#}if
+#{if THREAD!=2
 call		[ addr n	// since "bar" is currently just a nop
+#}if
 #}if
 #{if prim_var_deref!=1
 defexec		[ addr n	// since "bar" is currently just a nop

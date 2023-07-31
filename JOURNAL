@@ -83,6 +83,7 @@ INDEX
 	* 19 Jul '23
 	* 20 Jul '23
 	* 26 Jul '23
+	* 31 Jul '23
 
 04 Nov '22
 ----------
@@ -3243,3 +3244,57 @@ than as a warning. So I fixed that first as a separate commit prior to making
 this set of changes. The current set of changes passes all the regression tests
 so other than the confusion that may ensue in the future, I'm willing to go
 ahead with this for now and review the bigger picture later.
+
+31 Jul '23
+----------
+At step 51 I ran into yet another weird bug which took a bit of effort to
+debug. My preferred debug methodology is "printf based debugging" (I assume
+that's what it is called nowadays) which just means that you sprinkle printfs
+(or emits in this case) and try to figure out what is going on. For debugging
+the earlier bugs, I have switched between this approach and using breakpoints
+and/or step based debugging using mspdebug. To keep the codebase clean, I've
+typically removed the debug code after each debug session but this is getting
+a bit tiresome so for now I've decided to leave it all in there under a debug
+flag. This particular type of debug coding used to be called "scaffolding debug
+statements" but I've not seen it used anywhere nowadays so I assume it may
+have fallen out of fashion.
+
+The first issue that I ran into after adding the debug prints was that the
+output from '.' (which is a copy paste of the code in rest.inp) appeared to be
+incorrect and this turned out to be an existing bug in the implementation of
+<< and >> when the shift value is 0. So I fixed that as part of the debug
+changes.
+
+Note: All of the debug code and fix for << and >> was merged in the previous
+commit.
+
+After fixing that, I then dug in trying to root cause the actual problem at
+step 51. Running mspdebug to step through the code showed that the call to
+defexec which was added in step 51 ended up trying to run code at 0xffff and
+from there to address 0. In mspdebug 0xffff is an indication of uninitialized
+code and this uninitialized code was in the body of "bar".
+
+For further debugging, I enabled debug=1 in fpp.config.msp430, then ran make
+and looked at the output in test.out. The tail end of the generated output
+(with the current set of scaffolding debug prints in place) showed this:
+
+bar|alloc 0x4048 cr1 0x4042 cr2 0x404C  0x1289 ,|alloc 0x404E  0xD130 ,|alloc
+0x4001 bar|find 0x404C
+
+This shows that the body of "bar" is being filled out with the call prefix
+"0x1289" which is added to the dictionary at 0x404E which appears to be as
+expected. But after that, the addition of exit/"0xD130" goes sideways since
+the allocation for storing it is at address 0x4001 instead of the expected
+(0x404E + 2) == 0x4050 address. Due to this the body of "bar" wasn't filled out
+correctly since it only got the call prefix and nothing else so that when "bar'
+was defexec'ed, control flow went off into the weeds.
+
+So it looked like alloc returned the wrong address and my speculation was that
+this was due to some corruption that was happening to the content of "here".
+
+Looking at the objdump of the binary and searching for the address of 'here'
+showed that it was placed at address 0x203. My spidey senses immediately
+started tingling and I assumed that this was yet another case of alignment
+issues. Sure enough, after swapping the positions of "here" and "state" things
+are working again. Whew! I guess looking at the objdump was a lucky break that
+helped avoid a much longer and laborious debug exercise.

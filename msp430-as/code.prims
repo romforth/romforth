@@ -51,5 +51,11 @@ _fa_ke_	: .data
 #{if step>=41
 var latest	#include "latest.s"
 #}if
+#{if step<51
 var state .byte 1
 var here .word mem
+#}if
+#{if step>=51
+var here .word mem
+var state .byte 1
+#}if
