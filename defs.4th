@@ -1102,7 +1102,12 @@ def{ repl
 		cell	[ lfa cell	// lfa into the
 		+	[ lfa+cell	// cfa
 #{if prim_var_deref==1
+#{if THREAD!=2
 		call	[ ?		// and then exec it
+#}if
+#{if THREAD==2
+		defexec	[ ?		// and then exec it
+#}if
 #}if
 #{if prim_var_deref!=1
 		defexec	[ ?		// and then exec it
