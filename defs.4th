@@ -1237,7 +1237,12 @@ def{ cpl_ex_imm		[ cfa
 	isimmediate	[ cfa c&0x80
 	if{		[ cfa			// immediate,
 #{if prim_var_deref==1
+#{if THREAD!=2
 		call	[ ?			// execute it
+#}if
+#{if THREAD==2
+		defexec	[ ?			// execute it
+#}if
 #}if
 #{if prim_var_deref!=1
 		defexec	[ ?			// execute it
@@ -1260,7 +1265,12 @@ def{ cpl_ex			[ cfa
 		cpl_ex_imm	[ ?		// compile or exec if immediate
 	}else{			[ cfa		// s==0, interpreting
 #{if prim_var_deref==1
+#{if THREAD!=2
 		call		[ ?		// go ahead and exec it
+#}if
+#{if THREAD==2
+		defexec		[ ?		// go ahead and exec it
+#}if
 #}if
 #{if prim_var_deref!=1
 		defexec		[ ?		// go ahead and exec it
