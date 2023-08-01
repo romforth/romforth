@@ -1462,6 +1462,11 @@ def{ compile	[	| w ]
 #}if
 #{if THREAD==2
 	@	[ w o
+#{if prim_var_deref==1
+[ THREAD==2 and prim_var_deref==1 => MSP430 which needs an indirection
+	cell +	[ w o+cell	// skip past the call
+	@	[ w o'		// and get the primitive offset
+#}if
 #}if
 #{if THREAD==3
 #{if PRIMSZ==1
