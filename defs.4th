@@ -1355,7 +1355,7 @@ def{ outer
 
 #{if step>=57
 
-#{if THREAD==3 or THREAD==1
+#{if THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
 
 [ // primitives such as lit, j/jz/jnz etc which use "immediate addressing"
 [ // (where "immediate" refers not to the Forth meaning of the word but to the
