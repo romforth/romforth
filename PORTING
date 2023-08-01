@@ -17,11 +17,24 @@ The following ports are complete:
 | z80       |  16  | little | 1 | Baremetal | sdasz80    | ucsim/sz80    |
 | z180-sdcc |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
 | z80n-sdcc |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
+| msp430-as |  16  | little | 2*| Baremetal | msp430-gcc | mspdebug      |
 '-----------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
 	T : The "thread" type used in the interpreter - this needs some form of
 		a mapping to the usual Forth notation of DIRECT/INDIRECT/STC/...
+	Thread type 1 has the following invocation format:
+		| enter | cfa:cell |
+	Thread type 2 has the following invocation format:
+		| cfa:cell |
+		where cfa contains: | enter | ... | exit
+	Thread type 2* is the same as type 2 except that the prim/vars are
+		"encapsulated" in a header which looks like this:
+			variable	| lit | var | exit |
+			primitive	| prim | exit |
+		(this is denoted using the configuration prim_var_deref=1)
+	Thread type 3 is used in C implementations and has the format:
+		| enter | cfa:void* |
 
 Porting Guide
 =============

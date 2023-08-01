@@ -126,6 +126,8 @@ To make a local copy:
 
 To build/test, the following dependencies need to be installed:
 	perl nasm gcc binutils(pdp11,m68k,sparc) simh zig qemu sdcc(ucsim)
+	msp430-gcc mspdebug(from github.com/romforth/mspdebug, until my changes
+	are upstreamed)
 
 After installing all the above dependencies, running `make` will build each of
 the ports and run each of them in an emulator and should complete successfully.

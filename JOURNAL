@@ -84,6 +84,7 @@ INDEX
 	* 20 Jul '23
 	* 26 Jul '23
 	* 31 Jul '23
+	* 01 Aug '23
 
 04 Nov '22
 ----------
@@ -3298,3 +3299,43 @@ started tingling and I assumed that this was yet another case of alignment
 issues. Sure enough, after swapping the positions of "here" and "state" things
 are working again. Whew! I guess looking at the objdump was a lucky break that
 helped avoid a much longer and laborious debug exercise.
+
+01 Aug '23
+----------
+This entry marks the conclusion of the MSP430 port. Unlike some of the earlier
+ports, for eg: the SPARC and m68k, which were completed in short weekly bursts,
+this one turned into a long hard slog that took nearly a month to complete just
+like the Z80 port. I think part of the reason for the slow progress is that it
+is still summer vacation time, and that of course comes with its fair share of
+distractions but I think the real reason was the introduction of yet another
+THREAD'ing type which reuses PDP11's THREAD type of 2 but which is in many ways
+subtly different because of the additional prim_var_deref=1 configuration.
+
+Although I got it working, the code, especially the grungy parts, are starting
+to look really ugly and I'm tempted to try to see if I can clean them up since
+it felt like reading and modifying the code was a fair bit of struggle for each
+of the bugs that I ran into. Given the vacation vibe, it was easy to slip into
+doing something else instead of continuing to struggle with each bug as it
+popped up. Averaging over all of the ports that have been completed so far, an
+estimate of 2-4 weeks for a port still seems to hold and this port also falls
+within that envelope.
+
+Anyway, now that I have yet another port under my belt, the usual question of
+"what next" pops up. Although I've been tagging the "emulator tested" ports as
+"Baremetal", so far none of the ports has been tested on actual hardware.
+
+Since this port is done and since I have the MSP430 Launchpad dev kit on hand
+(for almost a decade now, actually), this is as good a time as any to try it
+out on real hardware. Unfortunately the distro that I use is pretty old - it's
+Ubuntu 16.04, which is currently 7+ years old (and no longer supported), so I
+can no longer install the packages required to get mspdebug to talk to real
+hardware. So I'm going to be spending some time figuring out how to get all of
+that to work. I may need to rebuild the required packages to get it working.
+
+There is also the additional remaining hard work of shoehorning all of this
+code to fit into the tiny 2KB ROM that the MSP430 devices that came with the
+Launchpad kit are equipped with.
+
+Maybe, just maybe, given that there are only a few more days of summer vacation
+remaining, I should just give in to procrastination, kick back, relax and go
+hang out at the beach instead ;)

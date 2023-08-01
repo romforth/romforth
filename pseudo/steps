@@ -70,4 +70,4 @@
     z80-c : step 59 : Enable loop{ ... }while{ ... }loop in the repl
     z80-c : step 60 : Enable loop{ ... }until{ ... }loop in the repl
     z80-c : step 61 : Enable for{ ... }for loop support in the repl
-    z80-c : step 62 : Implement '.' to conclude the x86 assembly syscall port
+    z80-c : step 62 : Implement '.' to conclude this port
