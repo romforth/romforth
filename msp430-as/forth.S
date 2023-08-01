@@ -54,6 +54,6 @@ rom:
 #include "prims.s"
 #endif
 
-	.org 32
+	.org 50
 spbase:
 mem:
