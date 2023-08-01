@@ -1222,7 +1222,15 @@ lit lit lit lit lit lit lit	[ cfa enter	// padding escaped by lit
 
 	}else{		[ cfa		// variable or primitive,
 #{if step>=54
+#{if THREAD==2 and prim_var_deref==1
+[ special case for MSP430 which uses uniform handling for all cfa's
+		,	[ \ cfa	// compile the variable or primitive's cfa
+#}if
+[ note : this test is just the negation of the above test used for MSP430
+[ ie !(THREAD==2 and prim_var_deref==1)
+#{if THREAD!=2 or prim_var_deref!=1
 		compcfa	[ \ cfa	// compile the variable or primitive's cfa
+#}if
 #}if
 	}if
 }def
