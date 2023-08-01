@@ -1417,7 +1417,7 @@ lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
 
 #{if step>=60
 
-#{if THREAD==3 or THREAD==1
+#{if THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
 
 [ // see the comment for #jz above for the details of why this is needed
 def{ #jnz
