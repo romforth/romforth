@@ -131,3 +131,28 @@ To build/test, the following dependencies need to be installed:
 
 After installing all the above dependencies, running `make` will build each of
 the ports and run each of them in an emulator and should complete successfully.
+
+ROM/RAM Requirements
+====================
+
+The table below lists the current ROM usage (in bytes) of the various ports:
+
+.-----------.------------.-----------------.-----------------.
+| CPU       | Primitives | Forth bytecodes | Forth bytecodes |
+|           |            |     (total)     | TESTROM (total) |
++-----------+------------+-----------------+-----------------+
+| x86       |     264    |   1619 (1883)   |   3047 (3311)   |
+| x86-as    |     264    |   1619 (1883)   |   3047 (3311)   |
+| PDP11     |     276    |   2140 (2416)   |   4272 (4548)   |
+| x86-user  |     445    |   3245 (3690)   |   6548 (6993)   |
+| C/x86     |     445    |   3928 (5848)   |   6985 (7430)   |
+| x86-32    |     385    |   2229 (2614)   |   4288 (4673)   |
+| x86-sys   |     518    |   3245 (3763)   |   6548 (7066)   |
+| m68k      |     378    |   2280 (2658)   |   4348 (4726)   |
+| sparc     |     956    |   2208 (3164)   |   4315 (5271)   |
+| z80       |     491    |   1735 (2231)   |   3178 (3674)   |
+| z80-c     |    1588    |   1563 (3151)   |   2927 (4515)   |
+| z180-sdcc |    1590    |   1563 (3153)   |   2927 (4517)   |
+| z80n-sdcc |    1584    |   1563 (3147)   |   2927 (4511)   |
+| msp430-as |     270    |   2540 (2810)   |   4672 (4942)   |
+'-----------'------------'-----------------'-----------------'

@@ -85,6 +85,7 @@ INDEX
 	* 26 Jul '23
 	* 31 Jul '23
 	* 01 Aug '23
+	* 04 Aug '23
 
 04 Nov '22
 ----------
@@ -3339,3 +3340,31 @@ Launchpad kit are equipped with.
 Maybe, just maybe, given that there are only a few more days of summer vacation
 remaining, I should just give in to procrastination, kick back, relax and go
 hang out at the beach instead ;)
+
+04 Aug '23
+----------
+I tried to see if disabling the tests can make the code space small enough to
+fit within the 2KB ROM that the MSP430 devices have. It turns out that even
+with tests disabled, the code still needs ~2800 bytes. So I decided to take a
+bit of a detour and compare the sizes of all of the ports that have been
+completed so far to see if I can discern patterns. Since the MSP430 and the x86
+are 16 bit implementations, but use different THREAD types, I was curious to
+see how that implementation choice affects code space usage. I've added the
+data as a table to the end of the README. From the data it is clear that THREAD
+type 1 (used in x86 as well as the z80) generates the most compact code while
+THREAD type 2 (used in the PDP11 and MSP430) generates less dense results.
+
+So the immediate conclusion I can draw from the data in that table is that if
+ROM capacity is the biggest constraint, it might be better to choose THREAD=1
+
+In the case of the MSP430 devices that I have, ROM is not the only constraint.
+The RAM at 128 bytes is also a big constraint. Since the RAM is so small, it
+does not make sense to have a runtime dictionary so this rules out "fourforth".
+
+Since there is no character input device, even the REPL is superfluous and so
+even the static dictionary becomes unnecessary. So "threeforth" is also out of
+the picture and so we are left with just "twoforth" which only needs umbilical
+hosting for a set of defined words. I can see how this kind of thinking can
+turn into a race to the bottom so rather than indulge in that, I'll try to see
+how much of the code can possibly be shoehorned into the 2KB ROM that these
+devices have. So I guess that's what I'll focus on next.
