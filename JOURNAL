@@ -86,6 +86,7 @@ INDEX
 	* 31 Jul '23
 	* 01 Aug '23
 	* 04 Aug '23
+	* 08 Aug '23
 
 04 Nov '22
 ----------
@@ -3368,3 +3369,23 @@ hosting for a set of defined words. I can see how this kind of thinking can
 turn into a race to the bottom so rather than indulge in that, I'll try to see
 how much of the code can possibly be shoehorned into the 2KB ROM that these
 devices have. So I guess that's what I'll focus on next.
+
+08 Aug '23
+----------
+After mulling over this decision a fair bit, I've decided that forking off to
+work on "real hardware" is too much of a distraction right now so I'm going to
+try and finish the two remaining ports that I'd intended to work on from the
+start of this project and then revisit the port to "real hardware" when it is
+more convenient to do so.
+
+The only two remaining ports from the initial list are ARM and RISC-V and I've
+decided to start with ARM first just because I happen to have an old STM board
+which I can use for testing whenever I get around to testing these ports on
+real hardware.
+
+In my JOURNAL entry for 01 May '23 I'd listed ports which have zig+qemu support
+and both ARM(aarch64-linux-musl, qemu-aarch64) and RISC-V (riscv64-linux-gnu,
+qemu-riscv64) can be easily built using zig and tested using user mode qemu.
+Since figuring out the tooling for build and test tends to be one of the harder
+parts of doing a port to a new architecture, I'm happy to take the easy way out
+and work on these since the infrastructure issues are already sorted out.
