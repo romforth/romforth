@@ -87,6 +87,7 @@ INDEX
 	* 01 Aug '23
 	* 04 Aug '23
 	* 08 Aug '23
+	* 09 Aug '23
 
 04 Nov '22
 ----------
@@ -3389,3 +3390,17 @@ qemu-riscv64) can be easily built using zig and tested using user mode qemu.
 Since figuring out the tooling for build and test tends to be one of the harder
 parts of doing a port to a new architecture, I'm happy to take the easy way out
 and work on these since the infrastructure issues are already sorted out.
+
+09 Aug '23
+----------
+Rather than start out with a port done in ARM assembly, I've decided to try and
+see if I can use the C code "as is" for shaking out any problems I may run into
+by using the zig/qemu combination (since this is the first time I'm trying out
+that combination). Since this port should be, for the most part, identical to
+the C port, I've symlinked all the files that will be common and left out the
+ones which won't be shared as new files.
+
+Unlike the ports of the Z80 variants where the C porting "just worked" all the
+way to step 62, this port fails at step 62 when I tried to see if it would be
+that easy, so I'll fall back to my usual method of testing out each step one at
+a time.

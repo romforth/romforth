@@ -22,6 +22,7 @@ my $z80c_check=1;
 my $z180c_check=1;
 my $z80n_c_check=1;
 my $msp430as_check=1;
+my $armzigcc_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -37,6 +38,7 @@ if (@ARGV) {
 	$z180c_check=0;
 	$z80n_c_check=0;
 	$msp430as_check=0;
+	$armzigcc_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -52,6 +54,7 @@ if (@ARGV) {
 		$z180c_check=1 if ( $d eq "z180-sdcc");
 		$z80n_c_check=1 if ( $d eq "z80n-sdcc");
 		$msp430as_check=1 if ( $d eq "msp430-as");
+		$armzigcc_check=1 if ( $d eq "arm-zigcc");
 	}
 }
 
@@ -140,6 +143,12 @@ $x=`cat msp430-as/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $msp430as_step=$step;
+
+my $armzigcc_step;
+$x=`cat arm-zigcc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$armzigcc_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -376,6 +385,19 @@ msp430as_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the msp430 port\n";
 	system("cd msp430-as ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+armzigcc_port: {
+	last armzigcc_port unless ($armzigcc_check);
+	last armzigcc_port if ($i>$armzigcc_step);
+	@ARGV=("arm-zigcc/fpp.config.C");
+	open(my $fh, ">arm-zigcc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the arm port\n";
+	system("cd arm-zigcc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }
