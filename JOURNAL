@@ -88,6 +88,7 @@ INDEX
 	* 04 Aug '23
 	* 08 Aug '23
 	* 09 Aug '23
+	* 11 Aug '23
 
 04 Nov '22
 ----------
@@ -3404,3 +3405,22 @@ Unlike the ports of the Z80 variants where the C porting "just worked" all the
 way to step 62, this port fails at step 62 when I tried to see if it would be
 that easy, so I'll fall back to my usual method of testing out each step one at
 a time.
+
+11 Aug '23
+----------
+I should have realized ahead of time that the there would be a failure at step
+13, even for the portable C code, since the addresses specified in fpp.config
+are per port since they are memory layout specific. Since I ran into this again
+I'll go ahead and document what I needed to do here so that it makes this step
+a bit easier in the future. As I mentioned previously in the JOURNAL entry for
+20 Apr '23, the trick is to find addresses that don't move after each compile
+step. To do this, I appended:
+	printf("got %p\n", tos);
+to the @ code in code.prims and collected the sorted output from nm forth_dict
+before and after the change was compiled. Running `comm -12` with the sorted
+output files (from nm) gives the addresses that don't change after a recompile
+and in this case with clang 11.1 the address happens to be 0x200200. After
+adding this address to fpp.config.C, I can rebuild and see the value at that
+address which is printed out by the printf mentioned above which in this case
+happened to be 0, so I added it as the VALUE config parameter in fpp.config.C.
+Finally, restore the original code.prims and run make to verify things work.
