@@ -89,6 +89,7 @@ INDEX
 	* 08 Aug '23
 	* 09 Aug '23
 	* 11 Aug '23
+	* 14 Aug '23
 
 04 Nov '22
 ----------
@@ -3424,3 +3425,12 @@ adding this address to fpp.config.C, I can rebuild and see the value at that
 address which is printed out by the printf mentioned above which in this case
 happened to be 0, so I added it as the VALUE config parameter in fpp.config.C.
 Finally, restore the original code.prims and run make to verify things work.
+
+14 Aug '23
+----------
+With the C version of the ARM port out of the way, it is now time to take a
+look at implementing the assembly version. Since clang can generate the ARM
+assembly code, I can sneak a peek at the generated code and try to see if I
+can get away with not having to read the voluminous ARM docs. Although I could
+continue to use zig to assemble the ARM assembly code, I'll switch to old
+faithful binutils just so I have coverage of all the available tools.

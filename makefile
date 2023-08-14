@@ -14,6 +14,7 @@ all :
 	(cd z80n-sdcc ; make)
 	(cd msp430-as ; make)
 	(cd arm-zigcc ; make)
+	(cd arm64-sys ; make)
 
 allsteps :
 	./runallsteps
@@ -36,3 +37,4 @@ clean :
 	(cd z80n-sdcc ; make clean)
 	(cd msp430-as ; make clean)
 	(cd arm-zigcc ; make clean)
+	(cd arm64-sys ; make clean)
