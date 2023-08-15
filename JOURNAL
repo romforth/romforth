@@ -90,6 +90,7 @@ INDEX
 	* 09 Aug '23
 	* 11 Aug '23
 	* 14 Aug '23
+	* 15 Aug '23
 
 04 Nov '22
 ----------
@@ -3434,3 +3435,20 @@ assembly code, I can sneak a peek at the generated code and try to see if I
 can get away with not having to read the voluminous ARM docs. Although I could
 continue to use zig to assemble the ARM assembly code, I'll switch to old
 faithful binutils just so I have coverage of all the available tools.
+
+15 Aug '23
+----------
+I struggled a bit to figure out how to get the bytecode trampoline working
+since I'm still continuing with my experiment to see if I can code this thing
+up without reading the docs and looking at just the clang generated assembly
+output. After some experiments, I figured out that adrp + adding the offset of
+the address appears to work just enough to initialize addresses but I'm sure
+there must be a shorter way to do it if I just went ahead and read the docs.
+For now I'll go ahead with what works and leave the clean up for later.
+
+Since this port is for the ARM 64 bit architecture, it makes sense to use the
+THREAD type=1 for compactness.
+
+---
+
+Happy Independence Day to all you desis out there! ;)
