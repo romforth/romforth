@@ -91,6 +91,7 @@ INDEX
 	* 11 Aug '23
 	* 14 Aug '23
 	* 15 Aug '23
+	* 16 Aug '23
 
 04 Nov '22
 ----------
@@ -3452,3 +3453,12 @@ THREAD type=1 for compactness.
 ---
 
 Happy Independence Day to all you desis out there! ;)
+
+16 Aug '23
+----------
+Just as in the MSP430 port, for this port also, I'll start off by linking the
+assembly code generator scripts to the SPARC version. Since the SPARC port was
+32 bits while this ARM port uses 64 bits, if it turns out that the scripts need
+to be changed, so be it, I'll change it at the step where I run into trouble.
+
+The configuration file fpp.config.arm is also a copy from the SPARC port.

@@ -1,0 +1,8 @@
+# code.prims : mapping from the Forth primitives to ARM64 assembly
+#
+# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+next	: ldrb wl, [ip] ; add w, w, i ; add ip, ip, #1 ; br w
+bye	: ret
