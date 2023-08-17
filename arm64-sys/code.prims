@@ -6,5 +6,5 @@
 
 next	: ldrb wl, [ip] ; add w, w, i ; add ip, ip, #1 ; br w
 bye	: ret
-key	: mov temp, #'f' ; strb temp, [bufp] ;
+key	: mov w8, #63 ; mov x0, #0 ; mov x1, bufp ; mov x2, #1 ; svc 0 ;
 emit	: mov w8, #64 ; mov x0, #1 ; mov x1, bufp ; mov x2, #1 ; svc 0 ;
