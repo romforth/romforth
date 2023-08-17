@@ -92,6 +92,7 @@ INDEX
 	* 14 Aug '23
 	* 15 Aug '23
 	* 16 Aug '23
+	* 17 Aug '23
 
 04 Nov '22
 ----------
@@ -3462,3 +3463,10 @@ assembly code generator scripts to the SPARC version. Since the SPARC port was
 to be changed, so be it, I'll change it at the step where I run into trouble.
 
 The configuration file fpp.config.arm is also a copy from the SPARC port.
+
+17 Aug '23
+----------
+Since the write syscall uses registers x0,x1,x2 (and x8), I've decided to alloc
+a different set of registers for ip, i and w so that I don't have to push/pop
+them before/after each syscall. Since ARM has 30 registers, I guess I can be a
+bit profligate with them, so I've used up an additional temp register as well.

@@ -4,9 +4,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-#define ip	x0
-#define i	x1
-#define w	x2
+#define ip	x3
+#define i	x4
+#define w	x5
+#define wl	w5
+#define bufp	x6
+#define temp	w7
 
 	.globl _start
 _start:
@@ -14,6 +17,8 @@ _start:
 	add ip, ip, #rom
 	adrp i, next
 	add i, i, #next
+	adrp bufp, buf
+	add bufp, bufp, #buf
 	bl next
 	mov x0, #0
 	mov w8, #93
@@ -40,3 +45,5 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+	.comm buf, 4
