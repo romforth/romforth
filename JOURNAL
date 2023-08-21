@@ -93,6 +93,7 @@ INDEX
 	* 15 Aug '23
 	* 16 Aug '23
 	* 17 Aug '23
+	* 21 Aug '23
 
 04 Nov '22
 ----------
@@ -3470,3 +3471,81 @@ Since the write syscall uses registers x0,x1,x2 (and x8), I've decided to alloc
 a different set of registers for ip, i and w so that I don't have to push/pop
 them before/after each syscall. Since ARM has 30 registers, I guess I can be a
 bit profligate with them, so I've used up an additional temp register as well.
+
+21 Aug '23
+----------
+I'd been hoping that I could avoid reading the 1300+ page ARM architecture
+manual by just looking at the generated assembly code from the clang C compiler
+but when I came to this step where I need to implement a stack, I had no choice
+but to start reading up on it to figure out how to deal with the machine stack
+- mostly because of the unwieldy stack implementation that ARM v8 has chosen to
+use starting with Aarch64.
+
+From reading the docs (and Stack Overflow along with various helpful blogs), my
+understanding is that stack entries need to push/pop registers in multiples of
+two at a time since the stack pointer register SP must have 16 byte alignment
+when accessing memory.
+
+After spending way more time than was necessary thinking about how to deal with
+this weird architectural twist, I think I have a really elegant implementation
+which caches the top two stack entries (tos and nos) in registers without the
+friction of shuffling data between the two registers by using a coroutine like
+control flow mechanism for tracking which registers are "live".
+
+Assume that 's' is the memory array backing the stack of size N. We can define
+the push and pop operations on this stack using the following definition:
+
+--- Pseudo Code {
+initial state is (0,0)
+push(v) :
+	(0,n) -> nos=v ; yield (1,n)
+	(1,n) -> tos=v ; yield (2,n)
+	(2,N) -> overflow
+	(2,n) -> s<-nos,tos ; nos=v ; yield (1,n+2)
+
+v=pop() :
+	(2,n) -> yield (1,n)::tos
+	(1,n) -> yield (0,n)::nos
+	(0,0) -> underflow
+	(0,n) -> tos,nos<-s ; yield (1,n-2)::tos
+
+--- Pseudo Code }
+
+The above notation is just for my own consumption since I was using it to help
+flesh things out. A more conventional implementation in C might look like this:
+
+--- C Code {
+
+int items=0;
+value tos, nos; // the expectation is that these are in registers
+
+int pop(value *s) {
+	switch(items) {
+		case 0 : pop2(s, &tos, &nos); // fall thru
+		case 2 : items=1; return tos;
+		case 1 : items=0; return nos;
+	}
+}
+
+void push(value *s, value v) {
+	switch(items) {
+		case 2 : push2(s, tos, nos); // fall thru
+		case 0 : items=1; nos=v; return;
+		case 1 : items=2; tos=v; return;
+	}
+}
+
+--- C code }
+
+It should be fairly easy to extend this to many more registers and you can
+almost see how it devolves into a SPARC register window like mechanism where
+the "register window" needs to be filled or flushed only after N pops/pushes.
+
+For the implementation in assembly, I used a jumptable since that seemed to
+be the closest fit to the pseudo code.
+
+Since ARM v8 has 30 registers, I'll continue to squander them like there is
+no tomorrow. I'm also not going to bother with writing space constrained code
+since the 64 bit architecture, allows me to assume that there will be plenty of
+ROM and RAM to fling around. I may have to resort to writing tighter code if I
+ever revisit ARM to do a 32 bit/Thumb16 implementation.
