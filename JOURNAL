@@ -94,6 +94,7 @@ INDEX
 	* 16 Aug '23
 	* 17 Aug '23
 	* 21 Aug '23
+	* 22 Aug '23
 
 04 Nov '22
 ----------
@@ -3549,3 +3550,25 @@ no tomorrow. I'm also not going to bother with writing space constrained code
 since the 64 bit architecture, allows me to assume that there will be plenty of
 ROM and RAM to fling around. I may have to resort to writing tighter code if I
 ever revisit ARM to do a 32 bit/Thumb16 implementation.
+
+22 Aug '23
+----------
+For implementing lit, I decided to leverage clang's superoptimization powers
+and generated the assembly equivalent of the following code:
+
+	char *p=ip+8;
+	int tos=0;
+	do {
+		tos<<=8;
+		tos|=*--p;
+	} while (p!=ip);
+
+But using that resulted in a test failure which I had to debug to the fact that
+after adding dup/drop in the previous step, I had (as usual, this has happened
+multiple times now) completely forgotten to also modify key/emit to use dup and
+drop. Luckily, during the previous port for MSP430, I had run into this exact
+same bug and with some foresight, I'd changed the tests to catch this bug as
+early as possible and paying down that $TECHDEBT turned out to be an excellent
+move in hindsight. I looked at trying to move this test back one more step so
+it can be caught at step 2 but that seems to be hard to implement so I'll leave
+things as they are for now.

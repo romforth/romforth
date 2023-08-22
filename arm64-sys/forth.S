@@ -9,11 +9,13 @@
 #define w	x5
 #define wl	w5
 #define bufp	x6
-#define temp	w7
+#define temp	x7
+#define templ	w7
 #define sn	x9
 #define tosr	x10
 #define nosr	x11
 #define tos	x12
+#define tosl	w12
 #define pusho	x13
 #define popo	x14
 #define ofsr	x15
@@ -21,6 +23,8 @@
 #define jmprl	w16
 #define pp	x17
 #define ssp	x18
+#define c	x19
+#define cl	w19
 
 	.globl _start
 _start:
