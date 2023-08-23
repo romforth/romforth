@@ -84,6 +84,34 @@ pushitem1:
 	mov tosr, tos
 	mov sn, #2
 	ret
+reallit:
+	mov temp, #3
+1:
+	ldrb cl, [ip,temp]
+	sub temp, temp, #1
+	cmn temp, #1
+	orr tos, c, tos, lsl #8
+	b.ne 1b
+	add ip, ip, #4
+	ret
+
+realkey:
+	mov w8, #63
+	mov x0, #0
+	mov x1, bufp
+	mov x2, #1
+	svc 0
+	ldrb tosl, [bufp]
+	ret
+
+realemit:
+	strb tosl, [bufp]
+	mov w8, #64
+	mov x0, #1
+	mov x1, bufp
+	mov x2, #1
+	svc 0
+	ret
 
 #if USEDICT
 #include "prims_dict.s"

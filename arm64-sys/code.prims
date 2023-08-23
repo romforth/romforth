@@ -9,8 +9,8 @@ next	: ldrb wl, [ip] ; add w, w, i ; add ip, ip, #1 ; br w
 bye	: ret ssp
 dup	: mov ofsr, pusho ; bl pushpop ;
 drop	: mov ofsr, popo ; bl pushpop ;
-key	: dup ; mov w8, #63 ; mov x0, #0 ; mov x1, bufp ; mov x2, #1 ; svc 0 ; ldrb tosl, [bufp] ;
-emit	: strb tosl, [bufp] ; mov w8, #64 ; mov x0, #1 ; mov x1, bufp ; mov x2, #1 ; svc 0 ; drop ;
-lit	: dup ; mov temp, #3 ; 1: ; ldrb cl, [ip,temp] ; sub temp, temp, #1 ; cmn temp, #1 ; orr tos, c, tos, lsl #8 ; b.ne 1b ; add ip, ip, #4 ;
+key	: dup ; bl realkey ;
+emit	: bl realemit ; drop ;
+lit	: dup ; bl reallit ;
 neg	: neg tos, tos ;
 j	: ldrb cl, [ip] ; add ip, ip, #1 ; add ip, ip, c ;

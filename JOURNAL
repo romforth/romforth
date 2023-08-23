@@ -95,6 +95,7 @@ INDEX
 	* 17 Aug '23
 	* 21 Aug '23
 	* 22 Aug '23
+	* 23 Aug '23
 
 04 Nov '22
 ----------
@@ -3572,3 +3573,24 @@ early as possible and paying down that $TECHDEBT turned out to be an excellent
 move in hindsight. I looked at trying to move this test back one more step so
 it can be caught at step 2 but that seems to be hard to implement so I'll leave
 things as they are for now.
+
+23 Aug '23
+----------
+While trying to implement jz, I filled up the 256 bytes of primitive space and
+rather than widen the offset from 1 byte to 2, I decided to shuffle the largest
+primitives from code.prims into forth.S
+
+Since I wrote the primsize script a while back exactly to track down these type
+of issues, I went ahead and ran it like this:
+	../primsize forth | sort -n
+which gives me the following list of the current heavyweight champions:
+	16 next
+	20 neg
+	24 drop
+	24 dup
+	28 j
+	48 emit
+	48 key
+	52 lit
+So for this round of shifting the weight around, I'll go ahead and move the top
+three: lit, key and emit from code.prims to forth.S
