@@ -14,5 +14,5 @@ emit	: bl realemit ; drop ;
 lit	: dup ; bl reallit ;
 neg	: neg tos, tos ;
 j	: ldrb cl, [ip] ; add ip, ip, #1 ; add ip, ip, c ;
-jz	: ldrb cl, [ip] ; add ip, ip, #1 ; cmp tos, #0 ; csel c, c, xzr, eq ; add ip, ip, c ; drop ;
-jnz	: ldrb cl, [ip] ; add ip, ip, #1 ; cmp tos, #0 ; csel c, c, xzr, ne ; add ip, ip, c ; drop ;
+jz	: ldrb cl, [ip] ; sxtb c, cl ; add ip, ip, #1 ; cmp tos, #0 ; csel c, c, xzr, eq ; add ip, ip, c ; drop ;
+jnz	: ldrb cl, [ip] ; sxtb c, cl ; add ip, ip, #1 ; cmp tos, #0 ; csel c, c, xzr, ne ; add ip, ip, c ; drop ;
