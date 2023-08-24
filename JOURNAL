@@ -96,6 +96,7 @@ INDEX
 	* 21 Aug '23
 	* 22 Aug '23
 	* 23 Aug '23
+	* 24 Aug '23
 
 04 Nov '22
 ----------
@@ -3594,3 +3595,10 @@ which gives me the following list of the current heavyweight champions:
 	52 lit
 So for this round of shifting the weight around, I'll go ahead and move the top
 three: lit, key and emit from code.prims to forth.S
+
+24 Aug '23
+----------
+While debugging step 5, the 256 byte primitive area became full again and this
+time I decided to do a bit more invasive set of space optimizations. So along
+with moving jz/jnz to forth.S, I also moved next so all the primitives that
+prepend it became shorter as well.

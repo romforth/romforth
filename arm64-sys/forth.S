@@ -113,6 +113,30 @@ realemit:
 	svc 0
 	ret
 
+realjz:
+	ldrb cl, [ip]
+	sxtb c, cl
+	add ip, ip, #1
+	cmp tos, #0
+	csel c, c, xzr, eq
+	add ip, ip, c
+	ret
+
+realjnz:
+	ldrb cl, [ip]
+	sxtb c, cl
+	add ip, ip, #1
+	cmp tos, #0
+	csel c, c, xzr, ne
+	add ip, ip, c
+	ret
+
+realnext:
+	ldrb wl, [ip]
+	add w, w, i
+	add ip, ip, #1
+	br w
+
 #if USEDICT
 #include "prims_dict.s"
 #else

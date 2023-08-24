@@ -5,7 +5,7 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 cold	: mov ssp, x30
-next	: ldrb wl, [ip] ; add w, w, i ; add ip, ip, #1 ; br w
+next	: b realnext
 bye	: ret ssp
 dup	: mov ofsr, pusho ; bl pushpop ;
 drop	: mov ofsr, popo ; bl pushpop ;
@@ -14,5 +14,5 @@ emit	: bl realemit ; drop ;
 lit	: dup ; bl reallit ;
 neg	: neg tos, tos ;
 j	: ldrb cl, [ip] ; add ip, ip, #1 ; add ip, ip, c ;
-jz	: ldrb cl, [ip] ; sxtb c, cl ; add ip, ip, #1 ; cmp tos, #0 ; csel c, c, xzr, eq ; add ip, ip, c ; drop ;
-jnz	: ldrb cl, [ip] ; sxtb c, cl ; add ip, ip, #1 ; cmp tos, #0 ; csel c, c, xzr, ne ; add ip, ip, c ; drop ;
+jz	: bl realjz ; drop ;
+jnz	: bl realjnz ; drop ;
