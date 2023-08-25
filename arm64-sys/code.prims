@@ -8,7 +8,8 @@ cold	: mov ssp, x30
 next	: b realnext
 bye	: ret ssp
 dup	: mov ofsr, pusho ; bl pushpop ;
-drop	: mov ofsr, popo ; bl pushpop ;
+2drop	: bl realdrop
+drop	: bl realdrop ;
 key	: dup ; bl realkey ;
 emit	: bl realemit ; drop ;
 lit	: dup ; bl reallit ;

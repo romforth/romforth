@@ -120,6 +120,10 @@ dipitem1:
 	mov sn, #2
 	ret
 
+realdrop:
+	mov ofsr, popo
+	b pushpop
+
 realnip:
 	mov ofsr, popo
 	add ofsr, ofsr, #6
