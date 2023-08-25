@@ -25,3 +25,4 @@ dip	: bl realdip ;
 +	: nip ; add tos, tos, nos ;
 &	: nip ; and tos, tos, nos ;
 |	: nip ; orr tos, tos, nos ;
+^	: nip ; eor tos, tos, nos ;
