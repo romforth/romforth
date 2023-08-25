@@ -25,6 +25,7 @@
 #define ssp	x18
 #define c	x19
 #define cl	w19
+#define nos	x20
 
 	.globl _start
 _start:
@@ -56,6 +57,16 @@ popoffsets:
 	.byte popitem1-pushpop
 	.byte popitem2-pushpop
 
+dipoffsets:
+	.byte dipitem0-pushpop
+	.byte dipitem1-pushpop
+	.byte dipitem2-pushpop
+
+nipoffsets:
+	.byte nipitem0-pushpop
+	.byte nipitem1-pushpop
+	.byte nipitem2-pushpop
+
 	.align 2
 
 pushpop:
@@ -84,6 +95,31 @@ pushitem1:
 	mov tosr, tos
 	mov sn, #2
 	ret
+
+nipitem0:
+	ldp nos, nosr, [sp]
+	mov sn, #1
+	ret
+nipitem1:
+	mov nos, nosr
+	mov sn, #0
+	ret
+nipitem2:
+	mov nos, tosr
+	mov sn, #1
+	ret
+
+dipitem2:
+	stp tosr, nosr, [sp, #-16]!
+dipitem0:
+	mov nosr, nos
+	mov sn, #1
+	ret
+dipitem1:
+	mov tosr, nos
+	mov sn, #2
+	ret
+
 reallit:
 	mov temp, #3
 1:

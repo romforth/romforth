@@ -19,3 +19,5 @@ jnz	: bl realjnz ; drop ;
 inc	: add tos, tos, 1 ;
 dec	: sub tos, tos, 1 ;
 inv	: mvn tos, tos ;
+nip	: mov ofsr, popo ; add ofsr, ofsr, #6 ; bl pushpop ;
+dip	: mov ofsr, pusho ; add ofsr, ofsr, #6 ; bl pushpop ;
