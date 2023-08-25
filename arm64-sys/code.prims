@@ -18,3 +18,4 @@ jz	: bl realjz ; drop ;
 jnz	: bl realjnz ; drop ;
 inc	: add tos, tos, 1 ;
 dec	: sub tos, tos, 1 ;
+inv	: mvn tos, tos ;
