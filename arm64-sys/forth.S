@@ -93,6 +93,7 @@ reallit:
 	orr tos, c, tos, lsl #8
 	b.ne 1b
 	add ip, ip, #4
+	sxth tos, tosl
 	ret
 
 realkey:
