@@ -23,3 +23,4 @@ nip	: mov ofsr, popo ; add ofsr, ofsr, #6 ; bl pushpop ;
 dip	: mov ofsr, pusho ; add ofsr, ofsr, #6 ; bl pushpop ;
 -	: neg
 +	: nip ; add tos, tos, nos ;
+&	: nip ; and tos, tos, nos ;
