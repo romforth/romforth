@@ -196,6 +196,18 @@ realnext:
 	add ip, ip, #1
 	br w
 
+store:
+	bl realnip
+	str nos, [tos]
+	bl realdrop
+	b realnext
+
+cstore:
+	bl realnip
+	strb nosl, [tos]
+	bl realdrop
+	b realnext
+
 rom:
 
 #include "rom.s"

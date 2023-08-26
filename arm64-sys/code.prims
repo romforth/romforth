@@ -30,9 +30,9 @@ dip	: bl realdip ;
 swap	: nip ; dup
 t_n	: mov tos, nos ;
 @	: ldr tos, [tos] ;
-!	: nip ; str nos, [tos] ; drop ;
+!	: b store
 c@	: ldrb tosl, [tos] ;
-c!	: nip ; strb nosl, [tos] ; drop ;
+c!	: b cstore
 
 _fa_ke_	: .data
 
