@@ -187,12 +187,6 @@ realnext:
 	add ip, ip, #1
 	br w
 
-#if USEDICT
-#include "prims_dict.s"
-#else
-#include "prims.s"
-#endif
-
 rom:
 
 #include "rom.s"
@@ -209,4 +203,13 @@ rom:
 #endif
 #endif
 
+	.align 2
+
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
+#endif
+
 	.comm buf, 4
+	.comm mem, 1024
