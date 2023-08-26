@@ -26,6 +26,7 @@
 #define c	x19
 #define cl	w19
 #define nos	x20
+#define nosl	w20
 
 	.globl _start
 _start:
