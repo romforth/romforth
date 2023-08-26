@@ -29,3 +29,4 @@ dip	: bl realdip ;
 ^	: nip ; eor tos, tos, nos ;
 swap	: nip ; dup
 t_n	: mov tos, nos ;
+@	: ldr tos, [tos] ;

@@ -135,15 +135,14 @@ realdip:
 	b pushpop
 
 reallit:
-	mov temp, #3
+	mov temp, #7
 1:
 	ldrb cl, [ip,temp]
 	sub temp, temp, #1
 	cmn temp, #1
 	orr tos, c, tos, lsl #8
 	b.ne 1b
-	add ip, ip, #4
-	sxth tos, tosl
+	add ip, ip, #8
 	ret
 
 realkey:

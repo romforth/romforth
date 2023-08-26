@@ -98,6 +98,7 @@ INDEX
 	* 23 Aug '23
 	* 24 Aug '23
 	* 25 Aug '23
+	* 26 Aug '23
 
 04 Nov '22
 ----------
@@ -3616,3 +3617,20 @@ I'm a bit worried though that I may have added more complexity than is good for
 my own sanity. Just because I have 64 bits of address space does not mean that
 I need to binge on it. I'll wait and see if this turns out to be way too clever
 for my own good.
+
+26 Aug '23
+----------
+Due to the legacy genrom (from sparc) that I've been using so far, I've been
+treating the 64 bit ARM as a 32 bit architecture. But now that I need to access
+memory, I might as well go all in and let its 64 bitness shine through.
+
+This of course required the genrom script to be modified and I've changed the
+symlink from the sparc version to the x86-sys version (which is also 64 bit). I
+don't really remember why I didn't just do this at the very beginning.
+
+Due to the genrom change, literals are now 8 bytes instead of 4 so the code in
+the handler for that needed to be updated. A full regression test (runallsteps)
+was done to make sure that nothing broke due to that change.
+
+Finally, the port specific configuration values for the memory address and the
+value at that address also needed to be updated.
