@@ -69,6 +69,9 @@ nipoffsets:
 
 	.align 2
 
+realdup:
+	mov ofsr, pusho
+				# and then, fall thru
 pushpop:
 	ldrb jmprl, [ofsr,sn]
 	add jmpr, jmpr, pp
@@ -181,6 +184,11 @@ realjnz:
 	add ip, ip, c
 	ret
 
+realj:
+	ldrb cl, [ip]
+	add ip, ip, #1
+	add ip, ip, c
+				# and then, fall thru
 realnext:
 	ldrb wl, [ip]
 	add w, w, i
