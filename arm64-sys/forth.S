@@ -73,6 +73,11 @@ pickoffsets:
 	.byte pickitem1-pushpop
 	.byte pickitem2-pushpop
 
+stickoffsets:
+	.byte stickitem0-pushpop
+	.byte stickitem1-pushpop
+	.byte stickitem2-pushpop
+
 	.align 2
 
 realdup:
@@ -147,6 +152,24 @@ pickitem1:
 	ldr tos, [sp,tos]
 	ret
 
+stickitem0:
+	ldp tosr, nosr, [sp]
+stickitem2:
+	cmp tos, #1
+	mov sn, #1
+	bne stickmem
+	mov nosr, tosr
+	ret
+stickitem1:
+	mov tosr, nosr
+stickmem:
+	sub tos, tos, #1
+	lsl tos, tos, #3
+	str tosr, [sp,tos]
+	ret
+	mov sn, #0
+	ret
+
 realdrop:
 	mov ofsr, popo
 	b pushpop
@@ -165,6 +188,13 @@ realpick:
 	mov ofsr, pusho
 	add ofsr, ofsr, #12
 	bl pushpop
+	b realnext
+
+realstick:
+	mov ofsr, popo
+	add ofsr, ofsr, #12
+	bl pushpop
+	bl realdrop
 	b realnext
 
 reallit:
