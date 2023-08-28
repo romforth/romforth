@@ -99,6 +99,7 @@ INDEX
 	* 24 Aug '23
 	* 25 Aug '23
 	* 26 Aug '23
+	* 28 Aug '23
 
 04 Nov '22
 ----------
@@ -3634,3 +3635,39 @@ was done to make sure that nothing broke due to that change.
 
 Finally, the port specific configuration values for the memory address and the
 value at that address also needed to be updated.
+
+28 Aug '23
+----------
+The kernel of truth ingrained in the quote about caching being one of the "hard
+problems in Computer Science" is starting to make itself felt. The decision to
+cache the top 2 stack entries in registers was done out of necessity due to the
+16 byte stack alignment constraint for the SP register that Aarch64 imposes.
+
+The knock on effects of that decision were felt initially in the implementation
+of nip/dip. Now that it is time to implement pick/stick the grottiness of the
+whole scheme is on display. But it is water under the bridge now and the least
+that I can do is to document things in case I run into bugs later.
+
+Here's the stack layout for registers and memory where the top of the stack is
+to the left and the rightmost entry (x0) is the stack element that needs to be
+"pick"ed. The ']' marks the "boundary" between register and memory elements.
+sn is the number of elements cached in registers (sn is the register name that
+is used to track this in forth.S). The number in the "pick" column indicates
+the element that needs to be picked from the stack. For each column, the number
+of stack elements shown in the table is #picks+2
+.---------.----------------.---------------------.--------------------------.
+| pick\sn |        0       |          1          |              2           |
++---------+----------------+---------------------+--------------------------+
+|    1    | tos ] x1 x0    | tos nosr:x1 ] x0    | tos tosr:x1 nosr:x0 ]    |
+|    2    | tos ] x2 x1 x0 | tos nosr:x2 ] x1 x0 | tos tosr:x2 nosr:x1 ] x0 |
+'---------'----------------'---------------------'--------------------------'
+
+Using the above table as a guide to the implementation, pick can be coded as:
+pick\sn->    0                       1                       2
+ 1          pop2;tos=nosr;sn=2   tos=*(sp+0*8)           tos=nosr
+ 2          tos=*(sp+2*8)        tos=*(sp+1*8)           tos=*(sp+0*8)
+ 3          tos=*(sp+3*8)        tos=*(sp+2*8)           tos=*(sp+1*8)
+...
+
+Thus, in general, tos=*(sp+(n-sn)*8), except when pick==1. The code implemented
+in forth.S is a straightforward encoding of the above logic.

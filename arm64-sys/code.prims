@@ -33,6 +33,7 @@ t_n	: mov tos, nos ;
 !	: b store
 c@	: ldrb tosl, [tos] ;
 c!	: b cstore
+pick	: b realpick
 
 _fa_ke_	: .data
 

@@ -68,6 +68,11 @@ nipoffsets:
 	.byte nipitem1-pushpop
 	.byte nipitem2-pushpop
 
+pickoffsets:
+	.byte pickitem0-pushpop
+	.byte pickitem1-pushpop
+	.byte pickitem2-pushpop
+
 	.align 2
 
 realdup:
@@ -124,6 +129,24 @@ dipitem1:
 	mov sn, #2
 	ret
 
+pickitem0:
+	cmp tos, #1
+	bne pickitem1
+	ldp tosr, nosr, [sp]
+	mov sn, #2
+	mov tos, nosr
+	ret
+pickitem2:
+	cmp tos, #1
+	bne pickitem1
+	mov tos, nosr
+	ret
+pickitem1:
+	sub tos, tos, sn
+	lsl tos, tos, #3
+	ldr tos, [sp,tos]
+	ret
+
 realdrop:
 	mov ofsr, popo
 	b pushpop
@@ -137,6 +160,12 @@ realdip:
 	mov ofsr, pusho
 	add ofsr, ofsr, #6
 	b pushpop
+
+realpick:
+	mov ofsr, pusho
+	add ofsr, ofsr, #12
+	bl pushpop
+	b realnext
 
 reallit:
 	mov temp, #7
