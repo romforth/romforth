@@ -252,6 +252,7 @@ realjnz:
 
 realj:
 	ldrb cl, [ip]
+	sxtb c, cl
 	add ip, ip, #1
 	add ip, ip, c
 				# and then, fall thru
