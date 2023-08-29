@@ -295,6 +295,13 @@ realexit:
 	ldr ip, [rp]
 	b realnext
 
+realcall:
+	str ip, [rp]
+	add rp, rp, #8
+	mov ip, tos
+	bl realdrop
+	b realnext
+
 tor:
 	str tos, [rp]
 	add rp, rp, #8

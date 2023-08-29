@@ -42,6 +42,7 @@ r>	: b rfrom
 exec	: b realexec
 enter	: b realenter
 exit	: b realexit
+call	: b realcall
 
 _fa_ke_	: .data
 
