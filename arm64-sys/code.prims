@@ -39,6 +39,7 @@ sp@!	: b spswap
 rp@!	: b rpswap
 >r	: b tor
 r>	: b rfrom
+exec	: b realexec
 
 _fa_ke_	: .data
 

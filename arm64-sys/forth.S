@@ -294,6 +294,13 @@ rfrom:
 	ldr tos, [rp]
 	b realnext
 
+realexec:
+	mov w, tos
+	and w, w, #0xff
+	add w, w, i
+	bl realdrop
+	br w
+
 rom:
 
 #include "rom.s"
