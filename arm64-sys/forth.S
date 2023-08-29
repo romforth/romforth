@@ -27,6 +27,7 @@
 #define cl	w19
 #define nos	x20
 #define nosl	w20
+#define rp	x21
 
 	.globl _start
 _start:
@@ -270,6 +271,12 @@ cstore:
 spswap:
 	mov temp, sp
 	mov sp, tos
+	mov tos, temp
+	b realnext
+
+rpswap:
+	mov temp, rp
+	mov rp, tos
 	mov tos, temp
 	b realnext
 

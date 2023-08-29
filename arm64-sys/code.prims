@@ -36,6 +36,7 @@ c!	: b cstore
 pick	: b realpick
 stick	: b realstick
 sp@!	: b spswap
+rp@!	: b rpswap
 
 _fa_ke_	: .data
 
