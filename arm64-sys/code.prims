@@ -45,6 +45,7 @@ exit	: b realexit
 call	: b realcall
 <<	: b shiftleft
 >>	: b shiftright
+over	: b realover
 
 _fa_ke_	: .data
 

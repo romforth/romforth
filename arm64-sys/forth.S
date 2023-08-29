@@ -185,6 +185,9 @@ realdip:
 	add ofsr, ofsr, #6
 	b pushpop
 
+realover:
+	bl realdup
+	mov tos, #1
 realpick:
 	mov ofsr, pusho
 	add ofsr, ofsr, #12
