@@ -43,6 +43,8 @@ exec	: b realexec
 enter	: b realenter
 exit	: b realexit
 call	: b realcall
+<<	: b shiftleft
+>>	: b shiftright
 
 _fa_ke_	: .data
 

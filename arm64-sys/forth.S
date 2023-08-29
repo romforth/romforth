@@ -261,6 +261,18 @@ realnext:
 	add ip, ip, #1
 	br w
 
+shiftleft:
+	bl realnip
+	lsl nos, nos, tos
+	mov tos, nos
+	b realnext
+
+shiftright:
+	bl realnip
+	lsr nos, nos, tos
+	mov tos, nos
+	b realnext
+
 store:
 	bl realnip
 	str nos, [tos]
