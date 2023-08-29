@@ -210,13 +210,14 @@ reallit:
 	ret
 
 realkey:
+	bl realdup
 	mov w8, #63
 	mov x0, #0
 	mov x1, bufp
 	mov x2, #1
 	svc 0
 	ldrb tosl, [bufp]
-	ret
+	b realnext
 
 realemit:
 	strb tosl, [bufp]
@@ -225,7 +226,8 @@ realemit:
 	mov x1, bufp
 	mov x2, #1
 	svc 0
-	ret
+	bl realdrop
+	b realnext
 
 realjz:
 	ldrb cl, [ip]

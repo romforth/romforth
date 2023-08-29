@@ -10,8 +10,8 @@ bye	: ret ssp
 dup	: bl realdup ;
 2drop	: bl realdrop
 drop	: bl realdrop ;
-key	: dup ; bl realkey ;
-emit	: bl realemit ; drop ;
+key	: b realkey
+emit	: b realemit
 lit	: dup ; bl reallit ;
 neg	: neg tos, tos ;
 j	: b realj
