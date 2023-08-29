@@ -35,6 +35,7 @@ c@	: ldrb tosl, [tos] ;
 c!	: b cstore
 pick	: b realpick
 stick	: b realstick
+sp@!	: b spswap
 
 _fa_ke_	: .data
 

@@ -267,6 +267,12 @@ cstore:
 	bl realdrop
 	b realnext
 
+spswap:
+	mov temp, sp
+	mov sp, tos
+	mov tos, temp
+	b realnext
+
 rom:
 
 #include "rom.s"
