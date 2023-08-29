@@ -40,6 +40,8 @@ rp@!	: b rpswap
 >r	: b tor
 r>	: b rfrom
 exec	: b realexec
+enter	: b realenter
+exit	: b realexit
 
 _fa_ke_	: .data
 

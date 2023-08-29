@@ -282,6 +282,19 @@ rpswap:
 	mov tos, temp
 	b realnext
 
+realenter:
+	ldr w, [ip]
+	add ip, ip, #8
+	str ip, [rp]
+	add rp, rp, #8
+	mov ip, w
+	b realnext
+
+realexit:
+	sub rp, rp, #8
+	ldr ip, [rp]
+	b realnext
+
 tor:
 	str tos, [rp]
 	add rp, rp, #8
