@@ -12,11 +12,11 @@ dup	: bl realdup ;
 drop	: bl realdrop ;
 key	: b realkey
 emit	: b realemit
-lit	: dup ; bl reallit ;
+lit	: b reallit
 neg	: neg tos, tos ;
 j	: b realj
-jz	: bl realjz ; drop ;
-jnz	: bl realjnz ; drop ;
+jz	: b realjz
+jnz	: b realjnz
 inc	: add tos, tos, 1 ;
 dec	: sub tos, tos, 1 ;
 inv	: mvn tos, tos ;

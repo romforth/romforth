@@ -199,6 +199,7 @@ realstick:
 	b realnext
 
 reallit:
+	bl realdup
 	mov temp, #7
 1:
 	ldrb cl, [ip,temp]
@@ -207,7 +208,7 @@ reallit:
 	orr tos, c, tos, lsl #8
 	b.ne 1b
 	add ip, ip, #8
-	ret
+	b realnext
 
 realkey:
 	bl realdup
@@ -236,7 +237,8 @@ realjz:
 	cmp tos, #0
 	csel c, c, xzr, eq
 	add ip, ip, c
-	ret
+	bl realdrop
+	b realnext
 
 realjnz:
 	ldrb cl, [ip]
@@ -245,7 +247,8 @@ realjnz:
 	cmp tos, #0
 	csel c, c, xzr, ne
 	add ip, ip, c
-	ret
+	bl realdrop
+	b realnext
 
 realj:
 	ldrb cl, [ip]
