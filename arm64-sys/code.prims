@@ -37,6 +37,8 @@ pick	: b realpick
 stick	: b realstick
 sp@!	: b spswap
 rp@!	: b rpswap
+>r	: b tor
+r>	: b rfrom
 
 _fa_ke_	: .data
 

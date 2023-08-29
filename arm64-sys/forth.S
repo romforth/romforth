@@ -280,6 +280,18 @@ rpswap:
 	mov tos, temp
 	b realnext
 
+tor:
+	str tos, [rp]
+	add rp, rp, #8
+	bl realdrop
+	b realnext
+
+rfrom:
+	bl realdup
+	sub rp, rp, #8
+	ldr tos, [rp]
+	b realnext
+
 rom:
 
 #include "rom.s"
