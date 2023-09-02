@@ -90,7 +90,7 @@ pushpop:
 	br jmpr
 
 popitem0:
-	ldp tosr, nosr, [sp]
+	ldp tosr, nosr, [sp], #16
 popitem2:
 	mov tos, tosr
 	mov sn, #1
@@ -112,7 +112,7 @@ pushitem1:
 	ret
 
 nipitem0:
-	ldp nos, nosr, [sp]
+	ldp nos, nosr, [sp], #16
 	mov sn, #1
 	ret
 nipitem1:
@@ -138,7 +138,7 @@ dipitem1:
 pickitem0:
 	cmp tos, #1
 	bne pickitem1
-	ldp tosr, nosr, [sp]
+	ldp tosr, nosr, [sp], #16
 	mov sn, #2
 	mov tos, nosr
 	ret
@@ -154,7 +154,7 @@ pickitem1:
 	ret
 
 stickitem0:
-	ldp tosr, nosr, [sp]
+	ldp tosr, nosr, [sp], #16
 stickitem2:
 	cmp tos, #1
 	mov sn, #1
@@ -167,8 +167,6 @@ stickmem:
 	sub tos, tos, #1
 	lsl tos, tos, #3
 	str tosr, [sp,tos]
-	ret
-	mov sn, #0
 	ret
 
 realdrop:
