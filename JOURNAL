@@ -101,6 +101,7 @@ INDEX
 	* 26 Aug '23
 	* 28 Aug '23
 	* 01 Sep '23
+	* 02 Sep '23
 
 04 Nov '22
 ----------
@@ -3748,3 +3749,14 @@ from the stack as well. Anyway, all of that is 20/20 hindsight now. So, perhaps
 the lesson here is that it serves me right for not having read all the arcana
 in all of the relevant parts of the ~3300 pages of the ARMv8 ISA manual or at
 least going through it in enough detail to avoid these kinds of blunders.
+
+02 Sep '23
+----------
+Things were chugging along nicely until I needed to add dictionary headers at
+step 41 which caused the offset of `next` to exceed 12 bits and this makes it
+so that it doesn't fit into the 12 bit space for an immediate value. Rather
+than read through the docs yet again I'm just going to use yet another level of
+indirection which seems to be quite expedient at this point. This of course
+triggered a failure at step 13 since it caused the address hardcoded in the
+fpp.config.arm configuration file to go out of whack so I had to fix that as
+well to get the test to pass.

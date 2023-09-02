@@ -33,8 +33,9 @@
 _start:
 	adrp ip, rom
 	add ip, ip, #rom
-	adrp i, next
-	add i, i, #next
+	adrp i, nextofs
+	add i, i, #nextofs
+	ldr i, [i]
 	adrp bufp, buf
 	add bufp, bufp, #buf
 	adrp pusho, pushoffsets
@@ -48,6 +49,9 @@ _start:
 	mov x0, #0
 	mov w8, #93
 	svc #0
+
+nextofs:
+	.quad next
 
 pushoffsets:
 	.byte pushitem0-pushpop
