@@ -180,7 +180,7 @@ def{ .			[ n
 	32 emit		[ n > SPACE
 	48 emit		[ n > 0
 	120 emit	[ n > x
-	2 3 <<		[ n s:2*8 // length of the display is fixed at 16 bits
+	$CELL 2 <<	[ n s	// length of the display is 4*cell nibbles
 	loop{		[ n s
 		dup	[ n s s
 	}while{		[ n s

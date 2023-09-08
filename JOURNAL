@@ -102,6 +102,7 @@ INDEX
 	* 28 Aug '23
 	* 01 Sep '23
 	* 02 Sep '23
+	* 08 Sep '23
 
 04 Nov '22
 ----------
@@ -3760,3 +3761,28 @@ indirection which seems to be quite expedient at this point. This of course
 triggered a failure at step 13 since it caused the address hardcoded in the
 fpp.config.arm configuration file to go out of whack so I had to fix that as
 well to get the test to pass.
+
+08 Sep '23
+----------
+At step 58, I ran into yet another bug that needed a fair amount of debugging.
+Since qemu is not of much use even with the "-d in_asm,cpu" logging option, I
+decided to fall back to my old printf debugging strategy by enabling "debug=1"
+in the fpp.config file. Unfortunately this triggered a regression which I had
+to debug first when I increased the width of the output (which defaulted to
+assuming a 16-bit cell size). After changing it to use the current CELL size,
+I could see that the SEGV was happening in find while traversing the dictionary
+entries. I could see that the regression started at step 56 but it was not at
+all clear why things had worked before I added the debugging.
+
+In hindsight if I had looked at the addresses more carefully, I could have
+figured out the problem immediately. But since I guess I wasn't paying enough
+attention it took me quite a while to figure out that I had overstepped the
+memory bounds and that I needed to increase it. Since memory will hopefully
+never be a constraint on a 64-bit architecture, I've doubled it from the 1KB
+that it is currently allocating to a whopping 2KB ;)
+
+Even after that doubling I ran into yet another SEGV and luckily my hunch that
+it was a return stack overflow turned out to be correct when I bumped up the
+return stack size also by doubling it from 120 bytes to 240 bytes. Some binary
+searching for the "sufficient" value of the return stack shows no segv at 176
+bytes but I might as well just leave it at the higher setting.
