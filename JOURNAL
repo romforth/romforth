@@ -103,6 +103,7 @@ INDEX
 	* 01 Sep '23
 	* 02 Sep '23
 	* 08 Sep '23
+	* 15 Sep '23
 
 04 Nov '22
 ----------
@@ -3786,3 +3787,15 @@ it was a return stack overflow turned out to be correct when I bumped up the
 return stack size also by doubling it from 120 bytes to 240 bytes. Some binary
 searching for the "sufficient" value of the return stack shows no segv at 176
 bytes but I might as well just leave it at the higher setting.
+
+15 Sep '23
+----------
+I spent a fair bit of time again trying to understand a new segv that happened
+at step 59. I finally found that while a doubling of the allocated RAM space
+was not sufficient to fix the issue, a quadrupling of the allocation did fix
+it. Although it looks like the problem is fixed, I have a feeling in my bones
+that there is something funky afoot that I don't quite understand so I spent
+a fair bit of time adding even more tracing to try to figure out what is going
+on. I didn't get to the bottom of it to my satisfacation but I don't want this
+issue to hold up the porting effort on ARM64 for much longer. So, for now, I'm
+going to reluctantly leave this change in as $TECHDEBT and move on.

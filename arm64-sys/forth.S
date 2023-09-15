@@ -367,4 +367,4 @@ rom:
 #endif
 
 	.comm buf, 4
-	.comm mem, 2048
+	.comm mem, 8192
