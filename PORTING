@@ -18,6 +18,8 @@ The following ports are complete:
 | z180-sdcc |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
 | z80n-sdcc |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
 | msp430-as |  16  | little | 2*| Baremetal | msp430-gcc | mspdebug      |
+| arm-zigcc |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-aarch64  |
+| arm64-sys |  64  | little | 1 | Linux/sys | GNU as     | qemu-aarch64  |
 '-----------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:

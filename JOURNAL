@@ -104,6 +104,7 @@ INDEX
 	* 02 Sep '23
 	* 08 Sep '23
 	* 15 Sep '23
+	* 18 Sep '23
 
 04 Nov '22
 ----------
@@ -3799,3 +3800,35 @@ a fair bit of time adding even more tracing to try to figure out what is going
 on. I didn't get to the bottom of it to my satisfacation but I don't want this
 issue to hold up the porting effort on ARM64 for much longer. So, for now, I'm
 going to reluctantly leave this change in as $TECHDEBT and move on.
+
+18 Sep '23
+----------
+This entry marks the conclusion of the ARM64/Aarch64 port using Linux syscalls.
+Although I had expected this to be an easy port, it had its fair share of bugs
+which made it take a little more than a month to finish. It may also have been
+because I was doing it at an unhurried pace, in laid back fashion while also
+spending time on other things that are starting to be more interesting.
+
+The bug that I ran into at step 32 with an incorrect stack implementation shows
+that the test coverage needs to be improved (to sanity check read/write to the
+memory backing up the stack) but I'll assume that the paucity of registers on
+most conventional low end microcontrollers will guarantee that this situation
+will not usually arise. So I think I'll leave that as $TECHDEBT.
+
+The bugs that I ran into at steps 58 and 59 were a complete surprise to me so
+one of the sanity checks that I'd like to do as a followup is to figure out the
+actual RAM requirement. The data and return stack usage is reported by running
+the x86 emulator which reports it in bytes - but only for x86 so I need a means
+of doing the same thing on other architectures as well.
+
+With the ARM port now complete, the only major port remaining on the list that
+I'd started with almost a year ago is RISC-V and since it is also a RISC chip
+much like ARM, I think I should be able to finish it in a New York minute.
+
+So let's see how that goes.
+
+---
+
+On a personal note, today would have been Lisa's 20th birthday.
+Like Browning in her poem, I wonder, in how many ways do I grieve for thee?
+Miss you Lisamma.

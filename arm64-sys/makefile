@@ -7,7 +7,7 @@
 AS=aarch64-unknown-elf-as
 LD=aarch64-unknown-elf-ld
 
-all : threeforth
+all : fourforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
