@@ -105,6 +105,7 @@ INDEX
 	* 08 Sep '23
 	* 15 Sep '23
 	* 18 Sep '23
+	* 22 Sep '23
 
 04 Nov '22
 ----------
@@ -3832,3 +3833,20 @@ So let's see how that goes.
 On a personal note, today would have been Lisa's 20th birthday.
 Like Browning in her poem, I wonder, in how many ways do I grieve for thee?
 Miss you Lisamma.
+
+22 Sep '23
+----------
+For the riscv-zigcc port, I've decided to short circuit through all the steps
+since I think I have the methodology down pat now. The only difficulty I faced
+in this port was at step 13 and so I used the instructions that I'd previously
+documented in the JOURNAL entry for 11 Aug '23 to figure out the address and
+value to be used in the fpp.config file. Just like the ARM port, I've used zig
+for the build and qemu for testing. I've used the arm-zigcc makefile and config
+as the templates for the equivalent files in the RISC-V port and the rest of
+the scripts are just symlinks to the corresponding scripts in the C directory.
+
+The address and value used in the configuration file may be valid only for the
+final step of this port so I'm going to weasel out of that issue by taking the
+easy way out by not creating the runallsteps entry for this port. Since this
+issue is starting to be a bit if a pain in the neck for now I'll just go ahead
+and mark it as $TECHDEBT here.

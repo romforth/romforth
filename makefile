@@ -15,6 +15,7 @@ all :
 	(cd msp430-as ; make)
 	(cd arm-zigcc ; make)
 	(cd arm64-sys ; make)
+	(cd riscv-zigcc ; make)
 
 allsteps :
 	./runallsteps
@@ -38,3 +39,4 @@ clean :
 	(cd msp430-as ; make clean)
 	(cd arm-zigcc ; make clean)
 	(cd arm64-sys ; make clean)
+	(cd riscv-zigcc ; make clean)

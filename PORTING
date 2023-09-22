@@ -1,26 +1,27 @@
 The following ports are complete:
 =================================
 
-.-----------.------.--------.---.-----------.------------.---------------.
-| CPU       | Bits | Endian | T | API       | Build      |     Test      |
-+-----------+------+--------+---+-----------+------------+---------------+
-| x86       |  16  | little | 1 | Baremetal | nasm       | DIY emulator  |
-| x86-as    |  16  | little | 1 | Baremetal | GNU as     | DIY emulator  |
-| PDP11     |  16  | little | 2 | Baremetal | GNU as     | simh/pdp11    |
-| x86-user  |  64  | little | 1 | libc/musl | gcc/zig cc | Host/Native   |
-| C/x86     |  64  | little | 3 | libc/musl | gcc/zig cc | Host/Native   |
-| x86-32    |  32  | little | 1 | libc/musl | gcc/zig cc | Host32/Native |
-| x86-sys   |  64  | little | 1 | Linux/sys | GNU as     | Host/Native   |
-| m68k      |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-m68k     |
-| sparc     |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-sparc    |
-| z80-c     |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
-| z80       |  16  | little | 1 | Baremetal | sdasz80    | ucsim/sz80    |
-| z180-sdcc |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
-| z80n-sdcc |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
-| msp430-as |  16  | little | 2*| Baremetal | msp430-gcc | mspdebug      |
-| arm-zigcc |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-aarch64  |
-| arm64-sys |  64  | little | 1 | Linux/sys | GNU as     | qemu-aarch64  |
-'-----------'------'--------'---'-----------'------------'---------------'
+.-------------.------.--------.---.-----------.------------.---------------.
+| CPU         | Bits | Endian | T | API       | Build      |     Test      |
++-------------+------+--------+---+-----------+------------+---------------+
+| x86         |  16  | little | 1 | Baremetal | nasm       | DIY emulator  |
+| x86-as      |  16  | little | 1 | Baremetal | GNU as     | DIY emulator  |
+| PDP11       |  16  | little | 2 | Baremetal | GNU as     | simh/pdp11    |
+| x86-user    |  64  | little | 1 | libc/musl | gcc/zig cc | Host/Native   |
+| C/x86       |  64  | little | 3 | libc/musl | gcc/zig cc | Host/Native   |
+| x86-32      |  32  | little | 1 | libc/musl | gcc/zig cc | Host32/Native |
+| x86-sys     |  64  | little | 1 | Linux/sys | GNU as     | Host/Native   |
+| m68k        |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-m68k     |
+| sparc       |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-sparc    |
+| z80-c       |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
+| z80         |  16  | little | 1 | Baremetal | sdasz80    | ucsim/sz80    |
+| z180-sdcc   |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
+| z80n-sdcc   |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
+| msp430-as   |  16  | little | 2*| Baremetal | msp430-gcc | mspdebug      |
+| arm-zigcc   |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-aarch64  |
+| arm64-sys   |  64  | little | 1 | Linux/sys | GNU as     | qemu-aarch64  |
+| riscv-zigcc |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-riscv64  |
+'-------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
 	T : The "thread" type used in the interpreter - this needs some form of
