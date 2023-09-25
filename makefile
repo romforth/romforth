@@ -16,6 +16,7 @@ all :
 	(cd arm-zigcc ; make)
 	(cd arm64-sys ; make)
 	(cd riscv-zigcc ; make)
+	(cd rv64-sys ; make)
 
 allsteps :
 	./runallsteps
@@ -40,3 +41,4 @@ clean :
 	(cd arm-zigcc ; make clean)
 	(cd arm64-sys ; make clean)
 	(cd riscv-zigcc ; make clean)
+	(cd rv64-sys ; make clean)

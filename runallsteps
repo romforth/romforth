@@ -24,6 +24,7 @@ my $z80n_c_check=1;
 my $msp430as_check=1;
 my $armzigcc_check=1;
 my $armas_check=1;
+my $rv64as_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -41,6 +42,7 @@ if (@ARGV) {
 	$msp430as_check=0;
 	$armzigcc_check=0;
 	$armas_check=0;
+	$rv64as_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -58,6 +60,7 @@ if (@ARGV) {
 		$msp430as_check=1 if ( $d eq "msp430-as");
 		$armzigcc_check=1 if ( $d eq "arm-zigcc");
 		$armas_check=1 if ( $d eq "arm64-sys");
+		$rv64as_check=1 if ( $d eq "rv64-sys");
 	}
 }
 
@@ -158,6 +161,12 @@ $x=`cat arm64-sys/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $armas_step=$step;
+
+my $rv64as_step;
+$x=`cat rv64-sys/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$rv64as_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -420,6 +429,19 @@ armas_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the arm64-sys port\n";
 	system("cd arm64-sys ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+rv64as_port: {
+	last rv64as_port unless ($rv64as_check);
+	last rv64as_port if ($i>$rv64as_step);
+	@ARGV=("rv64-sys/fpp.config.riscv");
+	open(my $fh, ">rv64-sys/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the riscv port\n";
+	system("cd rv64-sys ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

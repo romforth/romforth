@@ -106,6 +106,7 @@ INDEX
 	* 15 Sep '23
 	* 18 Sep '23
 	* 22 Sep '23
+	* 25 Sep '23
 
 04 Nov '22
 ----------
@@ -3850,3 +3851,29 @@ final step of this port so I'm going to weasel out of that issue by taking the
 easy way out by not creating the runallsteps entry for this port. Since this
 issue is starting to be a bit if a pain in the neck for now I'll just go ahead
 and mark it as $TECHDEBT here.
+
+25 Sep '23
+----------
+Since the riscv-zigcc port is done, I could call the RISC-V porting complete
+and move on to something else. But given that RISC-V is the new hotness and
+furthermore, given the fact that some of the recent crop of the lowest priced
+microcontrollers are now based on this architecture, I think it is only prudent
+to have a low level port on this as well. So for the most part, this is just a
+learning exercise to get more familiarity with the ISA.
+
+I had worked on RISC-V when I worked at Amazon(Ring) but since all of the code
+was C/C++, I didn't really need to bother with assembly there except when there
+was a crash and even then, GDB+JTAG was usually nice enough to get a C function
+level backtrace. So this will be my first exposure to RISC-V assembly at a very
+close level. Nevertheless, that still is not reason enough for me to go read
+the voluminous ISA docs which very likely clock in at thousands of pages. Just
+like I did with the ARM port, I'm going to try the experiment of getting away
+with not reading any of the docs unless absolutely essential. This turned out
+to be not such a great idea during the ARM port, but since RISC-V is hopefully
+better thought out, I'm hoping that reading the clang generated assembly should
+be sufficient to get me most of the way there.
+
+As with the ARM port, I'll eschew zig for the build and use binutils instead
+since that gives a good coverage over the tools as well. For the configuration
+file, I've made a copy of the fpp.config from the arm64-sys port since I assume
+that should be pretty close in terms of the ISA.
