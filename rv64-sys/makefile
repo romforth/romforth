@@ -11,7 +11,8 @@ all : forth
 	qemu-riscv64 forth
 forth : forth.o
 	$(LD) -o forth forth.o
-forth.o : forth.S
-	$(AS) -o forth.o forth.S
+forth.o : forth.s
+	$(AS) -o forth.o forth.s
+forth.s : forth.S
 clean :
-	rm -f forth forth.o
+	rm -f forth forth.o forth.s
