@@ -23,8 +23,24 @@ next:
 	add i, i, nr
 	jr i
 
-bye:
-	ret
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
+#endif
 
 rom:
-	.byte bye-next
+
+#include "rom.s"
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
