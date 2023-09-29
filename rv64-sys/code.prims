@@ -4,4 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+next	: j realnext
 bye	: ret
+key	: nop ;
+emit	: li tos, 'f' ; j realemit

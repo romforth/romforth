@@ -4,12 +4,21 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-#define ip	a0
-#define i	a1
-#define nr	a2
+#define tos	s1
+#		s1 (x9)
+#		a0 (x10) is used for the fd in the write syscall
+#		a1 (x11) is used for bufp
+#		a2 (x12) is used for the byte count in the write syscall
+#define ip	a3
+#		a3 (x13)
+#define i	a4
+#		a4 (x14)
+#define nr	a5
+#		a5 (x15)
 
 	.globl _start
 _start:
+	la a1, bufp
 	la ip, rom
 	la nr, next
 	call next
@@ -17,11 +26,19 @@ _start:
 	li a7, 93
 	ecall
 
-next:
+realnext:
 	lbu i, (ip)
 	add ip, ip, 1
 	add i, i, nr
 	jr i
+
+realemit:
+	sb tos, (a1)
+	li a7, 64
+	li a0, 1
+	li a2, 1
+	ecall
+	j realnext
 
 #if USEDICT
 #include "prims_dict.s"
@@ -44,3 +61,4 @@ rom:
 #include "defs.s"
 #endif
 #endif
+	.comm bufp, 4
