@@ -32,6 +32,14 @@ realnext:
 	add i, i, nr
 	jr i
 
+realkey:
+	li a7, 63
+	li a0, 0
+	li a2, 1
+	ecall
+	lbu tos, (a1)
+	j realnext
+
 realemit:
 	sb tos, (a1)
 	li a7, 64
