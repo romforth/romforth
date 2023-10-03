@@ -5,6 +5,8 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 next	: j realnext
-bye	: ret
+bye	: jalr x0,x5,0
 key	: j realkey
 emit	: j realemit
+dup	: call realdup ;
+drop	: call realdrop ;

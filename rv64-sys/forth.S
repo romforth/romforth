@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+#		t0 (x5) is used in bye
+#define dp	s0
+#		s1 (x8)
 #define tos	s1
 #		s1 (x9)
 #		a0 (x10) is used for the fd in the write syscall
@@ -18,10 +21,11 @@
 
 	.globl _start
 _start:
+	la dp, datastack
 	la a1, bufp
 	la ip, rom
 	la nr, next
-	call next
+	jal x5, next
 	li a0, 0
 	li a7, 93
 	ecall
@@ -32,7 +36,18 @@ realnext:
 	add i, i, nr
 	jr i
 
+realdup:
+	sd tos, (dp)
+	add dp, dp, 8
+	ret
+
+realdrop:
+	add dp, dp, -8
+	ld tos, (dp)
+	ret
+
 realkey:
+	call realdup
 	li a7, 63
 	li a0, 0
 	li a2, 1
@@ -46,6 +61,7 @@ realemit:
 	li a0, 1
 	li a2, 1
 	ecall
+	call realdrop
 	j realnext
 
 #if USEDICT
@@ -70,3 +86,4 @@ rom:
 #endif
 #endif
 	.comm bufp, 4
+	.comm datastack, 200
