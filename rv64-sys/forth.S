@@ -30,6 +30,11 @@ _start:
 	li a7, 93
 	ecall
 
+reallit:
+	call realdup
+	ld tos, (ip)
+	add ip, ip, 8
+# fall thru
 realnext:
 	lbu i, (ip)
 	add ip, ip, 1
