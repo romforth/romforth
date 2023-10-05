@@ -11,3 +11,4 @@ emit	: j realemit
 dup	: call realdup ;
 drop	: call realdrop ;
 lit	: j reallit
+neg	: neg tos, tos ;
