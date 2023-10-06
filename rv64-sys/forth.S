@@ -51,6 +51,12 @@ realdrop:
 	ld tos, (dp)
 	ret
 
+realj:
+	lb i, (ip)
+	add ip, ip, 1
+	add ip, ip, i
+	j realnext
+
 realkey:
 	call realdup
 	li a7, 63

@@ -12,3 +12,4 @@ dup	: call realdup ;
 drop	: call realdrop ;
 lit	: j reallit
 neg	: neg tos, tos ;
+j	: j realj
