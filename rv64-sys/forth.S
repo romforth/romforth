@@ -60,6 +60,9 @@ realj:
 	add ip, ip, 1
 	call realdrop
 	j realnext
+realjnz:
+	beq tos, x0, 1b
+	j realj
 
 realkey:
 	call realdup
