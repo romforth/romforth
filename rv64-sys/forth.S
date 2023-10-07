@@ -58,6 +58,7 @@ realj:
 	add ip, ip, i
 1:
 	add ip, ip, 1
+	call realdrop
 	j realnext
 
 realkey:
