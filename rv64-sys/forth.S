@@ -51,10 +51,13 @@ realdrop:
 	ld tos, (dp)
 	ret
 
+realjz:
+	bne tos, x0, 1f
 realj:
 	lb i, (ip)
-	add ip, ip, 1
 	add ip, ip, i
+1:
+	add ip, ip, 1
 	j realnext
 
 realkey:

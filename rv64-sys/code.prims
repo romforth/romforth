@@ -13,3 +13,4 @@ drop	: call realdrop ;
 lit	: j reallit
 neg	: neg tos, tos ;
 j	: j realj
+jz	: j realjz
