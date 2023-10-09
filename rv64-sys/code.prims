@@ -15,3 +15,5 @@ neg	: neg tos, tos ;
 j	: j realj
 jz	: j realjz
 jnz	: j realjnz
+inc	: add tos, tos, 1 ;
+dec	: add tos, tos, -1 ;
