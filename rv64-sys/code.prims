@@ -9,6 +9,7 @@ bye	: jalr x0,x5,0
 key	: j realkey
 emit	: j realemit
 dup	: call realdup ;
+2drop	: call realdrop
 drop	: call realdrop ;
 lit	: j reallit
 neg	: neg tos, tos ;
