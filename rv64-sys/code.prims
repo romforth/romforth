@@ -22,3 +22,4 @@ nip	: call realnip ;
 dip	: j realdip
 -	: neg
 +	: nip ; add tos, tos, nos ;
+&	: nip ; and tos, tos, nos ;
