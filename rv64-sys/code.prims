@@ -20,3 +20,5 @@ dec	: add tos, tos, -1 ;
 inv	: not tos, tos ;
 nip	: call realnip ;
 dip	: j realdip
+-	: neg
++	: nip ; add tos, tos, nos ;
