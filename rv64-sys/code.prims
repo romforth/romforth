@@ -26,3 +26,5 @@ dip	: j realdip
 &	: nip ; and tos, tos, nos ;
 |	: nip ; or tos, tos, nos ;
 ^	: nip ; xor tos, tos, nos ;
+swap	: nip ; dup
+t_n	: mv tos, nos ;
