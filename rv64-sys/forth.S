@@ -5,6 +5,8 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 #		t0 (x5) is used in bye
+#define nos	t2
+#		t2 (x7)
 #define dp	s0
 #		s1 (x8)
 #define tos	s1
@@ -50,6 +52,16 @@ realdrop:
 	add dp, dp, -8
 	ld tos, (dp)
 	ret
+
+realnip:
+	add dp, dp, -8
+	ld nos, (dp)
+	ret
+
+realdip:
+	sd nos, (dp)
+	add dp, dp, 8
+	j realnext
 
 realjz:
 	bne tos, x0, 1f

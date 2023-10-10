@@ -18,3 +18,5 @@ jnz	: j realjnz
 inc	: add tos, tos, 1 ;
 dec	: add tos, tos, -1 ;
 inv	: not tos, tos ;
+nip	: call realnip ;
+dip	: j realdip
