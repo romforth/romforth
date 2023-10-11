@@ -28,3 +28,4 @@ dip	: j realdip
 ^	: nip ; xor tos, tos, nos ;
 swap	: nip ; dup
 t_n	: mv tos, nos ;
+@	: ld tos, (tos) ;
