@@ -117,3 +117,4 @@ rom:
 #endif
 	.comm bufp, 4
 	.comm datastack, 200
+	.comm mem, 4096

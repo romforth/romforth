@@ -29,3 +29,8 @@ dip	: j realdip
 swap	: nip ; dup
 t_n	: mv tos, nos ;
 @	: ld tos, (tos) ;
+!	: nip ; sd nos, (tos) ; drop ;
+
+_fa_ke_	: .data
+
+var here .quad mem
