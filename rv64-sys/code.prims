@@ -30,6 +30,7 @@ swap	: nip ; dup
 t_n	: mv tos, nos ;
 pick	: inc ; sll tos, tos, 3 ; sub tos, dp, tos
 @	: ld tos, (tos) ;
+stick	: inc ; sll tos, tos, 3 ; sub tos, dp, tos
 !	: nip ; sd nos, (tos) ; drop ;
 c@	: lbu tos, (tos) ;
 c!	: nip ; sb nos, (tos) ; drop ;
