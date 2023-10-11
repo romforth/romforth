@@ -28,6 +28,7 @@ dip	: j realdip
 ^	: nip ; xor tos, tos, nos ;
 swap	: nip ; dup
 t_n	: mv tos, nos ;
+pick	: inc ; sll tos, tos, 3 ; sub tos, dp, tos
 @	: ld tos, (tos) ;
 !	: nip ; sd nos, (tos) ; drop ;
 c@	: lbu tos, (tos) ;
