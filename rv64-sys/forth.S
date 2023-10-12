@@ -5,7 +5,7 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 #		t0 (x5) is used in bye
-#define temp	t1
+#define rp	t1
 #		t1 (x6)
 #define nos	t2
 #		t2 (x7)
