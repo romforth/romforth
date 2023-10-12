@@ -34,6 +34,7 @@ stick	: inc ; sll tos, tos, 3 ; sub tos, dp, tos
 !	: nip ; sd nos, (tos) ; drop ;
 c@	: lbu tos, (tos) ;
 c!	: nip ; sb nos, (tos) ; drop ;
+sp@!	: mv temp, dp ; mv dp, tos ; mv tos, temp ;
 
 _fa_ke_	: .data
 
