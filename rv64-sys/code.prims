@@ -42,6 +42,8 @@ exec	: j realexec
 enter	: j realenter
 exit	: j realexit
 call	: j realcall
+<<	: j shiftleft
+>>	: j shiftright
 
 _fa_ke_	: .data
 

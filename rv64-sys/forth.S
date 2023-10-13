@@ -161,6 +161,16 @@ realxor:
 	xor tos, tos, nos
 	j realnext
 
+shiftleft:
+	call realnip
+	sll tos, nos, tos
+	j realnext
+
+shiftright:
+	call realnip
+	srl tos, nos, tos
+	j realnext
+
 #if USEDICT
 #include "prims_dict.s"
 #else
