@@ -95,6 +95,12 @@ realexec:
 	call realdrop
 	jr i
 
+realover:
+	sd tos, (dp)
+	ld tos, -8(dp)
+	add dp, dp, 8
+	j realnext
+
 realdup:
 	sd tos, (dp)
 	add dp, dp, 8
