@@ -36,6 +36,8 @@ c@	: lbu tos, (tos) ;
 c!	: nip ; sb nos, (tos) ; drop ;
 sp@!	: j spfetchstore
 rp@!	: j rpfetchstore
+>r	: j tor
+r>	: j fromr
 
 _fa_ke_	: .data
 

@@ -57,6 +57,18 @@ rpfetchstore:
 	mv tos, a0
 	j realnext
 
+tor:
+	sd tos, (rp)
+	add rp, rp, 8
+	call realdrop
+	j realnext
+
+fromr:
+	call realdup
+	add rp, rp, -8
+	ld tos, (rp)
+	j realnext
+
 realdup:
 	sd tos, (dp)
 	add dp, dp, 8
