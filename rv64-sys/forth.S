@@ -69,6 +69,12 @@ fromr:
 	ld tos, (rp)
 	j realnext
 
+realexec:
+	andi tos, tos, 0xff
+	add i, tos, nr
+	call realdrop
+	jr i
+
 realdup:
 	sd tos, (dp)
 	add dp, dp, 8

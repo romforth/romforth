@@ -38,6 +38,7 @@ sp@!	: j spfetchstore
 rp@!	: j rpfetchstore
 >r	: j tor
 r>	: j fromr
+exec	: j realexec
 
 _fa_ke_	: .data
 
