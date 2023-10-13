@@ -45,6 +45,18 @@ realnext:
 	add i, i, nr
 	jr i
 
+spfetchstore:
+	mv a0, dp
+	mv dp, tos
+	mv tos, a0
+	j realnext
+
+rpfetchstore:
+	mv a0, rp
+	mv rp, tos
+	mv tos, a0
+	j realnext
+
 realdup:
 	sd tos, (dp)
 	add dp, dp, 8

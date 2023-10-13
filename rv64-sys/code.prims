@@ -34,8 +34,8 @@ stick	: inc ; sll tos, tos, 3 ; sub tos, dp, tos
 !	: nip ; sd nos, (tos) ; drop ;
 c@	: lbu tos, (tos) ;
 c!	: nip ; sb nos, (tos) ; drop ;
-sp@!	: mv a0, dp ; mv dp, tos ; mv tos, a0 ;
-rp@!	: mv a0, rp ; mv rp, tos ; mv tos, a0 ;
+sp@!	: j spfetchstore
+rp@!	: j rpfetchstore
 
 _fa_ke_	: .data
 
