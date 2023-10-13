@@ -126,6 +126,21 @@ realemit:
 	call realdrop
 	j realnext
 
+realand:
+	call realnip
+	and tos, tos, nos
+	j realnext
+
+realor:
+	call realnip
+	or tos, tos, nos
+	j realnext
+
+realxor:
+	call realnip
+	xor tos, tos, nos
+	j realnext
+
 #if USEDICT
 #include "prims_dict.s"
 #else

@@ -23,9 +23,9 @@ nip	: call realnip ;
 dip	: j realdip
 -	: neg
 +	: nip ; add tos, tos, nos ;
-&	: nip ; and tos, tos, nos ;
-|	: nip ; or tos, tos, nos ;
-^	: nip ; xor tos, tos, nos ;
+&	: j realand
+|	: j realor
+^	: j realxor
 swap	: nip ; dup
 t_n	: mv tos, nos ;
 pick	: inc ; sll tos, tos, 3 ; sub tos, dp, tos
