@@ -41,6 +41,7 @@ r>	: j fromr
 exec	: j realexec
 enter	: j realenter
 exit	: j realexit
+call	: j realcall
 
 _fa_ke_	: .data
 

@@ -69,6 +69,13 @@ fromr:
 	ld tos, (rp)
 	j realnext
 
+realcall:
+	sd ip, (rp)
+	add rp, rp, 8
+	mv ip, tos
+	call realdrop
+	j realnext
+
 realenter:
 	ld i, (ip)
 	add ip, ip, 8
