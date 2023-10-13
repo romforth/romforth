@@ -39,6 +39,8 @@ rp@!	: j rpfetchstore
 >r	: j tor
 r>	: j fromr
 exec	: j realexec
+enter	: j realenter
+exit	: j realexit
 
 _fa_ke_	: .data
 

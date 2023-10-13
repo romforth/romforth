@@ -69,6 +69,19 @@ fromr:
 	ld tos, (rp)
 	j realnext
 
+realenter:
+	ld i, (ip)
+	add ip, ip, 8
+	sd ip, (rp)
+	add rp, rp, 8
+	mv ip, i
+	j realnext
+
+realexit:
+	add rp, rp, -8
+	ld ip, (rp)
+	j realnext
+
 realexec:
 	andi tos, tos, 0xff
 	add i, tos, nr
