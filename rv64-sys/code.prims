@@ -48,8 +48,8 @@ over	: j realover
 
 _fa_ke_	: .data
 
-var here .quad mem
 var state .byte 1
 #{if step>=41
 var latest .include "latest.s"
 #}if
+var here .quad mem
