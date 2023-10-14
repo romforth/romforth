@@ -121,18 +121,21 @@ realdip:
 	add dp, dp, 8
 	j realnext
 
+realjnz:
+	mv a0, tos
+	call realdrop
+	beq a0, x0, 1f
+	j realj
 realjz:
-	bne tos, x0, 1f
+	mv a0, tos
+	call realdrop
+	bne a0, x0, 1f
 realj:
 	lb i, (ip)
 	add ip, ip, i
 1:
 	add ip, ip, 1
-	call realdrop
 	j realnext
-realjnz:
-	beq tos, x0, 1b
-	j realj
 
 realkey:
 	call realdup
