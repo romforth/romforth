@@ -107,6 +107,7 @@ INDEX
 	* 18 Sep '23
 	* 22 Sep '23
 	* 25 Sep '23
+	* 14 Oct '23
 
 04 Nov '22
 ----------
@@ -3877,3 +3878,36 @@ As with the ARM port, I'll eschew zig for the build and use binutils instead
 since that gives a good coverage over the tools as well. For the configuration
 file, I've made a copy of the fpp.config from the arm64-sys port since I assume
 that should be pretty close in terms of the ISA.
+
+14 Oct '23
+----------
+It is exactly one year since I made the first commit to this repo on github and
+as they say, "you've come a long way, baby" ;)
+
+Almost as an anniversary gift, I've managed to finish up the RISC-V syscall
+based port on Linux which is coded in assembly primarily for ease of porting to
+baremetal. Since this was an RV64 port, which was picked for ease of build and
+test, I may follow this up with an RV32 variant as well. The RISC-V docs also
+mentioned a 16-bit "size optimized" version, so I may make an attempt at doing
+that port as well if that turns out to be a fairly easy "adjacent" port.
+
+As ports go, the RV64 port was relatively easy although I did run into a couple
+of nasty bugs along the way due to the tests not catching them early enough and
+passing it through to much later steps where it becomes progressively harder to
+debug. Looking to the future, tightening up the code coverage could be an area
+of focus as I move in to year #2 of romforth.
+
+Given that I've successfully completed quite a few ports (a baker's dozen?) for
+a variety of distinct "architectures", I think it is only fair that I can lay
+claim to the fact that romforth is an "ultra portable" version of Forth. I'm
+proud of the methodology that I've created which allows a structured means of
+creating new ports for any new architecture and in some sense you can almost
+think of it as an almost gamified means of porting Forth.
+
+Since most of the primary CPUs that I listed at the beginning of this project
+are now complete, (see JOURNAL entry dated 04 Nov '22) I think it may also be
+time to shift focus from even more ports to testing things on real hardware
+rather than just emulation, which is the expedient approach I've taken so far.
+
+Anyway, all of that is off in the rosy future. For today, I'm just going to
+look back at all of the work that I've done and give myself a pat on the back.

@@ -125,9 +125,23 @@ To make a local copy:
 	git clone https://github.com/romforth/romforth
 
 To build/test, the following dependencies need to be installed:
-	perl nasm gcc binutils(pdp11,m68k,sparc) simh zig qemu sdcc(ucsim)
-	msp430-gcc mspdebug(from github.com/romforth/mspdebug, until my changes
-	are upstreamed)
+	- perl
+	- nasm
+	- gcc
+	- binutils
+		- pdp11
+		- m68k
+		- sparc
+		- msp430
+		- aarch64
+		- riscv64
+	- simh
+	- zig
+	- qemu
+	- sdcc(ucsim)
+	- msp430-gcc
+	- mspdebug(from github.com/romforth/mspdebug, until my changes
+		are upstreamed)
 
 After installing all the above dependencies, running `make` will build each of
 the ports and run each of them in an emulator and should complete successfully.
@@ -158,4 +172,5 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | arm-zigcc   |    1272+.. |   3036 (4308)   |   5762 (7034)   |
 | arm64-sys   |    1060    |   3336 (4396)   |   6664 (7724)   |
 | riscv-zigcc |    1124+.. |   3036 (4160)   |   5762 (6886)   |
+| rv64-sys    |     692    |   3336 (4028)   |   6664 (7356)   |
 '-------------'------------'-----------------'-----------------'

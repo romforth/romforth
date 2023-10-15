@@ -7,7 +7,7 @@
 AS=riscv64-unknown-linux-gnu-as
 LD=riscv64-unknown-linux-gnu-ld
 
-all : threeforth
+all : fourforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
