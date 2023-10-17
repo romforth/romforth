@@ -1,0 +1,55 @@
+# code.prims : mapping from the Forth primitives to RISC_V assembly
+#
+# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+next	: j realnext
+bye	: jalr x0,x5,0
+key	: j realkey
+emit	: j realemit
+dup	: call realdup ;
+2drop	: call realdrop
+drop	: call realdrop ;
+lit	: j reallit
+neg	: neg tos, tos ;
+j	: j realj
+jz	: j realjz
+jnz	: j realjnz
+inc	: add tos, tos, 1 ;
+dec	: add tos, tos, -1 ;
+inv	: not tos, tos ;
+nip	: call realnip ;
+dip	: j realdip
+-	: neg
++	: nip ; add tos, tos, nos ;
+&	: j realand
+|	: j realor
+^	: j realxor
+swap	: nip ; dup
+t_n	: mv tos, nos ;
+pick	: inc ; sll tos, tos, 2 ; sub tos, dp, tos
+@	: lw tos, (tos) ;
+stick	: inc ; sll tos, tos, 2 ; sub tos, dp, tos
+!	: nip ; sw nos, (tos) ; drop ;
+c@	: lbu tos, (tos) ;
+c!	: nip ; sb nos, (tos) ; drop ;
+sp@!	: j spfetchstore
+rp@!	: j rpfetchstore
+>r	: j tor
+r>	: j fromr
+exec	: j realexec
+enter	: j realenter
+exit	: j realexit
+call	: j realcall
+<<	: j shiftleft
+>>	: j shiftright
+over	: j realover
+
+_fa_ke_	: .data
+
+var state .byte 1
+#{if step>=41
+var latest .include "latest.s"
+#}if
+var here .quad mem

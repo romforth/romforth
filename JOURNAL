@@ -108,6 +108,7 @@ INDEX
 	* 22 Sep '23
 	* 25 Sep '23
 	* 14 Oct '23
+	* 16 Oct '23
 
 04 Nov '22
 ----------
@@ -3911,3 +3912,15 @@ rather than just emulation, which is the expedient approach I've taken so far.
 
 Anyway, all of that is off in the rosy future. For today, I'm just going to
 look back at all of the work that I've done and give myself a pat on the back.
+
+16 Oct '23
+----------
+After thinking about next steps, I decided to take a shot at a RISC-V 32-bit
+port since binutils could be used for the build and qemu-riscv32 for testing.
+
+For the generator scripts, I used the x86-32 bit build scripts and for the rest
+of the CPU specific code, it was just a matter of replacing the constant 8 with
+4 to denote the switch from the 64 bit RISC-V port to a 32 bit port. All in all
+this port turned out to be much easier than I could have ever imagined and I'll
+go ahead and mark this port complete in one shot rather than the usual 73 step
+long drawn out process.

@@ -22,6 +22,7 @@ The following ports are complete:
 | arm64-sys   |  64  | little | 1 | Linux/sys | GNU as     | qemu-aarch64  |
 | riscv-zigcc |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-riscv64  |
 | rv64-sys    |  64  | little | 1 | Linux/sys | GNU as     | qemu-riscv64  |
+| rv32-sys    |  32  | little | 1 | Linux/sys | GNU as     | qemu-riscv32  |
 '-------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
