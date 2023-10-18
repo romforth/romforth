@@ -109,6 +109,7 @@ INDEX
 	* 25 Sep '23
 	* 14 Oct '23
 	* 16 Oct '23
+	* 18 Oct '23
 
 04 Nov '22
 ----------
@@ -3924,3 +3925,23 @@ of the CPU specific code, it was just a matter of replacing the constant 8 with
 this port turned out to be much easier than I could have ever imagined and I'll
 go ahead and mark this port complete in one shot rather than the usual 73 step
 long drawn out process.
+
+18 Oct '23
+----------
+With the RISC-V 32 and 64 bit ports out of the way, I did some research on the
+"16 bit" RISC-V variant and from the quick browse that I did it appears to just
+be an opcode variant and so I'll skip over that and move on to something I've
+had in the back of my mind for a while.
+
+There are many Forth implementations which use a "THREAD"ing technique called
+"Subroutine Threaded Code/STC" which is just an old fashioned way of saying
+that instead of relying on an interpreter, the Forth code is directly turned
+into machine code with the usual space/time tradeoffs. Given Forth's philosophy
+of simplicity, this type of "compilation" is done with nary a lexer or parser
+or optimizer or machine code generator in sight. So I'm going to try to see how
+far I can get with reimplementing the MSP430 port, using "STC" THREAD'ing.
+
+I'm choosing the MSP430 since it is in the lineage of the PDP11 (with readily
+available hardware). I could have picked the RISC-V but I'll hold off on that
+until I've done more research into exactly how the 16-bit mode is supposed to
+work.

@@ -1,0 +1,17 @@
+#!/bin/bash -x
+
+# run_mspdebug : wrapper to call mspdebug
+
+# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+arg=$1
+halt=$(nm $arg | grep 't halt' | awk '{print $1}' | sed 's/^00*/0x/')
+start=$(nm $arg | grep 't start' | awk '{print $1}' | sed 's/^00*/0x/')
+cat <<EOF | mspdebug -n sim
+load $arg
+set PC $start
+setbreak $halt
+run
+EOF

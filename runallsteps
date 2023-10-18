@@ -26,6 +26,7 @@ my $armzigcc_check=1;
 my $armas_check=1;
 my $rv64as_check=1;
 my $riscv32as_check=1;
+my $msp430stc_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -45,6 +46,7 @@ if (@ARGV) {
 	$armas_check=0;
 	$rv64as_check=0;
 	$riscv32as_check=0;
+	$msp430stc_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -64,6 +66,7 @@ if (@ARGV) {
 		$armas_check=1 if ( $d eq "arm64-sys");
 		$rv64as_check=1 if ( $d eq "rv64-sys");
 		$riscv32as_check=1 if ( $d eq "rv32-sys");
+		$msp430stc_check=1 if ( $d eq "msp430-stc");
 	}
 }
 
@@ -176,6 +179,12 @@ $x=`cat rv32-sys/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $riscv32as_step=$step;
+
+my $msp430stc_step;
+$x=`cat msp430-stc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$msp430stc_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -464,6 +473,19 @@ riscv32as_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the riscv port\n";
 	system("cd rv32-sys ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+msp430stc_port: {
+	last msp430stc_port unless ($msp430stc_check);
+	last msp430stc_port if ($i>$msp430stc_step);
+	@ARGV=("msp430-stc/fpp.config.msp430");
+	open(my $fh, ">msp430-stc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the msp430 port\n";
+	system("cd msp430-stc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }
