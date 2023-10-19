@@ -110,6 +110,7 @@ INDEX
 	* 14 Oct '23
 	* 16 Oct '23
 	* 18 Oct '23
+	* 19 Oct '23
 
 04 Nov '22
 ----------
@@ -3945,3 +3946,14 @@ I'm choosing the MSP430 since it is in the lineage of the PDP11 (with readily
 available hardware). I could have picked the RISC-V but I'll hold off on that
 until I've done more research into exactly how the 16-bit mode is supposed to
 work.
+
+19 Oct '23
+----------
+My initial plan to implement "subroutine threaded code" THREAD'ing type was to
+leverage the C preprocessor (as a macro processor) to run all the necessary
+code expansions that were necessary. But after trying out various attempts at
+making it work, I've decided that plain old M4 might be the simple way to go
+about this. I know that M4 is gnarly and pretty much everyone uniformly detests
+it. But I see it as just another tool in my arsenal and despite some misgivings
+about it, I'll just go ahead and use it. I'm reminded of "something something
+angels fear to tread" so sue me ;)

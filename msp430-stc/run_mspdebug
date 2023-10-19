@@ -11,6 +11,8 @@ halt=$(nm $arg | grep 't halt' | awk '{print $1}' | sed 's/^00*/0x/')
 start=$(nm $arg | grep 't start' | awk '{print $1}' | sed 's/^00*/0x/')
 cat <<EOF | mspdebug -n sim
 load $arg
+simio add console serial
+simio config serial output test.out
 set PC $start
 setbreak $halt
 run
