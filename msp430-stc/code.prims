@@ -1,1 +1,3 @@
 bye	: ret
+key	: mov #'f', tos
+emit	: mov #0xff, w ; mov.b tos, @w

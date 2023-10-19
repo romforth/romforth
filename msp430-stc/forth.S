@@ -5,6 +5,8 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 #define sp	R1
+#define w	R5
+#define tos	R6
 
 	.cpu 430
 start:
