@@ -13,6 +13,7 @@ cat <<EOF | mspdebug -n sim
 load $arg
 simio add console serial
 simio config serial output test.out
+simio config serial input test.in
 set PC $start
 setbreak $halt
 run
