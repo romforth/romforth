@@ -6,3 +6,4 @@ emit	: mov #0xff, w ; mov.b tos, @w ; drop
 neg	: inv tos ; inc tos
 j	: .word 0x5030
 jz	: decd dsp ; and tos, tos ; mov @dsp, tos ; .word 0x2002 ; .word 0x5030
+jnz	: decd dsp ; and tos, tos ; mov @dsp, tos ; .word 0x2702 ; .word 0x5030
