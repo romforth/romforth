@@ -1,3 +1,5 @@
 bye	: ret
 key	: mov #0xff, w ; mov.b @w, tos
 emit	: mov #0xff, w ; mov.b tos, @w
+dup	: mov tos, @dsp ; incd dsp
+drop	: decd dsp ; mov @dsp, tos

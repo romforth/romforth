@@ -7,10 +7,12 @@
 #define sp	R1
 #define w	R5
 #define tos	R6
+#define dsp	R7
 
 	.cpu 430
 start:
 	mov #spbase, sp
+	mov #spbase, dsp
 	call #rom
 halt:
 	nop
