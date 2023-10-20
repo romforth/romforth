@@ -3,3 +3,4 @@ dup	: mov tos, @dsp ; incd dsp
 drop	: decd dsp ; mov @dsp, tos
 key	: dup ; mov #0xff, w ; mov.b @w, tos
 emit	: mov #0xff, w ; mov.b tos, @w ; drop
+neg	: inv tos ; inc tos
