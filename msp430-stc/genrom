@@ -225,8 +225,8 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\t.word lit\n);
-	print qq(\t.word $o\n);
+	print qq(\tdup\n);
+	print qq(\tmov \#$o, tos\n);
 }
 
 my $m;					# cache for the map from name to label

@@ -11,7 +11,7 @@
 
 	.cpu 430
 start:
-	mov #spbase, sp
+	mov #__stack, sp
 	mov #spbase, dsp
 	call #rom
 halt:
@@ -39,5 +39,4 @@ rom:
 #endif
 #endif
 
-	.org 50
-spbase:
+	.comm spbase,50,1
