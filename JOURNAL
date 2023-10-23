@@ -111,6 +111,7 @@ INDEX
 	* 16 Oct '23
 	* 18 Oct '23
 	* 19 Oct '23
+	* 23 Oct '23
 
 04 Nov '22
 ----------
@@ -3957,3 +3958,20 @@ about this. I know that M4 is gnarly and pretty much everyone uniformly detests
 it. But I see it as just another tool in my arsenal and despite some misgivings
 about it, I'll just go ahead and use it. I'm reminded of "something something
 angels fear to tread" so sue me ;)
+
+23 Oct '23
+----------
+My brash/first attempt at implementing jumps was to manipulate the PC directly
+using machine code that looked like this:
+    0f930: 30 50 f8 ff               ADD     #0xfff8, PC
+After thinking a bit about this approach, I've decided to go back and redo the
+j'ump implementation to use MSP430's JMP opcode instead, since that takes up
+much less code space. Part of the reason I didn't use JMP to begin with was
+that the MSP430 uses 10 bit offsets for JMPs which meant bit fiddling (since it
+is not byte aligned) and I didn't want to change the scripts too much at this
+point to special case them. After thinking about it over the weekend though, I
+decided, for now, that I may be able to tolerate the additional complexity.
+
+I was also able to get away with not having to change the generator scripts at
+this point by leveraging/(using the hack that) the MSP430 assembler allows the
+EQU pseudo-op to reuse the same name multiple times.

@@ -254,7 +254,7 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
-				print qq(\t.word $i\n);
+				print qq(\t.byte $i\n\t.byte JOP\n);
 				next;
 			}
 			die "unknown word: $f"
