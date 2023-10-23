@@ -254,6 +254,9 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
+				if ($i < 0) {
+					print "\t.equ JOP,JOP+3\n"
+				}
 				print qq(\t.byte $i\n\t.byte JOP\n);
 				next;
 			}
