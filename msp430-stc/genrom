@@ -112,15 +112,18 @@ sub runrepeat {
 }
 
 sub runif {
-	print "\t.word ", $mapjz, " # branch if zero\n";
-	print "\t.word ", $label, '_then-.-2', "\n";
+	print "\tdecd dsp\n";
+	print "\tand tos, tos\n";
+	print "\tmov \@dsp, tos\n";
+	print "\tJZ ";
+	print " $label", '_then', "\n";
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\t.word ", $mapjmp, " # branch\n";
-	print "\t.word ", $ol->[0], '_endif-.-2', "\n";
+	print "\tJMP ";
+	print $ol->[0], '_endif', "\n";
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
 	$ol->[1]="endif";
