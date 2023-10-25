@@ -14,3 +14,4 @@ nip	: decd dsp ; mov @dsp, nos
 dip	: mov nos, @dsp ; incd dsp
 -	: nip ; sub tos, nos ; mov nos, tos
 +	: nip ; add nos, tos
+&	: nip ; and nos, tos
