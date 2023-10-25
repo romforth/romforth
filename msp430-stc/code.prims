@@ -12,3 +12,5 @@ dec	: DEC tos
 inv	: INV tos
 nip	: decd dsp ; mov @dsp, nos
 dip	: mov nos, @dsp ; incd dsp
+-	: nip ; sub tos, nos ; mov nos, tos
++	: nip ; add nos, tos
