@@ -8,6 +8,7 @@
 #define w	R5
 #define tos	R6
 #define dsp	R7
+#define nos	R8
 
 	.cpu 430
 start:
