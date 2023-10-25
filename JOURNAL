@@ -112,6 +112,7 @@ INDEX
 	* 18 Oct '23
 	* 19 Oct '23
 	* 23 Oct '23
+	* 25 Oct '23
 
 04 Nov '22
 ----------
@@ -3975,3 +3976,14 @@ decided, for now, that I may be able to tolerate the additional complexity.
 I was also able to get away with not having to change the generator scripts at
 this point by leveraging/(using the hack that) the MSP430 assembler allows the
 EQU pseudo-op to reuse the same name multiple times.
+
+25 Oct '23
+----------
+The first case of a workaround to handle M4 has now made its way into the code.
+Since 'inc' is a Forth primitive as well as an assembler opcode, I was using it
+on the left and right hand sides of the definitions in code.prims. This caused
+m4 to go into an infinite loop. Luckily, the MSP430 GCC assembler appears to be
+case-insensitive for opcodes (ie it treats 'inc' and 'INC' identically) so I
+was able to hack my way out of this predicament by replacing all the assembler
+'inc' opcodes with 'INC'. I assume mixed case might also work although I didn't
+bother trying it.
