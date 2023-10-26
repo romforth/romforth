@@ -19,3 +19,4 @@ dip	: mov nos, @dsp ; incd dsp
 ^	: nip ; xor nos, tos
 2drop	: drop ; drop
 swap	: nip ; dup ; mov nos, tos
+@	: mov @tos, tos
