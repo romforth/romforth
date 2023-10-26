@@ -20,3 +20,5 @@ dip	: mov nos, @dsp ; incd dsp
 2drop	: drop ; drop
 swap	: nip ; dup ; mov nos, tos
 @	: mov @tos, tos
+!	: nip ; mov nos, @tos ; drop
+var here .word mem
