@@ -21,4 +21,8 @@ dip	: mov nos, @dsp ; incd dsp
 swap	: nip ; dup ; mov nos, tos
 @	: mov @tos, tos
 !	: nip ; mov nos, @tos ; drop
+c@	: mov.b @tos, tos
+c!	: nip ; mov.b nos, @tos ; drop
+
 var here .word mem
+var state .word 1
