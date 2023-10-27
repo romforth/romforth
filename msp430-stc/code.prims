@@ -24,6 +24,7 @@ swap	: nip ; dup ; mov nos, tos
 c@	: mov.b @tos, tos
 c!	: nip ; mov.b nos, @tos ; drop
 pick	: rla tos ; mov dsp, nos ; decd nos ; sub tos, nos ; mov @nos, tos
+stick	: rla tos ; mov dsp, nos ; decd nos ; sub tos, nos ; drop ; mov tos, @nos ; drop
 
 var here .word mem
 var state .word 1
