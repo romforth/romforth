@@ -27,6 +27,8 @@ pick	: rla tos ; mov dsp, nos ; decd nos ; sub tos, nos ; mov @nos, tos
 stick	: rla tos ; mov dsp, nos ; decd nos ; sub tos, nos ; drop ; mov tos, @nos ; drop
 sp@!	: mov dsp, nos ; mov tos, dsp ; mov nos, tos
 rp@!	: mov sp, nos ; mov tos, sp ; mov nos, tos
+>r	: push tos ; drop
+r>	: dup ; pop tos
 
 var here .word mem
 var state .word 1
