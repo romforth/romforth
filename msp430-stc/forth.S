@@ -41,4 +41,4 @@ rom:
 #endif
 
 	.comm spbase,50,1
-	.comm mem,10,1
+	.comm mem,200,1

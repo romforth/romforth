@@ -113,6 +113,7 @@ INDEX
 	* 19 Oct '23
 	* 23 Oct '23
 	* 25 Oct '23
+	* 30 Oct '23
 
 04 Nov '22
 ----------
@@ -3987,3 +3988,14 @@ case-insensitive for opcodes (ie it treats 'inc' and 'INC' identically) so I
 was able to hack my way out of this predicament by replacing all the assembler
 'inc' opcodes with 'INC'. I assume mixed case might also work although I didn't
 bother trying it.
+
+30 Oct '23
+----------
+The earlier Forth interpreter for MSP430 (which I'd implemented a while back)
+used THREAD type 2 encoding for interpretation so it was more compact in terms
+of ROM space usage. Since the current implementation uses machine code aka STC
+(subroutine threaded code), it is much less compact and this can be verified
+from the fact that we have now run out of ROM space at step 19 compared to the
+older implementation which needed the additional space only at step 36. Just as
+in the earlier implementation I've chosen to use the largest device that the
+compiler supports in one shot rather than add more space incrementally.
