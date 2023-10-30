@@ -262,6 +262,8 @@ while (<>) {				# map forth words in the standard input
 				}
 				print qq(\t.byte $i\n\t.byte JOP\n);
 				next;
+			} elsif ($f eq 'lit') {
+				next;
 			}
 			die "unknown word: $f"
 		}
