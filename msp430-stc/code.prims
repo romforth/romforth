@@ -30,6 +30,7 @@ rp@!	: mov sp, nos ; mov tos, sp ; mov nos, tos
 >r	: push tos ; drop
 r>	: dup ; pop tos
 exec	: nop
+call	: mov tos, nos ; drop ; CALL nos
 
 var here .word mem
 var state .word 1

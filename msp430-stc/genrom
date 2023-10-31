@@ -239,7 +239,7 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need their
-			print "\tcall \#$m # $f\n";	# starting address
+			print "\tCALL \#$m # $f\n";	# starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
