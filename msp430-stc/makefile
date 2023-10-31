@@ -10,7 +10,7 @@ CC=msp430-gcc
 #ASFLAGS=-al=forth.lst
 #LD=msp430-unknown-elf-ld
 
-all : oneforth
+all : twoforth
 
 oneforth : test.out
 twoforth : test.defs
@@ -45,7 +45,7 @@ forth_defs.S : forth.S
 forth_defs.s : forth_defs.S prims.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs.s
-	cpp -P forth_defs.S > forth_defs.s
+	cpp -P forth_defs.S | m4 > forth_defs.s
 forth_defs : forth_defs.s
 forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
 	../fix_comments rom.s
