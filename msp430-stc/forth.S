@@ -24,6 +24,30 @@ halt:
 #include "prims.s"
 #endif
 
+shiftleft:
+	and tos, tos
+	JZ 2f
+	nip
+1 :	rla nos
+	DEC tos
+	JNZ 1b
+	mov nos, tos
+	ret
+2 :	drop
+	ret
+
+shiftright:
+	and tos, tos
+	JZ 2f
+	nip
+1 :	rra nos
+	DEC tos
+	JNZ 1b
+	mov nos, tos
+	ret
+2 :	drop
+	ret
+
 rom:
 
 #include "rom.s"

@@ -31,6 +31,8 @@ rp@!	: mov sp, nos ; mov tos, sp ; mov nos, tos
 r>	: dup ; pop tos
 exec	: nop
 call	: mov tos, nos ; drop ; CALL nos
+<<	: CALL #shiftleft
+>>	: CALL #shiftright
 
 var here .word mem
 var state .word 1
