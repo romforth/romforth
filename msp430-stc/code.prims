@@ -33,6 +33,7 @@ exec	: nop
 call	: mov tos, nos ; drop ; CALL nos
 <<	: CALL #shiftleft
 >>	: CALL #shiftright
+over	: dup ; mov #1, tos ; pick
 
 var here .word mem
 var state .word 1
