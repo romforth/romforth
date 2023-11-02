@@ -90,24 +90,32 @@ sub runbegin {
 	push @labelstack, $ol;
 }
 
+sub branchx {
+	my ($jmp)=@_;
+	print "\tdecd dsp\n";
+	print "\tand tos, tos\n";
+	print "\tmov \@dsp, tos\n";
+	print "\t$jmp ";
+}
+
 sub rununtil {
-	print "\t.word ", $mapjnz, " # branch if not zero\n";
+	branchx('JNZ');
 	my $ol=pop @labelstack;
-	print "\t.word ", join('_', @$ol), '-.-2', "\n";
+	print join('_', @$ol),"\n";
 	push @labelstack, $ol;
 }
 
 sub runwhile {
-	print "\t.word ", $mapjz, " # branch if zero\n";
+	branchx('JZ');
 	my $ol=pop @labelstack;
-	print "\t.word ", join('_', @$ol), '-.-2', "\n";
+	print join('_', @$ol),"\n";
 	push @labelstack, $ol;
 }
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\t.word ", $mapjmp, " # branch\n";
-	print "\t.word ", $ol->[0], '_begin-.-2', "\n";
+	print "\tJMP ";
+	print $ol->[0], '_begin', "\n";
 	print join('_', @$ol), ":\n";
 }
 
