@@ -38,3 +38,6 @@ exit	: ret
 
 var here .word mem
 var state .word 1
+#{if step>=41
+var latest	#include "latest.s"
+#}if

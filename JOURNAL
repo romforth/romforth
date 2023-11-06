@@ -114,6 +114,7 @@ INDEX
 	* 23 Oct '23
 	* 25 Oct '23
 	* 30 Oct '23
+	* 06 Nov '23
 
 04 Nov '22
 ----------
@@ -3999,3 +4000,15 @@ from the fact that we have now run out of ROM space at step 19 compared to the
 older implementation which needed the additional space only at step 36. Just as
 in the earlier implementation I've chosen to use the largest device that the
 compiler supports in one shot rather than add more space incrementally.
+
+06 Nov '23
+----------
+After making steady progress for a while I ran into a bug that stumped me for a
+bit. Lots of debugging later (which involved staring, a lot, at the disassembly
+then placing a few strategic breakpoints followed by single stepping), it turns
+out that the bug was a side effect of using M4. Some of the strings used in the
+dictionary header needed M4 specific quotes so that it wouldn't get expanded
+into other strings of assembly code. Despite how hairy the debugging turned out
+to be, that was a really fun debug exercise, but probably only for those who
+think of debugging as fun. What was especially nice was not having anyone
+breathing down my neck and asking for daily (hourly?) status updates.

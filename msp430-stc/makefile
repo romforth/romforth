@@ -10,7 +10,7 @@ CC=msp430-gcc
 #ASFLAGS=-al=forth.lst
 #LD=msp430-unknown-elf-ld
 
-all : twoforth
+all : threeforth
 
 oneforth : test.out
 twoforth : test.defs
@@ -51,7 +51,7 @@ forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs_dict.s
 	../fix_comments prims_dict.s
-	cpp -P forth_dict.S > forth_dict.s
+	cpp -P forth_dict.S | m4 > forth_dict.s
 forth_dict.S : forth.S forth_defs.S rom.s
 	cp forth_defs.S forth_dict.S
 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S

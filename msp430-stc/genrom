@@ -205,7 +205,7 @@ sub def {
 			if ($len%2==0) {
 				print "$l","_pad:\t.byte 0\n";
 			}
-			print qq{\t.ascii "$w"\n};
+			print qq{\t.ascii "\[$w\]"\n};
 			$len |= 0x80 if ($immediate);
 			print "$l","_nfa:\t.byte $len\n";
 			print "$l","_lfa:\t.word $prev\n";
