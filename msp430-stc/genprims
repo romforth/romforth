@@ -57,6 +57,7 @@ sub mapnames {
 my $hash={};
 my $agg=[];
 my $label="lbl000";
+my $data_declared=0;
 print qq{changequote(`[', `]')\n};
 while (<>) {
 	/^\#/ and next;
@@ -94,6 +95,10 @@ while (<>) {
 		print $mh "var $f $f\n";# create dictionary entry for variables
 		if ($gendict) {
 			unshift @$headers, [$f,$f,0];
+		}
+		if ($data_declared==0) {
+			print "\t.data\n";
+			$data_declared=1;
 		}
 		print "$f:\n";		# generate the label for the assembler
 		print "\t$2\n";		# and allocation/initial value if any

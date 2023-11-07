@@ -14,6 +14,11 @@
 start:
 	mov #__stack, sp
 	mov #spbase, dsp
+	mov #6, r15
+data_copy:
+	decd r15
+	mov __data_load_start(r15),__data_start(r15)
+	jnz data_copy
 	call #rom
 halt:
 	nop
@@ -23,6 +28,8 @@ halt:
 #else
 #include "prims.s"
 #endif
+
+	.text
 
 shiftleft:
 	and tos, tos

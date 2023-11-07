@@ -281,6 +281,7 @@ if ($gendict) {
 	open(my $lh, ">latest.s");
 	select $lh;
 	print "\t.word $prev\n";
+	print "\t.text\n";
 	close $lh;
 	print $mh "label prev $prev\n";
 }

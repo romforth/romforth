@@ -36,8 +36,8 @@ call	: mov tos, nos ; drop ; CALL nos
 over	: dup ; mov #1, tos ; pick
 exit	: ret
 
-var here .word mem
 var state .word 1
 #{if step>=41
 var latest	#include "latest.s"
 #}if
+var here .word mem
