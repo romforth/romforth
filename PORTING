@@ -28,18 +28,46 @@ The following ports are complete:
 Notes for the table above:
 	T : The "thread" type used in the interpreter - this needs some form of
 		a mapping to the usual Forth notation of DIRECT/INDIRECT/STC/...
+	The sample code shown below is delimited using the '|' character
+		... | lit | 1 | lit | 2 | + | ... | enter | XX | YY | ...
+	where the '|' can signify either a byte or a cell boundary.
+
 	Thread type 1 has the following invocation format:
 		| enter | cfa:cell |
+		The cfa points to an address which contains a bytecode sequence
+		ending in 'exit' - for eg: | ... | exit |
+		where the ... denotes the actual body of the defined word.
+		The 'enter'/'exit' and 'lit' listed above are primitives which
+		use up a single byte and are usually offsets to the machine
+		executable code (which enforces the 256 byte machine code limit)
+
 	Thread type 2 has the following invocation format:
 		| cfa:cell |
 		where cfa contains: | enter | ... | exit
-	Thread type 2* is the same as type 2 except that the prim/vars are
-		"encapsulated" in a header which looks like this:
-			variable	| lit | var | exit |
-			primitive	| prim | exit |
-		(this is denoted using the configuration prim_var_deref=1)
+		The 'enter'/'exit' are usually machine code constructs that
+		handle the return stack handling logic and the body of the
+		definition (which is denoted by '...') is in turn made up of
+		cell sized references to other words.
+
 	Thread type 3 is used in C implementations and has the format:
-		| enter | cfa:void* |
+		| enter | cfa:PRIMSZ |
+		The cfa in this case is just an index into a table which is a
+		pointer to the "real cfa" which contains the actual bytecode
+		sequence terminated as usual with 'exit'. The width of the cfa
+		may be compiler dependent and is shared with Forth by using the
+		PRIMSZ configuration variable.
+
+	Thread type 4 is used to denote subroutine threaded code (STC)
+
+	There is also a prim_var_deref setting which is meant to modify the
+	semantics of how cfa's are handled by the various threading schemes.
+
+	When prim_var_deref is set to 1 it means that the primitives and
+	variables are "encapsulated" in a header which can look like this:
+		variable:	| lit | var | return |
+		primitive:	| prim | return |
+	This is denoted by the addition of a * after the thread type for some
+	ports (for example, see the entry for msp430-as which is marked 2*)
 
 Porting Guide
 =============
@@ -149,7 +177,11 @@ defs.4th. If these are defined as primitives (or by other means), these can be
 set to 0 (or removed).
 
 THREAD denotes the type of Forth "threading" used by the interpreter. The
-current options are 1, 2 and 3.
+current options are 1, 2, 3 and 4.
+
+More notes documenting the THREAD configuration parameter is given as part of
+the explanation of the 'T'hread type in the "Notes" section below the table of
+completed ports listed earlier.
 
 ALIGN is used to denote alignment requirements. Architectures that don't have
 alignment restrictions can use ALIGN=0. ALIGN=4 denotes a 32 bit alignment.
