@@ -280,6 +280,9 @@ while (<>) {				# map forth words in the standard input
 				my $i=int($1); # "immediate" assembly equivalent
 				print qq(\t$i,\n);
 				next;
+			} elsif ($f eq 'pad0') {
+				print "\t0,";
+				next;
 			}
 			die "unknown word: $f"
 		}

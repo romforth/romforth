@@ -115,6 +115,7 @@ INDEX
 	* 25 Oct '23
 	* 30 Oct '23
 	* 06 Nov '23
+	* 28 Nov '23
 
 04 Nov '22
 ----------
@@ -4012,3 +4013,21 @@ into other strings of assembly code. Despite how hairy the debugging turned out
 to be, that was a really fun debug exercise, but probably only for those who
 think of debugging as fun. What was especially nice was not having anyone
 breathing down my neck and asking for daily (hourly?) status updates.
+
+28 Nov '23
+----------
+What with the Thanksgiving break and other distractions things are moving along
+slower than usual. I ran into an issue where the existing common code cannot be
+made to work with the newer THREAD type so while fixing that up I decided to
+also take this as an opportunity to pay down some of the techdebt that has been
+building up over the past year. I've been rather profligate in making copies of
+the genrom scripts and I decided to turn them into symlinks instead. The hacky
+use of 'lit' to zero fill and pad out a byte has been replaced with an explicit
+'pad0' directive. But this change then snowballed into modifications to the
+genrom scripts and that's when I decided to do a proper clean up job with the
+net result of: 11 files changed, 30 insertions(+), 867 deletions(-)
+
+With 867 fewer lines of code my "LOC performance metric" will take a hit and I
+will have to kiss goodbye to that "10x programmer" performance bonus I guess. I
+was really hoping for a Ferrari for Christmas this year but that will just have
+to wait. And, yes that was just sarcasm, in case you didn't get it ;)

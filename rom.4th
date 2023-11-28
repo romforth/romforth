@@ -418,13 +418,13 @@ lit		[ 1 2	// lit escapes the following byte(s)
 swap		[ 1 2	// escaped by lit
 #}if
 #{if offset==1
-lit		[ 1 2	// padding escaped by lit
+pad0		[ 1 2	// padding escaped by lit
 #}if
 #{if offset==3
-lit lit lit	[ 1 2	// padding escaped by lit
+pad0 pad0 pad0	[ 1 2	// padding escaped by lit
 #}if
 #{if offset==7
-lit lit lit lit lit lit lit	[ 1 2	// padding escaped by lit
+pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ 1 2	// padding escaped by lit
 #}if
 #{if big_endian==1
 swap		[ 1 2	// escaped by lit
@@ -1087,13 +1087,13 @@ lit		[ 	// lit escapes the following byte(s)
 exit		[ exit	// escaped by lit
 #}if
 #{if offset==1
-lit		[ exit	// padding escaped by lit
+pad0		[ exit	// padding escaped by lit
 #}if
 #{if offset==3
-lit lit lit	[ exit	// padding escaped by lit
+pad0 pad0 pad0	[ exit	// padding escaped by lit
 #}if
 #{if offset==7
-lit lit lit lit lit lit lit	[ exit	// padding escaped by lit
+pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ exit	// padding escaped by lit
 #}if
 #{if big_endian==1
 exit		[ exit	// escaped by lit
