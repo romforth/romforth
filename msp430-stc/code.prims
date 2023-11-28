@@ -29,7 +29,7 @@ sp@!	: mov dsp, nos ; mov tos, dsp ; mov nos, tos
 rp@!	: mov sp, nos ; mov tos, sp ; mov nos, tos
 >r	: push tos ; drop
 r>	: dup ; pop tos
-exec	: nop
+exec	: mov tos, nos ; drop ; CALL nos
 call	: mov tos, nos ; drop ; CALL nos
 <<	: CALL #shiftleft
 >>	: CALL #shiftright
