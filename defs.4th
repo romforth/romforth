@@ -972,6 +972,25 @@ def{ defprefix	[
 
 #}if
 
+#{if THREAD==4
+
+[ Implementations that use THREAD'ing type 4 (STC/subroutine threaded code)
+[ need the 'ret' opcode as the suffix/terminator for words in the dictionary.
+[ On the MSP430, rather than hardcode the value, we read it from the code
+[ generated for exit
+
+def{ suffixret	[ exit_cfa
+
+#{if ARCH eq "msp430"
+@		[ ret (exit_cfa:ret)	// exit_cfa is expected to contain ...
+,		[ \ ret			// ... the opcode of ret, so append it
+
+#}if
+
+}def
+
+#}if
+
 #}if
 
 #{if step>=51

@@ -1116,6 +1116,9 @@ c,		[ \ exit	// sdcc/z80 uses an enum which fits in a byte
 s,		[ \ exit	// gcc/clang uses jump offset (short, 2 bytes)
 #}if
 #}if
+#{if THREAD==4
+suffixret	[ \ ret		// append a 'return' opcode to the dictionary
+#}if
 
 32		[ 32 < "foo "
 parse		[ addr n (addr:"foo")
