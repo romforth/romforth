@@ -116,6 +116,7 @@ INDEX
 	* 30 Oct '23
 	* 06 Nov '23
 	* 28 Nov '23
+	* 04 Dec '23
 
 04 Nov '22
 ----------
@@ -4031,3 +4032,27 @@ With 867 fewer lines of code my "LOC performance metric" will take a hit and I
 will have to kiss goodbye to that "10x programmer" performance bonus I guess. I
 was really hoping for a Ferrari for Christmas this year but that will just have
 to wait. And, yes that was just sarcasm, in case you didn't get it ;)
+
+04 Dec '23
+----------
+Since the Nov 28 change to replace 'lit' with 'pad0' was done piecemeal so as
+to just get step 50 to work, that change will need to be repeated at all later
+steps which depend on the newer keyword. Rather than do it all in one shot,
+I'll continue with the philosophy of only making small targeted changes to help
+make progress one "step" at a time. So the changes here are sufficient to get
+step 50 to pass.
+
+Also now that 'suffixret' exists, I decided to use it to terminate definitions.
+
+And in other news, I got bitten by my decision to use M4 once again at this
+step. M4 needs quote characters and the defaults are "`" on the left and "'" on
+the right. Since those quote characters would clash with many of the existing
+Forth words, I'd chosen to use '[' and ']' as the quote characters instead and
+this choice was made fairly early on and I now realize it may have been too
+hasty since it runs into trouble with the definitions named 'run[' and ']run'
+which are used at step 51.
+
+Rather than try to struggle valiantly with m4, I'll just cave in and change the
+names of the routines to run{ and }run instead.
+
+There, there, that wasn't so hard, was it?

@@ -996,7 +996,7 @@ def{ suffixret	[ exit_cfa
 #{if step>=51
 
 [ switch to compile mode
-def{ ]run
+def{ }run
 	1		[ 1
 	state		[ 1 state
 	c!		[ (state:1)
@@ -1011,11 +1011,11 @@ def{ :			[
 	defprefix	[	\ prefix	// to prefix the definition
 #}if
 
-	]run		[			// switch to compile mode
+	}run		[			// switch to compile mode
 }def
 
 [ switch to interpret mode
-def{ run[
+def{ run{
 	0	[ 0
 	state	[ 0 state
 	c!	[ (state:0)
@@ -1049,20 +1049,25 @@ imm{ ;		[
 	exit	[ exit	// escaped by lit
 #}if
 #{if offset==1
-	lit	[ exit	// padding escaped by lit
+	pad0	[ exit	// padding escaped by lit
 #}if
 #{if offset==3
-lit lit lit	[ exit	// padding escaped by lit
+pad0 pad0 pad0	[ exit	// padding escaped by lit
 #}if
 #{if offset==7
-lit lit lit lit lit lit lit	[ exit	// padding escaped by lit
+pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ exit	// padding escaped by lit
 #}if
 #{if big_endian==1
 	exit	[ exit	// escaped by lit
 #}if
 
+#{if THREAD!=4
 	offset,	[ \ exit
-	run[
+#}if
+#{if THREAD==4
+	suffixret	[ \ ret // fill in the ret opcode for STC
+#}if
+	run{
 }imm
 
 #}if
