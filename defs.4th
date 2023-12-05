@@ -1075,24 +1075,47 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ exit	// padding escaped by lit
 #{if step>=52
 
 def{ literal	[ n
+
+#{if THREAD!=4
 	lit	[ n	// to escape the next "token"
 #{if big_endian==0
 	lit	[ n lit	// so as to get lit on the stack
 #}if
 #{if offset==1
-	lit	[ n lit	// padding escaped by lit
+	pad0	[ n lit	// padding escaped by lit
 #}if
 #{if offset==3
-lit lit lit	[ n lit	// padding escaped by lit
+pad0 pad0 pad0	[ n lit	// padding escaped by lit
 #}if
 #{if offset==7
-lit lit lit lit lit lit lit	[ n lit	// padding escaped by lit
+pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ n lit	// padding escaped by lit
 #}if
 #{if big_endian==1
 	lit	[ n lit	// so as to get lit on the stack
 #}if
 
 	offset,	[ n \ lit
+#}if
+
+#{if THREAD==4
+
+#{if ARCH eq "msp430"
+
+[ Sample machine code for pushing literals on MSP430 looks like this
+[ 0c096: 87 46 00 00               MOV     R6,     0x0000(R7)
+[ 0c09a: 27 53                     INCD    R7
+[ 0c09c: 36 40 6f 00               MOV     #0x006f, R6
+[ so the words that needed to be added to the dictionary are:
+[ 	0x4687 0x0000 0x5327 0x4036.
+[ Note that the actual literal value (0x006f) is added later (below)
+
+	0x4687 , 0x0000 ,	[ \ mov tos, @dsp
+	0x5327 ,		[ \ incd dsp
+	0x4036 ,		[ \ mov #..., tos
+
+#}if
+
+#}if
 	,	[ \ n		// in either case, the value needs a full cell
 
 }def
