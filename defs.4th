@@ -1201,13 +1201,13 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 	call	[	// THREAD type 3 uses call to invoke the cfa
 #}if
 #{if offset==1
-	lit	[	// padding escaped by lit
+	pad0	[	// padding escaped by lit
 #}if
 #{if offset==3
-lit lit lit	[	// padding escaped by lit
+pad0 pad0 pad0	[	// padding escaped by lit
 #}if
 #{if offset==7
-lit lit lit lit lit lit lit	[ // padding escaped by lit
+pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ // padding escaped by lit
 #}if
 #{if big_endian==1
 	call	[	// THREAD type 3 uses call to invoke the cfa
@@ -1237,8 +1237,14 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 #}if
 #}if
 #{if THREAD!=1
+#{if THREAD!=4
 [ THREAD!=1 and THREAD!=3 => THREAD==2, pdp11 where cfa's are non-uniform
 	isdefn		[ cfa flag
+#}if
+#{if THREAD==4
+[ THREAD!=1 and THREAD!=3 and THREAD==4 => STC, where everything is uniform
+	1		[ cfa 1
+#}if
 #}if
 	if{		[ cfa		// defined word
 
@@ -1248,13 +1254,13 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
 #}if
 #{if offset==1
-		lit	[ cfa enter	// padding escaped by lit
+		pad0	[ cfa enter	// padding escaped by lit
 #}if
 #{if offset==3
-lit lit lit		[ cfa enter	// padding escaped by lit
+pad0 pad0 pad0		[ cfa enter	// padding escaped by lit
 #}if
 #{if offset==7
-lit lit lit lit lit lit lit	[ cfa enter	// padding escaped by lit
+pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ cfa enter // padding escaped by lit
 #}if
 #{if big_endian==1
 		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
@@ -1265,6 +1271,16 @@ lit lit lit lit lit lit lit	[ cfa enter	// padding escaped by lit
 
 #{if THREAD==2
 		,	[ 	\ cfa	// on pdp11, just the cfa is sufficient
+#}if
+#{if THREAD==4
+#{if ARCH eq "msp430"
+
+[ Sample machine code for calls to absolute addresses on MSP430 looks like this
+[	0c05e: b0 12 96 c0               CALL    #0xc096
+[ so it is clear that the 0x12b0 opcode just needs to be prefixed to the cfa
+	0x12b0 ,	[ cfa \ call #...
+	,		[ \ cfa	// so the dictionary now contains: call #cfa
+#}if
 #}if
 
 	}else{		[ cfa		// variable or primitive,
