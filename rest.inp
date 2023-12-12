@@ -28,7 +28,8 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 #{if THREAD!=3
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
-	#jz
+[ THREAD==4 and prim_var_deref==1 => msp430-stc
+	#jz	[ jz	// for rationale, see the comments where #jz is defined
 #}if
 #{if prim_var_deref!=1
 	lit	[	// lit escapes the following byte(s)
@@ -37,10 +38,10 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	lit	[ jz	// padding escaped by lit
 #}if
 #{if offset==3
-	lit lit lit	[ jz	// padding escaped by lit
+	pad0 pad0 pad0	[ jz	// padding escaped by lit
 #}if
 #{if offset==7
-	lit lit lit lit lit lit lit	[ jz	// padding escaped by lit
+	pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ jz // padding escaped by lit
 #}if
 #}if
 #}if
@@ -48,8 +49,25 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 #{if THREAD==3
 	#jz	[ jz	// since thread type3 cannot use the above trick
 #}if
+#{if THREAD!=4
 	offset,	[ \ jz
 	offset	[ h \ 0
+#}if
+#{if THREAD==4
+#{if ARCH eq "msp430"
+[ // machine code for the "conditional jump if zero" looks like this:
+[ //	0c11e: 27 83                     DECD    R7
+[ //	0c120: 06 f6                     AND     R6,     R6
+[ //	0c122: 26 47                     MOV     @R7,    R6
+[ //	0c124: 0b 24                     JZ      0xc13c
+[ // Since jz_cfa has the code for the preamble, just generate a call to it
+[ // and then reserve 2 bytes for the actual jump itself to be "patch"ed later
+	compdef [ \ call jz_cfa	// appended to the dictionary to call preamble
+	offset	[ h \ 0		// MSP 430 uses 2 bytes for a conditional jump
+	offset	[ h h+1 \ 0	// with 10 bits used for the jump offset
+	drop	[ h		// we only need the offset to the first one
+#}if
+#}if
 ;
 immediate
 
@@ -83,6 +101,12 @@ immediate
 	>>	[ o n:n>>1	// divided by 2 since C does a pointer addition
 #}if
 #}if
+#{if THREAD==4
+#{if ARCH eq "msp430"
+	1	[ o n 1		// for MSP430 the offset needs to be divided by
+	>>	[ o n:n>>1	// 2 since the jump ops use word size offsets
+#}if
+#}if
 	swap	[ n o
 	dec	[ n a:o-1
 #{if THREAD==1
@@ -99,6 +123,20 @@ immediate
 #{if PRIMSZ==2
 	dec	[ n a:a-1
 	s!	[ (a:n)
+#}if
+#}if
+#{if THREAD==4
+#{if ARCH eq "msp430"
+[ // machine code for the "conditional jump if zero" looks like this
+[ //	0c124: 0b 24                     JZ      0xc13c
+	dec	[ n a:a-1
+	swap	[ a n
+	0x3ff	[ a n 0x3ff
+	&	[ a o:n&0x3ff	// mask off top 6 bits of the opcode
+	0x2400	[ a o 0x2400	// jz opcode is 0b001001 + 10 addl offset bits
+	|	[ a op:o|0x2400
+	swap	[ op a
+	!	[ (a:op)
 #}if
 #}if
 ;
