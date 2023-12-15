@@ -63,9 +63,10 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 [ // Since jz_cfa has the code for the preamble, just generate a call to it
 [ // and then reserve 2 bytes for the actual jump itself to be "patch"ed later
 	compdef [ \ call jz_cfa	// appended to the dictionary to call preamble
-	offset	[ h \ 0		// MSP 430 uses 2 bytes for a conditional jump
-	offset	[ h h+1 \ 0	// with 10 bits used for the jump offset
-	drop	[ h		// we only need the offset to the first one
+	9216	[ 0x2400	// MSP 430 uses 2 bytes for a conditional jump
+	,	[ \ 0 0x24	// 6 bits opcode for JZ + 10 bits jump offset
+	here	[ here		// the 10 bit jump offset is zero filled
+	@	[ h		// and will be "patch"ed later
 #}if
 #}if
 ;
@@ -131,15 +132,17 @@ immediate
 [ //	0c124: 0b 24                     JZ      0xc13c
 	dec	[ n a:a-1
 	swap	[ a n
-	0x3ff	[ a n 0x3ff
-	&	[ a o:n&0x3ff	// mask off top 6 bits of the opcode
-	0x2400	[ a o 0x2400	// jz opcode is 0b001001 + 10 addl offset bits
-	|	[ a op:o|0x2400
-	swap	[ op a
-	!	[ (a:op)
+	1023	[ a n 0x3ff	// mask for the lower 10 bits for jump offset
+	&	[ a o:n&0x3ff	// to clear off top 6 bits to place the opcode
+	over	[ a o a		// then use the address passed in from the 'if'
+	@	[ a o op	// to retrieve the opcode that was saved in the
+	|	[ a op:o|op	// previous jump location and merge it in
+	swap	[ op a		// and then
+	!	[ (a:op)	// store it back
 #}if
 #}if
 ;
+
 [ // }if is just syntax sugar replacement for traditional Forth's THEN
 [ // it patches up the reserved offset saved on the stack at the start
 : }if		[ o
@@ -167,11 +170,13 @@ immediate
 
 #{if step>=58
 [ "jump" compiles in the "j" operator and the placeholder for the offset
+[ for "subroutine threaded code"/STC, it compiles in the machine code for "jmp"
 : jump
 #{if THREAD!=3
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
-	#j
+[ THREAD==4 and prim_var_deref==1 => msp430-stc
+	#j	[ j	// for rationale, see the comments where #j is defined
 #}if
 #{if prim_var_deref!=1
 	lit	[	// lit escapes the following byte(s)
@@ -179,8 +184,11 @@ immediate
 #{if offset==1
 	lit	[ j	// padding used for 1 byte offset, escaped by lit
 #}if
+#{if offset==3
+	pad0 pad0 pad0	[ j	// padding escaped by lit
+#}if
 #{if offset==7
-	lit lit lit lit lit lit lit	[ j	// padding escaped by lit
+	pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ j // padding escaped by lit
 #}if
 #}if
 #}if
@@ -188,9 +196,23 @@ immediate
 #{if THREAD==3
 	#j	[ j	// since thread type3 cannot use the above trick
 #}if
+#{if THREAD!=4
 	offset,	[ \ j
 	offset	[ h \ 0
+#}if
+#{if THREAD==4
+#{if ARCH eq "msp430"
+[ // machine code for the "unconditional jump" looks like this:
+[ //	0c0e8: 0b 3c                     JMP     0xc100
+	drop	[		// since j_cfa does not contain anything useful
+	15360	[ 0x3c00	// jmp opcode is 0b001111 + 10 addl offset bits
+	,	[ \ 0 0x3c	// stick that unconditional jump into the
+	here	[ here		// dictionary and then leave the current offset
+	@	[ h		// to be "patch"ed up later
+#}if
+#}if
 ;
+
 [ compile the "immediate" word following it by setting the override flag
 : [compile]
 	override!
@@ -206,6 +228,7 @@ immediate
 	[compile] }if	[ h	// to compile an }if despite its immediacy
 ;
 immediate
+
 #{ifdef TESTROM
 : foo			[ n
 	if{		[	// n!=0

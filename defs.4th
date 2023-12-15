@@ -1451,7 +1451,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 
 #{if step>=58
 
-#{if THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
+#{if THREAD==4 or THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
 
 [ // see the comment for #jz above for the details of why this is needed
 def{ #j
@@ -1460,13 +1460,13 @@ def{ #j
 	j	[ j	// so as to get j on the stack
 #}if
 #{if offset==1
-	lit	[ lit	// padding escaped by lit
+	pad0	[ lit	// padding escaped by lit
 #}if
 #{if offset==3
-lit lit lit	[ lit	// padding escaped by lit
+pad0 pad0 pad0	[ lit	// padding escaped by lit
 #}if
 #{if offset==7
-lit lit lit lit lit lit lit	[ lit	// padding escaped by lit
+pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 #}if
 #{if big_endian==1
 	j	[ j	// so as to get j on the stack
