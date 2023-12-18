@@ -309,8 +309,11 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 #{if offset==1
 	lit	[ jnz	// padding used for 1 byte offset, escaped by lit
 #}if
+#{if offset==3
+	pad0 pad0 pad0	[ jnz	// padding escaped by lit
+#}if
 #{if offset==7
-	lit lit lit lit lit lit lit	[ jnz	// padding escaped by lit
+	pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ jnz // padding escaped by lit
 #}if
 #}if
 #}if
@@ -318,8 +321,26 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 #{if THREAD==3
 	#jnz	[ jnz	// since thread type3 cannot use the above trick
 #}if
+#{if THREAD!=4
 	offset,	[ \ jnz
 	offset	[ h \ 0
+#}if
+#{if THREAD==4
+#{if ARCH eq "msp430"
+[ // machine code for the "conditional jump if non zero" looks like this:
+[ //	0c172: 27 83                     DECD    R7
+[ //	0c174: 06 f6                     AND     R6,     R6
+[ //	0c176: 26 47                     MOV     @R7,    R6
+[ //	0c178: 0b 20                     JNZ     0xc190
+[ // Since jnz_cfa has the code for the preamble, just generate a call to it
+[ // and then reserve 2 bytes for the actual jump itself to be "patch"ed later
+	compdef	[ \ call jnz_cfa // appended to the dictionary to call preamble
+	8192	[ 0x2000	// MSP 430 uses 2 bytes for a conditional jump
+	,	[ \ 0 0x20	// 6 bits opcode for JNZ + 10 bits jump offset
+	here	[ here		// the 10 bit jump offset is zero filled
+	@	[ h		// and will be "patch"ed later
+#}if
+#}if
 ;
 immediate
 : ==		[ a b
