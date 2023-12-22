@@ -1508,6 +1508,9 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 #}if
 
 #{if step>=61
+
+#{if THREAD!=4
+
 def{ compile	[	| w ]
 	r>	[ w	|   ] // get the next exec'utable address
 	dup	[ w w	|   ] (w:o)
@@ -1584,4 +1587,65 @@ def{ compile	[	| w ]
 #}if
 #}if
 }def
+
+#}if
+
+#{if THREAD==4
+
+[ // for subroutine threaded code, the return stack operators cannot be CALL'ed
+[ // unlike all the other routines (since they manipulate the return stack), so
+[ // this variant of compile, expands the body of the routines in place. This
+[ // way it avoids a CALL and can leave the return stack untouched.
+
+def{ compile	[	| w ]
+	r>	[ w	|   ] // get the next exec'utable address
+	dup	[ w w	|   ] (w:o)
+
+#{if ARCH eq "msp430"
+
+[ // Note: much of this code is not arch specific, but better safe than sorry
+
+[ // Also most of this could be retrofitted into the current version of compile
+[ // but since the existing version of 'compile' is already pretty hairy, it
+[ // seems prudent to separate this out and not make it any more unreadable.
+
+[ // the calling code is expected to have the following layout:
+[ //	addr:	CALL compile	#	| 0x12b0 | compile |
+[ //	addr+4:	CALL foo_cfa	#	| 0x12b0 | foo_cfa |
+[ // and 'w' will be pointing at addr+4 when compile is being executed. Ideally
+[ // all we need to do is to copy the 4 bytes starting at 'w' and push addr+8
+[ // back on the stack for the matching return instruction. But this breaks
+[ // when >r or r> are being compile'd since their semantics expects expansion
+[ // in place (or at least, an unchanged return stack). So the ugly bandaid
+[ // that this version of 'compile' implements is to expand/copy over the
+[ // body of the definition instead of calling it (just like a macro expansion
+[ // except it happens at run time)
+	4 +	[ w w+4
+	>r	[ w	| w+4 ]
+[ // as explained above, the body of the cfa needs to be expanded in place so I
+[ // use the expedient approach of just copying everything upto the terminating
+[ // ret'urn instruction. Note that this will not work for larger routines that
+[ // may embed the ret'urn instruction within the body of the subroutine but in
+[ // this restricted case where we know that will not happen, it is fine to do
+[ // so, although it means we are living a little dangerously.
+	2 +		[ w+2	(w:CALL, w+2:cfa)
+	@		[ cfa
+	loop{		[ c:cfa
+		dup	[ c c
+		@	[ c b	(b:c)
+		dup	[ c b b
+		0x4130	[ c b b r:0x4130	// ret'urn opcode of MSP430
+		-	[ c b b-r
+	}while{		[ c b			// (b-r)!=0 ie b!=r
+		,	[ c	\ b		// append it to dictionary
+		2 +	[ c:c+2			// move to next op code
+	}loop		[ c+? b			// (b-r)==0 ie b==r
+	drop		[ c+?
+	drop		[
+#}if
+
+}def
+
+#}if
+
 #}if
