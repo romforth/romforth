@@ -23,6 +23,7 @@ The following ports are complete:
 | riscv-zigcc |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-riscv64  |
 | rv64-sys    |  64  | little | 1 | Linux/sys | GNU as     | qemu-riscv64  |
 | rv32-sys    |  32  | little | 1 | Linux/sys | GNU as     | qemu-riscv32  |
+| msp430-stc  |  16  | little | 4 | Baremetal | msp430-gcc | mspdebug      |
 '-------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
@@ -187,3 +188,8 @@ ALIGN is used to denote alignment requirements. Architectures that don't have
 alignment restrictions can use ALIGN=0. ALIGN=4 denotes a 32 bit alignment.
 
 LITC denotes the size of literals in bytes and must match the size of a store.
+
+If you make it safely past step 38, debugging becomes a bit easier by setting
+the config parameter 'debug' to 1.
+
+TESTROM can be set to 0 to generate a build with all of the tests disabled.

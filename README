@@ -1,6 +1,25 @@
-A portable, small, baremetal Forth that can go into the Flash/ROM
+At a superficial level, romforth is just a collection of ports of Forth. It is
+a portable, small, baremetal version of Forth that can run from Flash/ROM and
+has been ported to a number of CPUs.
 
-Forth is a perfect fit for small, resource constrained systems.
+Dig deeper though, and you might see that romforth can also be considered a
+"porting toolkit" which enables a "stepwise porting framework" that allows you
+to port Forth "relatively easily" to any of your favorite CPU architectures.
+
+The various ports that have been done already can be then be considered as
+proof of concept of this approach to porting Forth.
+
+At this point you might reasonably ask: Why use Forth for microcontrollers?
+I'll go ahead and claim that Forth is a perfect fit for small, resource
+constrained systems. Perhaps elsewhere too, but opinions widely differ on that.
+Here's some sample code that might be used to blink an LED every second:
+
+	loop{
+		green led_on
+		500 millisec sleep
+		green led_off
+		500 millisec sleep
+	}loop
 
 romforth is yet another Forth-like implementation meant to (eventually)
 run on most "low end" (ie ROM and RAM constrained) microcontrollers.
@@ -125,21 +144,23 @@ To make a local copy:
 	git clone https://github.com/romforth/romforth
 
 To build/test, the following dependencies need to be installed:
-	- perl
-	- nasm
-	- gcc
-	- binutils
+(Note: the version number in parentheses is the "known to work" version used in
+testing, older/newer versions may or may not work)
+	- perl (v5.22.1)
+	- nasm (version 2.15.05 compiled on Aug 28 2020)
+	- gcc (version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2))
+	- binutils ((GNU Binutils) 2.38)
 		- pdp11
 		- m68k
 		- sparc
 		- msp430
 		- aarch64
 		- riscv64
-	- simh
-	- zig
-	- qemu
-	- sdcc(ucsim)
-	- msp430-gcc
+	- simh (open-simh V4.0-0 Current git commit id: 33aad325)
+	- zig (0.11.0-dev.2725+4374ce51b)
+	- qemu (7.1.0, via nix)
+	- sdcc(ucsim) (4.2.0)
+	- msp430-gcc ((GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched))
 	- mspdebug(from github.com/romforth/mspdebug, until my changes
 		are upstreamed)
 
@@ -174,4 +195,5 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | riscv-zigcc |    1124+.. |   3036 (4160)   |   5762 (6886)   |
 | rv64-sys    |     692    |   3336 (4028)   |   6664 (7356)   |
 | rv32-sys    |     692    |   2302 (2994)   |   4374 (5066)   |
+| msp430-stc  |       0    |   4328 (4328)   |   10060 (10060) |
 '-------------'------------'-----------------'-----------------'

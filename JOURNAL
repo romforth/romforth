@@ -117,6 +117,7 @@ INDEX
 	* 06 Nov '23
 	* 28 Nov '23
 	* 04 Dec '23
+	* 23 Dec '23
 
 04 Nov '22
 ----------
@@ -4056,3 +4057,32 @@ Rather than try to struggle valiantly with m4, I'll just cave in and change the
 names of the routines to run{ and }run instead.
 
 There, there, that wasn't so hard, was it?
+
+23 Dec '23
+----------
+So there you have it, my first "subroutine threaded code"/STC port of romforth
+to the MSP430. This port turned out to be much more troublesome than most of
+the recent ports partly because machine code is unforgiving and also because it
+was difficult to inspect the generated code without dropping into the debugger
+to strategically place a few breakpoints and then look at the disassembly.
+
+Another reason this took so long, I think, was that the THREAD=4 setting was
+added as it was being used which took a fair bit of rework of the common code
+as I had to be very careful not to break any of the existing stuff while I was
+at it.
+
+My hope is that future STC ports will be much easier than this since most of
+the skeleton code for THREAD type 4 is now in place and the only thing that
+needs changing will just be the machine code specific parts.
+
+Looking ahead, I'm thinking of either implementing yet another THREAD type that
+I've been considering for a while now or try another STC port (perhaps redo one
+of the existing ports, just like I did for the MSP430) to see if things are
+easier the second time around.
+
+But all that work can wait for the New Year. Since it is Christmas time now, I
+think it is time to take a break - both to look back and look ahead and also to
+focus on family and friends and not go too crazy from all the stresses and
+strains of entertaining all of them ;)
+
+Merry Christmas everyone! And wish you all a wonderful and Happy New Year!

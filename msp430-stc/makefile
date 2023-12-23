@@ -10,7 +10,7 @@ CC=msp430-gcc
 #ASFLAGS=-al=forth.lst
 #LD=msp430-unknown-elf-ld
 
-all : threeforth
+all : fourforth
 
 oneforth : test.out
 twoforth : test.defs
