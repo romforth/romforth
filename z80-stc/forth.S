@@ -1,2 +1,3 @@
+#define bye halt
 hlt:
-	halt
+	bye
