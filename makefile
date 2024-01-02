@@ -19,6 +19,7 @@ all :
 	(cd rv64-sys ; make)
 	(cd rv32-sys ; make)
 	(cd msp430-stc ; make)
+	(cd z80-stc ; make)
 
 allsteps :
 	./runallsteps
@@ -46,3 +47,4 @@ clean :
 	(cd rv64-sys ; make clean)
 	(cd rv32-sys ; make clean)
 	(cd msp430-stc ; make clean)
+	(cd z80-stc ; make clean)

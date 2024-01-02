@@ -118,6 +118,7 @@ INDEX
 	* 28 Nov '23
 	* 04 Dec '23
 	* 23 Dec '23
+	* 02 Jan '24
 
 04 Nov '22
 ----------
@@ -4086,3 +4087,13 @@ focus on family and friends and not go too crazy from all the stresses and
 strains of entertaining all of them ;)
 
 Merry Christmas everyone! And wish you all a wonderful and Happy New Year!
+
+02 Jan '24
+----------
+I've decided to start off on yet another STC port while the memory of the one
+that I finished is still relatively fresh in my memory. This time around, I've
+picked the Z80 for the port and the rationale is pretty much identical to the
+reasons why I picked the MSP430 earlier - ie, a working implementation already
+is in place. Hopefully much of this work should be limited to sanity checking
+and verifying that the framework for STC/THREAD type 4 which is in place can be
+easily carried over to a newer architecture without too much effort.
