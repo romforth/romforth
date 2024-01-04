@@ -26,7 +26,7 @@ test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	touch test.out
 	cat cmds.ucsim | ucsim_z80 -I in=test.in,out=test.out,if=rom'[0x7fff]' forth.ihx > test.log
-	grep 'Stop at 0x000010: (101) Halted' test.log > /dev/null
+	grep 'Stop at 0x00000b: (101) Halted' test.log > /dev/null
 	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp

@@ -1,3 +1,5 @@
-bye	: halt
-key	: ld w, #0x7fff ; ld (w), #'r' ; ld tos, (w)
-emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tos
+bye	: ret
+key	: call realkey
+emit	: call realemit
+dup	: call realdup
+drop	: call realdrop

@@ -5,10 +5,44 @@
 ; Please see the LICENSE file for the Affero GPL 3.0 license details
 
 #define w	hl
-#define tos	a
+#define tos	de
+#define tosh	d
+#define tosl	e
+#define dp	iy
 
 cold:
-	jp rom
+	ld sp, #0xffff
+	ld dp, #stack
+	call rom
+	halt
+
+realdup:
+	ld (dp), tosl
+	inc dp
+	ld (dp), tosh
+	inc dp
+	ret
+
+realdrop:
+	dec dp
+	ld tosh, (dp)
+	dec dp
+	ld tosl, (dp)
+	ret
+
+realkey:
+	call realdup
+	ld w, #0x7fff
+	ld (w), #'r'
+	ld tosl, (w)
+	ret
+
+realemit:
+	ld w, #0x7fff
+	ld (w), #'w'
+	ld (w), tosl
+	call realdrop
+	ret
 
 #if USEDICT
 #include "prims_dict.s"
@@ -31,3 +65,5 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+stack:    .ds 100
