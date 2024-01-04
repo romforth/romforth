@@ -4,7 +4,8 @@
 ; SPDX-License-Identifier: AGPL-3.0-only
 ; Please see the LICENSE file for the Affero GPL 3.0 license details
 
-#define bye halt
+#define w	hl
+
 cold:
 	jp rom
 

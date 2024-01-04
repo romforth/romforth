@@ -48,7 +48,7 @@ my $headers=[];
 sub mapnames {
 	($f,$l)=@_;		# which provides forth<->label mapping
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
-	#print "$l:\n";	# generate the label for the assembler
+	print "define\(\[$l\], \[";	# generate the label for the assembler
 	if ($gendict) {
 		push @$headers, [$f,$l,1];
 	}
@@ -57,6 +57,7 @@ sub mapnames {
 my $hash={};
 my $agg=[];
 my $label="lbl000";
+print qq{changequote(`[', `]')\n};
 while (<>) {
 	/^\#/ and next;
 	if (s/^\s*(\S+)\s+:\s+//) {
@@ -71,13 +72,14 @@ while (<>) {
 			$w="next" unless ($w);
 			$w=~s/^\s+//;
 			if ($l=$hash->{$w}) {
-				#print "\t", join("\n\t",@$l), "\n";
+				print "\t", join("\n",@$l), "\n";
 				push @$agg, @$l unless ($w eq "next");
 			} else {
-				#print "\t$w\n";
+				print "\t$w\n";
 				push @$agg, $w;
 			}
 		}
+		print "\])\n";
 		$hash->{"$f"}=[@$agg];
 		$agg=[];
 		next;
