@@ -5,6 +5,7 @@
 ; Please see the LICENSE file for the Affero GPL 3.0 license details
 
 #define w	hl
+#define tos	a
 
 cold:
 	jp rom

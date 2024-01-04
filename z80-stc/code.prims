@@ -1,3 +1,3 @@
 bye	: halt
-key	: nop
-emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), #'f'
+key	: ld w, #0x7fff ; ld (w), #'r' ; ld tos, (w)
+emit	: ld w, #0x7fff ; ld (w), #'w' ; ld (w), tos
