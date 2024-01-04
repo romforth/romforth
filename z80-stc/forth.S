@@ -44,6 +44,20 @@ realemit:
 	call realdrop
 	ret
 
+invert:
+	ld a, tosh
+	cpl
+	ld tosh, a
+	ld a, tosl
+	cpl
+	ld tosl, a
+	ret
+
+negate:
+	call invert
+	inc tos
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else

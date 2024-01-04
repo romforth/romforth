@@ -3,3 +3,4 @@ key	: call realkey
 emit	: call realemit
 dup	: call realdup
 drop	: call realdrop
+neg	: call negate
