@@ -4,3 +4,4 @@ emit	: call realemit
 dup	: call realdup
 drop	: call realdrop
 neg	: call negate
+j	: .db 0x18
