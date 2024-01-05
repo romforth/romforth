@@ -7,3 +7,5 @@ neg	: call negate
 j	: .db 0x18
 jz	: ld a, tosl ; or a, tosh ; drop ; .db 0x28
 jnz	: ld a, tosl ; or a, tosh ; drop ; .db 0x20
+inc	: INC tos
+dec	: DEC tos
