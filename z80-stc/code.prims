@@ -16,3 +16,4 @@ dip	: call realdip
 +	: call realadd
 &	: call realand
 |	: call realor
+^	: call realxor

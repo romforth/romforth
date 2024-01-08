@@ -105,6 +105,16 @@ realor:
 	ld tosh, a
 	ret
 
+realxor:
+	call realnip
+	ld a, nosl
+	xor a, tosl
+	ld tosl, a
+	ld a, nosh
+	xor a, tosh
+	ld tosh, a
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else
