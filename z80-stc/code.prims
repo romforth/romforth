@@ -18,3 +18,4 @@ dip	: call realdip
 &	: call realand
 |	: call realor
 ^	: call realxor
+swap	: nip ; dup ; push nos ; pop tos
