@@ -85,6 +85,16 @@ realadd:
 	ld tosh, a
 	ret
 
+realand:
+	call realnip
+	ld a, nosl
+	and a, tosl
+	ld tosl, a
+	ld a, nosh
+	and a, tosh
+	ld tosh, a
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else

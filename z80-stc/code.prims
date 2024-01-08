@@ -14,3 +14,4 @@ nip	: call realnip
 dip	: call realdip
 -	: neg ; call realadd
 +	: call realadd
+&	: call realand
