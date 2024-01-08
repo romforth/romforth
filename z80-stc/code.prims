@@ -15,3 +15,4 @@ dip	: call realdip
 -	: neg ; call realadd
 +	: call realadd
 &	: call realand
+|	: call realor

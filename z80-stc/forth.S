@@ -95,6 +95,16 @@ realand:
 	ld tosh, a
 	ret
 
+realor:
+	call realnip
+	ld a, nosl
+	or a, tosl
+	ld tosl, a
+	ld a, nosh
+	or a, tosh
+	ld tosh, a
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else
