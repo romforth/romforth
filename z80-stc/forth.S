@@ -75,6 +75,16 @@ negate:
 	inc tos
 	ret
 
+realadd:
+	call realnip
+	ld a, nosl
+	add a, tosl
+	ld tosl, a
+	ld a, nosh
+	adc a, tosh
+	ld tosh, a
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else

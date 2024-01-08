@@ -12,3 +12,5 @@ dec	: DEC tos
 inv	: call invert
 nip	: call realnip
 dip	: call realdip
+-	: neg ; call realadd
++	: call realadd
