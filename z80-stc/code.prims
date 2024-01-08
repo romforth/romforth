@@ -3,6 +3,7 @@ key	: call realkey
 emit	: call realemit
 dup	: call realdup
 drop	: call realdrop
+2drop	: drop ; drop
 neg	: call negate
 j	: .db 0x18
 jz	: ld a, tosl ; or a, tosh ; drop ; .db 0x28
