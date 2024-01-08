@@ -9,12 +9,29 @@
 #define tosh	d
 #define tosl	e
 #define dp	iy
+#define nos	bc
+#define nosh	b
+#define nosl	c
 
 cold:
 	ld sp, #0xffff
 	ld dp, #stack
 	call rom
 	halt
+
+realdip:
+	ld (dp), nosl
+	inc dp
+	ld (dp), nosh
+	inc dp
+	ret
+
+realnip:
+	dec dp
+	ld nosh, (dp)
+	dec dp
+	ld nosl, (dp)
+	ret
 
 realdup:
 	ld (dp), tosl

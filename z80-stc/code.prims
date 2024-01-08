@@ -10,3 +10,5 @@ jnz	: ld a, tosl ; or a, tosh ; drop ; .db 0x20
 inc	: INC tos
 dec	: DEC tos
 inv	: call invert
+nip	: call realnip
+dip	: call realdip
