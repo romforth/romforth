@@ -21,5 +21,8 @@ dip	: call realdip
 swap	: nip ; dup ; push nos ; pop tos
 @	: push tos ; pop mp ; ld tosl, (mp) ; INC mp ; ld tosh, (mp)
 !	: push tos ; pop mp ; nip ; ld (mp), nosl ; INC mp ; ld (mp), nosh ; drop
+c@	: push tos ; pop mp ; ld tosl, (mp) ; xor a, a ; ld tosh, a
+c!	: push tos ; pop mp ; nip ; ld (mp), nosl ; drop
 
 var here .dw mem
+var state .db 1
