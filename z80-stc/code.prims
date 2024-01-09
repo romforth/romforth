@@ -24,6 +24,7 @@ swap	: nip ; dup ; push nos ; pop tos
 c@	: push tos ; pop mp ; ld tosl, (mp) ; xor a, a ; ld tosh, a
 c!	: push tos ; pop mp ; nip ; ld (mp), nosl ; drop
 pick	: call realpick
+stick	: call realstick
 
 var here .dw mem
 var state .db 1

@@ -131,6 +131,23 @@ realpick:
 	pop w
 	ret
 
+realstick:
+	push w
+	push dp
+	pop w
+	ld a, tosl
+	INC a
+	add a, a
+	ld tosl, a
+	sbc w, tos
+	call realnip
+	ld (w), nosl
+	INC w
+	ld (w), nosh
+	pop w
+	call realdrop
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else
