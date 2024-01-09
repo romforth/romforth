@@ -138,4 +138,5 @@ rom:
 #endif
 #endif
 
-stack:    .ds 100
+stack	: .ds 100
+mem	: .ds 2048
