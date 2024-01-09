@@ -12,6 +12,7 @@
 #define nos	bc
 #define nosh	b
 #define nosl	c
+#define mp	ix
 
 cold:
 	ld sp, #0xffff

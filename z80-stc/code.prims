@@ -19,3 +19,4 @@ dip	: call realdip
 |	: call realor
 ^	: call realxor
 swap	: nip ; dup ; push nos ; pop tos
+@	: push tos ; pop mp ; ld tosl, (mp) ; INC mp ; ld tosh, (mp)
