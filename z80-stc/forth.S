@@ -116,6 +116,21 @@ realxor:
 	ld tosh, a
 	ret
 
+realpick:
+	push w
+	push dp
+	pop w
+	ld a, tosl
+	INC a
+	add a, a
+	ld tosl, a
+	sbc w, tos
+	ld tosl, (w)
+	INC w
+	ld tosh, (w)
+	pop w
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else
