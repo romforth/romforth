@@ -119,6 +119,7 @@ INDEX
 	* 04 Dec '23
 	* 23 Dec '23
 	* 02 Jan '24
+	* 10 Jan '24
 
 04 Nov '22
 ----------
@@ -4097,3 +4098,12 @@ reasons why I picked the MSP430 earlier - ie, a working implementation already
 is in place. Hopefully much of this work should be limited to sanity checking
 and verifying that the framework for STC/THREAD type 4 which is in place can be
 easily carried over to a newer architecture without too much effort.
+
+10 Jan '24
+----------
+I didn't really care enough to code a real version of rp@! which would allow
+twiddling with Z80's SP register especially since the ucsim_z80 simulator seems
+to be finicky about having the stack within the F000-FFFF address range. So for
+now I'm just going to sneak in a 'nop' as the implementation. Obviously this is
+a completely broken implementation if you ever need to switch the stack but if
+you need it you can fix it yourself (or, you know, "call me, maybe")

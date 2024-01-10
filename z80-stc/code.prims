@@ -26,6 +26,7 @@ c!	: push tos ; pop mp ; nip ; ld (mp), nosl ; drop
 pick	: call realpick
 stick	: call realstick
 sp@!	: call dpswap
+rp@!	: nop
 
 var here .dw mem
 var state .db 1
