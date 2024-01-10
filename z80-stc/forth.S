@@ -20,6 +20,16 @@ cold:
 	call rom
 	halt
 
+dpswap:			; [ x			w:ow dp:d
+	push w		; [ x	|    ow ]
+	push dp		; [ x	|  d ow ]
+	pop w		; [ x	|    ow ]	w:dp
+	ex tos, w	; [ d	|    ow ]	w:x
+	push w		; [ d	|  x ow ]
+	pop dp		; [ d	|    ow ]	dp:x
+	pop w		; [ d
+	ret
+
 realdip:
 	ld (dp), nosl
 	inc dp
