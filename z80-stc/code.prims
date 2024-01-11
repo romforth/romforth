@@ -27,6 +27,8 @@ pick	: call realpick
 stick	: call realstick
 sp@!	: call dpswap
 rp@!	: nop
+>r	: push tos ; drop
+r>	: dup ; pop tos
 
 var here .dw mem
 var state .db 1
