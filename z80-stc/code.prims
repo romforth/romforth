@@ -29,6 +29,7 @@ sp@!	: call dpswap
 rp@!	: nop
 >r	: push tos ; drop
 r>	: dup ; pop tos
+exec	: nop
 
 var here .dw mem
 var state .db 1

@@ -7,7 +7,6 @@ VALUE=0xff31
 RGROWLOW=0
 RSTKSZ=120
 big_endian=0
-offset=1
 prim_var_deref=1
 CELL=2
 SERIALIN=0xFF72

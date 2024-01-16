@@ -120,6 +120,7 @@ INDEX
 	* 23 Dec '23
 	* 02 Jan '24
 	* 10 Jan '24
+	* 16 Jan '24
 
 04 Nov '22
 ----------
@@ -4107,3 +4108,14 @@ to be finicky about having the stack within the F000-FFFF address range. So for
 now I'm just going to sneak in a 'nop' as the implementation. Obviously this is
 a completely broken implementation if you ever need to switch the stack but if
 you need it you can fix it yourself (or, you know, "call me, maybe")
+
+16 Jan '24
+----------
+When I started off on this port, my expectation was that I'd be done with it
+fairly quickly and now here I am, almost 2 weeks in and I haven't even got to
+the parts that require heavy lifting. I'm going to try and speed things up even
+though that implies adding techdebt even if no one (except me, probably) cares
+if this gets any done faster. To achieve the quicker cadence, I'm planning to
+copy the steps that I followed in the msp430-stc port as is. So although I know
+that exec cannot be implemented as a 'nop', I'll follow that step here since it
+was done that way in the earlier port.
