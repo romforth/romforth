@@ -141,8 +141,7 @@ sub genprim {
 
 sub gendef {
 	my ($m, $f)=@_;
-	print "\t.db enter-cold\n";
-	print "\t.dw $m # $f\n";
+	print "\tcall $m # $f\n";
 }
 
 sub gencode {
@@ -223,12 +222,12 @@ sub def {
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.db exit-cold\n";
+			print "\tret\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\t.db exit-cold\n";
+			print "\tret\n";
 			$state=0;
 			$immediate=0;
 			return 1;

@@ -7,7 +7,7 @@
 AS=sdasz80
 ASFLAGS=-l
 LD=sdldz80
-all : oneforth
+all : twoforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
@@ -20,7 +20,7 @@ test.dict : forth_dict.ihx test.inp test.exp
 test.defs : forth_defs.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	cat cmds.ucsim | ucsim_z80 -I in=test.in,out=test.defs,if=rom'[0x7fff]' forth_defs.ihx > test.log
-	grep 'Stop at 0x000004: (101) Halted' test.log > /dev/null
+	grep 'Stop at 0x00000b: (101) Halted' test.log > /dev/null
 	cmp test.defs test.exp
 test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
@@ -50,7 +50,7 @@ forth_defs.S : forth.S
 forth_defs.s : forth_defs.S prims.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs.s
-	cpp -P forth_defs.S > forth_defs.s
+	cpp -P forth_defs.S | m4 > forth_defs.s
 forth_dict.ihx : forth_dict.rel
 	$(LD) -i forth_dict.rel
 forth_dict.rel : forth_dict.s
