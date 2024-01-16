@@ -1,35 +1,36 @@
 bye	: ret
-key	: call realkey
-emit	: call realemit
-dup	: call realdup
-drop	: call realdrop
+key	: CALL realkey
+emit	: CALL realemit
+dup	: CALL realdup
+drop	: CALL realdrop
 2drop	: drop ; drop
-neg	: call negate
+neg	: CALL negate
 j	: .db 0x18
 jz	: ld a, tosl ; or a, tosh ; drop ; .db 0x28
 jnz	: ld a, tosl ; or a, tosh ; drop ; .db 0x20
 inc	: INC tos
 dec	: DEC tos
-inv	: call invert
-nip	: call realnip
-dip	: call realdip
--	: neg ; call realadd
-+	: call realadd
-&	: call realand
-|	: call realor
-^	: call realxor
+inv	: CALL invert
+nip	: CALL realnip
+dip	: CALL realdip
+-	: neg ; CALL realadd
++	: CALL realadd
+&	: CALL realand
+|	: CALL realor
+^	: CALL realxor
 swap	: nip ; dup ; push nos ; pop tos
 @	: push tos ; pop mp ; ld tosl, (mp) ; INC mp ; ld tosh, (mp)
 !	: push tos ; pop mp ; nip ; ld (mp), nosl ; INC mp ; ld (mp), nosh ; drop
 c@	: push tos ; pop mp ; ld tosl, (mp) ; xor a, a ; ld tosh, a
 c!	: push tos ; pop mp ; nip ; ld (mp), nosl ; drop
-pick	: call realpick
-stick	: call realstick
-sp@!	: call dpswap
+pick	: CALL realpick
+stick	: CALL realstick
+sp@!	: CALL dpswap
 rp@!	: nop
 >r	: push tos ; drop
 r>	: dup ; pop tos
 exec	: nop
+call	: CALL trampoline
 
 var here .dw mem
 var state .db 1

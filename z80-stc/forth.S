@@ -20,6 +20,12 @@ cold:
 	call rom
 	halt
 
+trampoline:
+	push tos
+	pop w
+	CALL realdrop
+	jp (w)
+
 dpswap:			; [ x			w:ow dp:d
 	push w		; [ x	|    ow ]
 	push dp		; [ x	|  d ow ]

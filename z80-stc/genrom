@@ -141,7 +141,7 @@ sub genprim {
 
 sub gendef {
 	my ($m, $f)=@_;
-	print "\tcall $m # $f\n";
+	print "\tCALL $m # $f\n";
 }
 
 sub gencode {
