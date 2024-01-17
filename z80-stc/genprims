@@ -28,17 +28,17 @@ sub genheader {
 	if ($len%2==0) {
 		print "$l","_pad:\t.db 0\n";
 	}
-	print qq{\t.ascii "$f"\n};
+	print qq{\t.ascii "\[$f\]"\n};
 	print "$l","_nfa:\t.db $len\n";
 	print "$l","_lfa:\t.dw $prev\n";
 	print "$l","_cfa:\n";
 	if ($flag) {
-		print "\t.db $l-cold\n";
-		print "\t.db exit-cold\n";
+		print "\t$l\n";
+		print "\tret\n";
 	} else {
-		print "\t.db lit-cold\n";
-		print "\t.dw $l\n";
-		print "\t.db exit-cold\n";
+		print "\tdup\n";
+		print "\tld tos, \#$l\n";
+		print "\tret\n";
 	}
 	$prev="$l"."_lfa";
 }
