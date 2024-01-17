@@ -1125,6 +1125,22 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ n lit	// padding escaped by lit
 
 #}if
 
+#{if ARCH eq "z80"
+
+[ Sample machine code for pushing literals on Z80 looks like this:
+[	0000E6 CD 31 00         [17]  210   CALL realdup
+[	0000E9 11 6F 00         [10]  212  ld de, #111
+[ so the words that needed to be added to the dictionary are:
+[	0x31CD 0x1100
+[ Note that the actual literal value (0x006f) is added later (below)
+	0x31CD , 0x1100 ,
+
+#}if
+
+#{if ARCH ne "msp430" and ARCH ne "z80"
+step_52_assertion_failure_to_catch_missing_literal_modifications
+#}if
+
 #}if
 	,	[ \ n		// in either case, the value needs a full cell
 
