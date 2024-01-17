@@ -90,24 +90,32 @@ sub runbegin {
 	push @labelstack, $ol;
 }
 
+sub branchx {
+	my ($jmp)=@_;
+	print "\tld a, tosl\n";
+	print "\tor a, tosh\n";
+	print "\tCALL realdrop\n";
+	print "\t$jmp ";
+}
+
 sub rununtil {
-	print "\t.db ", $mapjnz, "-cold # branch if not zero\n";
+	branchx('JR NZ, ');
 	my $ol=pop @labelstack;
-	print "\t.db ", join('_', @$ol), '-.-1', "\n";
+	print join('_', @$ol),"\n";
 	push @labelstack, $ol;
 }
 
 sub runwhile {
-	print "\t.db ", $mapjz, "-cold # branch if zero\n";
+	branchx('JR Z, ');
 	my $ol=pop @labelstack;
-	print "\t.db ", join('_', @$ol), '-.-1', "\n";
+	print join('_', @$ol),"\n";
 	push @labelstack, $ol;
 }
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\t.db ", $mapjmp, "-cold # branch\n";
-	print "\t.db ", $ol->[0], '_begin-.-1', "\n";
+	print "\tJR ";
+	print $ol->[0], '_begin', "\n";
 	print join('_', @$ol), ":\n";
 }
 
