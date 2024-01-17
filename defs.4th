@@ -1299,6 +1299,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ cfa enter // padding escaped by lit
 		,	[ 	\ cfa	// on pdp11, just the cfa is sufficient
 #}if
 #{if THREAD==4
+
 #{if ARCH eq "msp430"
 
 [ Sample machine code for calls to absolute addresses on MSP430 looks like this
@@ -1307,6 +1308,19 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ cfa enter // padding escaped by lit
 	0x12b0 ,	[ cfa \ call #...
 	,		[ \ cfa	// so the dictionary now contains: call #cfa
 #}if
+
+#{if ARCH eq "z80"
+[ Sample machine code for calls to absolute addresses on Z80 looks like this:
+[	000047 CD 31 00         [17]   45  call realdup
+[ so it is clear that the 0xCD opcode just needs to be prefixed to the cfa
+	0xCD c,		[ cfa \ call #...
+	,		[ \ cfa	// so the dictionary now contains: call #cfa
+#}if
+
+#{if ARCH ne "msp430" and ARCH ne "z80"
+step_53_assertion_failure_to_catch_missing_compdef_modifications
+#}if
+
 #}if
 
 	}else{		[ cfa		// variable or primitive,
