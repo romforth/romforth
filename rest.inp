@@ -54,6 +54,7 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	offset	[ h \ 0
 #}if
 #{if THREAD==4
+
 #{if ARCH eq "msp430"
 [ // machine code for the "conditional jump if zero" looks like this:
 [ //	0c11e: 27 83                     DECD    R7
@@ -68,6 +69,31 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	here	[ here		// the 10 bit jump offset is zero filled
 	@	[ h		// and will be "patch"ed later
 #}if
+
+#{if ARCH eq "z80"
+[ // machine code for the "conditional jump if zero" looks like this:
+[ //	001009 7B               [ 4] 2683  ld a, e
+[ //	00100A B2               [ 4] 2684  or a, d
+[ //	00100B CD 3C 00         [17] 2685  CALL realdrop
+[ //	00100E 28                    2686  .db 0x28
+[ //	00100F 0B                    2688  .db lbl031_then-.-1
+[ // Since jz_cfa contins the first 6 bytes that are needed, we copy them as is
+[ // and then reserve 1 byte for the actual jump offset to be "patch"ed later
+	dup	[ jz_cfa jz_cfa (jz_cfa:0xB27B)
+	@	[ jz_cfa 0xB27B
+	,	[ jz_cfa \ 0x7B 0xB2
+	2 +	[ j2:jz_cfa+2
+	dup	[ j2 j2 (j2:0x3CCD)
+	@	[ j2 0x3CCD
+	,	[ j2 \ 0xCD 0x3C
+	2 +	[ j4:j2+2 (j4:0x2800)
+	@	[ 0x2800
+	,	[ \ 0x00 0x28
+	0 c,	[ \ 0		// reserved for the offset
+	here	[ here
+	@	[ h
+#}if
+
 #}if
 ;
 immediate
@@ -127,6 +153,7 @@ immediate
 #}if
 #}if
 #{if THREAD==4
+
 #{if ARCH eq "msp430"
 [ // machine code for the "conditional jump if zero" looks like this
 [ //	0c124: 0b 24                     JZ      0xc13c
@@ -140,6 +167,11 @@ immediate
 	swap	[ op a		// and then
 	!	[ (a:op)	// store it back
 #}if
+
+#{if ARCH eq "z80"
+	c!	[ (a:n)
+#}if
+
 #}if
 ;
 
