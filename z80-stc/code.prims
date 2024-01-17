@@ -33,6 +33,7 @@ exec	: nop
 call	: CALL trampoline
 <<	: CALL shiftleft
 >>	: CALL shiftright
+over	: dup ; ld tos, #1 ; pick
 
 var here .dw mem
 var state .db 1
