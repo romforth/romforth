@@ -251,11 +251,17 @@ sub lit {
 	print qq(\tld tos, \#$o\n);
 }
 
+my $evalstr='';
 my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
-			genprim($f);
+			if ($evalstr) {
+				eval($evalstr);
+				$evalstr='';
+			} else {
+				genprim($f);
+			}
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need to
@@ -279,6 +285,8 @@ while (<>) {				# map forth words in the standard input
 				print qq(\t.db $i\n);
 				next;
 			} elsif ($f eq 'lit') {
+				print qq(\tdup\n);
+				$evalstr=qq(print "\tld tos, \#\${f}_cfa\n");
 				next;
 			}
 			die "unknown word: $f"
