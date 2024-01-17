@@ -36,8 +36,8 @@ call	: CALL trampoline
 over	: dup ; ld tos, #1 ; pick
 exit	: ret
 
-var here .dw mem
 var state .db 1
 #{if step>=41
 var latest	#include "latest.s"
 #}if
+var here .dw mem
