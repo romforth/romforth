@@ -31,6 +31,8 @@ rp@!	: nop
 r>	: dup ; pop tos
 exec	: nop
 call	: CALL trampoline
+<<	: CALL shiftleft
+>>	: CALL shiftright
 
 var here .dw mem
 var state .db 1

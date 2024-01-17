@@ -164,6 +164,39 @@ realstick:
 	call realdrop
 	ret
 
+shiftleft:			; a:?   tos:n nos:?	[ m // want: [ m<<n
+	ld a, tosl		; a:n   tos:n nos:?	[ m
+	or a, a			; a:n   tos:n nos:?	[ m
+	jr z, doneleft		; if (n!=0) {		[ m	// n != 0
+	call realnip		; a:n   tos:n nos:m	[
+	push nos		; a:n	tos:n nos:m	[	| m ]
+	pop mp			; a:n mp:m tos:n nos:m	[
+moreleft:			; do {			[	// n >= 0
+	add mp, mp		; a:n	tos:n mp:m<<1	[
+	dec a			; a:n-1	tos:n mp:m<<1	[
+	jr nz, moreleft		; } while (--n!=0)	[
+	push mp			; a:0	tos:n mp:m<<n	[	| m<<n ]
+	pop nos			; a:0	tos:n nos:m<<n	[
+	call realdip		; a:0   tos:n nos:m<<n	[ m<<n
+doneleft:			; }if			[ m<<n	// n == 0
+	call realdrop		; a:0   tos:m<<n	[
+	ret
+
+shiftright:			; a:?   tos:n nos:?	[ m // want: [ m>>n
+	ld a, tosl		; a:n   tos:n nos:?	[ m
+	or a, a			; a:n   tos:n nos:?	[ m
+	jr z, doneright		; if (n!=0) {		[ m // n != 0
+	call realnip		; a:n   tos:n nos:m	[
+moreright:			; do {			[
+	srl nosh		; a:n   tos:n nos:m>>1	[
+	rr nosl			; a:n   tos:n nos:m>>1	[
+	dec a			; a:n-1 tos:n nos:m>>1	[
+	jr nz, moreright	; } while (--n!=0)	[   // n == 0
+	call realdip		; a:0   tos:n nos:m>>n	[ m>>n
+doneright:			; }if			[
+	call realdrop		; a:0   tos:m>>n
+	ret
+
 #if USEDICT
 #include "prims_dict.s"
 #else
