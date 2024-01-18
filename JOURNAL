@@ -121,6 +121,7 @@ INDEX
 	* 02 Jan '24
 	* 10 Jan '24
 	* 16 Jan '24
+	* 17 Jan '24
 
 04 Nov '22
 ----------
@@ -4119,3 +4120,24 @@ if this gets any done faster. To achieve the quicker cadence, I'm planning to
 copy the steps that I followed in the msp430-stc port as is. So although I know
 that exec cannot be implemented as a 'nop', I'll follow that step here since it
 was done that way in the earlier port.
+
+17 Jan '24
+----------
+After whining about the slow pace of progress yesterday, I'm glad that after an
+all day coding marathon I've managed to complete the z80-stc port. The fact
+that I could refer to the previously completed msp430-stc implementation and
+use it as a template definitely helped speed up the process. With this port now
+out of the way, I think I can safely stake the claim that STC implementations
+for romforth, are for the most part, a solved problem. Anyone who cares enough
+about performance and is willing to trade it off against increased ROM usage
+can choose a part with a larger ROM and spend some quality time tussling with
+the machine code (and M4 if they choose to use the same methodology that I
+picked) and be able to crank out a new port in fairly short order.
+
+With all the different THREADing types that I've implemented (4 so far), I
+think I have fairly decent coverage of the ones that are commonly used to
+implement Forth. While "subroutine threaded code" makes the tradeoff in favor
+of performance, it is possible to go in the opposite direction and use a slower
+implementation which takes up less space. For example, THREAD type 1 makes that
+choice. For the next port, I'm considering a variation of that THREADing type 1
+about which I've been thinking quite a while.

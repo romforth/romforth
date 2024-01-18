@@ -24,6 +24,7 @@ The following ports are complete:
 | rv64-sys    |  64  | little | 1 | Linux/sys | GNU as     | qemu-riscv64  |
 | rv32-sys    |  32  | little | 1 | Linux/sys | GNU as     | qemu-riscv32  |
 | msp430-stc  |  16  | little | 4 | Baremetal | msp430-gcc | mspdebug      |
+| z80-stc     |  16  | little | 4 | Baremetal | sdasz80    | ucsim/sz80    |
 '-------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
