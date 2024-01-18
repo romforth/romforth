@@ -233,6 +233,7 @@ immediate
 	offset	[ h \ 0
 #}if
 #{if THREAD==4
+
 #{if ARCH eq "msp430"
 [ // machine code for the "unconditional jump" looks like this:
 [ //	0c0e8: 0b 3c                     JMP     0xc100
@@ -242,6 +243,20 @@ immediate
 	here	[ here		// dictionary and then leave the current offset
 	@	[ h		// to be "patch"ed up later
 #}if
+
+#{if ARCH eq "z80"
+[ // machine code for the "long unconditional jump" looks like this:
+[ //	0006FA C3 D8 06         [10] 1183  JP lbl120_begin
+[ // There is also the "short unconditional jump" which looks like this:
+[ //	0006F8 18 03            [12] 1182  JR lbl120_endloop
+[ // for now I'll choose the short jump and switch if it runs into trouble
+		[ j_cfa
+	@	[ 0xC918 (j_cfa:0xC918)	// the 0xc9 happens to be a ret
+	,	[ \ 0x18 0xC9		// so we just use that as the filler
+	here	[ here			// which will be "patch"ed up ...
+	@	[ h			// ... later
+#}if
+
 #}if
 ;
 
@@ -277,6 +292,7 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 3ret
 #}ifdef
 #}if
+
 #{if step>=59
 [ // The loop control structures are:
 [ // loop{ ... }while{ ... }loop and loop{ ... }until{ ... }loop
