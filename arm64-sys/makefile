@@ -50,10 +50,10 @@ forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
 	../fix_comments defs_dict.s
 	../fix_comments prims_dict.s
 	cpp -E forth_dict.S > forth_dict.s
-forth_dict.S : forth.S forth_defs.S rom.s
+forth_dict.S : forth.S forth_defs.S
 	cp forth_defs.S forth_dict.S
 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S
-defs_dict.s : ../defs.4th ../fpp fpp.config prims_dict.s genrom
+defs_dict.s : ../defs.4th ../fpp fpp.config genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map > defs_dict.s
 defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g defs.map dict.map > defs.s
