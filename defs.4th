@@ -1643,6 +1643,7 @@ def{ compile	[	| w ]
 
 #{if ARCH eq "msp430"
 
+[ // See also the arch specific implementation for Z80 below
 [ // Note: much of this code is not arch specific, but better safe than sorry
 
 [ // Also most of this could be retrofitted into the current version of compile
@@ -1679,6 +1680,50 @@ def{ compile	[	| w ]
 	}while{		[ c b			// (b-r)!=0 ie b!=r
 		,	[ c	\ b		// append it to dictionary
 		2 +	[ c:c+2			// move to next op code
+	}loop		[ c+? b			// (b-r)==0 ie b==r
+	drop		[ c+?
+	drop		[
+#}if
+
+#{if ARCH eq "z80"
+
+[ // See also the arch specific implementation for MSP430 above
+[ // Note: much of this code is not arch specific, but better safe than sorry
+
+[ // Also most of this could be retrofitted into the current version of compile
+[ // but since the existing version of 'compile' is already pretty hairy, it
+[ // seems prudent to separate this out and not make it any more unreadable.
+
+[ // the calling code is expected to have the following layout:
+[ //	addr:	CALL compile	#	| 0xCD | compile |
+[ //	addr+3:	CALL foo_cfa	#	| 0xCD | foo_cfa |
+[ // and 'w' will be pointing at addr+3 when compile is being executed. Ideally
+[ // all we need to do is to copy the 3 bytes starting at 'w' and push addr+6
+[ // back on the stack for the matching return instruction. But this breaks
+[ // when >r or r> are being compile'd since their semantics expects expansion
+[ // in place (or at least, an unchanged return stack). So the ugly bandaid
+[ // that this version of 'compile' implements is to expand/copy over the
+[ // body of the definition instead of calling it (just like a macro expansion
+[ // except it happens at run time)
+	3 +	[ w w+3
+	>r	[ w	| w+3 ]
+[ // as explained above, the body of the cfa needs to be expanded in place so I
+[ // use the expedient approach of just copying everything upto the terminating
+[ // ret'urn instruction. Note that this will not work for larger routines that
+[ // may embed the ret'urn instruction within the body of the subroutine but in
+[ // this restricted case where we know that will not happen, it is fine to do
+[ // so, although it means we are living a little dangerously.
+	inc		[ w+1	(w:CALL, w+1:cfa)
+	@		[ cfa
+	loop{		[ c:cfa
+		dup	[ c c
+		c@	[ c b	(b:c)
+		dup	[ c b b
+		0xC9	[ c b b r:0xC9	// ret'urn opcode of Z80
+		-	[ c b b-r
+	}while{		[ c b			// (b-r)!=0 ie b!=r
+		c,	[ c	\ b		// append it to dictionary
+		inc	[ c:c+1			// move to next op code
 	}loop		[ c+? b			// (b-r)==0 ie b==r
 	drop		[ c+?
 	drop		[
