@@ -79,11 +79,12 @@ figure out the build/emulate/test toolchain.
 
 If you prefer to look at an existing implementation as a guide, you could pick
 any one of the completed ports and follow each of those steps until all steps
-are complete.
+are complete. For example the following command will show the changes at each
+step in chronological order for the Z80 port:
+	git log -p --reverse 09acfe0067d090a49d0b9b611103b98d6cfcb2da..HEAD
 
 Instead, if you prefer to get a more abstract view, you can look at the steps
-outlined in pseudo/code (NOTE: the steps in pseudo/code are independent of the
-"steps" used in the real ports, I need to sync them up RSN).
+outlined in pseudo/code.
 
 Currently there are a total of about 73 "bite size" steps. The first few steps
 can be summarized as getting the equivalent of the following code in C running
@@ -93,9 +94,10 @@ These represent the external/environmental dependencies of your implementation.
 
 From an operational point of view, after you have setup the directory for
 a new port, you just need to make the appropriate changes at each step and
-then keep running ../git_auto_commit `basename $PWD` inside that directory
-which will take care of creating a git commit with the appropriate subject
-line for each step.
+then keep running the following command after each step:
+	../git_auto_commit $(basename $PWD)
+from within that directory and this will take care of creating a git commit
+with the appropriate subject line for each step.
 
 Since the makefile is very target dependent, you could make a copy of any one
 of the existing ports and modify as appropriate.

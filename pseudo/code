@@ -1,8 +1,31 @@
-# code : Describe the porting process in step wise fashion
+# code : Describe the porting process in "bite size" step wise fashion
 #
-# Copyright (c) 2022 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2022,2024 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
+
+So you want to port Forth to a new architecture?
+
+You may have come to the right place, but before you begin, take a look at the
+README where I have tried to give a high level overview of the subsets of Forth
+that you could implement. Please do take a look at that first to familiarize
+yourself with the "four levels of Forth" that can be layered on top of each
+other. Finally, make up your mind regarding the "level" of Forth that you want
+to implement. Ideally, you may want to implement only the minimal stuff that
+you required to get your work done rather than try to build a "standards
+compliant" version.
+
+For a higher level overview of the work that you will be doing, the PORTING
+guide may also be of some use since it gives the big picture and describes all
+of the the configuration settings.
+
+Once you have understood the overall porting landscape, you can then come back
+here to read the rest of this guide since this document goes into all of the
+nitty-gritty details to describe the fine grain split of the 4 high level steps
+into a total of 73 smaller "bite size" steps each of which is easy/trivial to
+implement.
+
+Let's begin.
 
 # Preamble { : Decide on a porting target and the build/emulate/test toolchain
 
@@ -10,6 +33,7 @@
 #	The reasons for picking a particular CPU might be as simple as "I feel
 #	like it", or perhaps it was inflicted on you by your PHB or perhaps
 #	your customer or it could be any random/arcane/superfluous reason.
+#	Make sure that you have a good understanding of the CPU architecture.
 
 # b. Choose the toolchain that can be used to build code for that target
 #	- if it doesn't exist, code it yourself or decide on alternatives
@@ -24,7 +48,7 @@
 
 # Preamble } : Decide on a porting target and build/emulate/test toolchain
 
-# Step 0 { : Decide on ROM layout, instruction pointer mapping and threading
+# Step 0 Preamble { : Figure out (or decide on) the ROM layout
 
 # a. Figure out/decide on the location/size of ROM from the memory map
 #	- if the ROM is "too small", think about alternative approaches
@@ -35,7 +59,24 @@
 #    rom	: { rom0, rom1, ... }
 #    rom'	: MEM[ROMOFFSET;ROMSIZE]
 
-# b. Pick a register (or RAM location) for i, the instruction pointer
+# Step 0 Preamble } : Figure out (or decide on) the ROM layout
+
+# Step 0 { : Test a halt'ing interpreter by initializing the rom
+
+# Verify that a halt instruction in ROM can be used to halt/pause the system
+# Use this step as a sanity check of the toolchain
+
+# This is the first test of the init code (and of toolchain)
+#    - Test that the "halting interpreter" halts
+
+# Step 0 } : Test a halt'ing interpreter by initializing the rom
+
+# Step 0.1 { : Decide on instruction pointer mapping and threading
+
+# This step can be glossed over if subroutine threading is used since most
+# of the information below makes sense only if a VM is being used.
+
+# a. Pick a register (or RAM location) for i, the instruction pointer
 #	- worry about "cell" size,
 #	- worry about address bus width vs data bus width
 #    i	: instruction pointer
@@ -58,57 +99,99 @@ inner	: goto MEM[i+]	# looping happens implicitly via "next"
 next	: goto inner ;	# goes full circle. Expand in place to avoid a branch.
 ;	: next		# from here on ';' denotes "next" in the code below
 
-# Step 0 } : Decide on ROM layout, instruction pointer mapping and threading
-
-# Step 1 { : Test a halt'ing interpreter by initializing the rom byte codes
-
-# a. Add the init code to the ROM
-bye	: halt	# exit this universe
+# e. Use a 'halt' bytecode appended to the ROM to sanity check the VM
+bye	: halt	# pause current context and resume the outer environment
 rom'	: bye	# thread that into the init code sequnce
 
-# b. This may be a good time to code up the rom generator : genrom
+# Step 0.1 } : Decide on instruction pointer mapping and threading
+
+# Step 0.2 { : Test a halt'ing interpreter by initializing the rom byte codes
+
+# a. This may be a good time to code up the rom generator : genrom
 # This enables the rom to be coded in the version of Forth that you are coding
 
-# c. First test of init code (and of toolchain)
-#    - Test that the "halting interpreter" halts
+# b. This may be a good time to code up the primitives generator : genprims
+# This may enable the primitives to be coded more compactly.
 
-# Step 1 } : Test a halt'ing interpreter by initializing the rom byte codes
+# c. Use genrom/genprims and rom.4th/code.prims to generate the code required
+# for the halt bytecode sequence. Since this was done manually at step 0.1, you
+# have a fallback means of sanity checking that the stuff that is generated
+# by genrom/genprims matches the older code.
 
-# Step 2 { : Use the serial port for debugging
+# d. For completeness, use a makefile (maybe use an earlier port as a template).
+bye	: halt	# pause current context and resume the outer environment
+rom'	: bye	# thread that into the init code sequnce
+
+# Step 0.2 } : Test a halt'ing interpreter by initializing the rom byte codes
+
+# Step 1 { : Use the serial port for input/output, fake input for now
+
+# A serial port is required only if you are using Forth as a REPL, but having a
+# serial port makes debugging so much easier especially during bootstrap and
+# system bringup that you might as well have something like it supported from
+# the very beginning.
 
 # a. Decide on how to implement a serial port
 #    - Assume serial port is on the IO bus (separate from the Memory bus)
 #    - decide on alternatives if a serial port is not available for debugging
 #	- use the JTAG?
-#	- blink leds?
+#	- blink leds? Using morse code?
 #	- code up an emulator?
 #    port	: serial port
-cold'	: port=SERIALIN ;	# add this to the earlier set of code in cold
+
+cold'	: outport=SERIALOUT	# add this to the earlier set of code in cold
 
 # b. Pick a register or RAM location for tos - top element of the data stack
 #	- worry about "cell" size mismatch between address and data bus
 #	- If using a register, make sure to pick one capable of MEM/IO access
 #    tos	: top of stack
 
-# c. Implement input(key) and output(emit) using the serial port
-: key	tos=IO[port] ;
-: emit	IO[port]=tos ;
+# c. Implement output(emit) using the serial port, fake input(key) for now
+: key	tos='f' ;
+: emit	IO[output]=tos ;
 
 # Note that the terminating ';' in the above code signifies 'next' expansion
 
-# d : Echo test the input and output using the serial port
+# d : Add code to fake input and generate output using the serial port
 rom"	: key emit	# thread these instructions into the init code
 			# this needs to go ahead of rom' : bye
 
 # e. Test your debug capabilities
-#	- For sanity checking, the expected final output is "forth rom !"
-#	- start off by making sure that an input byte can be echo'ed back
-#	- input byte could be 'f' (first byte in the "forth rom !" string)
+#	- For sanity checking, the expected final output is a single 'f'
 #	- this will need to be run over and over again, consider automation
 
-# Step 2 } : Use the serial port for debugging
+# f. Verify that the expected byte ('f' in this case) is output on the serial
+# port and the system then halts as before.
 
-# Step 3 { : Test the data stack and verify dup/push and drop/pop operations
+# Step 1 } : Use the serial port for input/output, fake input for now
+
+# Step 1.1 { : Use the serial port for both input/output
+
+# This is an enhancement to the previous step so that the input that was faked
+# in the previous step is actually read out of the input port instead.
+
+# If this is using an emulator, this step may be relatively easy but on real
+# hardware, things can get pretty dicey.
+
+cold'	: input=SERIALIN ;	# add this to the earlier set of code in cold
+
+# a. Implement input(key) using the serial port
+: key	tos=IO[input] ;		# change this from the previous version
+
+# Note that the terminating ';' in the above code signifies 'next' expansion
+
+# b : Echo test the input and output using the serial port
+rom"	: key emit	# thread these instructions into the init code
+			# this needs to go ahead of rom' : bye
+
+# e. Test your debug capabilities
+#	- Start off by making sure that an input byte can be echo'ed back
+#	- For sanity checking, the expected final output is still a single 'f'
+#	- this will need to be run over and over again, consider automation
+
+# Step 1.1 } : Use the serial port for both input/output
+
+# Step 2 { : Test the data stack and verify dup/push and drop/pop operations
 
 # a. Figure out/decide on the location/size of RAM from the memory map
 #	- if it is "too small", give up
@@ -148,10 +231,10 @@ cold'	: d=datastack	# add this to the earlier set of code in cold
 # f. Replace earlier input/output from/to the serial port to use the stack
 : key
 	dup
-	tos=IO[port]
+	tos=IO[input]
 ;
 : emit
-	IO[port]=tos
+	IO[output]=tos
 	drop
 ;
 
@@ -160,21 +243,21 @@ rom"	: key emit	# same as earlier, repeated for clarity
 
 # h. Test the dup/drop operators explicitly, for completeness
 #	- repeat the previous test, automation will come in handy
-rom"	: key dup emit drop # replace earlier version rom" : key emit
+rom"	: key dup drop emit # replace earlier version rom" : key emit
 
-# Step 3 } : Test the data stack and verify dup/push and drop/pop operations
+# Step 2 } : Test the data stack and verify dup/push and drop/pop operations
 
-# Step 4 { : Decide if you need a bootloader
+# Intermission : { Decide if you need a bootloader
 
 # If the ROM size is "very small" (or if you have an OTP ROM device) and there
 # is sufficient RAM to hold the contents that would typically go into the ROM,
 # this is as good a time as any to code a bootstrap bootloader using key+dup
 # to read in byte codes and fill them in memory. Do this only if you are
-# desperate. Search for "Frank Sergeant's "3 instruction Forth" for ideas.
+# desperate. Search for Frank Sergeant's "3 instruction Forth" for ideas.
 
-# Step 4 } : Decide if you need a bootloader
+# Intermission : } Decide if you need a bootloader
 
-# Step 5 { : Implement and test literals
+# Step 3 { : Implement and test literals
 
 # a. Implement the code for lit and add it to the ROM
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -186,12 +269,11 @@ rom"	: key dup emit drop # replace earlier version rom" : key emit
 # b. Test it using a character literal and emit'ing it
 #    using code such as this to echo out the second byte from the
 #    expected final output string of "forth rom !"
-#    all of the rom" code from here on gets appended to previous code
-rom"	:	'o' emit	# another sanity check output byte : 'o'
+rom"	: 'o' key dup drop emit emit	# another sanity check output byte : 'o'
 
-# Step 5 } : Implement and test literals
+# Step 3 } : Implement and test literals
 
-# Step 6 { : Implement and test neg'ate
+# Step 4 { : Implement and test neg'ate
 
 # Meta note about carry bit: This implementation detail reflects the x86 CPU
 # specifics since the neg'ate operation sets the carry bit and this is used by
@@ -210,13 +292,15 @@ rom"	:	'o' emit	# another sanity check output byte : 'o'
 # b. Test it using a character literal and emit'ing it
 #    using code such as this to echo out the third byte from the
 #    expected final output string of "forth rom !"
+#    all of the rom" code from here on gets appended to previous code
+
 rom"	: -114 neg emit		# another sanity check output byte : 'r'
 
-# Step 6 } : Implement and test neg'ate
+# Step 4 } : Implement and test neg'ate
 
-# Step 7 { : Implement and test conditionals
+# Step 4.x { : Implement and test conditionals
 
-# Step 7.1 { : Implement the unconditional branching operator
+# Step 4.1 { : Implement the unconditional branching operator
 
 # a. Implement the j'ump operator
 : j i+=MEM[i+] ;	# add a signed byte to the instruction pointer
@@ -224,9 +308,9 @@ rom"	: -114 neg emit		# another sanity check output byte : 'r'
 # b. Test the j'ump operator
 rom"	: j 1 assert	# pretend that the assert opcode needs 1 byte
 
-# Step 7.1 } : Implement the unconditional branching operator
+# Step 4.1 } : Implement the unconditional branching operator
 
-# Step 7.2 { : Implement the "branch if zero" operator
+# Step 4.2 { : Implement the "branch if zero" operator
 
 # a. Implement the jz operator
 : jz
@@ -239,9 +323,16 @@ rom"	: j 1 assert	# pretend that the assert opcode needs 1 byte
 # b. Test the jz operator
 rom"	: 0 jz 1 assert	# pretend that the assert opcode needs 1 byte
 
-# Step 7.2 } : Implement the "branch if zero" operator
+# Step 4.2 } : Implement the "branch if zero" operator
 
-# Step 7.3 { : Implement the "branch if not zero" operator
+# Step 4.3 { : Ensure that the "branch if zero" operator works for -ve offsets
+
+# This is just a sanity check to ensure that the implementation you have works
+# correctly for both the forward and backward branches.
+
+# Step 4.3 } : Ensure that the "branch if zero" operator works for -ve offsets
+
+# Step 4.4 { : Implement the "branch if not zero" operator
 
 # a. Implement the jnz operator
 : jnz
@@ -254,9 +345,18 @@ rom"	: 0 jz 1 assert	# pretend that the assert opcode needs 1 byte
 # b. Test the jnz operator
 rom"	: 1 jnz 1 assert	# pretend that the assert opcode needs 1 byte
 
-# Step 7.3 } : Implement the "branch if not zero" operator
+# Step 4.4 } : Implement the "branch if not zero" operator
 
-# Step 7.4 { : Implement the conditionals
+# Step 4.5 { : Ensure the "branch if not zero" operator works for -ve offsets
+
+# This is just a sanity check to ensure that the implementation you have works
+# correctly for both the forward and backward branches.
+
+# Step 4.5 } : Ensure the "branch if not zero" operator works for -ve offsets
+
+# Step 4.x } : Implement and test conditionals
+
+# Step 5 { : Implement support for the conditionals
 
 # a. Extend genrom to handle if{ ... }else{ ... }if
 
@@ -266,11 +366,9 @@ rom"	: 0 if{ assert }if
 # c. Test if{ ... }else{ ... }if
 rom"	: 1 if{ }else{ assert }if
 
-# Step 7.4 } : Implement the conditionals
+# Step 5 } : Implement support for the conditionals
 
-# Step 7 } : Implement and test conditionals
-
-# Step 8 { : Implement and test inc(1+)/dec(1-)
+# Step 6 { : Implement and test inc(1+)/dec(1-)
 
 # This step is optional if ROM space is really tight
 # if this is not implemented, macro expand using the following definitions
@@ -295,9 +393,9 @@ rom"	: -1 inc if{ assert }if
 # c. Test dec
 rom"	: 1 dec if{ assert }if
 
-# Step 8 } : Implement and test inc(1+)/dec(1-)
+# Step 6 } : Implement and test inc(1+)/dec(1-)
 
-# Step 9 { : Implement and test inv'ert
+# Step 7 { : Implement and test inv'ert
 
 # a. Implement inv
 : inv	tos^=-1 ;
@@ -310,9 +408,9 @@ rom"	: 1 dec if{ assert }if
 # b. Test inv
 rom"	: 1 neg inv if{ assert }if
 
-# Step 9 } : Implement and test inv'ert
+# Step 7 } : Implement and test inv'ert
 
-# Step 10 { : Implement and test nip/dip
+# Step 8 { : Implement and test nip/dip
 
 # a. Implement nip/dip
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -331,9 +429,9 @@ rom"	: 0 1 nip dup dip dec if{ assert }if if{ assert }if dec if{ assert }if
 # with the stack signature
 #	[a b] tuck [b a b]
 
-# Step 10 } : Implement and test nip/dip
+# Step 8 } : Implement and test nip/dip
 
-# Step 11 { : Implement and test addition(+) and subtraction(-)
+# Step 9 { : Implement and test addition(+) and subtraction(-)
 
 # a. Implement +/-
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -369,11 +467,11 @@ bin(op)	: tos = MEM[d++] op tos ;
 # b. Test +/-
 rom"	: 1 2 + 2 - dec if{ assert }if
 
-# Step 11 } : Implement and test addition(+) and subtraction(-)
+# Step 9 } : Implement and test addition(+) and subtraction(-)
 
-# Step 12 { : Implement and test and(&) or(|) xor(^)
+# Step 10.x { : Implement and test and(&) or(|) xor(^)
 
-# Step 12.1 { : Implement and test and(&)
+# Step 10.1 { : Implement and test and(&)
 # a. Implement and(&)
 : &	bin(&) ;
 
@@ -383,9 +481,9 @@ rom"	: 1 2 + 2 - dec if{ assert }if
 # b. Test and(&)
 rom"	: 1 2 & if{ assert }if
 
-# Step 12.1 } : Implement and test and(&)
+# Step 10.1 } : Implement and test and(&)
 
-# Step 12.2 { : Implement and test or(|)
+# Step 10.2 { : Implement and test or(|)
 
 # a. Implement or(|)
 : |	bin(|) ;
@@ -396,9 +494,9 @@ rom"	: 1 2 & if{ assert }if
 # b. Test or(|)
 rom"	: 1 2 | 3 - if{ assert }if
 
-# Step 12.2 } : Implement and test or(|)
+# Step 10.2 } : Implement and test or(|)
 
-# Step 12.3 { : Implement and test xor(^)
+# Step 10.3 { : Implement and test xor(^)
 
 # a. Implement xor(^)
 : ^	bin(^) ;
@@ -409,11 +507,11 @@ rom"	: 1 2 | 3 - if{ assert }if
 # d. Test xor(^)
 rom"	: -1 0 ^ inc if{ assert }if
 
-# Step 12.3 } : Implement and test xor(^)
+# Step 10.3 } : Implement and test xor(^)
 
-# Step 12 } : Implement and test and(&) or(|) xor(^)
+# Step 10.x } : Implement and test and(&) or(|) xor(^)
 
-# Step 13 { : Implement and test "2drop"
+# Step 11 { : Implement and test "2drop"
 
 # This step is optional if ROM space is really tight
 # if this is not implemented, macro expand using the following definition
@@ -425,9 +523,9 @@ rom"	: -1 0 ^ inc if{ assert }if
 # b. Test 2drop
 rom"	: 0 1 2 2drop if{ assert }if
 
-# Step 13 } : Implement and test "2drop"
+# Step 11 } : Implement and test "2drop"
 
-# Step 14 { : Implement and test "swap"
+# Step 12 { : Implement and test "swap"
 
 # Meta note about the exchange operator:
 # I'll pretend that the notation a<=>b denotes an exchange of values
@@ -438,9 +536,9 @@ swap	: tos<=>MEM[d] ;
 # b. Test swap
 rom"	: 1 2 swap - dec if{ assert }if
 
-# Step 14 } : Implement and test "swap"
+# Step 12 } : Implement and test "swap"
 
-# Step 15 { : Memory fetch(@) operator
+# Step 13 { : Memory fetch(@) operator
 
 # a. Implement fetch(@)
 : @	tos=MEM[tos] ;
@@ -448,9 +546,9 @@ rom"	: 1 2 swap - dec if{ assert }if
 # c. If possible, test @ using an address AAAA with known contents CCCC
 rom"	: AAAA @ CCCC - if{ assert }if
 
-# Step 15 } : Memory fetch(@) operator
+# Step 13 } : Memory fetch(@) operator
 
-# Step 16 { : Memory store(!) operator
+# Step 14 { : Memory store(!) operator
 # a. Make sure to extend genrom to handle var'iable declarations
 #	- and add a variable : here
 #	mem	: MEM[FREEMEM;FREEMEMSIZE]
@@ -466,9 +564,9 @@ rom"	: AAAA @ CCCC - if{ assert }if
 # d. Test ! using the "here" variable
 rom"	: here @ 1234 here ! here @ 1234 - if{ assert }if here !
 
-# Step 16 } : Memory store(!) operator
+# Step 14 } : Memory store(!) operator
 
-# Step 17 { : Byte memory access using cfetch(c@) and cstore(c!)
+# Step 15 { : Byte memory access using cfetch(c@) and cstore(c!)
 
 # a. Implement cfetch(c@) and cstore(c!)
 : c@
@@ -490,9 +588,9 @@ rom"	: state c@ dec if{ assert }if
 # d. Test c!
 rom"	: state c@ 123 state c! state c@ 123 - if{ assert }if state c!
 
-# Step 17 } : Byte memory access using cfetch(c@) and cstore(c!)
+# Step 15 } : Byte memory access using cfetch(c@) and cstore(c!)
 
-# Step 18 { : Implement and test "pick"
+# Step 16 { : Implement and test "pick"
 
 # a. Implement pick
 : pick	tos=MEM[d+tos] ;
@@ -500,9 +598,9 @@ rom"	: state c@ 123 state c! state c@ 123 - if{ assert }if state c!
 # b. Test pick
 rom"	: 3 2 1 pick 3 - if{ assert }if - dec if{ assert }if
 
-# Step 18 } : Implement and test "pick"
+# Step 16 } : Implement and test "pick"
 
-# Step 19 { : Implement and test "stick" (just for symmetry with pick)
+# Step 17 { : Implement and test "stick" (just for symmetry with pick)
 
 # a. Implement stick
 : stick
@@ -514,9 +612,9 @@ rom"	: 3 2 1 pick 3 - if{ assert }if - dec if{ assert }if
 # b. Test stick
 rom"	: 2 1 1 stick dec if{ assert }if
 
-# Step 19 } : Implement and test "stick" (just for symmetry with pick)
+# Step 17 } : Implement and test "stick" (just for symmetry with pick)
 
-# Step 20 { : Implement and test a means to get/set the data stack pointer
+# Step 18 { : Implement and test a means to get/set the data stack pointer
 
 # a. Implement sp@!
 # See "Meta note about the exchange operator" above for details
@@ -529,9 +627,25 @@ rom"	: 2 1 1 stick dec if{ assert }if
 # since no space can be allocated (and in this test the new location is at 0)
 rom"	: 0 sp@! sp@! if{ assert }if
 
-# Step 20 } : Implement and test a means to get/set the data stack pointer
+# Step 18 } : Implement and test a means to get/set the data stack pointer
 
-# Step 21 { : Implement and test a means to get/set the return stack pointer
+Intermission : { Decide if you need to continue beyond 1/4
+
+# If all you really need is a minimal "oneforth" (1/4) implementation,
+# (see README for details) you can either stop here or continue to implement
+# other primitives that operate only on the data stack.
+
+# The remaining steps in this document assume that you need the return stack
+# as well in which case you need "twoforth" (2/4) functionality.
+
+# If you don't need the return stack but need additional primitives that are
+# described from steps 24 onwards, you may continue with steps 24-38 and skip
+# steps 19-23 with the caveat that any definitions will need to be macro
+# expanded out as primitives.
+
+Intermission : } Decide if you need to continue beyond 1/4
+
+# Step 19 { : Implement and test a means to get/set the return stack pointer
 
 # a. Pick a register or memory location for r, a pointer to the return stack
 #	- decide if you want to use the native machine stack
@@ -558,9 +672,9 @@ rom"	: RRRR here @ + here !
 # This will work fine if the return stack grows upwards, but if it is required
 # to grow downward, set up the return stack _after_ doing the above allocation.
 
-# Step 21 } : Implement and test a means to get/set the return stack pointer
+# Step 19 } : Implement and test a means to get/set the return stack pointer
 
-# Step 22 { : Implement and test the tor(>r) and rfrom(r>) return stack ops
+# Step 20 { : Implement and test the tor(>r) and rfrom(r>) return stack ops
 
 # a. Implement >r/r>
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -578,9 +692,9 @@ rom"	: RRRR here @ + here !
 # This test implicitly uses the definition : over >r dup r> swap ;
 rom"	: 3 2 >r dup r> swap 3 - if{ assert }if - dec if{ assert }if
 
-# Step 22 } : Implement and test the tor(>r) and rfrom(r>) return stack ops
+# Step 20 } : Implement and test the tor(>r) and rfrom(r>) return stack ops
 
-# Step 23 { : Implement and test "exec" to dynamically jump to native code
+# Step 21 { : Implement and test "exec" to dynamically jump to native code
 
 # a. Pick a register or RAM location for x, a temporary register
 #    used to temporarily switch the flow of control
@@ -595,9 +709,9 @@ rom"	: 3 2 >r dup r> swap 3 - if{ assert }if - dec if{ assert }if
 # c. Test exec
 rom"	: 1 2 lit swap lit exec - dec if{ assert }if
 
-# Step 23 } : Implement and test "exec" to dynamically jump to native code
+# Step 21 } : Implement and test "exec" to dynamically jump to native code
 
-# Step 24 { : Implement and test enter/exit
+# Step 22 { : Implement and test enter/exit
 
 # a. Extend genrom to handle Forth def'initions using enter/exit
 # add a simple definition such as that for "bl", for testing
@@ -620,9 +734,12 @@ rom"	: 1 2 lit swap lit exec - dec if{ assert }if
 # c. Test enter/exit
 rom"	: bl 32 - if{ assert }if
 
-# Step 24 } : Implement and test enter/exit
+# If you used one of the existing makefiles as a template, you may need to
+# switch the makefile target from "oneforth" to "twoforth"
 
-# Step 25 { : Implement and test "call" to dynamically call tos
+# Step 22 } : Implement and test enter/exit
+
+# Step 23 { : Implement and test "call" to dynamically call tos
 
 # a. Implement call
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -639,9 +756,9 @@ rom"	: bl 32 - if{ assert }if
 # c. Test call using 2ret/testret
 rom"	: testnest call 1234 - if{ assert }if
 
-# Step 25 } : Implement and test "call" to dynamically call tos
+# Step 23 } : Implement and test "call" to dynamically call tos
 
-# Step 26 { : Implement and test p@/p!
+# Step 24 { : Implement and test p@/p!
 
 # a. Implement p@/p!
 # See "Meta note about notation" above for auto increment/decrement notation
@@ -660,9 +777,9 @@ rom"	: testnest call 1234 - if{ assert }if
 #	- input byte could be 'r' (seventh byte in the "forth rom !" string)
 rom"	: SERIALIN p@ SERIALOUT p!	# another sanity check output byte : 'r'
 
-# Step 26 } : Implement and test p@/p!
+# Step 24 } : Implement and test p@/p!
 
-# Step 27 { : Implement and test left shift(<<) and right shift(>>) operators
+# Step 25 { : Implement and test left shift(<<) and right shift(>>) operators
 
 # a. Implement the shift operators
 : <<	bin(<<) ;
@@ -671,9 +788,9 @@ rom"	: SERIALIN p@ SERIALOUT p!	# another sanity check output byte : 'r'
 # b. Test the shift operators
 rom"	: 4 2 << 64 2 >> - if{ assert }if
 
-# Step 27 } : Implement and test left shift(<<) and right shift(>>) operators
+# Step 25 } : Implement and test left shift(<<) and right shift(>>) operators
 
-# Step 28 { : Implement and test "until true" loops
+# Step 26 { : Implement and test "until true" loops
 
 # a. Modify genrom to support "until true" loops : loop{ ... }until{ ... }loop
 
@@ -682,9 +799,9 @@ rom"	: 4 2 << 64 2 >> - if{ assert }if
 # the input byte could be 'x'
 rom"	: loop{ SSSS p@ 1 T << & }until{ }loop key 'x' - if{ assert }if
 
-# Step 28 } : Implement and test "until true" loops
+# Step 26 } : Implement and test "until true" loops
 
-# Step 29 { : Implement and test "while true" loops
+# Step 27 { : Implement and test "while true" loops
 
 # a. Modify genrom to support "while true" loops : loop{ ... }while{ ... }loop
 
@@ -692,9 +809,9 @@ rom"	: loop{ SSSS p@ 1 T << & }until{ }loop key 'x' - if{ assert }if
 #    the input byte could be 'o' (eighth byte of the "forth rom !" string)
 rom"	: 3 loop{ dup }while{ key emit dec }loop drop	# sanity check byte 'o'
 
-# Step 29 } : Implement and test "while true" loops
+# Step 27 } : Implement and test "while true" loops
 
-# Step 30 { : Implement and test "over"
+# Step 28 { : Implement and test "over"
 
 # a. Implement "over"
 # If there is a space crunch, it can be defined as : over 1 pick ;
@@ -706,9 +823,9 @@ rom"	: 3 loop{ dup }while{ key emit dec }loop drop	# sanity check byte 'o'
 # b. Test "over"
 rom"	:	1 2 over - dec if{ assert }if dec if{ assert }if
 
-# Step 30 } : Implement and test "over"
+# Step 28 } : Implement and test "over"
 
-# Step 31 { : Implement and test "third"
+# Step 29 { : Implement and test "third"
 
 # a. Implement "third"
 # If there is a space crunch, it can be defined as : third 2 pick ;
@@ -720,9 +837,9 @@ rom"	:	1 2 over - dec if{ assert }if dec if{ assert }if
 # b. Test "third"
 rom"	:	3 2 3 third - if{ assert }if - dec if{ assert }if
 
-# Step 31 } : Implement and test "third"
+# Step 29 } : Implement and test "third"
 
-# Step 32 { : Implement and test "fourth"
+# Step 30 { : Implement and test "fourth"
 
 # a. Implement "fourth"
 # If there is a space crunch, it can be defined as : fourth 3 pick ;
@@ -734,9 +851,9 @@ rom"	:	3 2 3 third - if{ assert }if - dec if{ assert }if
 # b. Test "fourth"
 rom"	:	4 6 2 4 fourth - if{ assert }if - - if{ assert }if
 
-# Step 32 } : Implement and test "fourth"
+# Step 30 } : Implement and test "fourth"
 
-# Step 33 { : Implement and test "for" loops
+# Step 31 { : Implement and test "for" loops
 
 # a. Modify genrom to support "for" loops : "for{ ... }for"
 
@@ -744,9 +861,9 @@ rom"	:	4 6 2 4 fourth - if{ assert }if - - if{ assert }if
 #    The input bytes could be "m !" (bytes 9-11 of the "forth rom !" string)
 rom"	: 1 4 for{ key emit }for	# sanity check bytes : "m !'
 
-# Step 33 } : Implement and test "for" loops
+# Step 31 } : Implement and test "for" loops
 
-# Step 34 { : Implement and test the for loop index operator "i"
+# Step 32 { : Implement and test the for loop index operator "i"
 
 # a. Implement "i"
 # Assume the return stack growth is upward in memory (see Step 21 for details)
@@ -759,9 +876,9 @@ rom"	: 1 4 for{ key emit }for	# sanity check bytes : "m !'
 # b. Test "i"
 rom"	: 1 4 for{ i }for - + if{ assert }if
 
-# Step 34 } : Implement and test the for loop index operator "i"
+# Step 32 } : Implement and test the for loop index operator "i"
 
-# Step 35 { : Implement and test the signum/~ comparison operator
+# Step 33 { : Implement and test the signum/~ comparison operator
 
 # a. Implement the signum/~ comparison operator
 # Henry Massalin's superoptimization trick can give a compact implementation
@@ -772,9 +889,9 @@ rom"	: 1 1 ~ if{ assert }if
 rom"	: 2 1 ~ inc if{ assert }if
 rom"	: 1 2 ~ dec if{ assert }if
 
-# Step 35 } : Implement and test the signum/~ comparison operator
+# Step 33 } : Implement and test the signum/~ comparison operator
 
-# Step 36 { : Implement and test the ge/>= comparison operator
+# Step 34 { : Implement and test the ge/>= comparison operator
 
 # a. Implement the "greater than or equal"/ge/>= comparison operator
 # Since ~ can be encoded compactly using superoptimization, if space is really
@@ -786,9 +903,9 @@ rom"	: 2 1 >= if{ }else{ assert }if
 rom"	: 1 1 >= if{ }else{ assert }if
 rom"	: 1 2 >= if{ assert }if
 
-# Step 36 } : Implement and test the ge/>= comparison operator
+# Step 34 } : Implement and test the ge/>= comparison operator
 
-# Step 37 { : Implement and test the le/<= comparison operator
+# Step 35 { : Implement and test the le/<= comparison operator
 
 # a. Implement the "less than or equal"/le/<= comparison operator
 # Since ~ can be encoded compactly using superoptimization, if space is really
@@ -800,9 +917,9 @@ rom"	: 1 2 <= if{ }else{ assert }if
 rom"	: 1 1 <= if{ }else{ assert }if
 rom"	: 2 1 <= if{ assert }if
 
-# Step 37 } : Implement and test the le/<= comparison operator
+# Step 35 } : Implement and test the le/<= comparison operator
 
-# Step 38 { : Implement and test the 0= comparison operator
+# Step 36 { : Implement and test the 0= comparison operator
 
 # a. Implement the 0= comparison operator
 # Henry Massalin's superoptimization trick can give a compact implementation
@@ -812,9 +929,9 @@ rom"	: 2 1 <= if{ assert }if
 rom"	: 0 0= if{ }else{ assert }if
 rom"	: 1 0= if{ assert }if
 
-# Step 38 } : Implement and test the 0= comparison operator
+# Step 36 } : Implement and test the 0= comparison operator
 
-# Step 39 { : Implement and test the lt/< comparison operator
+# Step 37 { : Implement and test the lt/< comparison operator
 
 # a. Implement the "less than"/lt/< comparison operator
 # Since 0= can be encoded compactly using superoptimization, if space is really
@@ -826,9 +943,9 @@ rom"	: 1 2 <	if{ }else{ assert }if
 rom"	: 1 1 <	if{ assert }if
 rom"	: 2 1 <	if{ assert }if
 
-# Step 39 } : Implement and test the lt/< comparison operator
+# Step 37 } : Implement and test the lt/< comparison operator
 
-# Step 40 { : Implement and test the gt/> comparison operator
+# Step 38 { : Implement and test the gt/> comparison operator
 
 # a. Implement the "greater than"/gt/> comparison operator
 # Since 0= can be encoded compactly using superoptimization, if space is really
@@ -840,11 +957,217 @@ rom"	: 2 1 >	if{ }else{ assert }if
 rom"	: 1 1 >	if{ assert }if
 rom"	: 1 2 >	if{ assert }if
 
-# Step 40 } : Implement and test the gt/> comparison operator
+# Step 38 } : Implement and test the gt/> comparison operator
 
-# Step 41 { : Other additional primitives, if required
+Intermission : { Decide if you need to continue beyond 2/4
 
-# Depending on the hardware you have and what features of it need to be exposed
-# additional primitives can be added to the implementation, as required.
+# The starting steps for a Forth REPL begin after this step. If you don't need
+# a REPL, you may stop at this point with a fairly minimal but extremely usable
+# Forth that I've called "twoforth" (2/4) - please see README for details.
 
-# Step 41 } : Other additional primitives, if required
+# Most of the steps from here on out need a working serial port for input and
+# output which is used in both the 'Read'/R and 'Print'/P parts of the "REPL".
+
+# Since the rest of the code for the remaining steps is written in machine
+# independent Forth it is not listed here since that will just duplicate the
+# existing code in rom.4th/rest.inp
+
+Intermission : } Decide if you need to continue beyond 2/4
+
+# Step 39 { : Verify token parsing works
+
+# This is a sanity check step, where a token, literally 'token' is read in
+# and various verification steps are done:
+# 	1. Sanity check that length('token')==5
+#	2. Sanity check that last character of the string is 'n' and
+#	3. Sanity check that first character of the string is 't'
+
+# Step 39 } : Verify token parsing works
+
+# Step 40 { : Verify number parsing works
+
+# This is yet another sanity check step where a numerical token, '1000' is
+# read in and it is turned into a number and checked for equality with 1000
+
+# Step 40 } : Verify number parsing works
+
+# Step 41 { : Implement a dictionary
+
+# The "dictionary" is just a singly linked list starting at "latest" with all
+# the entries linked through the "link field address"/lfa. As a sanity check
+# we verify that the first entry in the list ("repl") can be found and that it
+# has a length of 4 and is at the head of the linked list as expected. A sanity
+# check that the string "1000" is not found in the dictionary and that it can
+# be turned into a number (equal to 1000) is also tested. Rather than implement
+# all of the functionality all at once, this step just verifies that the "repl"
+# can correctly access the first entry of the dictionary.
+
+# If you used one of the existing makefiles as a template, you may need to
+# switch the makefile target from "twoforth" to "threeforth"
+
+# Step 41 } : Implement a dictionary
+
+# Step 42 { : sanity check dictionary's first entry
+
+# The code for match'ing elements in the dictionary is added and we verify that
+# the very first entry can still be found (just like in step 41)
+# Debug printfs are available and can be used as a debugging aid from here on
+
+# Step 42 } : sanity check dictionary's first entry
+
+# Step 43 { : Verify that dictionary lookup works
+
+# The code for walking the elements in the dictionary and find'ing a token in
+# the dictionary is added and we verify that all of it works correctly. This
+# step also adds functionality to the repl to attempt to turn tokens that are
+# not found in the dictionary into numbers and the tests verify all of this
+# newer functionality also continues to work.
+
+# Step 43 } : Verify that dictionary lookup works
+
+# Step 44 { : Verify variables work from the repl
+
+# Verify that variables can be found in the dictionary via a repl which is
+# extended to special case the handling of variables as a poor man's
+# replacement of Forth's <BUILDS ... DOES> functionality.
+
+# Step 44 } : Verify variables work from the repl
+
+# Step 45 { : Verify that primitives can be exec'ed from the cfa
+
+# So far the repl has been used only to lookup tokens in the dictionary and at
+# this step, we extend it to also exec/call primitives based on the THREAD type
+
+# Step 45 } : Verify that primitives can be exec'ed from the cfa
+
+# Step 46 { : Verify that definitions can be run from the repl
+
+# The repl functionality to lookup and run definitions is checked.
+# All of the functionality required for "threeforth" (3/4) - (see README for
+# details) to lookup tokens in the dictionary and then exec them as appropriate
+# is now complete. So you may use this as a good stopping point for your Forth
+# implementation if you do not need to create new words from within the REPL.
+
+# Step 46 } : Verify that definitions can be run from the repl
+
+# Step 47 { : Verify alloc/alloca returns aligned addresses
+
+# All the steps after this assume that you will need to extend the dictionary
+# to create new Forth words from the REPL. Processors that care about alignment
+# restrictions need to be handled so we verify that alloc/alloca can return
+# memory at the right alignment boundaries.
+
+# Step 47 } : Verify alloc/alloca returns aligned addresses
+
+# Step 48 { : Verify new dictionary headers can be added
+
+# Verify that "create" works at run time from within the REPL to convert
+# tokens to dictionary entries.
+
+# Step 48 } : Verify new dictionary headers can be added
+
+# Step 49 { : Verify that immediate words can be added (and found)
+
+# Verify that the latest entry in the dictionary can be marked "immediate"
+# and still be found (since the immediate bit affects the length byte)
+
+# Step 49 } : Verify that immediate words can be added (and found)
+
+# Step 50 { : Verify that run time definitions can be exec'ed
+
+# This verification step is used to sanity check that newly create'd words
+# which were defined within the REPL can also be run from within it.
+
+# Step 50 } : Verify that run time definitions can be exec'ed
+
+# Step 51 { : Verify ':' and ';' work as expected
+
+# Verify the implementations of ':' and ';'
+
+# Step 51 } : Verify ':' and ';' work as expected
+
+# Step 52 { : Verify that definitions using literals work in the repl
+
+# At this step we use the newly minted definitions of ':' and ';' within the
+# REPL to define a new word that just wraps a number and verify that it works
+# as expected.
+
+# Step 52 } : Verify that definitions using literals work in the repl
+
+# Step 53 { : Verify that words can be defined and run from the repl
+
+# A new word that calls an existing definition is defined and then run from
+# within the used to verify that call nesting functionality works.
+
+# Step 53 } : Verify that words can be defined and run from the repl
+
+# Step 54 { : Verify that definitions can use primitives and variables
+
+# As in the previous step, we continue that along with defined words, calls to
+# primitives and variables also work.
+
+# Step 54 } : Verify that definitions can use primitives and variables
+
+# Step 55 { : Verify that the outer interpreter works
+
+# The outer interpreter is just a simple loop over the REPL but we need to
+# check that we can escape out of it when needed.
+
+# Step 55 } : Verify that the outer interpreter works
+
+# Step 56 { : Verify that comments work in the repl
+
+# Being able to add comments to the code that is used in the outer interpreter
+# is valuable so that is the first piece of functionality that we verify.
+
+# Step 56 } : Verify that comments work in the repl
+
+# Step 57 { : Enable conditionals at the repl
+
+# Add support for if{ ... }if and sanity check
+
+# Step 57 } : Enable conditionals at the repl
+
+# Step 58 { : Conditionals : enable }else{
+
+# Add support for if{ ...}else{ ... }if and sanity check
+
+# Step 58 } : Conditionals : enable }else{
+
+# Step 59 { : Enable loop{ ... }while{ ... }loop in the repl
+
+# Sanity check the implementation of the support for while-true loops
+
+# Step 59 } : Enable loop{ ... }while{ ... }loop in the repl
+
+# Step 60 { : Enable loop{ ... }until{ ... }loop in the repl
+
+# Sanity check the implementation of the support for until-false loops
+
+# Step 60 } : Enable loop{ ... }until{ ... }loop in the repl
+
+# Step 61 { : Enable for{ ... }for loop support in the repl
+
+# Sanity check the implementation of the support for counted loops
+
+# Step 61 } : Enable for{ ... }for loop support in the repl
+
+# Step 62 { : Implement '.' to conclude this port
+
+# Sanity check the implementation of the '.' to bring "fourforth" (4/4) - (see
+# README for details) to a close.
+
+# Step 62 } : Implement '.' to conclude this port
+
+If you have successfully made it past step 62, Congratulations! You are now
+the proud implementer of a Forth REPL that can be made to fit into really
+tiny spaces.
+
+If you used one of the existing makefiles as a template, you may now switch
+the makefile target from "threeforth" to "fourforth" to mark the completion
+of your port.
+
+Feel free to try to measure the ROM and RAM requirements of your port and
+update that in the table at the end of the README. Also don't forget to add an
+entry with a 1-line summary of your port to the table at the beginning of the
+PORTING guide.
