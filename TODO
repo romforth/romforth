@@ -1,0 +1,16 @@
+The following CPU architectures have QEMU user emulation support.
+So they might be easy targets for future ports.
+	DEC Alpha
+	CRIS
+	Hexagon
+	HP PA-RISC
+	MicroBlaze
+	MIPS
+	MIPS64
+	Altera Nios II
+	OR1K
+	Power PC
+	Power PC 64
+	s390x
+	SH4
+	Xtensa
