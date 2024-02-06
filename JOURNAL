@@ -122,6 +122,7 @@ INDEX
 	* 10 Jan '24
 	* 16 Jan '24
 	* 17 Jan '24
+	* 05 Feb '24
 
 04 Nov '22
 ----------
@@ -4141,3 +4142,94 @@ of performance, it is possible to go in the opposite direction and use a slower
 implementation which takes up less space. For example, THREAD type 1 makes that
 choice. For the next port, I'm considering a variation of that THREADing type 1
 about which I've been thinking quite a while.
+
+05 Feb '24
+----------
+In my previous commit, I'd created a TODO list of CPU architectures that can be
+used as "relatively easy" porting targets since they have QEMU user emulation
+support. After spending some time thinking it over though, I've decided that
+before I go branching off to support even more CPUs I should really go back and
+take a look at the original problem that I was trying to solve when I started
+this project, which was to get Forth running on my MSP430 "Value Line LaunchPad
+Development Kit" which has a microcontroller with just 2KB ROM and 128 bytes of
+RAM.
+
+As you can see from the entry for "msp430-as" in the table at the end of the
+README, the "full"/fourforth/(4/4) Forth implementation needs 2810 bytes of
+ROM (for the version without tests), which means it definitely will not fit in
+the 2KB ROM. Moreover, the 128 byte RAM may be too small to hold a full runtime
+dictionary (but might be able to hold a tiny set of words though).
+
+After the implementation of "msp430-stc" which uses almost twice the ROM as the
+"msp430-as" by trading off space for time, it is fairly clear to me that it is
+now time to try the opposite trade-off as well to see if I can get a version
+that will fit in a smaller ROM.
+
+To set the stage for that implementation, let me start with a small digression
+by discussing the ISA of one of the earliest computers: the TX-0. The TX-0 has
+just 4 opcodes and is implemented with just a measly 3600 transistors although
+they did add an escape hatch (as opcode "10") to extend the ISA without any
+real limits by making it a catch all type of opcode.
+
+We could use the same idea to come up with an ISA for a "minimal Forth CPU"
+with just 4 "instructions":
+	00 X	: push X
+	01	: pop
+	10 X	: call X
+	11	: return
+
+Note that just like in the TX-0, the "10" opcode is used as an escape hatch to
+extend the functionality without having to define an extensive opcode set right
+at the outset.
+
+But even a cursory glance at the "packing efficiency" of this instruction set
+shows that we should try to get rid of the 01 and 11 opcodes. Which leaves me
+with just two opcodes which need to be encoded and these can be denoted as:
+	0 X	: push X
+	1 X	: exec X
+so "0" acts as opcode for Forth's "literal" and "1" is the new catch all to
+handle everything else and thus we get to a "2 instruction Forth" CPU.
+
+Finally, we can take the next simplification step and go all the way to decide
+that even the two opcodes are in some sense superfluous. So the final encoding
+can just be:
+	X	: exec X
+
+If X is used as the offset to the address where it is implemented, we end up
+with an encoding which is compact and reasonably performant. So this is how I
+ended up with THREAD type 1. THREAD type 2 can then be considered a 2 byte
+variant of the same scheme which is used only for the PDP11 and MSP430 ports.
+THREAD type 3 is yet another variant of this scheme which is used in C code.
+
+While this encoding is space efficient, the resulting binary is not portable
+since the actual values used for each bytecode happens to be whatever address
+is applicable to that processor. Now, one could argue that binary portability
+is useless - since portability of the higher level Forth code is, for the most
+part, the only "real" requirement. And obviously, this will result in trading
+off efficiency/time for the sake of a portable binary.
+
+Nevertheless, for the sake of my own curiosity, I'm going to try to go ahead
+with creating a portable encoding as well. Like most things in computer science
+all it requires is an additional level of indirection such that instead of X
+being an offset, X becomes an index which can be dereferenced to an offset.
+
+With this encoding, one possibility is to pick the index number for each Forth
+word based on the order in which they are implemented. This can result in a
+rather arbitrary mapping from Forth words to the corresponding bytecode.
+
+Instead, I'm going to try to use a "mnemonic mapping" from each Forth word to
+an ASCII character, which might make the binary a bit readable as well.
+
+My thinking on this idea is: just as Forth code is made up of "words", what if
+we use characters as the building blocks? Since this "language" is built out of
+characters, it seems appropriate to refer to it as 'F'. Just as Forth words can
+be strung together (but delimited by spaces), strings of 'F' characters can be
+used to implement Forth words defined in terms of lower level "opcodes" except
+that unlike Forth definitions, they don't need dictionary entries since the new
+definitions can also be named using single characters. I'm hoping that using
+this implementation technique I can get a "fourforth" implementation that can
+fit into really small spaces - even on relatively tiny ROMs such as the
+microcontrollers used in the MSP430 "Value Line Launchpad Development Kit".
+
+That's enough blather for today - let me try to turn at least some of those
+ideas into actual code real soon now.
