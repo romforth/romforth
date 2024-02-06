@@ -1,0 +1,100 @@
+#!/usr/bin/perl -w
+use strict;
+
+# usage: $0 dir label suffix
+# for example: newport 8051-sdcc m8051c 8051
+# will create the 8051-sdcc directory with config in fpp.config.8051
+# The m8051c label is used within the generated runallsteps script as a label
+
+my $pdir=shift or die "usage: $0 dir label conf # 8051-sdcc m8051c 8051";
+my $label=shift or die "usage: $0 dir label conf # 8051-sdcc m8051c 8051";
+my $conf=shift or die "usage: $0 dir label conf # 8051-sdcc m8051c 8051";
+
+exit 1 if (-d $pdir);
+my $acc=[];
+my $in="makefile";
+open(my $infp, $in) or die "can't open $in";
+while (<$infp>) {
+	push @$acc, $_;
+	/^allsteps/ and last;
+}
+my $all=pop @$acc;
+my $empty=pop @$acc;
+push @$acc, "\t(cd $pdir ; make)\n";
+open(my $outfp, ">$in.new") or die "can't open $in.new for writing";
+print $outfp join('', @$acc, $empty, $all); $acc=[];
+while (<$infp>) {
+	print $outfp $_;
+}
+print $outfp "\t(cd $pdir ; make clean)\n";
+close $outfp;
+close $infp;
+
+my $run="runallsteps";
+open(my $rnfp, $run) or die "can't open $run";
+open(my $runfp, ">runallsteps.new");
+while (<$rnfp>) {
+	push @$acc, $_;
+	/^if / and last;
+}
+$all=pop @$acc;
+print $runfp join('', @$acc); $acc=[];
+print $runfp "my \$${label}_check=1;\n";
+print $runfp $all;
+
+while (<$rnfp>) {
+	push @$acc, $_;
+	/^\tfor my / and last;
+}
+$all=pop @$acc;
+print $runfp join('', @$acc); $acc=[];
+print $runfp "\t\$${label}_check=0;\n";
+print $runfp $all;
+
+while (<$rnfp>) {
+	push @$acc, $_;
+	/^\t}$/ and last;
+}
+$all=pop @$acc;
+print $runfp join('', @$acc); $acc=[];
+print $runfp qq{\t\t\$${label}_check=1 if ( \$d eq "$pdir");\n};
+print $runfp $all;
+
+while (<$rnfp>) {
+	push @$acc, $_;
+	/^my \$debug=0;$/ and last;
+}
+$all=pop @$acc;
+print $runfp join('', @$acc); $acc=[];
+print $runfp "my \$${label}_step;\n";
+print $runfp "\$x\=\`cat $pdir\/stepfile\`;\n";
+print $runfp '$x=~s/^/\$/;', "\n";
+print $runfp 'eval $x;', "\n";
+print $runfp "\$${label}_step=\$step;\n\n";
+print $runfp $all;
+
+while (<$rnfp>) {
+	push @$acc, $_;
+}
+close $rnfp;
+
+$all=pop @$acc;
+print $runfp join('', @$acc); $acc=[];
+print $runfp "${label}_port: {\n";
+print $runfp "\tlast ${label}_port unless (\$${label}_check);\n";
+print $runfp "\tlast ${label}_port if (\$i>\$${label}_step);\n";
+print $runfp "\t", qq{\@ARGV=("$pdir/fpp.config.$conf");\n};
+print $runfp "\t", qq{open(my \$fh, ">$pdir/fpp.config");\n};
+print $runfp "\t", 'select $fh;', "\n";
+print $runfp "\t", 'print "step=$i\n";', "\n";
+print $runfp "\t", 'while (<>) { print; }', "\n";
+print $runfp "\t", 'close $fh; select STDOUT;', "\n";
+print $runfp "\t", qq{print "\\nRunning step \$i for the $conf port\\n";\n};
+print $runfp "\t", qq{system("cd $pdir ; make") == 0 or die "make failed at step \$i with exit status \$?";\n};
+print $runfp "}\n\n";
+print $runfp $all;
+close $runfp;
+rename("makefile.new","makefile");
+rename("runallsteps.new","runallsteps");
+chmod 0755, "runallsteps";
+mkdir $pdir,0755;

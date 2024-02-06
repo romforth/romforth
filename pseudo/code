@@ -61,6 +61,18 @@ Let's begin.
 
 # Step 0 Preamble } : Figure out (or decide on) the ROM layout
 
+# Step 0 Preamble { : Setup the new directory using the "newport" script
+
+# Support for each CPU architecture is added within its own directory
+
+# The "newport" script automates some of the grunt work associated with making
+# many of the changes required to the makefiles and other scripts.
+# It can be invoked as:
+	./newport dirname label suffix
+# The script has usage details at the top explaining the meaning of the args
+
+# Step 0 Preamble } : Setup the new directory using the "newport" script
+
 # Step 0 { : Test a halt'ing interpreter by initializing the rom
 
 # Verify that a halt instruction in ROM can be used to halt/pause the system

@@ -92,9 +92,10 @@ on your target system: int main() { putchar( getchar() ); exit(0); }
 
 These represent the external/environmental dependencies of your implementation.
 
-From an operational point of view, after you have setup the directory for
-a new port, you just need to make the appropriate changes at each step and
-then keep running the following command after each step:
+From an operational point of view, after you have setup the directory for a new
+port (for example, by using the "newport" script to setup the directory), you
+just need to make the appropriate changes at each step and then keep running
+the following command after each step:
 	../git_auto_commit $(basename $PWD)
 from within that directory and this will take care of creating a git commit
 with the appropriate subject line for each step.
