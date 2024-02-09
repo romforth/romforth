@@ -123,6 +123,7 @@ INDEX
 	* 16 Jan '24
 	* 17 Jan '24
 	* 05 Feb '24
+	* 09 Feb '24
 
 04 Nov '22
 ----------
@@ -4233,3 +4234,9 @@ microcontrollers used in the MSP430 "Value Line Launchpad Development Kit".
 
 That's enough blather for today - let me try to turn at least some of those
 ideas into actual code real soon now.
+
+09 Feb '24
+----------
+Now that the bytecode implementation has begun in earnest, I need to pick a
+bytecode for Forth's bye (halt) opcode and for now I'm going to pick the very
+last character in the ASCII charset which is 'DEL'/0x7f for it.
