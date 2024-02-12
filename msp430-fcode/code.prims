@@ -10,3 +10,4 @@ $32	next	: br #realnext
 ]	drop	: pop tos ;
 <	key	: dup ; mov #0xff, w ; mov.b @w, tos ;
 >	emit	: mov #0xff, w ; mov.b tos, @w ; drop ;
+1	lit	: dup ; mov.b @ip+, tos ;

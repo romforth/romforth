@@ -4254,3 +4254,11 @@ MSP430 assembly code that they currently generate.
 
 To pick the 'F' bytecodes for Forth's key and emit primitives, I'm leaning on
 the UNIX heritage to map them to '<' and '>' respectively.
+
+---
+
+Picking a bytecode for the equivalent of Forth' LITeral is a bit difficult (pun
+intended) due to the various CPU architecture bit lengths that need to be
+supported. For now, I'm leaning toward using the digits 1..8 to designate how
+many bytes of the literal follow the opcode. I'll start with just '1' which is
+used to prefix a single byte and then add more as required later.
