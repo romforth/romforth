@@ -13,3 +13,4 @@ $32	next	: br #realnext
 1	lit	: dup ; mov.b @ip+, tos ;
 n	neg	: inv tos ; inc tos ;
 j	j	: mov.b @ip+, tmp ; add tmp, ip ;
+=	jz	: and tos, tos ; drop ; jz j ; add #1, ip ;
