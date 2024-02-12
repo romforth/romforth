@@ -6,6 +6,8 @@
 
 #define ip	R4
 #define i	R5
+#define w	R6
+#define tos	R7
 
 	.cpu 430
 start:

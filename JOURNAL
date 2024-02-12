@@ -4249,3 +4249,8 @@ I've copy pasted the genprims and genrom Perl scripts as well as the makefile
 and the configuration fpp.config.msp430 from the msp430-as port and made some
 (mostly minor) modifications to retrofit them to generate Fcode instead of the
 MSP430 assembly code that they currently generate.
+
+---
+
+To pick the 'F' bytecodes for Forth's key and emit primitives, I'm leaning on
+the UNIX heritage to map them to '<' and '>' respectively.

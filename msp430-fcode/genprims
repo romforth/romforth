@@ -97,7 +97,7 @@ while (<>) {
 		}
 		for my $w (split(' ;')) {
 			chomp $w;
-			$w="next" unless ($w);
+			$w="br #next" unless ($w);
 			$w=~s/^\s+//;
 			if ($l=$hash->{$w}) {
 				print "\t", join("\n\t",@$l), "\n";
