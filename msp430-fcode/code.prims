@@ -12,5 +12,5 @@ $32	next	: br #realnext
 >	emit	: mov #0xff, w ; mov.b tos, @w ; drop ;
 1	lit	: dup ; mov.b @ip+, tos ;
 n	neg	: inv tos ; inc tos ;
-j	j	: mov.b @ip+, tmp ; add tmp, ip ;
+j	j	: mov.b @ip+, tmp ; sxt tmp ; add tmp, ip ;
 =	jz	: and tos, tos ; drop ; jz j ; add #1, ip ;
