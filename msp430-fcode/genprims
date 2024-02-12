@@ -1,0 +1,154 @@
+#!/usr/bin/perl -w
+
+# genprims : convert code.prims into MSP430 code (mapping to F bytecodes)
+#
+# Copyright (c) 2024 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+my $mf=shift;	# the map file to be generated
+
+my $gendict=0;
+if ($mf eq "-d") {
+	$gendict=1;
+	$mf=shift;	# the map file to be generated
+}
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
+my ($f,$l);	# the forth name($f) and the assembler label ($l)
+
+my $prev="0";
+
+sub genheader {
+	my ($f,$l,$flag)=@_;
+	my $len=length($f);
+	print "\t.align 1\n";
+	if ($len%2==0) {
+		print "$l","_pad:\t.byte 0\n";
+	}
+	print qq{\t.ascii "$f"\n};
+	print "$l","_nfa:\t.byte $len\n";
+	print "$l","_lfa:\t.word $prev\n";
+	print "$l","_cfa:\n";
+	if ($flag) {
+		print "\t.word 0x1289\n";
+		print "\t.word $l\n";
+		print "\t.word exit\n";
+	} else {
+		print "\t.word 0x1289\n";
+		print "\t.word lit\n";
+		print "\t.word $l\n";
+		print "\t.word exit\n";
+	}
+	$prev="$l"."_lfa";
+}
+
+my $mapch=[];
+my $crc=-1;
+my $lastmapch=0;
+
+my $headers=[];
+
+sub mapnames {
+	($f,$l)=@_;		# which provides forth<->label mapping
+	print $mh "code $f $l $crc\n";	# create dictionary entry for primitives
+	print "$l:\n";	# generate the label for the assembler
+	$mapch->[$crc]=$l;
+	if ($gendict) {
+		push @$headers, [$f,$l,1];
+	}
+}
+
+sub mapchar {
+	my ($c)=shift;
+	while ($lastmapch<$c) {
+		$mapch->[$lastmapch++]='0';
+	}
+	$crc=$c;
+}
+
+my $hash={};
+my $agg=[];
+my $label="lbl000";
+while (<>) {
+	/^\#/ and next;
+	if (s/^(.\S*)\s+(\S+)\s+:\s+//) {
+		$f=$1;
+		my $save=$2;
+		if ($f=~s/^\$//) {	# For '$' escape character denotation
+			if ($f eq '') {	# but it could be a literal '$' as well
+				mapchar('$');
+			} elsif ($f=~/^(0x.+)/) {	# hexadecimals
+				mapchar(oct($1));
+			} else {			# decimals
+				mapchar(int($f));
+			}
+		} else { # non escaped values must be a single character long
+			die "$f must be a single character" unless ($f=~/^.$/);
+			mapchar(ord($f));
+		}
+		$f=$save;
+		if ($f=~/^[a-z]\w*$/) {
+			mapnames($f, $f);
+		} else {
+			mapnames($f, $label++);
+		}
+		for my $w (split(' ;')) {
+			chomp $w;
+			$w="next" unless ($w);
+			$w=~s/^\s+//;
+			if ($l=$hash->{$w}) {
+				print "\t", join("\n\t",@$l), "\n";
+				push @$agg, @$l unless ($w eq "next");
+			} else {
+				print "\t$w\n";
+				push @$agg, $w;
+			}
+		}
+		$hash->{"$f"}=[@$agg];
+		$agg=[];
+		next;
+	}
+	if (/^define\s+(\S+)\s+(.*)$/) {	# definitions
+		print "#define $1 $2\n";
+		next;
+	} elsif (/^var\s+(\S+)\s+(.*)$/) {	# variables
+		($f)=($1);
+		print $mh "var $f $f\n";# create dictionary entry for variables
+		if ($gendict) {
+			unshift @$headers, [$f,$f,0];
+		}
+		print "$f:\n";		# generate the label for the assembler
+		print "\t$2\n";		# and allocation/initial value if any
+		next;
+	}
+	next if (/^\s*$/);
+	chomp;
+	die "unknown declaration: '$_'";
+}
+
+print "jmptbl:\n";
+for my $i (0..$lastmapch) {
+	print "\t.word ", $mapch->[$i], "\n";
+}
+#print join("\n\t .word ", @{$mapch->[0..$lastmapch]}), "\n";
+
+print $mh "label fake $label\n";
+if ($gendict) {
+	my $lh;
+	open($lh, ">dict.s");
+	select $lh;
+	for my $h (@$headers) {
+		genheader(@$h);
+	}
+	close $lh;
+	open($lh, ">latest.s");
+	select $lh;
+	print "\t.word $prev\n";
+	close $lh;
+	print $mh "label prev $prev\n";
+}
+
+close $mh;

@@ -124,6 +124,7 @@ INDEX
 	* 17 Jan '24
 	* 05 Feb '24
 	* 09 Feb '24
+	* 12 Feb '24
 
 04 Nov '22
 ----------
@@ -4240,3 +4241,11 @@ ideas into actual code real soon now.
 Now that the bytecode implementation has begun in earnest, I need to pick a
 bytecode for Forth's bye (halt) opcode and for now I'm going to pick the very
 last character in the ASCII charset which is 'DEL'/0x7f for it.
+
+12 Feb '24
+----------
+For generating the 'F' bytecodes (which I'll refer to as Fcode from now on),
+I've copy pasted the genprims and genrom Perl scripts as well as the makefile
+and the configuration fpp.config.msp430 from the msp430-as port and made some
+(mostly minor) modifications to retrofit them to generate Fcode instead of the
+MSP430 assembly code that they currently generate.

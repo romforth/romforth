@@ -9,18 +9,31 @@
 
 	.cpu 430
 start:
-	br #cold
-halt:
-	nop
-cold:
 	mov #rom, ip
 next:
 	mov.b @ip+, i
 	rla i
 	add #jmptbl, i
 	br @i
-jmptbl:
-	.skip 254,0
-	.word halt
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
+
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
+#endif
+
 rom:
-	.byte 0x7f
+
+#include "rom.s"
