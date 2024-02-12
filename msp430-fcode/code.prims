@@ -5,5 +5,8 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 $0x7F	bye	: nop
-<	key	: mov #0xff, w ; mov.b @w, tos ;
->	emit	: mov #0xff, w ; mov.b tos, @w ;
+$32	next	: br #realnext
+[	dup	: push tos ;
+]	drop	: pop tos ;
+<	key	: dup ; mov #0xff, w ; mov.b @w, tos ;
+>	emit	: mov #0xff, w ; mov.b tos, @w ; drop ;
