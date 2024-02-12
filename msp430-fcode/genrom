@@ -237,7 +237,7 @@ my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
-			print "\t.byte ", $mapch->{$f}, " # $f\n";
+			print "\t.byte '", chr($mapch->{$f}), "' # $f\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need their
@@ -258,7 +258,7 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
-				print qq(\t.word $i\n);
+				print qq(\t.byte $i\n);
 				next;
 			}
 			die "unknown word: $f"
