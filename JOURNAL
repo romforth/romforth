@@ -4312,3 +4312,8 @@ decremen(t) instead.
 While testing the change, I ran into an existing bug in the implementation of
 literals since it doesn't handle negative bytes correctly and I've fixed it as
 part of this change.
+
+---
+
+The choice of 'v' for in(v) was motivated in part by the fact that I want to
+reserve 'i' for the loop variable.
