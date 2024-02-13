@@ -64,6 +64,6 @@ prims.s : genprims code.prims ../fpp fpp.config
 fpp.config : stepfile fpp.config.msp430
 	cat stepfile fpp.config.msp430 > fpp.config
 rom.s : ../rom.4th ../fpp fpp.config prims.s genrom defs.s
-	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
+	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map | ./patchrom > rom.s
 clean :
 	rm -f forth dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.o forth_defs.S forth_defs.o forth_defs forth_defs.lst defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.o forth_dict forth_dict.lst test.dict forth.s forth_defs.s forth_dict.s test.in test.log forth.lst
