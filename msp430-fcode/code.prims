@@ -20,3 +20,5 @@ t	dec	: dec tos ;
 v	inv	: inv tos ;
 p	nip	: pop nos ;
 P	dip	: push nos ;
+-	-	: neg
++	+	: nip ; add nos, tos ;
