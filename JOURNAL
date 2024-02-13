@@ -4301,3 +4301,14 @@ those pre-computed values into rom.s
 
 This avoids having to generate the code shown above and so I don't have to
 deal with whatever bug it is that msp430-as is (probably) encountering.
+
+---
+
+To pick the 'F' bytecodes for the implementation of inc/dec I wanted to use a
+set of characters that were in some sense "symmetric" and the obvious choice of
+(i)nc and (d)ec doesn't meet that criteria so I've chosen incremen(T) and
+decremen(t) instead.
+
+While testing the change, I ran into an existing bug in the implementation of
+literals since it doesn't handle negative bytes correctly and I've fixed it as
+part of this change.
