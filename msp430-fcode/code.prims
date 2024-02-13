@@ -18,3 +18,5 @@ $35	jnz	: and tos, tos ; drop ; jnz j ; add #1, ip ;
 T	inc	: inc tos ;
 t	dec	: dec tos ;
 v	inv	: inv tos ;
+p	nip	: pop nos ;
+P	dip	: push nos ;

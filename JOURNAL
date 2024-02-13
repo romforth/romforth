@@ -4317,3 +4317,12 @@ part of this change.
 
 The choice of 'v' for in(v) was motivated in part by the fact that I want to
 reserve 'i' for the loop variable.
+
+---
+
+The choice of ni(p) and di(P) was again dictated by the notion of "symmetry"
+that I mentioned earlier for inc/dec and in this case I chose the capital
+alphabet for dip as a mnemonic for the fact that it increases the stack size.
+
+I'm now wondering if (D)up/(d)rop would have been a better choice for dup/drop
+instead of the current mapping of dup/drop to '['/']'.
