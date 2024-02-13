@@ -4326,3 +4326,8 @@ alphabet for dip as a mnemonic for the fact that it increases the stack size.
 
 I'm now wondering if (D)up/(d)rop would have been a better choice for dup/drop
 instead of the current mapping of dup/drop to '['/']'.
+
+---
+
+The mappings for +/-/&/|/^ to their respective characters was fairly easy and
+for 2drop I'm going to make the choice of picking 'd' for now.
