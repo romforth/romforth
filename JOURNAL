@@ -4331,3 +4331,8 @@ instead of the current mapping of dup/drop to '['/']'.
 
 The mappings for +/-/&/|/^ to their respective characters was fairly easy and
 for 2drop I'm going to make the choice of picking 'd' for now.
+
+---
+
+For swap I'm going to pick 'S' although it breaks the "symmetry" notion that
+I've been harping on during the past couple of selections. Moving on ...

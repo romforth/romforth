@@ -26,3 +26,4 @@ P	dip	: push nos ;
 &	&	: nip ; and nos, tos ;
 |	|	: nip ; bis nos, tos ;
 ^	^	: nip ; xor nos, tos ;
+S	swap	: nip ; dup ; mov nos, tos ;
