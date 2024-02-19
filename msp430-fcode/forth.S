@@ -47,3 +47,4 @@ rom:
 	.data
 	.org 50
 spbase:
+mem:

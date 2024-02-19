@@ -227,6 +227,12 @@ sub def {
 	die "received $w in state $state";
 }
 
+sub lit2 {
+	my ($o)=@_;
+	print qq(\t.byte '2'\n);
+	print qq(\t.word $o\n);
+}
+
 sub lit {
 	my ($o)=@_;
 	if (($o > -256) and ($o < 255)) { # x is in the range [-256, 256)
@@ -245,7 +251,7 @@ while (<>) {				# map forth words in the standard input
 		if ($m=$map->{$f}) {	# byte offset within the binary
 			print "\t.byte '", chr($mapch->{$f}), "' # $f\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
-			lit($m);		# push their address
+			lit2($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need their
 			print "\t.word $m # $f\n";	# starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
