@@ -126,6 +126,7 @@ INDEX
 	* 09 Feb '24
 	* 12 Feb '24
 	* 13 Feb '24
+	* 19 Feb '24
 
 04 Nov '22
 ----------
@@ -4336,3 +4337,26 @@ for 2drop I'm going to make the choice of picking 'd' for now.
 
 For swap I'm going to pick 'S' although it breaks the "symmetry" notion that
 I've been harping on during the past couple of selections. Moving on ...
+
+19 Feb '24
+----------
+Real life intervened and caused a delay to the progress of this work. I got
+randomly selected for Jury duty and I spent most of the past week in the Hall
+of Justice at 190 W. Hedding. It started off with the jury selection process
+which took up both days of 14/15 February and the morning session of the 16'th
+at the end of which I have been selected as Juror #10. The actual hearing of
+the criminal case started in the afternoon session of the 16'th. The judge for
+the case estimates that the case should be concluded by the end of the month. I
+am not permitted to discuss anything about the case until it is over so I may
+update this JOURNAL with notes about the case but they will only be local
+commits until the case is resolved at which time I will be free to do the git
+push to publish my changes.
+
+With that explanation of why there has been no progress on this project out of
+the way, I can now return to working on it just for this rainy monday since the
+court observes a "President's day" holiday for today. So as a result of the
+court holiday I did manage to get some work done to add support for '@'/fetch.
+
+So far only 1 byte literals are supported and since MSP430 addresses can be
+16-bits, I went ahead and added a lit2/'2' primitive to handle 2 byte literals.
+Using this I can push addresses on the stack to verify the functionality of '@'

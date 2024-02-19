@@ -12,6 +12,7 @@ d	2drop	: pop tos
 <	key	: dup ; mov #0xff, w ; mov.b @w, tos ;
 >	emit	: mov #0xff, w ; mov.b tos, @w ; drop ;
 1	lit	: dup ; mov.b @ip+, tos ; sxt tos ;
+2	lit2	: dup ; mov.b @ip+, tmp ; mov.b @ip+, tos ; swpb tos ; bis tmp, tos ;
 n	neg	: inv tos ; inc tos ;
 j	j	: mov.b @ip+, tmp ; sxt tmp ; add tmp, ip ;
 =	jz	: and tos, tos ; drop ; jz j ; add #1, ip ;
@@ -27,3 +28,4 @@ P	dip	: push nos ;
 |	|	: nip ; bis nos, tos ;
 ^	^	: nip ; xor nos, tos ;
 S	swap	: nip ; dup ; mov nos, tos ;
+@	@	: mov @tos, tos ;
