@@ -16,6 +16,13 @@
 start:
 	mov #spbase, sp
 	mov #rom, ip
+	mov #0, r15 ; count must be even
+data_copy:
+	mov _unexpected_+2(r15), __data_start(r15)
+	incd r15
+	cmp #6, r15
+	jnz data_copy
+
 realnext:
 	mov.b @ip+, i
 	rla i
@@ -34,17 +41,16 @@ realnext:
 #endif
 #endif
 
+rom:
+
+#include "rom.s"
+
 #if USEDICT
 #include "prims_dict.s"
 #else
 #include "prims.s"
 #endif
 
-rom:
-
-#include "rom.s"
-
-	.data
 	.org 50
 spbase:
 mem:

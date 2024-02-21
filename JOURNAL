@@ -127,6 +127,7 @@ INDEX
 	* 12 Feb '24
 	* 13 Feb '24
 	* 19 Feb '24
+	* 20 Feb '24
 
 04 Nov '22
 ----------
@@ -4360,3 +4361,21 @@ court holiday I did manage to get some work done to add support for '@'/fetch.
 So far only 1 byte literals are supported and since MSP430 addresses can be
 16-bits, I went ahead and added a lit2/'2' primitive to handle 2 byte literals.
 Using this I can push addresses on the stack to verify the functionality of '@'
+
+20 Feb '24
+----------
+Jury duty ended a little early today so I was able to get some debugging done
+to fix up the implementation of c@/c!
+
+To implement c@/c! I first had to address the problem of picking opcodes that
+can be used to meaningfully represent them in ASCII and for now I've chosen 'C'
+and 'c' (for the same "symmetry" reasons that I've mentioned in some of the
+earlier entries in the JOURNAL).
+
+Unlike the msp430-as port where I was able to sneak in a '_fa_ke_' entry in
+code.prims to add a .data directive, I've chosen to use a simpler fix (which is
+hardcoded into genprims).
+
+The availability of the msp430-as port makes this port a bit easy since I can
+just use the existing code as a template to copy and paste but the bugs are
+always new.
