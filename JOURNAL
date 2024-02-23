@@ -4414,3 +4414,14 @@ always revisit these decisions later, if I think the mapping must be changed.
 It was decision time again to pick ASCII characters to denote >r and r> and
 since they are similar to function entry/exit "brace" operators, the choice of
 '{' and '}' seems to be the fairly obvious choice to me, at least for now.
+
+---
+
+To denote "exec", I was torn between choosing one of the non-alphanumeric
+symbols vs picking an alphabet. For now, I've gone ahead and used 'x' as the
+denotation although no equivalent symmetrical mapping for 'X' can ever exist
+since there is no inverse for "exec" - unless I go out on a limb to implement
+"come from" - like INTERCAL ;)
+
+The implementation of "exec" is based mostly on the "bytecode is an index"
+indirection implemented in "realnext".

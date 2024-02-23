@@ -38,6 +38,7 @@ c	c!	: pop.b @tos ; drop ;
 "	rp@!	: mov rp, nos ; mov tos, rp ; mov nos, tos ;
 }	>r	: mov tos, @rp ; incd rp ; drop ;
 {	r>	: dup ; decd rp ; mov @rp, tos ;
+x	exec	: mov tos, nos ; drop ; rla nos ; add #jmptbl, nos ; br @nos
 
 var state .byte 1
 var here .word mem
