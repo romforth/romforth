@@ -4408,3 +4408,9 @@ I can't think of a "symmetric" ASCII character notation for sp@!/rp@! so I'm
 going to make do with denoting them using (') and (") which seem "symmetric"
 enough for my taste, for now. Since all this gets processed by genprims, I can
 always revisit these decisions later, if I think the mapping must be changed.
+
+---
+
+It was decision time again to pick ASCII characters to denote >r and r> and
+since they are similar to function entry/exit "brace" operators, the choice of
+'{' and '}' seems to be the fairly obvious choice to me, at least for now.

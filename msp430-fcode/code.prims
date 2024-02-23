@@ -36,6 +36,8 @@ C	c@	: mov.b @tos, tos ;
 c	c!	: pop.b @tos ; drop ;
 '	sp@!	: mov sp, nos ; mov tos, sp ; mov nos, tos ;
 "	rp@!	: mov rp, nos ; mov tos, rp ; mov nos, tos ;
+}	>r	: mov tos, @rp ; incd rp ; drop ;
+{	r>	: dup ; decd rp ; mov @rp, tos ;
 
 var state .byte 1
 var here .word mem
