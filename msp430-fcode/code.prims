@@ -34,6 +34,7 @@ k	stick	: rla tos ; add sp, tos
 !	!	: pop @tos ; drop ;
 C	c@	: mov.b @tos, tos ;
 c	c!	: pop.b @tos ; drop ;
+'	sp@!	: mov sp, nos ; mov tos, sp ; mov nos, tos ;
 
 var state .byte 1
 var here .word mem
