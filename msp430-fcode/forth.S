@@ -11,6 +11,7 @@
 #define tos	R7
 #define tmp	R8
 #define nos	R9
+#define rp	R10
 
 	.cpu 430
 start:

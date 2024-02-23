@@ -4401,3 +4401,10 @@ I'm still not quite sure why my attention was drawn to it, dumb luck I guess.
 Anyway, the easy fix was to use a ".align 1" directive after the rom bytecodes
 to make the rest of the code start on even addresses. I'm not sure why I didn't
 run into this problem before this - I guess it was just even more dumb luck.
+
+---
+
+I can't think of a "symmetric" ASCII character notation for sp@!/rp@! so I'm
+going to make do with denoting them using (') and (") which seem "symmetric"
+enough for my taste, for now. Since all this gets processed by genprims, I can
+always revisit these decisions later, if I think the mapping must be changed.
