@@ -6,7 +6,7 @@
 
 CC=msp430-gcc
 
-all : oneforth
+all : twoforth
 
 oneforth : test.out
 twoforth : test.defs

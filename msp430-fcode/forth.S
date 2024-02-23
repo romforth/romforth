@@ -12,6 +12,7 @@
 #define tmp	R8
 #define nos	R9
 #define rp	R10
+#define tgt	R11
 
 	.cpu 430
 start:
@@ -23,6 +24,16 @@ data_copy:
 	incd r15
 	cmp #6, r15
 	jnz data_copy
+	jmp realnext
+
+linkage:
+	mov.b @ip+, tmp
+	mov.b @ip+, tgt
+	swpb tgt
+	bis tmp, tgt
+	mov ip, @rp
+	incd rp
+	mov tgt, ip
 
 realnext:
 	mov.b @ip+, i

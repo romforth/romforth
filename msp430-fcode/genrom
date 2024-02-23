@@ -206,18 +206,17 @@ sub def {
 		}
 		print "$l:	# $w\n"; # and generate assembly code
 		$defs->{$w}=$l;		 # for setting up a local mapping
-		print "\t.word 0x1289\n";
 		$state=2;
 		return 1;
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.word exit\n";
+			print "\t.byte '}'\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\t.word exit\n";
+			print "\t.byte '}'\n";
 			$state=0;
 			$immediate=0;
 			return 1;
@@ -253,6 +252,7 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit2($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need their
+			print "\t.byte '{'\n";
 			print "\t.word $m # $f\n";	# starting address
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately

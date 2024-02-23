@@ -129,6 +129,7 @@ INDEX
 	* 19 Feb '24
 	* 20 Feb '24
 	* 22 Feb '24
+	* 23 Feb '24
 
 04 Nov '22
 ----------
@@ -4425,3 +4426,42 @@ since there is no inverse for "exec" - unless I go out on a limb to implement
 
 The implementation of "exec" is based mostly on the "bytecode is an index"
 indirection implemented in "realnext".
+
+23 Feb '24
+----------
+Now that it is time to implement call/return linkage, I've decided to redo the
+ASCII character mappings for >r/r> since I want to use '{'/'}' to denote the
+call/return linkage. So I've renamed r> to use 'F', (since r> can be pronounced
+r(F)rom or (F)romr. But >r is pronounced "tor" and despite there being no 'f'
+in "tor" it is denoted 'f' just for "symmetry" reasons as explained in the
+earlier JOURNAL entries.
+
+With the newer naming scheme in place, calls become '{'+address and returns are
+just '}'. With this scheme each call requires 3 bytes (1 for the '{' + 2 for
+the address itself). Each definition consists of a series of bytecodes ending
+in a '}' bytecode. While this is a relatively compact representation, I had yet
+another idea floating around which I'm not going to implement for now, but I'll
+go ahead and document it here so I can come back to it later, if needed.
+
+The alternative representation which I'm going to discuss here is in many ways
+just fleshing out some of the ideas that I was trying to explore earlier which
+were documented in the JOURNAL entry of 05 Feb '24.
+
+The core idea can be expressed as: primitives are bytecodes and definitions are
+strings (but denoted by ASCII characters/bytecodes). The advantage of this code
+is that calls to a function are now just 1 byte and obviously the disadvantage
+is that the number of definitions+primitives is limited to 256 (using an 8-bit
+bytecode). This will require additional plumbing to associate each definition
+with an ASCII character or a bytecode that maps to it. The preamble part of the
+function definition can use the same encoding used in the PDP11 port (and the
+msp430-as port) such that it falls on an aligned code address and uses native
+machine code to setup the return linkage. And since C strings are terminated by
+the 0/NUL character, we could use byte 0 as the 'return' operator. Compared to
+the current implementation, this will result in a saving of 2 bytes for each
+call/invocation of a definition.
+
+So those are my thoughts on a more compact representation, which could be used
+if push comes to shove, on really low end microcontrollers. But as I mentioned
+earlier, I'm not going to implement that just yet - for now, and instead I'll
+forge ahead with the current implementation and see if it turns out to be
+compact enough for the MSP430 Launchpad development kit.
