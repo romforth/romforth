@@ -128,6 +128,7 @@ INDEX
 	* 13 Feb '24
 	* 19 Feb '24
 	* 20 Feb '24
+	* 22 Feb '24
 
 04 Nov '22
 ----------
@@ -4379,3 +4380,24 @@ hardcoded into genprims).
 The availability of the msp430-as port makes this port a bit easy since I can
 just use the existing code as a template to copy and paste but the bugs are
 always new.
+
+22 Feb '24
+----------
+For the same "symmetry" reasons that I've already mentioned in some of the
+previous JOURNAL entries, pic(K) and stic(k) are denoted using 'K' and 'k'
+respectively.
+
+While the implementation for pick was done fairly quickly, almost two days ago,
+I ran into a weird bug while trying to implement stick. Running `make` resulted
+in a failing run with the following message at the tail end of test.log:
+	(mspdebug) Running. Press Ctrl+C to interrupt...
+	console: read error
+and after some debugging and just looking at the output of
+	msp430-objdump -dx forth | less
+with special attention paid to the offset addresses of the functions, it was
+clear that the starting byte of the code was getting placed at odd addresses.
+I'm still not quite sure why my attention was drawn to it, dumb luck I guess.
+
+Anyway, the easy fix was to use a ".align 1" directive after the rom bytecodes
+to make the rest of the code start on even addresses. I'm not sure why I didn't
+run into this problem before this - I guess it was just even more dumb luck.

@@ -30,6 +30,7 @@ P	dip	: push nos ;
 S	swap	: nip ; dup ; mov nos, tos ;
 K	pick	: rla tos ; add sp, tos
 @	@	: mov @tos, tos ;
+k	stick	: rla tos ; add sp, tos
 !	!	: pop @tos ; drop ;
 C	c@	: mov.b @tos, tos ;
 c	c!	: pop.b @tos ; drop ;

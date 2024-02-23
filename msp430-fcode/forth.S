@@ -45,6 +45,8 @@ rom:
 
 #include "rom.s"
 
+	.align 1
+
 #if USEDICT
 #include "prims_dict.s"
 #else
