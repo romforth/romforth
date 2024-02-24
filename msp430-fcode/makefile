@@ -56,7 +56,7 @@ forth_dict : forth_dict.s
 defs_dict.s : ../defs.4th ../fpp fpp.config genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map > defs_dict.s
 defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
-	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g defs.map dict.map > defs.s
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g defs.map dict.map | ./patchrom > defs.s
 prims_dict.s : prims.s genprims code.prims ../fpp fpp.config
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims -d dict.map > prims_dict.s
 prims.s : genprims code.prims ../fpp fpp.config

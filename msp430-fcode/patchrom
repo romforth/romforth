@@ -45,6 +45,7 @@ while(<>) {
 				$agg->[$l]="\t.byte ". ($dot-$d) ."\n";
 			}
 		}
+		push @$agg, $_;	# unlike C, assembly code needs all the labels
 		next;		# labels don't move the dot location: no $dot++
 	}
 	if (/^\tPATCH\s+(\S+)$/) {	# if this is a patch location
