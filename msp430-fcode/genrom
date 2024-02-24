@@ -95,9 +95,9 @@ sub runbegin {
 }
 
 sub rununtil {
-	print "\t.word ", $mapjnz, " # branch if not zero\n";
+	print "\t.byte '", chr($mapjnz), "' # branch if not zero\n";
 	my $ol=pop @labelstack;
-	print "\t.word ", join('_', @$ol), '-.-2', "\n";
+	print "\tPATCH ", join('_', @$ol), "\n";
 	push @labelstack, $ol;
 }
 
@@ -110,8 +110,8 @@ sub runwhile {
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\t.word ", $mapjmp, " # branch\n";
-	print "\t.word ", $ol->[0], '_begin-.-2', "\n";
+	print "\t.byte '", chr($mapjmp), "' # branch\n";
+	print "\tPATCH ", $ol->[0], '_begin', "\n";
 	print join('_', @$ol), ":\n";
 }
 
