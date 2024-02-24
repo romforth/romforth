@@ -41,6 +41,7 @@ F	r>	: dup ; decd rp ; mov @rp, tos ;
 x	exec	: mov tos, nos ; drop ; rla nos ; add #jmptbl, nos ; br @nos
 {	enter	: jmp linkage
 }	exit	: decd rp ; mov @rp, ip ;
+X	call	: mov ip, @rp ; incd rp ; mov tos, ip ; drop ;
 
 var state .byte 1
 var here .word mem
