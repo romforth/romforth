@@ -42,6 +42,8 @@ x	exec	: mov tos, nos ; drop ; rla nos ; add #jmptbl, nos ; br @nos
 {	enter	: jmp linkage
 }	exit	: decd rp ; mov @rp, ip ;
 X	call	: mov ip, @rp ; incd rp ; mov tos, ip ; drop ;
+(	<<	: and tos, tos ; jz 2f ; nip ; 1 : rla nos ; dec tos ; jnz 1b ; mov nos, tos ; next ; 2: ; drop ;
+)	>>	: and tos, tos ; jz 2f ; nip ; 1 : rra nos ; dec tos ; jnz 1b ; mov nos, tos ; next ; 2: ; drop ;
 
 var state .byte 1
 var here .word mem
