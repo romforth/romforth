@@ -138,9 +138,9 @@ sub runthen {
 
 sub genprim {
 	my ($f)=@_;
-	my $m=$map->{$f};
+	my $m=$mapch->{$f};
 	die "$f has no mapping" unless $m;
-	print "\t.word $m # $f\n";
+	print "\t.byte $m # $f\n";
 }
 
 sub runfor {
