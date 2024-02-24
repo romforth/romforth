@@ -102,9 +102,9 @@ sub rununtil {
 }
 
 sub runwhile {
-	print "\t.word ", $mapjz, " # branch if zero\n";
+	print "\t.byte '", chr($mapjz), "' # branch if zero\n";
 	my $ol=pop @labelstack;
-	print "\t.word ", join('_', @$ol), '-.-2', "\n";
+	print "\tPATCH ", join('_', @$ol), "\n";
 	push @labelstack, $ol;
 }
 
