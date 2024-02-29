@@ -64,7 +64,12 @@ while(<>) {
 		next;
 	}
 	push @$agg, $_;		# for everything else
-	s/\,\s+$//;		# account for each element by
-	$dot+=split(/\,/);	# splitting on all of the commas on each line
+	if (/^\s*\.byte\s+/) {	# unlike C, assembler code can have entries
+		$dot+=1;	# of different sizes, so bytes need offset 1
+	} elsif (/^\s*\.word\s+/) {	# and words need an offset of ...
+		$dot+=2;		# ... 2
+	} else {			# and for now, as a catchall ...
+		die;			# ... just panic for everything else
+	}
 }
 print join('', @$agg);		# print it all out after all patches are done
