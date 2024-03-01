@@ -131,6 +131,7 @@ INDEX
 	* 22 Feb '24
 	* 23 Feb '24
 	* 29 Feb '24
+	* 01 Mar '24
 
 04 Nov '22
 ----------
@@ -4520,3 +4521,14 @@ With that fix out of the way I've finally managed to unblock myself from this
 stopper bug which had me puzzled for quite a bit of time (but then I was also
 distracted and working on something else which may or may not eventually make
 its way into Github).
+
+01 Mar '24
+----------
+At step 33, the assembler whined that the jump offsets have started to get too
+large so I tried to see if I could optimize a bit of the code by using "jmp"
+instead of "br" and while that shaves off ~72 bytes, there were new errors that
+the newly introduced "jmp" offsets were too large. That's when I realized that
+the real cause of the problem was the large blob of testcode (bytecode format)
+which is currently placed in between two blobs of native/machine code. So I've
+decided to revise the layout a bit to move the testcode (under the "rom" label)
+to the tail end of the ROM area.

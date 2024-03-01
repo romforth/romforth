@@ -53,10 +53,6 @@ realnext:
 #endif
 #endif
 
-rom:
-
-#include "rom.s"
-
 	.align 1
 
 #if USEDICT
