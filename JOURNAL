@@ -133,6 +133,7 @@ INDEX
 	* 29 Feb '24
 	* 01 Mar '24
 	* 07 Mar '24
+	* 08 Mar '24
 
 04 Nov '22
 ----------
@@ -4599,3 +4600,16 @@ variable which I'd originally placed at the tail end of code.prims and moved it
 ahead of "here". That managed to fix the bug although I didn't quite understand
 why it worked. Since it is fairly late now and it has been a long day, I'll try
 to understand why this fix works later and just go ahead with this commit.
+
+08 Mar '24
+----------
+At step 44, I have to make a decision about what THREAD type this new bytecode
+scheme should be called. So far it has been tagged THREAD type 2 since I copied
+the config file from msp430-as, but that breaks the tests at step 44 so I'm
+going to call it THREAD type 1 for now just so I can get the tests to pass and
+see how far I can hobble along on this new crutch. prim_var_deref can remain at
+the current setting of 1 since the right bytecode was saved into the dictionary
+at step 41 (as documented in the previous JOURNAL entry). Also, since the code
+stored in the CFA will be call'ed, I needed to add the "exit"/'}' bytecode to
+terminate primitive definitions in the dictionary so this needed a little fixup
+to the genprims script as well.

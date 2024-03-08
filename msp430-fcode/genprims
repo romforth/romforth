@@ -36,6 +36,7 @@ sub genheader {
 	print "$l","_cfa:\n";
 	if ($flag) {
 		print "\t.byte ", $maplabel->{$l}, "\n";
+		print "\t.byte '}'\n";
 	} else {
 		print "\t.byte '2'\n";
 		print "\t.word $l\n";
