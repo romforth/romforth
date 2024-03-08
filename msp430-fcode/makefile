@@ -6,7 +6,7 @@
 
 CC=msp430-gcc
 
-all : twoforth
+all : threeforth
 
 oneforth : test.out
 twoforth : test.defs
@@ -54,7 +54,7 @@ forth_dict.S : forth.S forth_defs.S
 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S
 forth_dict : forth_dict.s
 defs_dict.s : ../defs.4th ../fpp fpp.config genrom
-	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map > defs_dict.s
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map | ./patchrom > defs_dict.s
 defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g defs.map dict.map | ./patchrom > defs.s
 prims_dict.s : prims.s genprims code.prims ../fpp fpp.config

@@ -46,5 +46,6 @@ X	call	: mov ip, @rp ; incd rp ; mov tos, ip ; drop ;
 )	>>	: and tos, tos ; jz 2f ; nip ; 1 : rra nos ; dec tos ; jnz 1b ; mov nos, tos ; next ; 2: ; drop ;
 O	over	: dup ; mov 2(sp), tos ;
 
+var latest #include "latest.s"
 var state .byte 1
 var here .word mem

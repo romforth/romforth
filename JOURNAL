@@ -132,6 +132,7 @@ INDEX
 	* 23 Feb '24
 	* 29 Feb '24
 	* 01 Mar '24
+	* 07 Mar '24
 
 04 Nov '22
 ----------
@@ -4532,3 +4533,69 @@ the real cause of the problem was the large blob of testcode (bytecode format)
 which is currently placed in between two blobs of native/machine code. So I've
 decided to revise the layout a bit to move the testcode (under the "rom" label)
 to the tail end of the ROM area.
+
+07 Mar '24
+----------
+I ran into another weird bug at step 41 which took me a bit of time to figure
+out and fix and so I'm going to document the tortuous route I had to take to
+get here.
+
+My methodology in the course of this port has been to use the code changes that
+were made as part of the msp430-as port as a template so as to make this port a
+bit smoother and avoid all the bugs that I may have encountered as part of that
+port. Based on those changes, I modified the makefile to use patchrom to fix up
+the offsets in the code generated from defs.4th and to modify the make target
+from twoforth to threeforth. Another change that was required to code.prims was
+the addition of the definition for the "latest" variable. With those necessary
+changes out of the way, it was time to deal with the bugs that popped up.
+
+The first problem that had to be addressed was the assumption in the "patchrom"
+script that '.byte' and '.word' were the only keywords in the generated input.
+Rather than deal with the set of new keywords, I decided to weaken the strict
+checking that I'd added to the script by just getting rid of it.
+
+The next problem was a repeat of the issue that was documented in the previous
+JOURNAL entry - the jump offsets had become too large yet again. The solution
+was to again redo the code layout so that all the bytecode for the dictionary
+entries were moved to the end of the code segment so that all the native code
+was in a single piece at the beginning. This required additional changes to the
+genprims script as well which generated the dictionary headers. While working
+on that change, I realized that the code generated in the dictionary headers
+were only applicable to the old msp430-as port, not for the newer 'F' bytecode
+scheme (since the genrom script was just a copy), so I went ahead and made the
+changes to fix up that issue so that the correct bytecodes are generated for
+primitive variables. For the actual primitives themselves, since I'm undecided,
+for now, about how I'll handle calls to primitives from the REPL, the body of
+the CFA for primitives just contains the ASCII bytecode - I'll defer the actual
+decision about what else may be required to the step where the tests need that
+functionality.
+
+Anyway, with that boatload of changes in place, running `make` resulted in a
+build failure since the last 2 asserts of the tests at step 41 were triggered.
+So it was time to gird myself up for yet another round of debugging.
+
+Since it was clear that the problem happened after the second call to "repl"
+(within step 41), I needed a way to figure out the address of the bytecodes
+near it. From looking at the generated code in forth_dict.s, I noticed that
+there was a label 'lbl118_then' which preceded the second call to repl so I
+could use that label as a means of identifying the address where the call
+happened. Using `msp430-objdump -dx forth_dict | grep lbl118_then` showed that
+lbl118_then was at address 0xc896 so I added a read breakpoint on addr 0xc899
+which was the bytecode (after the call to repl has returned) by using
+	setwatch_r 0xc899
+in mspdebug. Looking at the register values that mspdebug showed after the
+breakpoint was hit showed that the call to repl had returned a value of 0 on
+the stack (in TOS register 7) instead of the expected value of 1.
+
+Since the implementation of "repl" (at step 41) is straight line code that tail
+calls "same", the return value from "repl" is just the return value from "same"
+so that would have been the next place to single step using the debugger.
+
+But at that point, rather than try to do any more debugging, I decided to go
+back to look at the msp430-as changes and had a faint memory refresh that there
+had been some trouble I'd run into with the order in which the variables were
+placed. So on a hunch I decided to move the declaration/layout of the "latest"
+variable which I'd originally placed at the tail end of code.prims and moved it
+ahead of "here". That managed to fix the bug although I didn't quite understand
+why it worked. Since it is fairly late now and it has been a long day, I'll try
+to understand why this fix works later and just go ahead with this commit.

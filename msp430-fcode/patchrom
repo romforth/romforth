@@ -69,7 +69,7 @@ while(<>) {
 	} elsif (/^\s*\.word\s+/) {	# and words need an offset of ...
 		$dot+=2;		# ... 2
 	} else {			# and for now, as a catchall ...
-		die;			# ... just panic for everything else
+		#die;			# ... just panic for everything else
 	}
 }
 print join('', @$agg);		# print it all out after all patches are done

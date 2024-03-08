@@ -21,6 +21,8 @@ my ($f,$l);	# the forth name($f) and the assembler label ($l)
 
 my $prev="0";
 
+my $maplabel={};
+
 sub genheader {
 	my ($f,$l,$flag)=@_;
 	my $len=length($f);
@@ -33,14 +35,11 @@ sub genheader {
 	print "$l","_lfa:\t.word $prev\n";
 	print "$l","_cfa:\n";
 	if ($flag) {
-		print "\t.word 0x1289\n";
-		print "\t.word $l\n";
-		print "\t.word exit\n";
+		print "\t.byte ", $maplabel->{$l}, "\n";
 	} else {
-		print "\t.word 0x1289\n";
-		print "\t.word lit\n";
+		print "\t.byte '2'\n";
 		print "\t.word $l\n";
-		print "\t.word exit\n";
+		print "\t.byte '}'\n";
 	}
 	$prev="$l"."_lfa";
 }
@@ -56,6 +55,7 @@ sub mapnames {
 	print $mh "code $f $l $crc\n";	# create dictionary entry for primitives
 	print "$l:\n";	# generate the label for the assembler
 	$mapch->[$crc]=$l;
+	$maplabel->{$l}=$crc;
 	if ($gendict) {
 		push @$headers, [$f,$l,1];
 	}
@@ -72,6 +72,18 @@ sub mapchar {
 my $dumpedtbl=0;
 
 sub dumptbl {
+	print <<'EOF';
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
+
+EOF
 	print "rom:\n";
 	print qq(#include "rom.s"\n);
 	print qq(\t.align 1\n);
