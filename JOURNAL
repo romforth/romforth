@@ -134,6 +134,7 @@ INDEX
 	* 01 Mar '24
 	* 07 Mar '24
 	* 08 Mar '24
+	* 09 Mar '24
 
 04 Nov '22
 ----------
@@ -4613,3 +4614,38 @@ at step 41 (as documented in the previous JOURNAL entry). Also, since the code
 stored in the CFA will be call'ed, I needed to add the "exit"/'}' bytecode to
 terminate primitive definitions in the dictionary so this needed a little fixup
 to the genprims script as well.
+
+09 Mar '24
+----------
+After running into the bug at step 44 that I documented in the previous entry,
+things were moving along nicely until I hit a new problem at step 51 where the
+`make` failed with the tail end of the output looking like this:
+	./run_mspdebug forth_dict > test.log 2>&1
+	grep 'Breakpoint 0 triggered' test.log > /dev/null
+	makefile:16: recipe for target 'test.dict' failed
+
+Looking at the test.log output file showed that the failure was happening here:
+	(mspdebug) Running. Press Ctrl+C to interrupt...
+	sim: executing in device space: PC = 0x00000; previous PC value 0x0ffff
+
+It was clear that code execution had gone off the rails at some point since it
+was no longer executing code from the valid part of the code space. One of the
+nicer parts of reaching this stage of the port, is that I can enable "printf
+style debuggging" directly from the config file (fpp.config.msp430) and have a
+trail of how far the execution had progressed just by enabling "debug=1".
+
+With this setting the tail end of the output file (test.out) looked like this:
+	bar|alloc 0x45 cr1 0x42 cr2 0x4A  0x7D c,|alloc 0x01
+
+This log tells me that the testing in step 51 had create'd "bar" with the CFA
+at offset 0x4A, and the terminating '}'/0x7D had been appended to its body.
+The lack of anything else after this set of output characters can only point to
+the fact that "Bad Things Happened" soon after. Luckily, rather than jump right
+in, to do further debugging by stepping through the code, I decided to take a
+step back and read through the old JOURNAL entries I had written during the
+msp430-as port, and sure enough the entry for 31 Jul '23 talks about exactly
+this problem and sure enough the exact same solution worked here as well. I'm
+glad that writing all this stuff down is actually turning out to be useful for
+the long term. In this specific case, rather than reorder the declarations to
+achieve alignment, as I'd done then, I've been profligate and turned the state
+variable into a .word (from a .byte) thus wasting an entire byte.

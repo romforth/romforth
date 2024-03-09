@@ -47,5 +47,5 @@ X	call	: mov ip, @rp ; incd rp ; mov tos, ip ; drop ;
 O	over	: dup ; mov 2(sp), tos ;
 
 var latest #include "latest.s"
-var state .byte 1
+var state .word 1
 var here .word mem
