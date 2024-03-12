@@ -135,6 +135,7 @@ INDEX
 	* 07 Mar '24
 	* 08 Mar '24
 	* 09 Mar '24
+	* 11 Mar '24
 
 04 Nov '22
 ----------
@@ -4649,3 +4650,104 @@ glad that writing all this stuff down is actually turning out to be useful for
 the long term. In this specific case, rather than reorder the declarations to
 achieve alignment, as I'd done then, I've been profligate and turned the state
 variable into a .word (from a .byte) thus wasting an entire byte.
+
+11 Mar '24
+----------
+Since the entire raison d'etre of this port was to make a more compact version
+of the previous msp430-as port, it made sense to code 2 versions of 'lit', a
+single .byte version (lit) and a .word version (lit2), which takes up 2 bytes.
+
+That design decision has come back to haunt me now though, since step 52 needs
+a 'lit' to prefix a 2 byte literal. So at this point I have atleast 2 options
+that are available. One is to create yet another THREAD type and special case
+the handling of lit/lit2. The other option is to continue with the attempt to
+shoehorn this port under the existing THREAD type 1 and see how far I can keep
+up that pretence. For now I'll keep it as THREAD type 1 and see if I can get
+away with a little renaming of (lit,lit2) to (lit1,lit).
+
+With that renaming, 1 byte literals are now prefixed by "lit1" and the regular
+old "lit" is used to prefix 2 byte literals. After making that change and then
+running the regression test (by running `./runallsteps msp430-fcode`) I could
+see that there was a regression at step 21 and this was because "offset" needed
+to be set to 1. After fixing that up and making additional mods to genrom to
+fix (and clean things up) there were no more regressions but I was back to a
+new breakage at step 52. The symptom is exactly the same as the ones mentioned
+in the previous JOURNAL entry (for step 51). Here also `make` failed with the
+tail end of the output looking like this:
+	./run_mspdebug forth_dict > test.log 2>&1
+	grep 'Breakpoint 0 triggered' test.log > /dev/null
+	makefile:16: recipe for target 'test.dict' failed
+
+Looking at the test.log output file showed that the failure was happening here:
+	(mspdebug) Running. Press Ctrl+C to interrupt...
+	sim: executing in device space: PC = 0x00000; previous PC value 0x0ffff
+
+I'm going to take a break for now and look at this again tomorrow.
+
+12 Mar '24
+----------
+I spent most of yesterday and a fair bit of time today going through all of the
+changes I had made and looking through the tests at step 52 to understand what
+could cause the new/non-obvious failure at step 52. As with the bug at step 51,
+I decided to drag out the heavy artillery for this bug as well by setting
+"debug=1" in the fpp.config.msp430 configuration file and this showed that
+things are mostly working as expected. Here's what the tail end of the log (in
+test.out) looked like after the failure at step 52 :
+
+    ... baz|alloc 0x027F cr1 0x027C cr2 0x0284 1234|find 0x0284  0x027C  0x0274
+    0xC7DC  0xC7CA ... 0xC1CA  0xC1C0  0xC1B2  0xC1A6  0x0000  0x0032 c,|alloc
+    0x0286  0x04D2 ,|alloc 0x0287 ;|find 0x0284  0x027C  0x0274  0xC7DC  0xC7CA
+    0xC7B6  0xC7A2  0x007D c,|alloc 0x0289 baz|find 0x0284
+
+I've used ellipsis in the above output to filter out the irrelevant parts (for
+the most part, getting rid of many of the addresses that "find" is stepping
+through) to hone in on just the interesting parts. You can see that after not
+find'ing "1234" in the dictionary ("find" terminates with 0x0000), the 'F'
+bytecode for lit'eral/'2' (0x0032 ASCII) is added to the dictionary using "c,"
+and then the number itself (1234 decimal == 0x04D2) is ","/comma'd into the
+definition of "baz" and then finally the definition of "baz" is terminated with
+"exit"/'}' (0x007D ASCII).
+
+As a sanity check, I also ran the same debug session on the msp430-as port to
+verify that the output log is similar. There was no difference in the output
+between the two ports, so it was clear that the body of the definition is
+created in the dictionary as expected but when the definition is invoked (after
+the final "find", in the above log), it works in the msp430-as port whereas it
+results in a crash in the msp430-fcode port.
+
+Eventually, it dawned on me that this might also just be an alignment issue
+(just as in step 51) and that it was caused by the address used to store the
+lit'eral 1234 as can be seen from the above log, where ',' alloc'ates space at
+0x0287 which is an unaligned address (when ',' invokes '!' which calls "pop").
+
+Now that I had a theory for why the crash occured, fixing it sounds relatively
+simple - just add some alignment, and this should be really simple since I'd
+already implemented "alloca" long ago. Looking through the code now though, it
+appears that none of the existing ports uses it - it is used only in test code.
+
+So this brings me, full circle, back to the discussion about THREAD types which
+I had mentioned in the JOURNAL entry from yesterday (11 Mar '24). Since none of
+the other ports needs alignment, the only means to add it in for this port is
+to create yet another THREAD type. Since THREAD types #1..#4 are already taken,
+this new THREAD type will be #5.
+
+So for the new round of changes I started off by setting THREAD=5 and getting
+rid of the "offset=1" in fpp.config.msp430 since that change was done yesterday
+and is no longer required. Running `./runallsteps msp430-fcode` to catch any
+new regressions with the newer THREADing type again predictably failed at step
+21 and this time the fix was to conditionally use "lit1" instead of "lit" in
+the testcode in rom.4th at step 21. The next failure was at step 39 but this
+turned out to be a false alarm since the failure was just because I had left
+"debug=1" enabled in the config file. After reverting that, the next regression
+failure was at step 50 and that was again fixed by using "lit1" instead of
+"lit" at step 50 conditionally in the test code. The regression failure after
+that was at step 51 which required similar changes in defs.4th in the
+definition of ';'.
+
+With all of those regressions caused by the introduction of a new THREAD type
+out of the way, I was finally back where I started with the failure at step 52.
+
+The fix for that was to make the call to ',' conditional such that for THREAD
+type 5, it splits a "word" sized number into the low and high bytes which are
+then saved as individual bytes in little endian byte order. That change was
+sufficient to get a passing result. Whew!

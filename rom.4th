@@ -413,7 +413,12 @@ if{		[	// not taken
 
 1		[ 1
 2		[ 1 2
+#{if THREAD!=5
 lit		[ 1 2	// lit escapes the following byte(s)
+#}if
+#{if THREAD==5
+lit1		[ 1 2	// lit1 escapes the following byte in THREAD type 5
+#}if
 #{if big_endian==0
 swap		[ 1 2	// escaped by lit
 #}if
@@ -1082,7 +1087,12 @@ if{		[ addr n	// not taken
 [ definition, arch specific gyrations are needed. On the PDP11 for example, we
 [ need to add the linkage instruction 0x080c ("JSR ip, (nr)"). On x86, the
 [ "exit" token on its own is sufficient.
+#{if THREAD!=5
 lit		[ 	// lit escapes the following byte(s)
+#}if
+#{if THREAD==5
+lit1		[ 	// lit1 escapes the following byte in THREAD type 5
+#}if
 #{if big_endian==0
 exit		[ exit	// escaped by lit
 #}if
@@ -1118,6 +1128,9 @@ s,		[ \ exit	// gcc/clang uses jump offset (short, 2 bytes)
 #}if
 #{if THREAD==4
 suffixret	[ \ ret		// append a 'return' opcode to the dictionary
+#}if
+#{if THREAD==5
+c,		[ \ exit        // 'F' bytecode fits in a byte
 #}if
 
 32		[ 32 < "foo "

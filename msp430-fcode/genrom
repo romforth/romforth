@@ -238,9 +238,7 @@ sub lit {
 		print qq(\t.byte '1'\n);
 		print qq(\t.byte $o\n);
 	} else {	# assume everything else fits in 2 bytes
-		print qq(\t.byte '2'\n);
-		print qq(\t.byte ), ($o & 0xff), "\n";
-		print qq(\t.byte ), ($o & 0xff00)>>8, "\n";
+		lit2($o);
 	}
 }
 
@@ -271,6 +269,9 @@ while (<>) {				# map forth words in the standard input
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
 				print qq(\t.byte $i\n);
+				next;
+			} elsif ($f eq 'pad0') {
+				print "\t.byte 0\n";
 				next;
 			}
 			die "unknown word: $f"

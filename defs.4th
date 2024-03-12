@@ -1050,11 +1050,20 @@ def{ offset,	[ val
 #}if
 #}if
 
+#{if THREAD==5
+	c,	[ \ val // 'F' bytecode uses just 1 byte
+#}if
+
 }def
 
 [ finish up the definition of a new word (and switch to interpret mode)
 imm{ ;		[
+#{if THREAD!=5
 	lit	[	// lit escapes the following byte(s)
+#}if
+#{if THREAD==5
+	lit1	[	// lit1 escapes the following byte in THREAD type 5
+#}if
 #{if big_endian==0
 	exit	[ exit	// escaped by lit
 #}if
@@ -1087,7 +1096,12 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ exit	// padding escaped by lit
 def{ literal	[ n
 
 #{if THREAD!=4
+#{if THREAD!=5
 	lit	[ n	// to escape the next "token"
+#}if
+#{if THREAD==5
+	lit1	[ n	// to escape the next "token" in THREAD type 5
+#}if
 #{if big_endian==0
 	lit	[ n lit	// so as to get lit on the stack
 #}if
@@ -1142,7 +1156,17 @@ step_52_assertion_failure_to_catch_missing_literal_modifications
 #}if
 
 #}if
+
+#{if THREAD!=5
 	,	[ \ n		// in either case, the value needs a full cell
+#}if
+#{if THREAD==5
+	dup	[ n n
+	0xff &	[ n l:n&0xff
+	c,	[ n \ l
+	8 >>	[ h:n>>8
+	c,	[ \ h
+#}if
 
 }def
 
