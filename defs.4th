@@ -1276,7 +1276,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ // padding escaped by lit
 
 [ compile a definition (or a native definition/variable)
 def{ compdef		[ cfa		// cfa: var/prim/def
-#{if THREAD==1
+#{if THREAD==1 or THREAD==5
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user where all cfa's are uniform
 	1		[ cfa 1
@@ -1298,8 +1298,13 @@ def{ compdef		[ cfa		// cfa: var/prim/def
 #}if
 	if{		[ cfa		// defined word
 
+#{if THREAD==1 or THREAD==5
 #{if THREAD==1
 		lit	[ cfa		// escape the next byte
+#}if
+#{if THREAD==5
+		lit1	[ cfa		// escape the next byte
+#}if
 #{if big_endian==0
 		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
 #}if
