@@ -1321,7 +1321,16 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ cfa enter // padding escaped by lit
 		enter	[ cfa enter	// x86/THREAD=1 needs enter as prefix
 #}if
 		c,	[ cfa	\ enter
+#{if THREAD==1
 		,	[	\ cfa
+#}if
+#{if THREAD==5
+		dup	[ cfa cfa
+		0xff &	[ cfa l:cfa&0xff
+		c,	[ cfa \ l
+		8 >>	[ h:cfa>>8
+		c,	[ \ h
+#}if
 #}if
 
 #{if THREAD==2
