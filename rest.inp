@@ -29,6 +29,7 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
 [ THREAD==4 and prim_var_deref==1 => msp430-stc
+[ THREAD==5 and prim_var_deref==1 => msp430-fcode
 	#jz	[ jz	// for rationale, see the comments where #jz is defined
 #}if
 #{if prim_var_deref!=1
@@ -173,6 +174,15 @@ immediate
 #}if
 
 #}if
+
+#{if THREAD==5
+	c!	[ (a:n)
+#}if
+
+#{if THREAD>5
+	70 emit	[ add a catchall for newer THREAD'ing types (70=='F' for fail)
+#}if
+
 ;
 
 [ // }if is just syntax sugar replacement for traditional Forth's THEN
