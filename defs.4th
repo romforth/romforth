@@ -1496,7 +1496,7 @@ def{ outer
 
 #{if step>=57
 
-#{if THREAD==4 or THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
+#{if THREAD==5 or THREAD==4 or THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
 
 [ // primitives such as lit, j/jz/jnz etc which use "immediate addressing"
 [ // (where "immediate" refers not to the Forth meaning of the word but to the
@@ -1504,7 +1504,12 @@ def{ outer
 [ // only when used as a prefix to the byte(s) that they precede. So, this is
 [ // just a workaround to provide a means of getting their "primitive" values.
 def{ #jz
+#{if THREAD!=5
 	lit	[	// to escape the next "token"
+#}if
+#{if THREAD==5
+	lit1	[	// to escape the next "token" in THREAD type 5
+#}if
 #{if big_endian==0
 	jz	[ jz	// so as to get jz on the stack
 #}if
