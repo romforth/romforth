@@ -1568,11 +1568,16 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 
 #{if step>=60
 
-#{if THREAD==4 or THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
+#{if THREAD==5 or THREAD==4 or THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
 
 [ // see the comment for #jz above for the details of why this is needed
 def{ #jnz
+#{if THREAD!=5
 	lit	[	// to escape the next "token"
+#}if
+#{if THREAD==5
+	lit1	[	// to escape the next "token" in THREAD type 5
+#}if
 #{if big_endian==0
 	jnz	[ jnz	// so as to get jnz on the stack
 #}if

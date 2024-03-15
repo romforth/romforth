@@ -361,6 +361,8 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 #{if THREAD!=3
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
+[ THREAD==4 and prim_var_deref==1 => msp430-stc
+[ THREAD==5 and prim_var_deref==1 => msp430-fcode
 	#jnz
 #}if
 #{if prim_var_deref!=1
