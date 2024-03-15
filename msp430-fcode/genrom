@@ -234,7 +234,7 @@ sub lit2 {
 
 sub lit {
 	my ($o)=@_;
-	if (($o > -256) and ($o < 255)) { # x is in the range [-256, 256)
+	if (($o > -128) and ($o < 128)) { # x is in the range [-128, 128)
 		print qq(\t.byte '1'\n);
 		print qq(\t.byte $o\n);
 	} else {	# assume everything else fits in 2 bytes

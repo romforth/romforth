@@ -218,6 +218,7 @@ immediate
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
 [ THREAD==4 and prim_var_deref==1 => msp430-stc
+[ THREAD==5 and prim_var_deref==1 => msp430-fcode
 	#j	[ j	// for rationale, see the comments where #j is defined
 #}if
 #{if prim_var_deref!=1
