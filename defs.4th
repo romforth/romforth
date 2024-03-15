@@ -1602,7 +1602,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 
 #{if step>=61
 
-#{if THREAD!=4
+#{if THREAD<4
 
 def{ compile	[	| w ]
 	r>	[ w	|   ] // get the next exec'utable address
@@ -1783,6 +1783,48 @@ def{ compile	[	| w ]
 #}if
 
 }def
+
+#}if
+
+#{if THREAD==5
+
+[ // Most of this could be retrofitted into the current version of compile
+[ // (currently marked THREAD<4 above) but since it is already pretty hairy, it
+[ // seems prudent to separate this out and not make it any more unreadable.
+
+def{ compile	[	| w ]
+
+[ // the calling code is expected to have the following layout:
+[ //	addr:	| '{' | compile |
+[ //	addr+3:	| '{' | foo_cfa |
+[ // and 'w' will be pointing at addr+3 when compile is being executed. Ideally
+[ // all we need to do is to copy the 3 bytes starting at 'w' and push addr+6.
+[ // But this variant of compile, expands the body of the primitive in place.
+[ // This way it leaves the return stack untouched - this is required for >r/r>
+
+	r>	[ w	|   ] // get the next exec'utable address
+	dup	[ w w	|   ]
+
+	inc	[ w w+1	(w+1:l)	// cfa's are coded as '{' CFA, so this
+	dup	[ w w+1 w+1	// is to skip past the '{' and get the cfa
+	c@	[ w w+1 l	// But the address may not be aligned so we
+	swap	[ w l w+1	// can't just fetch it using @ so we go through
+	inc	[ w l w+2 (w+2:h)	// some gyrations to access the bytes
+	c@	[ w l h		// one at a time, first LSB then the MSB
+	8 <<	[ w l h<<8	// and then assemble it back into an address
+	|	[ w (h<<8)|8	// which can then be dereferenced to get
+	c@	[ w o		// get the actual bytecode which can then be
+	c,	[ w	\ o	// appended as a primitive to the dictionary
+	inc	[ w+1		// Finally, we move the return pointer past
+	$LITC +	[ w+l+1		// the bytes that were read and save it back
+	>r	[ 	| w+l+1 ]	// into the return stack
+}def
+
+#}if
+
+#{if THREAD>5
+
+step_61_assertion_failure_to_catch_missing_code_additions
 
 #}if
 
