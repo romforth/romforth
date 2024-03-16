@@ -138,6 +138,7 @@ INDEX
 	* 11 Mar '24
 	* 12 Mar '24
 	* 15 Mar '24
+	* 16 Mar '24
 
 04 Nov '22
 ----------
@@ -4818,3 +4819,33 @@ of the other ports had this problem since this is the only port that introduced
 the 'lit1' opcode. I ran the usual regression testing:
 	`./runallsteps msp430-fcode`
 just to make sure that the change to genrom didn't tickle any other bugs.
+
+16 Mar '24
+----------
+This update marks the conclusion of the msp430-fcode port. As in most of the
+ports that I've done so far, I started out with the fond hope that it would be
+done fairly quickly and my hopes were utterly decimated when it turned into a
+long drawn out slog fest especially towards the end when it turned out I needed
+to actually add support for an entirely new THREAD type (which I thought could
+be avoided altogether, at the start of this port).
+
+And to top things off I got called in for jury duty right in the middle of the
+port and I'm not sure what effect it had in slowing things down.
+
+This port also seemed to be beset by bugs everywhere I turned - most of them
+caused by alignment issues since I moved out of the comfort zone of the earlier
+port to explore a more compact byte encoding scheme.
+
+But in retrospect, it did turn out to be a useful port since it gives me a
+useful stepping stone to yet another port in which I hope to actually finish
+what I started out to do with this port which was to generate a compact version
+of this code which can fit into the constraints of a 2048 byte ROM and 128 byte
+RAM. As you can see from the update to the README of this commit, I missed that
+goal, although I did get fairly close.
+
+This implementation is definitely more compact than the earlier THREAD type 2
+implementation (although it does trade off speed to achieve that goal) but in
+this kind of a problem, to miss by an inch is as bad as to miss by a mile. So
+now that I've done some more analysis to track down exactly where the space is
+used up, it is now time to go all in on the 'F' bytecode idea which I discussed
+at some length in the earlier JOURNAL entry for 23 Feb '24.

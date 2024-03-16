@@ -1,31 +1,32 @@
 The following ports are complete:
 =================================
 
-.-------------.------.--------.---.-----------.------------.---------------.
-| CPU         | Bits | Endian | T | API       | Build      |     Test      |
-+-------------+------+--------+---+-----------+------------+---------------+
-| x86         |  16  | little | 1 | Baremetal | nasm       | DIY emulator  |
-| x86-as      |  16  | little | 1 | Baremetal | GNU as     | DIY emulator  |
-| PDP11       |  16  | little | 2 | Baremetal | GNU as     | simh/pdp11    |
-| x86-user    |  64  | little | 1 | libc/musl | gcc/zig cc | Host/Native   |
-| C/x86       |  64  | little | 3 | libc/musl | gcc/zig cc | Host/Native   |
-| x86-32      |  32  | little | 1 | libc/musl | gcc/zig cc | Host32/Native |
-| x86-sys     |  64  | little | 1 | Linux/sys | GNU as     | Host/Native   |
-| m68k        |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-m68k     |
-| sparc       |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-sparc    |
-| z80-c       |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
-| z80         |  16  | little | 1 | Baremetal | sdasz80    | ucsim/sz80    |
-| z180-sdcc   |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
-| z80n-sdcc   |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
-| msp430-as   |  16  | little | 2*| Baremetal | msp430-gcc | mspdebug      |
-| arm-zigcc   |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-aarch64  |
-| arm64-sys   |  64  | little | 1 | Linux/sys | GNU as     | qemu-aarch64  |
-| riscv-zigcc |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-riscv64  |
-| rv64-sys    |  64  | little | 1 | Linux/sys | GNU as     | qemu-riscv64  |
-| rv32-sys    |  32  | little | 1 | Linux/sys | GNU as     | qemu-riscv32  |
-| msp430-stc  |  16  | little | 4 | Baremetal | msp430-gcc | mspdebug      |
-| z80-stc     |  16  | little | 4 | Baremetal | sdasz80    | ucsim/sz80    |
-'-------------'------'--------'---'-----------'------------'---------------'
+.--------------.------.--------.---.-----------.------------.---------------.
+| CPU          | Bits | Endian | T | API       | Build      |     Test      |
++--------------+------+--------+---+-----------+------------+---------------+
+| x86          |  16  | little | 1 | Baremetal | nasm       | DIY emulator  |
+| x86-as       |  16  | little | 1 | Baremetal | GNU as     | DIY emulator  |
+| PDP11        |  16  | little | 2 | Baremetal | GNU as     | simh/pdp11    |
+| x86-user     |  64  | little | 1 | libc/musl | gcc/zig cc | Host/Native   |
+| C/x86        |  64  | little | 3 | libc/musl | gcc/zig cc | Host/Native   |
+| x86-32       |  32  | little | 1 | libc/musl | gcc/zig cc | Host32/Native |
+| x86-sys      |  64  | little | 1 | Linux/sys | GNU as     | Host/Native   |
+| m68k         |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-m68k     |
+| sparc        |  32  |  big   | 1 | Linux/sys | GNU as     | qemu-sparc    |
+| z80-c        |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
+| z80          |  16  | little | 1 | Baremetal | sdasz80    | ucsim/sz80    |
+| z180-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
+| z80n-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/sz80    |
+| msp430-as    |  16  | little | 2*| Baremetal | msp430-gcc | mspdebug      |
+| arm-zigcc    |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-aarch64  |
+| arm64-sys    |  64  | little | 1 | Linux/sys | GNU as     | qemu-aarch64  |
+| riscv-zigcc  |  64  | little | 3 | libc/musl | gcc/zig cc | qemu-riscv64  |
+| rv64-sys     |  64  | little | 1 | Linux/sys | GNU as     | qemu-riscv64  |
+| rv32-sys     |  32  | little | 1 | Linux/sys | GNU as     | qemu-riscv32  |
+| msp430-stc   |  16  | little | 4 | Baremetal | msp430-gcc | mspdebug      |
+| z80-stc      |  16  | little | 4 | Baremetal | sdasz80    | ucsim/sz80    |
+| msp430-fcode |  16  | little | 5 | Baremetal | msp430-gcc | mspdebug      |
+'--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
 	T : The "thread" type used in the interpreter - this needs some form of
@@ -60,6 +61,17 @@ Notes for the table above:
 		PRIMSZ configuration variable.
 
 	Thread type 4 is used to denote subroutine threaded code (STC)
+
+	Thread type 5 is used to denote 'F' bytecode with the invocation format:
+		| '{'/enter | cfa:cell |
+		The cfa points to an address which contains a bytecode sequence
+		ending in '}'/exit - for eg: | ... | '}'/exit |
+		where the ... denotes an ASCII bytecode sequence.
+		The '{'/'}' shown above along with all the other primitives
+		use up a single ASCII byte. Unlike THREAD type 1, they need an
+		additional indirection through a 256 byte jumptable to get to
+		the actual offset of the machine executable code thus making it
+		slower than THREAD type 1 but much more compact than type 2
 
 	There is also a prim_var_deref setting which is meant to modify the
 	semantics of how cfa's are handled by the various threading schemes.
