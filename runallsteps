@@ -29,6 +29,7 @@ my $riscv32as_check=1;
 my $msp430stc_check=1;
 my $z80stc_check=1;
 my $msp430f_check=1;
+my $msp430_f_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -51,6 +52,7 @@ if (@ARGV) {
 	$msp430stc_check=0;
 	$z80stc_check=0;
 	$msp430f_check=0;
+	$msp430_f_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -73,6 +75,7 @@ if (@ARGV) {
 		$msp430stc_check=1 if ( $d eq "msp430-stc");
 		$z80stc_check=1 if ( $d eq "z80-stc");
 		$msp430f_check=1 if ( $d eq "msp430-fcode");
+		$msp430_f_check=1 if ( $d eq "msp430-f");
 	}
 }
 
@@ -203,6 +206,12 @@ $x=`cat msp430-fcode/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $msp430f_step=$step;
+
+my $msp430_f_step;
+$x=`cat msp430-f/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$msp430_f_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -530,6 +539,19 @@ msp430f_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the msp430 port\n";
 	system("cd msp430-fcode ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+msp430_f_port: {
+	last msp430_f_port unless ($msp430_f_check);
+	last msp430_f_port if ($i>$msp430_f_step);
+	@ARGV=("msp430-f/fpp.config.msp430");
+	open(my $fh, ">msp430-f/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the msp430 port\n";
+	system("cd msp430-f ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

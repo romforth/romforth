@@ -21,6 +21,7 @@ all :
 	(cd msp430-stc ; make)
 	(cd z80-stc ; make)
 	(cd msp430-fcode ; make)
+	(cd msp430-f ; make)
 
 allsteps :
 	./runallsteps
@@ -50,3 +51,4 @@ clean :
 	(cd msp430-stc ; make clean)
 	(cd z80-stc ; make clean)
 	(cd msp430-fcode ; make clean)
+	(cd msp430-f ; make clean)

@@ -139,6 +139,7 @@ INDEX
 	* 12 Mar '24
 	* 15 Mar '24
 	* 16 Mar '24
+	* 18 Mar '24
 
 04 Nov '22
 ----------
@@ -4849,3 +4850,60 @@ this kind of a problem, to miss by an inch is as bad as to miss by a mile. So
 now that I've done some more analysis to track down exactly where the space is
 used up, it is now time to go all in on the 'F' bytecode idea which I discussed
 at some length in the earlier JOURNAL entry for 23 Feb '24.
+
+18 Mar '24
+----------
+For the next port, I'm going all in on the idea documented in the JOURNAL entry
+of 23 Feb '24 to use ASCII characters to denote primitives and ASCII strings to
+denote definitions. But before jumping in, I'll start off with some analysis of
+how the ROM in the msp430-fcode port is currently used. Running the command:
+	`msp430-objdump -dx forth_dict | grep start`
+shows that the address of "start" (which, for all practial purposes, is the
+starting location in the code area) is 0xc048 and the ending location of the
+primitives is at label "here_pad" which is at address 0xc1a0. So the entire set
+of Forth primitives on MSP430 currently need 344 (=0xc1a0-0xc048) bytes.
+
+There are 128 jump table entries and 2 bytes are used for each ASCII character
+so that takes up 256 bytes. The "static" part of the dictionary along with its
+code contents extends from 0xc1a0 to 0xc872 and so that uses up the bulk of the
+ROM at 1746 bytes. In a "test" build (with TESTROM enabled), the testing codes
+clock in at 1232 bytes. But for a non-test build, we can set TESTROM=0 in the
+config file to bring that usage down to just 18 bytes (which is used for the
+machine independent initialization code, which sets up the return stack). That
+sums up the total space usage in the ROM. Here's a tabular representation:
+	Jump table:	256 bytes
+	Primitives:	344 bytes
+	Testing/Init:	1232 (or 18, if not testing)
+	Dictionary:	1746
+
+If we focus on just the space used by the dictionary, it is composed of two
+parts, the space required to keep track of the names of each word, as well as
+the space needed to store the bytecode corresponding to its definition. An easy
+way to bring down this usage is to use shorter/more compact names for each
+dictionary entry. We could take that approach to the limit, and try to map each
+word to a single ASCII character. Running:
+	`msp430-objdump -dx forth_dict | grep _nfa | grep text | wc -l`
+shows that only 107 characters out of the possible 128 characters are needed to
+do this, so it is clear that this is a viable solution.
+
+To see how many bytes I can save by doing this, I can run yet another one-liner
+	`grep ascii forth_dict.s  | sed 's/..ascii "//' | sed 's/."//' | wc -c`
+which tells me that I can save 438 bytes. Since the ROM usage in non-test mode
+is currently 2408 bytes for the msp430-fcode port, my hope is that I can knock
+it down to 1970 bytes (== 2408-438) by using this solution which should be more
+than sufficient to fit in the 2K ROM limit of the MSP430G2231IN14 device that I
+have on hand.
+
+My current plan is that I should be able to make small changes to the existing
+msp430-fcode port (mostly only to the dictionary handling part) to replace the
+current use of Forth word names with 'F' bytecode/ASCII mappings. As a mnemonic
+for the use of single byte ASCII characters in 'F' bytecode, I'm going to call
+this port "msp430-f" and for step 0, I'll start off with a copy of msp430-fcode
+modifying just forth.S and code.prims by stripping off most of the current code
+just enough to get things working.
+
+Although my current plan is to keep this port as close to the "msp430-fcode" as
+possible, the use of characters instead of dictionary words to invoke defined
+words means that I cannot used the THREAD type of 5 which I used for that port
+so I'll need to introduce yet another THREAD type. I'll pick the next available
+number sequentially, so the "msp430-f" port will be THREAD type 6.

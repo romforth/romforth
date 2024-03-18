@@ -1,0 +1,18 @@
+# forth.S : initialization and glue code
+#
+# Copyright (c) 2024 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+	.cpu 430
+start:
+	jmp bye
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDICT
+#include "prims_dict.s"
+#else
+#include "prims.s"
+#endif
