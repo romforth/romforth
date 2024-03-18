@@ -22,7 +22,7 @@ jmptbl:
 	.word bye
 
 rom:
-	.byte 0x7f
+#include "rom.s"
 
 #define USEDEFS 0
 #define USEDICT 0
