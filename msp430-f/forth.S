@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+#define sp	R1
 #define ip	R4
 #define i	R5
 #define w	R6
@@ -11,6 +12,7 @@
 
 	.cpu 430
 start:
+	mov #spbase, sp
 	mov #rom, ip
 
 realnext:
@@ -27,3 +29,7 @@ realnext:
 #else
 #include "prims.s"
 #endif
+
+	.data
+	.org 50
+spbase:
