@@ -6,5 +6,5 @@
 
 $0x7F	bye	: nop
 $32	next	: jmp realnext
-<	key	: mov #'f', tos ;
+<	key	: mov #0xff, w ; mov.b @w, tos ;
 >	emit	: mov #0xff, w ; mov.b tos, @w ;
