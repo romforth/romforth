@@ -12,3 +12,4 @@ $32	next	: jmp realnext
 >	emit	: mov #0xff, w ; mov.b tos, @w ; drop ;
 1	lit1	: dup ; mov.b @ip+, tos ;
 n	neg	: inv tos ; inc tos ;
+j	j	: mov.b @ip+, tmp ; add tmp, ip ;
