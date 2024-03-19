@@ -142,7 +142,6 @@ while (<>) {
 		print "#define $1 $2\n";
 		next;
 	} elsif (/^var\s+(\S+)\s+(.*)$/) {	# variables
-		dumptbl() unless ($dumpedtbl);
 		($f)=($1);
 		print $mh "var $f $f\n";# create dictionary entry for variables
 		if ($gendict) {
@@ -156,6 +155,8 @@ while (<>) {
 	chomp;
 	die "unknown declaration: '$_'";
 }
+
+dumptbl() unless ($dumpedtbl);
 
 print $mh "label fake $label\n";
 if ($gendict) {

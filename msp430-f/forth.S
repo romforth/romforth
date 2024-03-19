@@ -6,6 +6,8 @@
 
 #define ip	R4
 #define i	R5
+#define w	R6
+#define tos	R7
 
 	.cpu 430
 start:
@@ -16,13 +18,6 @@ realnext:
 	rla i
 	add #jmptbl, i
 	br @i
-
-jmptbl:
-	.skip 254,0
-	.word bye
-
-rom:
-#include "rom.s"
 
 #define USEDEFS 0
 #define USEDICT 0
