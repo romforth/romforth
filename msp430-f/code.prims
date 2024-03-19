@@ -14,3 +14,4 @@ $32	next	: jmp realnext
 n	neg	: inv tos ; inc tos ;
 j	j	: mov.b @ip+, tmp ; sxt tmp ; add tmp, ip ;
 =	jz	: and tos, tos ; drop ; jz j ; add #1, ip ;
+$35	jnz	: and tos, tos ; drop ; jnz j ; add #1, ip ;
