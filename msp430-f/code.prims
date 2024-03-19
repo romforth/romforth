@@ -23,3 +23,4 @@ P	dip	: push nos ;
 -	-	: neg
 +	+	: nip ; add nos, tos ;
 &	&	: nip ; and nos, tos ;
+|	|	: nip ; bis nos, tos ;
