@@ -7,6 +7,7 @@
 $0x7F	bye	: nop
 $32	next	: jmp realnext
 [	dup	: push tos ;
+d	2drop	: pop tos
 ]	drop	: pop tos ;
 <	key	: dup ; mov #0xff, w ; mov.b @w, tos ;
 >	emit	: mov #0xff, w ; mov.b tos, @w ; drop ;
