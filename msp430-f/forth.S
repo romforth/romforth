@@ -36,3 +36,4 @@ realnext:
 	.data
 	.org 50
 spbase:
+mem:

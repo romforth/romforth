@@ -29,3 +29,6 @@ P	dip	: push nos ;
 ^	^	: nip ; xor nos, tos ;
 S	swap	: nip ; dup ; mov nos, tos ;
 @	@	: mov @tos, tos ;
+!	!	: pop @tos ; drop ;
+
+var here .word mem
