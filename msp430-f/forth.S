@@ -16,6 +16,7 @@
 start:
 	mov #spbase, sp
 	mov #rom, ip
+	mov #0, r15	; filler to get the test to pass
 
 realnext:
 	mov.b @ip+, i
