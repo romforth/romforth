@@ -16,7 +16,12 @@
 start:
 	mov #spbase, sp
 	mov #rom, ip
-	mov #0, r15	; filler to get the test to pass
+	mov #0, r15
+data_copy:
+	mov _unexpected_+2(r15), __data_start(r15)
+	incd r15
+	cmp #6, r15
+	jnz data_copy
 
 realnext:
 	mov.b @ip+, i

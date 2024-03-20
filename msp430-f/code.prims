@@ -30,5 +30,8 @@ P	dip	: push nos ;
 S	swap	: nip ; dup ; mov nos, tos ;
 @	@	: mov @tos, tos ;
 !	!	: pop @tos ; drop ;
+C	c@	: mov.b @tos, tos ;
+c	c!	: pop.b @tos ; drop ;
 
 var here .word mem
+var state .byte 1
