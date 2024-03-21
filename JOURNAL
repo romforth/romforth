@@ -140,6 +140,7 @@ INDEX
 	* 15 Mar '24
 	* 16 Mar '24
 	* 18 Mar '24
+	* 21 Mar '24
 
 04 Nov '22
 ----------
@@ -4907,3 +4908,15 @@ possible, the use of characters instead of dictionary words to invoke defined
 words means that I cannot used the THREAD type of 5 which I used for that port
 so I'll need to introduce yet another THREAD type. I'll pick the next available
 number sequentially, so the "msp430-f" port will be THREAD type 6.
+
+21 Mar '24
+----------
+It has been smooth sailing so far on this port since I could just replicate the
+code from the "msp430-fcode" port and be sure that things would "just work".
+
+That situation unfortunately changed at this step since I needed to handle the
+newly added THREAD type 6. That change was made at the start of this port so it
+caught me a bit unaware since it is a couple of days already. It's a fairly
+simple fix though since I just needed to extend the code changes done in THREAD
+type 5 for THREAD type 6 as well but since it is part of the shared code, I ran
+a full regression test (using a toplevel `make`), just to be safe.

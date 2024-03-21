@@ -413,11 +413,11 @@ if{		[	// not taken
 
 1		[ 1
 2		[ 1 2
-#{if THREAD!=5
+#{if THREAD!=5 and THREAD!=6
 lit		[ 1 2	// lit escapes the following byte(s)
 #}if
-#{if THREAD==5
-lit1		[ 1 2	// lit1 escapes the following byte in THREAD type 5
+#{if THREAD==5 or THREAD==6
+lit1		[ 1 2	// lit1 escapes the following byte in THREAD type 5/6
 #}if
 #{if big_endian==0
 swap		[ 1 2	// escaped by lit
