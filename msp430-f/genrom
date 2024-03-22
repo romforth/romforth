@@ -21,24 +21,43 @@ open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my $map={};	# mapping from forth words to assembly labels
 my $mapch={};	# mapping from forth words to byte codes in F
+my $rvmapch=[];	# reverse mapping from byte codes in F to forth words
 my $varmap={};	# mapping from forth words to variables
 my $defs={};	# mapping from forth words to definition labels
 
 my ($t,$f,$l);	# the type($t), forth name($f) and the assembler label ($l)
 my $c;		# the bytecode in F
+my $nc=1;	# next available bytecode in F, 0/"exit" is already taken
 
 sub code {
 	my ($f,$l,$c)=@_;
 	$map->{$f}=$l;	# generate the mapping from name to label
 	$mapch->{$f}=$c; # generate the mapping from name to bytecode
+	$rvmapch->[$c]=$l; # generate the reverse mapping as well
 }
 sub var {
 	my ($f,$l)=@_;
 	$varmap->{$f}=$l;
 }
+
+sub nextfreechar {
+	my ($f)=@_;
+	my $i=$nc;
+	while ($i<128) {
+		last unless $rvmapch->[$i++];
+	}
+	die "no free/available characters" if ($i==128);
+	$rvmapch->[$i-1]=$f;
+	$mapch->{$f}=$i-1;
+	$nc=$i;
+	return $i-1;
+}
+
 sub olddef {
-	my ($f,$l)=@_;
+	my ($f,$l,$c)=@_;
 	$defs->{$f}=$l;
+	$mapch->{$f}=$c;
+	$rvmapch->[$c]=$l;
 }
 
 my $prev="0";
@@ -191,7 +210,8 @@ sub def {
 	}
 	if ($state == 1) {
 		$l=$label++;
-		print $mh "def $w $l\n"; # create mapping in "dictionary"
+		my $c=nextfreechar($w);
+		print $mh "def $w $l $c\n"; # create mapping in "dictionary"
 		if ($gendict) {
 			my $len=length($w);
 			print "\t.align 1\n";
@@ -204,19 +224,21 @@ sub def {
 			print "$l","_lfa:\t.word $prev\n";
 			$prev="$l"."_lfa";
 		}
+		print "\t.align 1\n";
 		print "$l:	# $w\n"; # and generate assembly code
 		$defs->{$w}=$l;		 # for setting up a local mapping
+		print "\t.word 0x128b\n";
 		$state=2;
 		return 1;
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.byte '}'\n";
+			print "\t.byte 0\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\t.byte '}'\n";
+			print "\t.byte 0\n";
 			$state=0;
 			$immediate=0;
 			return 1;
@@ -250,8 +272,7 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit2($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need their
-			print "\t.byte '{'\n";
-			print "\t.word $m # $f\n";	# starting address
+			print "\t.byte ", $mapch->{$f}, " # $f\n"; # ASCII byte
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
@@ -287,3 +308,13 @@ if ($gendict) {
 	print $mh "label prev $prev\n";
 }
 close $mh;
+exit 0 if ($gendefs);
+print "\t.align 1\n";
+print "jmptbl:\n";
+for my $i (0..127) {
+	if ($l=$rvmapch->[$i]) {
+		print "\t.word ", $rvmapch->[$i], "\n";
+	} else {
+		print "\t.word 0\n";
+	}
+}

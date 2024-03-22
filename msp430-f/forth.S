@@ -12,17 +12,25 @@
 #define tmp	R8
 #define nos	R9
 #define rp	R10
+#define nr	R11
 
 	.cpu 430
 start:
 	mov #spbase, sp
 	mov #rom, ip
 	mov #0, r15
+	mov #linkage, nr
 data_copy:
 	mov _unexpected_+2(r15), __data_start(r15)
 	incd r15
 	cmp #6, r15
 	jnz data_copy
+	jmp realnext
+
+linkage:
+	mov ip, @rp
+	incd rp
+	pop ip
 
 realnext:
 	mov.b @ip+, i

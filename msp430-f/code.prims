@@ -39,6 +39,7 @@ c	c!	: pop.b @tos ; drop ;
 f	>r	: mov tos, @rp ; incd rp ; drop ;
 F	r>	: dup ; decd rp ; mov @rp, tos ;
 x	exec	: mov tos, nos ; drop ; rla nos ; add #jmptbl, nos ; br @nos
+$0	exit	: decd rp ; mov @rp, ip ;
 
 var here .word mem
 var state .byte 1

@@ -87,11 +87,6 @@ sub dumptbl {
 EOF
 	print "rom:\n";
 	print qq(#include "rom.s"\n);
-	print qq(\t.align 1\n);
-	print "jmptbl:\n";
-	for my $i (0..$lastmapch) {
-		print "\t.word ", $mapch->[$i], "\n";
-	}
 	$dumpedtbl=1;
 	print "\t.data\n";
 }
