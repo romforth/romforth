@@ -141,6 +141,7 @@ INDEX
 	* 16 Mar '24
 	* 18 Mar '24
 	* 21 Mar '24
+	* 22 Mar '24
 
 04 Nov '22
 ----------
@@ -4920,3 +4921,41 @@ caught me a bit unaware since it is a couple of days already. It's a fairly
 simple fix though since I just needed to extend the code changes done in THREAD
 type 5 for THREAD type 6 as well but since it is part of the shared code, I ran
 a full regression test (using a toplevel `make`), just to be safe.
+
+22 Mar '24
+----------
+By design, the "msp430-f" port does not include what most folks would consider
+to be an essential part of any Forth implementation: the dictionary. Instead,
+the usual Forth dictionary is replaced by a lookup table, indexed by an ASCII
+character, which stands in for the "name" of a Forth word/definition. This fits
+into the overall philosophy of "definitions are strings, named by characters".
+
+In many ways this is a re-packaged version of the `msp430-fcode` port which was
+done prior to this port except that calls are now space optimized down to use a
+single character (instead of '{' + addr). This makes THREAD type 6 a hybrid of
+THREAD type 5 which was used in the `msp430-fcode` port and THREAD type 2 which
+was used in the `msp430-as` port.
+
+Since there is no dictionary, the rest of the steps (from step 41 onward) don't
+make sense for this port, so I'll go ahead and call this step as the final step
+and mark this port complete.
+
+And now for the $2K question : does this code now fit within the constraints of
+the 2K ROM of the lowest end MSP430 devices? To check this I can set TESTROM to
+0 in the configuration file `fpp.config.msp430` and run `make` to take a look
+at the output generated in `test.log`. The output from mspdebug reports that it
+only needed to write 946 bytes starting from address 0xc000 so it looks like we
+are well within the 2K ROM limit with almost 1K of ROM to spare for the actual
+"application" payload that the user can choose to write.
+
+Now, I'm aware that there are ports of Forth (on x86) that have a much smaller
+footprint. "sectorforth" famously fits in just a "boot sector" of 512 bytes and
+"milliforth" compresses this down even further. The problem I see with those
+implementations is that they fall under the category of "Turing tar pits" which
+have chosen to tradeoff performance for space. Also, since the entire code base
+is in x86 assembly, porting it to other architectures is left as an exercise
+for the reader, whereas this implementation is designed, from the get go, to be
+"ultra portable", using a series of "gradual implementation steps" with sanity
+checks to verify every step along the way. And finally, as proof of portability
+it is already available for over a dozen different architectures from 16 bits
+all the way to 64 bits.

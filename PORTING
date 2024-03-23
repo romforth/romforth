@@ -26,6 +26,7 @@ The following ports are complete:
 | msp430-stc   |  16  | little | 4 | Baremetal | msp430-gcc | mspdebug      |
 | z80-stc      |  16  | little | 4 | Baremetal | sdasz80    | ucsim/sz80    |
 | msp430-fcode |  16  | little | 5 | Baremetal | msp430-gcc | mspdebug      |
+| msp430-f     |  16  | little | 6 | Baremetal | msp430-gcc | mspdebug      |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
@@ -72,6 +73,15 @@ Notes for the table above:
 		additional indirection through a 256 byte jumptable to get to
 		the actual offset of the machine executable code thus making it
 		slower than THREAD type 1 but much more compact than type 2
+
+	Thread type 6 is used to denote 'F' bytecode with the invocation format:
+		| bytecode |
+	where the bytecode can either be a designated ASCII character (used for
+	primitives) or any byte in the 0-255 range (usually auto generated) for
+	other defined words. Unlike THREAD type 5, this uses the ASCII NUL byte
+	to terminate definitions in keeping with the slogan "definitions are
+	strings, named by characters". This is a space optimized version which
+	does not have a dictionary, just a lookup table for each character.
 
 	There is also a prim_var_deref setting which is meant to modify the
 	semantics of how cfa's are handled by the various threading schemes.
