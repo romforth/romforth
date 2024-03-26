@@ -268,7 +268,12 @@ my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
-			print "\t.byte '", chr($mapch->{$f}), "' # $f\n";
+			my $c=$mapch->{$f};
+			if ($c<32 or $c>126) { # cpp whines when unprintable
+				print "\t.byte ", $c," # $f\n";
+			} else {
+				print "\t.byte '", chr($c), "' # $f\n";
+			}
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			lit2($m);		# push their address
 		} elsif ($m=$defs->{$f}) { # definitions just need their
