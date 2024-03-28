@@ -284,6 +284,8 @@ def{ parse		[ d
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==39
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -294,6 +296,8 @@ def{ repl
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=40
 
@@ -335,6 +339,8 @@ def{ atoi			[ addr n
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==40
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -352,6 +358,8 @@ def{ repl
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=41
 
@@ -400,6 +408,8 @@ def{ same			[ addr name n
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==41
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -419,6 +429,8 @@ def{ repl
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=42
 
@@ -464,6 +476,8 @@ def{ match		[ addr n lfa
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==42
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -479,6 +493,8 @@ def{ repl
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=43
 
@@ -512,6 +528,8 @@ dup .
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==43
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -532,6 +550,8 @@ def{ repl
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=44
 
@@ -624,6 +644,8 @@ def{ defexec		[ cfa
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==44 || step==45
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -679,6 +701,8 @@ def{ repl
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=47
 
@@ -1180,6 +1204,8 @@ def{ number		[ n
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==52
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -1217,6 +1243,8 @@ def{ repl
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=54
 
@@ -1429,6 +1457,8 @@ def{ cpl_ex			[ cfa
 
 #}if
 
+#{ifdef TESTROM
+
 #{if step==53 || step==54 || step==55 || step>=56
 
 [ Assume that this definition of the repl is just a stepping stone, so it is
@@ -1493,6 +1523,8 @@ def{ outer
 }def
 
 #}if
+
+#}ifdef
 
 #{if step>=57
 

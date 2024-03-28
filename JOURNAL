@@ -142,6 +142,7 @@ INDEX
 	* 18 Mar '24
 	* 21 Mar '24
 	* 22 Mar '24
+	* 28 Mar '24
 
 04 Nov '22
 ----------
@@ -4959,3 +4960,44 @@ for the reader, whereas this implementation is designed, from the get go, to be
 checks to verify every step along the way. And finally, as proof of portability
 it is already available for over a dozen different architectures from 16 bits
 all the way to 64 bits.
+
+28 Mar '24
+----------
+Analyzing the ROM usage on `msp430-f` by redoing the same process I'd used for
+`msp430-fcode` (on 18 Mar '24) shows the following high level split:
+
+	rom		18	c29d -> c2af
+	Jumptable	256	c2b0 -> c3b0
+	Definitions	259	c19a -> c29d
+	Primitives	338	c048 -> c19a
+
+Since the primitives and definitions account for the bulk of the ROM usage, I
+can try to break those down into more granular pieces to look at the largest
+chunks. Looking at that output showed that even with the TESTROM disabled, some
+of the test definitions were making their way into the final image.
+
+The fix for that was to liberally sprinkle `#ifdef TESTROM` within defs.4th and
+that change is part of this commit. After doing that, re-running the analysis
+to list the largest primitives/definitions now shows this:
+	...
+	lbl028	14	c1ec -> c1fa	0=
+	lbl035	14	c21c -> c22a	ws?
+	lbl014	20	c16a -> c17e	<<
+	lbl015	20	c17e -> c192	>>
+	lbl023	20	c1cc -> c1e0	~
+	lbl036	22	c22a -> c240	wscmpr
+	lbl044	34	c270 -> c28f	atoi
+
+Looking through the generated `defs.s` to peruse the body of definition of each
+of the words in the above list shows that the code is reasonably compact so I'm
+not going to obsess about code golfing it down any further. So that leaves me
+with the question of what to work on next.
+
+In my copious free time, I've been doing some research into microcontrollers
+that are even smaller (and cheaper) than the smallest MSP430 devices, and one
+of the more intriguing ones that I happened to see is a microcontroller that
+was in the news (a while back, in 2019) since it was listed at just 3 cents.
+Yes, I'm talking about the PMS150 series from Padauk which boasts of a whopping
+1KB of ROM and 64 bytes of RAM. The SDCC toolchain (which was used previously
+for the Z80 port) lists the `pdk13` microcontroller as supported so it looks
+like a good fit to see how much Forth functionality can be shoehorned into it.
