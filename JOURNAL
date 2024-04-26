@@ -143,6 +143,7 @@ INDEX
 	* 21 Mar '24
 	* 22 Mar '24
 	* 28 Mar '24
+	* 26 Apr '24
 
 04 Nov '22
 ----------
@@ -5001,3 +5002,80 @@ Yes, I'm talking about the PMS150 series from Padauk which boasts of a whopping
 1KB of ROM and 64 bytes of RAM. The SDCC toolchain (which was used previously
 for the Z80 port) lists the `pdk13` microcontroller as supported so it looks
 like a good fit to see how much Forth functionality can be shoehorned into it.
+
+26 Apr '24
+----------
+Spring break and tax time intervened as usual and so I've been mostly focused
+on other things. But I wasn't completely ignoring this project since it kept
+chugging away in the back of my mind. I spent a fair bit of time thinking of
+ways to make the bytecode used in fcode even more compact and some of this was
+driven by the constraints of the Padauk microcontroller which I talked about in
+the previous JOURNAL entry. One path that I explored quite a bit was to check
+whether Huffman style variable length bytecodes might make a difference.
+
+Looking through the definitions in defs.s after a build, it is clear that the
+bytecode most frequently used in the "fcode" build is '{'/enter which is used
+to invoke other words and the second most used bytecode is the prefix for
+literals ('1'/lit1 and '2'/lit2). This led to an attempt to build a Huffman
+style frequency tree of all of the bytecodes. A full on attempt at variable
+length encoding might make the decoding pretty complex, thus negating the
+effects of any savings in space from the more compact encoding. So I tried to
+come up with a "not so variable length" encoding scheme which is compact, yet
+easily decodable. This JOURNAL entry is an attempt to document the thinking
+that went into the design.
+
+Just as I've mentioned earlier in the JOURNAL entry for 05 Feb '24, we could go
+with a TX-0 like encoding for call/lit which can be compactly expressed as:
+	0 X	: push X
+	1 X	: exec X
+where the "exec" is a wrapper for everything else (the rest of the primitives).
+
+But that scheme does not take into account the jmp/br0/call primitives which
+are seen quite frequently and also prefixed to other addresses/offsets. So the
+second attempt at the opcode design resulted in this:
+	00 X	: push X
+	01 X	: call X
+	100 X	: jmp X
+	101 X	: br0 X
+	110 X	: br1 X
+	111 X	: exec X
+
+If a jmp with offset 0 can be reinterpreted as "exit"/return, just the top 3
+opcodes listed above account for over 40% of the bytecodes. Rather than try to
+slice and dice my way into finer grained variable length encodings, I'll just
+shoehorn everything else into the remaining 3 opcodes listed above for the rest
+of the encodings.
+
+The 111 prefix is prepended to all the primitives that don't need additional
+offsets and if we continue to use bytecodes for these, the part of the opcode
+marked X will need to fit in the remaining 5 bits so this gives us 2^5==32
+primitives which is just a wee bit shy of the total of 34 remaining primitives
+that I've been using so far in all of the other ports. Since the br0/br1 opcode
+with 0 offsets are no-ops, that gives me space for 2 more primitives which will
+make everything fit quite nicely.
+
+Using this scheme, rather than using variable length prefixes, we can get away
+with a fixed prefix of 3 bits which can be easily decoded into an 8 entry
+jumptable so it appears to be at the right sweet spot between going whole hog
+into Huffman territory vs ease/compactness of decoding.
+
+Since jmp/br0/br1 need offsets for both positive and negative jumps, the 5 bits
+seems a bit tight since it allows offsets of only -16 .. 15 but I'll try to see
+what I can get away with as I wend my way through this implementation.
+
+My estimate is that I might be able to shave off about 150 to 200 bytes using
+this encoding - but that's just speculation purely based on the analysis I've
+done so far. So I guess it's about time to go ahead and try it out to see if
+those savings actually pan out.
+
+If it does, I might then try using it for the Padauk port which I mentioned in
+my previous JOURNAL entry since the Padauk PMS150 has much tighter constraints
+than all of the microcontrollers that I have used so far.
+
+Even if it doesn't work out well for the Padauk microcontrollers, I guess I'll
+keep this as a possible instruction set for a processor on an FPGA that I keep
+dreaming about. But that is in a far off future that may or may not materialize
+so for now, I'll stick to implementing this on a VM. Since I've used zig as a
+build tool so far, I'm not going to be adding any new dependencies if I also
+code the new VM in zig, so that's what I plan to do next. It also gives me an
+excuse to try out zig's bit size types.
