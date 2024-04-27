@@ -2,7 +2,7 @@
 
 # runallsteps : regression test suite
 #
-# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2023-2024 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -30,6 +30,7 @@ my $msp430stc_check=1;
 my $z80stc_check=1;
 my $msp430f_check=1;
 my $msp430_f_check=1;
+my $nqhzig_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -53,6 +54,7 @@ if (@ARGV) {
 	$z80stc_check=0;
 	$msp430f_check=0;
 	$msp430_f_check=0;
+	$nqhzig_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -76,6 +78,7 @@ if (@ARGV) {
 		$z80stc_check=1 if ( $d eq "z80-stc");
 		$msp430f_check=1 if ( $d eq "msp430-fcode");
 		$msp430_f_check=1 if ( $d eq "msp430-f");
+		$nqhzig_check=1 if ( $d eq "nqh-zig");
 	}
 }
 
@@ -212,6 +215,12 @@ $x=`cat msp430-f/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $msp430_f_step=$step;
+
+my $nqhzig_step;
+$x=`cat nqh-zig/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$nqhzig_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -552,6 +561,19 @@ msp430_f_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the msp430 port\n";
 	system("cd msp430-f ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+nqhzig_port: {
+	last nqhzig_port unless ($nqhzig_check);
+	last nqhzig_port if ($i>$nqhzig_step);
+	@ARGV=("nqh-zig/fpp.config.nqh");
+	open(my $fh, ">nqh-zig/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the nqh-zig port\n";
+	system("cd nqh-zig ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

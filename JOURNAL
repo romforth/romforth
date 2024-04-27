@@ -144,6 +144,7 @@ INDEX
 	* 22 Mar '24
 	* 28 Mar '24
 	* 26 Apr '24
+	* 27 Apr '24
 
 04 Nov '22
 ----------
@@ -5079,3 +5080,16 @@ so for now, I'll stick to implementing this on a VM. Since I've used zig as a
 build tool so far, I'm not going to be adding any new dependencies if I also
 code the new VM in zig, so that's what I plan to do next. It also gives me an
 excuse to try out zig's bit size types.
+
+27 Apr '24
+----------
+As mentioned in the JOURNAL entry yesterday, the starting point for this port
+was to implement a Huffman encoded bytecode but along the way, for simplicity,
+it turned into a "not quite Huffman" bytecode so this port is named "nqh-zig"
+(the "-zig" part is because I decided to implement the VM using zig, primarily
+as a learning exercise for me to get familiar with Zig and to take its bit size
+types for a spin).
+
+I'm starting small without any of the usual genrom/genprims scripts using just
+a tiny VM implemented in Zig. The fpp.config.nqh file is just a copy of the C
+version - it is just a placeholder until things get fleshed out.
