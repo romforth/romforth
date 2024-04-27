@@ -6,7 +6,7 @@
 
 all : forth
 	./forth
-forth : forth.zig
+forth : forth.zig rom.zig
 	zig fmt forth.zig
 	zig build-exe forth.zig
 

@@ -4,20 +4,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Please see the LICENSE file for the Affero GPL 3.0 license details
 
-const Bytecode = enum(u8) {
-    bye,
-};
-
-const rom = [_]Bytecode{
-    .bye,
-};
+const rom = @import("rom.zig");
 
 var ip: usize = 0;
-var i: Bytecode = undefined;
+var i: rom.Bytecode = undefined;
 
 pub fn main() !void {
     out: while (true) {
-        i = rom[ip];
+        i = rom.bytes[ip];
         ip += 1;
         switch (i) {
             .bye => break :out,
