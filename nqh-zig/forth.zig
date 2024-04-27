@@ -13,6 +13,8 @@ var tos: i8 = undefined;
 
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
+    const stdin = std.io.getStdIn().reader();
+
     out: while (true) {
         i = rom.bytes[ip];
         ip += 1;
@@ -22,7 +24,7 @@ pub fn main() !void {
                 try stdout.print("{c}", .{@as(u8, @intCast(tos))});
             },
             .key => {
-                tos = 'f';
+                tos = @intCast(try stdin.readByte());
             },
         }
     }
