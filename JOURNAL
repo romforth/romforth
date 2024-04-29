@@ -145,6 +145,7 @@ INDEX
 	* 28 Mar '24
 	* 26 Apr '24
 	* 27 Apr '24
+	* 29 Apr '24
 
 04 Nov '22
 ----------
@@ -5093,3 +5094,30 @@ types for a spin).
 I'm starting small without any of the usual genrom/genprims scripts using just
 a tiny VM implemented in Zig. The fpp.config.nqh file is just a copy of the C
 version - it is just a placeholder until things get fleshed out.
+
+29 Apr '24
+----------
+For the initial version of the VM I didn't use the encoding that was described
+in the JOURNAL entry for 26 Apr '24. Instead, for simplicity, I had implemented
+a simple bytecode interpreter. With the changes in this commit, that situation
+is now resolved and I have a "Nqhcode" ("not quite Huffman" encoding/decoding)
+interpreter in place.
+
+The initial version of the enum code that I wrote managed to trigger an honest
+to goodness bug in the zig compiler which caused it to segv. Since I was using
+zig version 0.11.0-dev.2725+4374ce51b which is quite a bit behind the times I
+decided to "upgrade" it to the latest version of zig which is available from
+their website which happens to be zig-linux-x86_64-0.13.0-dev.46+3648d7df1.
+
+Since zig is used as the C compiler (via `zig cc`) for some of the earlier
+ports, I decided to play it safe and ran a full regression test (which is just
+a toplevel `make` away). Sure enough, it uncovered a regression - in all the
+ports that use `zig cc` (and only in those ports) so it was clear that it was
+the newer version that was triggering the regression.
+
+After some analysis, this turned out to be due to an issue that was discussed
+almost exactly a year ago in the JOURNAL entry of 20 Apr '23 so to play it safe
+I decided to not upgrade all the way to version 13 and stick to the "released"
+version of 11 which is zig-linux-x86_64-0.11.0. That small upgrade seems to be
+sufficient to get past the segv and not regress anything else so I've updated
+the README to track the newer version of zig that I'll be using from now on.

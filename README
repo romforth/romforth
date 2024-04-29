@@ -158,7 +158,7 @@ testing, older/newer versions may or may not work)
 		- riscv64
 		- riscv32
 	- simh (open-simh V4.0-0 Current git commit id: 33aad325)
-	- zig (0.11.0-dev.2725+4374ce51b)
+	- zig (0.11.0)
 	- qemu (7.1.0, via nix)
 	- sdcc(ucsim) (4.2.0 #13081 (Linux), ucsim: 0.6.4)
 	- m4 ((GNU M4) 1.4.17)
