@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Please see the LICENSE file for the Affero GPL 3.0 license details
 
-// rom.zig : "not quite Huffman" encoding and ROM layout
+// rom.m4 : "not quite Huffman" encoding and ROM layout
 // See JOURNAL entry dated 26 Apr '24 for opcode details
 
 pub const Opcode = enum(u3) {
-	lit1,
-	lit2,
-	call1,
-	call2,
-	jmp,
-	br0,
-	br1,
-	prims,
+    lit1,
+    lit2,
+    call1,
+    call2,
+    jmp,
+    br0,
+    br1,
+    prims,
 };
 
 pub const Prims = enum(u5) {
@@ -30,7 +30,5 @@ pub const Nqhcode = packed struct {
 };
 
 pub const bytes = [_]Nqhcode{
-	Nqhcode{.op=.prims,.value=.key},
-	Nqhcode{.op=.prims,.value=.emit},
-	Nqhcode{.op=.prims,.value=.bye},
+include(`rom_zig.m4')
 };

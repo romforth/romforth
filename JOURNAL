@@ -146,6 +146,7 @@ INDEX
 	* 26 Apr '24
 	* 27 Apr '24
 	* 29 Apr '24
+	* 30 Apr '24
 
 04 Nov '22
 ----------
@@ -5121,3 +5122,14 @@ I decided to not upgrade all the way to version 13 and stick to the "released"
 version of 11 which is zig-linux-x86_64-0.11.0. That small upgrade seems to be
 sufficient to get past the segv and not regress anything else so I've updated
 the README to track the newer version of zig that I'll be using from now on.
+
+30 Apr '24
+----------
+Given all of the existing code, I'm trying to bring the zig port into the fold
+without making it too different from the stuff that is already out there.
+
+To start off, I've slightly modified the genrom script from the C port to auto
+generate the bytes that need to go into the rom but since I haven't quite
+figured out how to generate code at build time using Zig's comptime, so for now
+since Zig does not appear to have any kind preprocessor, I've chosen to use m4
+again - since it is part of the dependencies of this project already.

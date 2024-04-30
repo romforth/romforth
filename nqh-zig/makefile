@@ -19,6 +19,10 @@ fpp.config : stepfile fpp.config.nqh
 forth : forth.zig rom.zig
 	zig fmt forth.zig
 	zig build-exe forth.zig
+rom.zig : rom.m4 rom_zig.m4
+	m4 rom.m4 > rom.zig
+rom_zig.m4 : ../rom.4th ../fpp fpp.config genrom
+	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map > rom_zig.m4
 
 clean :
-	rm -f forth forth.o fpp.config test.out test.inp test.exp
+	rm -f forth forth.o fpp.config test.out test.inp test.exp rom_zig.m4 rom.map rom.zig
