@@ -1,3 +1,5 @@
 bye	: break :out
-emit	: { try stdout.print("{c}", .{tos}); }
-key	: { tos = try stdin.readByte(); }
+dup	: datastack[sp][d[sp]] = tos ; d[sp] += 1
+drop	: d[sp] -= 1 ; tos = datastack[sp][d[sp]]
+emit	: try stdout.print("{c}", .{@as(u8, @intCast(tos))}) ; drop
+key	: dup ; tos = try stdin.readByte()

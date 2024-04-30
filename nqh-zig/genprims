@@ -80,7 +80,7 @@ sub mapnames {
 	#print "count\[$xl\]++;\n";
 	#print "#endif\n";
 	$xl++;
-	push @$cnames, "$l,$f";
+	push @$cnames, "$l,";
 	if ($gendict) {
 		push @$headers, [$f,$l];
 	}
@@ -98,18 +98,20 @@ while (<>) {
 		} else {
 			mapnames($f, $label++);
 		}
+		print "{";
 		for my $w (split(' ;')) {
 			chomp $w;
-			$w="next" unless ($w);
+			$w=";" unless ($w);
 			$w=~s/^\s+//;
 			if ($l=$hash->{$w}) {
 				print "\t", join(";\n\t",@$l), ";\n";
-				push @$agg, @$l unless ($w eq "next");
+				push @$agg, @$l unless ($w eq ";");
 			} else {
-				print "\t$w,\n";
+				print "\t$w;\n";
 				push @$agg, $w;
 			}
 		}
+		print "},\n";
 		$hash->{"$f"}=[@$agg];
 		$agg=[];
 		next;
@@ -145,11 +147,11 @@ if ($gendict) {
 }
 
 close $mh;
-my $pf="profile.names";
+my $pf="prims.m4";
 open(my $ph, ">$pf") or die "can't open $pf for writing";
 my $x=0;
 for my $i (@$cnames) {
-	print $ph "$x $i\n";
+	print $ph "$i\n";
 	$x++;
 }
 close $ph;

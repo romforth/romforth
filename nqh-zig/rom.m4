@@ -17,9 +17,7 @@ pub const Opcode = enum(u3) {
 };
 
 pub const Prims = enum(u5) {
-    emit,
-    key,
-    bye,
+include(`prims.m4')
 };
 
 pub const Nqhcode = packed struct {

@@ -5140,3 +5140,14 @@ For generating the zig code for handling primitives, I've again used a copy of
 the genprims script from the C port with just enough modifications to get all
 of the current stuff working. I'm hoping to leverage m4 to handle any other
 preprocessing that may be required.
+
+---
+
+Adding support for dup/drop meant that I needed to handle Forth words nested
+within the code.prims definitions (since emit/key use drop/dup respectively)
+and that required a fair amount of rework of genprims and some formatting
+changes to code.prims to make it look similar to the code in all of the other
+ports. My initial plan had been to turn each of the definitions into m4 defines
+and then just process the entire file with m4 but I decided that I'm not in the
+mood for an extended struggle with m4 just now so I've handled everything in
+the genprims Perl script.

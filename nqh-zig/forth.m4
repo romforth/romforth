@@ -9,7 +9,13 @@ const rom = @import("rom.zig");
 
 var ip: usize = 0;
 var i: rom.Nqhcode = undefined;
-var tos: u8 = undefined;
+var tos: isize = undefined;
+
+const ns = 10;			// number of stacks
+const ds = 8;			// depth of the each stack
+var sp: usize = 0;		// the current stack which is in use
+var d: [ds]usize = undefined;	// set of stack pointers (indexed by sp)
+var datastack: [ns][ds]isize = undefined;	// set of stacks
 
 fn lit(_: rom.Prims) void {}
 fn call(_: rom.Prims) void {}
