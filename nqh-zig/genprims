@@ -1,0 +1,155 @@
+#!/usr/bin/perl -w
+
+# genprims : convert code.prims into zig code
+#
+# Copyright (c) 2022-2024 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+my $mf=shift;	# the map file to be generated
+
+my $gendict=0;
+if ($mf eq "-d") {
+	$gendict=1;
+	$mf=shift;	# the map file to be generated
+}
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
+my $lh;
+if ($gendict) {
+	open($lh, ">dict.h");
+}
+
+my ($f,$l);	# the forth name($f) and the C goto label ($l)
+
+my $prev="0";
+
+sub genheader {
+	my ($f,$l,$flag)=@_;
+	my $len=length($f);
+	my $fh=select $lh;
+	print "static const struct {\n";
+	if ($len%2==0) {
+		print "\tchar pad;\n";
+	}
+	print "\tchar name\[$len\];\n";
+	print "\tunsigned char nfa;\n";
+	print "\tlfa *prev;\n";
+	if ($flag) {	# not a variable
+		print "\tunsigned short cfa[];\n";
+	} else {	# variable
+		print "\tshort cfa;\n";
+		print "\tvoid *var;\n";
+		print "\tshort exit;\n";
+	}
+	print "}";
+	print "__attribute__((packed)) ${l}={\n";
+	if ($len%2==0) {
+		print "\t0,\n";
+	}
+	print "\t\"$f\",\n";
+	print "\t$len,\n";
+	if ($prev) {
+		print "\t(lfa *)\&$prev\.prev,\n";
+	} else {
+		print "\t0,\n";
+	}
+	if ($flag) {	# not a variable
+		print "\t&&$l-&&next,\n";
+		print "\t&&exit-&&next\n};\n";
+	} else {	# variable
+		print "\t&&lit-&&next,\n";
+		print "\t&vars.$l,\n";
+		print "\t&&exit-&&next\n};\n";
+	}
+	$prev=$l;
+	select $fh;
+}
+
+my $headers=[];
+
+my $xl=0;
+my $cnames=[];
+sub mapnames {
+	($f,$l)=@_;		# which provides forth<->label mapping
+	print $mh "code $f $l\n";	# create dictionary entry for primitives
+	print ".$l => ";	# generate the label
+	#print "#ifdef PROFILE\n";
+	#print "count\[$xl\]++;\n";
+	#print "#endif\n";
+	$xl++;
+	push @$cnames, "$l,$f";
+	if ($gendict) {
+		push @$headers, [$f,$l];
+	}
+}
+
+my $hash={};
+my $agg=[];
+my $label="lbl000";
+while (<>) {
+	/^\#/ and next;
+	if (s/^\s*(\S+)\s+:\s+//) {
+		$f=$1;
+		if ($f=~/^[a-z]\w*$/) {
+			mapnames($f, $f);
+		} else {
+			mapnames($f, $label++);
+		}
+		for my $w (split(' ;')) {
+			chomp $w;
+			$w="next" unless ($w);
+			$w=~s/^\s+//;
+			if ($l=$hash->{$w}) {
+				print "\t", join(";\n\t",@$l), ";\n";
+				push @$agg, @$l unless ($w eq "next");
+			} else {
+				print "\t$w,\n";
+				push @$agg, $w;
+			}
+		}
+		$hash->{"$f"}=[@$agg];
+		$agg=[];
+		next;
+	}
+	if (/^define\s+(\S+)\s+(.*)$/) {	# definitions
+		print "#define $1 $2\n";
+		next;
+	} elsif (/^var\s+(\S+)\s+(.*)$/) {	# variables
+		($f)=($1);
+		print $mh "var $f $f\n";# create dictionary entry for variables
+		if ($gendict) {
+			genheader($f,$f,0);
+		}
+		next;
+	}
+	next if (/^\s*$/);
+	chomp;
+	die "unknown declaration: '$_'";
+}
+
+print $mh "label fake $label\n";
+if ($gendict) {
+	select $lh;
+	for my $h (@$headers) {
+		genheader(@$h,1);
+	}
+	close $lh;
+	open($lh, ">latest.h");
+	select $lh;
+	print "\tvars.latest=&$prev\.prev;\n";
+	close $lh;
+	print $mh "label prev $prev\n";
+}
+
+close $mh;
+my $pf="profile.names";
+open(my $ph, ">$pf") or die "can't open $pf for writing";
+my $x=0;
+for my $i (@$cnames) {
+	print $ph "$x $i\n";
+	$x++;
+}
+close $ph;

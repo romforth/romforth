@@ -16,6 +16,7 @@ fn call(_: rom.Prims) void {}
 fn jmp(_: rom.Prims) void {}
 fn br0(_: rom.Prims) void {}
 fn br1(_: rom.Prims) void {}
+
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
     const stdin = std.io.getStdIn().reader();
@@ -32,13 +33,7 @@ pub fn main() !void {
             .br0 => br0(i.value),
             .br1 => br1(i.value),
             .prims => switch (i.value) {
-                .bye => break :out,
-                .emit => {
-                    try stdout.print("{c}", .{tos});
-                },
-                .key => {
-                    tos = try stdin.readByte();
-                },
+include(`forth_zig.m4')
             },
         }
     }

@@ -5133,3 +5133,10 @@ generate the bytes that need to go into the rom but since I haven't quite
 figured out how to generate code at build time using Zig's comptime, so for now
 since Zig does not appear to have any kind preprocessor, I've chosen to use m4
 again - since it is part of the dependencies of this project already.
+
+---
+
+For generating the zig code for handling primitives, I've again used a copy of
+the genprims script from the C port with just enough modifications to get all
+of the current stuff working. I'm hoping to leverage m4 to handle any other
+preprocessing that may be required.

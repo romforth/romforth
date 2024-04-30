@@ -1,0 +1,3 @@
+bye	: break :out
+emit	: { try stdout.print("{c}", .{tos}); }
+key	: { tos = try stdin.readByte(); }
