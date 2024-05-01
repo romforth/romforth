@@ -240,10 +240,15 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print "\t&&lit-&&next, ";
-	# adapted from perldoc -f pack
-	printf("%#02x, ", $_) for unpack("S*", pack L=>$o);
-	print "\n";
+	if ($o<32) {
+		print "\tNqhcode{.op=.lit1,.value=.$o},\n";
+	} elsif ($o<(1<<12)) {
+		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$o&0x1f,"},\n";
+		$o>>=5;
+		print "\tBytecode{.byte=$o},\n";
+	} else {
+		die "$o is too large to fit";
+	}
 }
 
 my $ref=0;
@@ -285,7 +290,7 @@ while (<>) {				# map forth words in the standard input
 				next;
 			}
 			#die "unknown word: $f"
-			print "\tNqhcode{.op=.prims,.value=.$f}, // $f\n";
+			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.$f}}, // $f\n";
 		}
 	}
 }

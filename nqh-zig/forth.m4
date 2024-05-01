@@ -17,7 +17,16 @@ var sp: usize = 0;		// the current stack which is in use
 var d: [ds]usize = undefined;	// set of stack pointers (indexed by sp)
 var datastack: [ns][ds]isize = undefined;	// set of stacks
 
-fn lit(_: rom.Prims) void {}
+fn dup() void {
+    datastack[sp][d[sp]] = tos;
+    d[sp] += 1;
+}
+
+fn lit(x: rom.Prims) isize {
+    dup();
+    return @intFromEnum(x);
+}
+
 fn call(_: rom.Prims) void {}
 fn jmp(_: rom.Prims) void {}
 fn br0(_: rom.Prims) void {}
@@ -28,11 +37,14 @@ pub fn main() !void {
     const stdin = std.io.getStdIn().reader();
 
     out: while (true) {
-        i = rom.bytes[ip];
+        i = rom.bytes[ip].nqh;
         ip += 1;
         switch (i.op) {
-            .lit1 => lit(i.value),
-            .lit2 => lit(i.value),
+            .lit1 => tos = lit(i.value),
+            .lit2 => {
+                tos = lit(i.value) | @as(i16, rom.bytes[ip].byte) << 5;
+                ip += 1;
+            },
             .call1 => call(i.value),
             .call2 => call(i.value),
             .jmp => jmp(i.value),

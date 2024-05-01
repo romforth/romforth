@@ -22,11 +22,17 @@ include(`prims.m4')
 
 pub const Nqhcode = packed struct {
     // As per the docs bits are packed from left to right in the order declared
-    op: Opcode,
     value: Prims,
+    op: Opcode,
     // so the byte layout is: | op:3 | value:5 |, I think
 };
 
-pub const bytes = [_]Nqhcode{
+
+pub const Bytecode = packed union {
+	byte: i8,
+	nqh: Nqhcode,
+};
+
+pub const bytes = [_]Bytecode{
 include(`rom_zig.m4')
 };

@@ -1,5 +1,5 @@
 bye	: break :out
-dup	: datastack[sp][d[sp]] = tos ; d[sp] += 1
+dup	: dup()
 drop	: d[sp] -= 1 ; tos = datastack[sp][d[sp]]
 emit	: try stdout.print("{c}", .{@as(u8, @intCast(tos))}) ; drop
 key	: dup ; tos = try stdin.readByte()

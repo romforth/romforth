@@ -5151,3 +5151,10 @@ ports. My initial plan had been to turn each of the definitions into m4 defines
 and then just process the entire file with m4 but I decided that I'm not in the
 mood for an extended struggle with m4 just now so I've handled everything in
 the genprims Perl script.
+
+---
+
+Trying to implement literals showed that my understanding of the layout for a
+packed bit struct was backwards. After fixing that bug and figuring out how to
+do casting between enums and integer/byte values and how to use packed unions,
+I was able to get literals also working.
