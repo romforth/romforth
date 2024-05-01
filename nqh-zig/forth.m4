@@ -22,6 +22,11 @@ fn dup() void {
     d[sp] += 1;
 }
 
+fn drop() void {
+    d[sp] -= 1;
+    tos = datastack[sp][d[sp]];
+}
+
 fn lit(x: rom.Prims) isize {
     dup();
     return @intFromEnum(x);
@@ -38,7 +43,18 @@ fn jmp(o: rom.Prims) void {
     }
 }
 
-fn br0(_: rom.Prims) void {}
+fn br0(o: rom.Prims) void {
+    var ofs: u5 = @intFromEnum(o);
+    if (tos==0) {
+        if (ofs > 15) {
+            ip -= (ofs-15);
+        } else {
+            ip += ofs;
+        }
+    }
+    drop();
+}
+
 fn br1(_: rom.Prims) void {}
 
 pub fn main() !void {

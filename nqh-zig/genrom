@@ -242,6 +242,10 @@ sub jmp {
 	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp)) << 5)|";
 }
 
+sub br0 {
+	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.br0)) << 5)|";
+}
+
 sub lit {
 	my ($o)=@_;
 	if ($o<0) {
@@ -255,7 +259,7 @@ sub lit {
 		return;
 	}
 	if ($o<32) {
-		print "\tNqhcode{.op=.lit1,.value=.$o},\n";
+		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit1)) << 5) | $o},\n";
 	} elsif ($o<(1<<12)) {
 		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$o&0x1f,"},\n";
 		$o>>=5;
@@ -304,6 +308,9 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f eq 'j') {
 				jmp();
+				next;
+			} elsif ($f eq 'jz') {
+				br0();
 				next;
 			} elsif ($f eq 'pad0') {
 				print "0,";
