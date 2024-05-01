@@ -304,6 +304,9 @@ while (<>) {				# map forth words in the standard input
 				if ($i>=16 or $i<-16) {
 					die "jump offset is too large";
 				}
+				if ($i<0) {
+					$i=15-$i;
+				}
 				print $i&0x1f, "},\n";
 				next;
 			} elsif ($f eq 'j') {
