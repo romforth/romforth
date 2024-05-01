@@ -29,7 +29,7 @@ pub const Nqhcode = packed struct {
 
 
 pub const Bytecode = packed union {
-	byte: i8,
+	byte: u8,
 	nqh: Nqhcode,
 };
 

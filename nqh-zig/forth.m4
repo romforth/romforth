@@ -42,7 +42,11 @@ pub fn main() !void {
         switch (i.op) {
             .lit1 => tos = lit(i.value),
             .lit2 => {
-                tos = lit(i.value) | @as(i16, rom.bytes[ip].byte) << 5;
+                tos = lit(i.value) | @as(isize, rom.bytes[ip].byte) << 5;
+                if (tos & (1<<12) == (1<<12)) {
+                    tos = tos&(-1^(1<<12));
+                    tos = -tos;
+                }
                 ip += 1;
             },
             .call1 => call(i.value),

@@ -147,6 +147,7 @@ INDEX
 	* 27 Apr '24
 	* 29 Apr '24
 	* 30 Apr '24
+	* 01 May '24
 
 04 Nov '22
 ----------
@@ -5158,3 +5159,15 @@ Trying to implement literals showed that my understanding of the layout for a
 packed bit struct was backwards. After fixing that bug and figuring out how to
 do casting between enums and integer/byte values and how to use packed unions,
 I was able to get literals also working.
+
+01 May '24
+----------
+Supporting neg'ation turned out to be harder that I'd thought in Zig since it
+is pretty nitpicky even about casts. Obviously, the type of tos and the stack
+needed to be changed from usize to isize which then required a seemingly large
+amount of contortion in bit/typecasts just to turn the isize into a u8 which is
+needed in emit for printing as a character. For passing in negative values from
+genrom, I've decided to set the MSB of the 8+5==13 bit number to 1 to denote
+negative values but since there is no auto mapping to two's complement, I do
+that explicitly in the code for lit2 handling which also implies that all
+negative numbers need two bytes since they have to be encoded using lit2.

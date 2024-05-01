@@ -240,6 +240,16 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
+	if ($o<0) {
+		if ($o<-(1<<12)) {
+			die "$o is too large to fit in 13 bits";
+		}
+		my $p=-$o;
+		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$p&0x1f,"},\n";
+		$p>>=5;
+		print "\tBytecode{.byte=$p|0x80},\n";
+		return;
+	}
 	if ($o<32) {
 		print "\tNqhcode{.op=.lit1,.value=.$o},\n";
 	} elsif ($o<(1<<12)) {
@@ -247,7 +257,7 @@ sub lit {
 		$o>>=5;
 		print "\tBytecode{.byte=$o},\n";
 	} else {
-		die "$o is too large to fit";
+		die "$o is too large to fit in 13 bits";
 	}
 }
 

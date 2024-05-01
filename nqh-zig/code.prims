@@ -1,5 +1,6 @@
 bye	: break :out
 dup	: dup()
 drop	: d[sp] -= 1 ; tos = datastack[sp][d[sp]]
-emit	: try stdout.print("{c}", .{@as(u8, @intCast(tos))}) ; drop
+emit	: var c: u8 = @truncate(@as(usize,@intCast(tos))) ; try stdout.print("{c}", .{c}) ; drop
 key	: dup ; tos = try stdin.readByte()
+neg	: tos = -tos
