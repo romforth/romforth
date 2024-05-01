@@ -28,7 +28,16 @@ fn lit(x: rom.Prims) isize {
 }
 
 fn call(_: rom.Prims) void {}
-fn jmp(_: rom.Prims) void {}
+
+fn jmp(o: rom.Prims) void {
+    var ofs: u5 = @intFromEnum(o);
+    if (ofs > 15) {
+        ip -= (ofs-15);
+    } else {
+        ip += ofs;
+    }
+}
+
 fn br0(_: rom.Prims) void {}
 fn br1(_: rom.Prims) void {}
 

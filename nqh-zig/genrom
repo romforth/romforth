@@ -238,6 +238,10 @@ sub def {
 	die "received $w in state $state";
 }
 
+sub jmp {
+	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp)) << 5)|";
+}
+
 sub lit {
 	my ($o)=@_;
 	if ($o<0) {
@@ -293,7 +297,13 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
-				print qq(\t$i,\n);
+				if ($i>=16 or $i<-16) {
+					die "jump offset is too large";
+				}
+				print $i&0x1f, "},\n";
+				next;
+			} elsif ($f eq 'j') {
+				jmp();
 				next;
 			} elsif ($f eq 'pad0') {
 				print "0,";
