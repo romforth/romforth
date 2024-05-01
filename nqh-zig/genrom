@@ -93,36 +93,36 @@ sub runbegin {
 }
 
 sub rununtil {
-	print "\t&&", $mapjnz, "-&&next,	// }until{\n";
+	branch("br1");
 	my $ol=pop @labelstack;
-	print "\tPATCH ", join('_', @$ol), "\n";
+	print "\n\tPATCH ", join('_', @$ol), "}\n";
 	push @labelstack, $ol;
 }
 
 sub runwhile {
-	print "\t&&", $mapjz, "-&&next,	// }while{\n";
+	branch("br0");
 	my $ol=pop @labelstack;
-	print "\tPATCH ", join('_', @$ol), "\n";
+	print "\n\tPATCH ", join('_', @$ol), "}\n";
 	push @labelstack, $ol;
 }
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\t&&", $mapjmp, "-&&next,	// }loop\n";
-	print "\tPATCH ", $ol->[0], '_begin', "\n";
+	branch("jmp");
+	print "\n\tPATCH ", $ol->[0], '_begin', "}\n";
 	print join('_', @$ol), ":\n";
 }
 
 sub runif {
-	print "\t&&", $mapjz, "-&&next,	// if{\n";
-	print "\tPATCH ", $label, '_then', "\n";
+	branch("br0");
+	print "\n\tPATCH ", $label, '_then', "}\n";
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\t&&", $mapjmp, "-&&next,	// }else{\n";
-	print "\tPATCH ", $ol->[0], '_endif', "\n";
+	branch("jmp");
+	print "\n\tPATCH ", $ol->[0], '_endif', "}\n";
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
 	$ol->[1]="endif";
@@ -240,7 +240,7 @@ sub def {
 
 sub branch {
 	my ($t)=@_;
-	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.$t)) << 5)|";
+	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.$t)) << 5) | ";
 }
 
 sub lit {
