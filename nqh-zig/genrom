@@ -238,12 +238,9 @@ sub def {
 	die "received $w in state $state";
 }
 
-sub jmp {
-	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp)) << 5)|";
-}
-
-sub br0 {
-	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.br0)) << 5)|";
+sub branch {
+	my ($t)=@_;
+	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.$t)) << 5)|";
 }
 
 sub lit {
@@ -310,10 +307,13 @@ while (<>) {				# map forth words in the standard input
 				print $i&0x1f, "},\n";
 				next;
 			} elsif ($f eq 'j') {
-				jmp();
+				branch("jmp");
 				next;
 			} elsif ($f eq 'jz') {
-				br0();
+				branch("br0");
+				next;
+			} elsif ($f eq 'jnz') {
+				branch("br1");
 				next;
 			} elsif ($f eq 'pad0') {
 				print "0,";

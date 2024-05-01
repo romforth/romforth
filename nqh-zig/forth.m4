@@ -55,7 +55,17 @@ fn br0(o: rom.Prims) void {
     drop();
 }
 
-fn br1(_: rom.Prims) void {}
+fn br1(o: rom.Prims) void {
+    var ofs: u5 = @intFromEnum(o);
+    if (tos!=0) {
+        if (ofs > 15) {
+            ip -= (ofs-15);
+        } else {
+            ip += ofs;
+        }
+    }
+    drop();
+}
 
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
