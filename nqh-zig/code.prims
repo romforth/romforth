@@ -7,3 +7,5 @@ neg	: tos = -tos
 inc	: tos += 1
 dec	: tos -= 1
 inv	: tos = ~tos
+nip	: nip()
+dip	: dip()

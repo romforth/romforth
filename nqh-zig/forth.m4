@@ -10,6 +10,7 @@ const rom = @import("rom.zig");
 var ip: usize = 0;
 var i: rom.Nqhcode = undefined;
 var tos: isize = undefined;
+var nos: isize = undefined;
 
 const ns = 10;			// number of stacks
 const ds = 8;			// depth of the each stack
@@ -25,6 +26,16 @@ fn dup() void {
 fn drop() void {
     d[sp] -= 1;
     tos = datastack[sp][d[sp]];
+}
+
+fn dip() void {
+    datastack[sp][d[sp]] = nos;
+    d[sp] += 1;
+}
+
+fn nip() void {
+    d[sp] -= 1;
+    nos = datastack[sp][d[sp]];
 }
 
 fn lit(x: rom.Prims) isize {
