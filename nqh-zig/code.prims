@@ -12,3 +12,4 @@ dip	: dip()
 +	: nip ; tos += nos
 -	: nip ; tos = nos-tos
 &	: nip ; tos &= nos
+|	: nip ; tos |= nos
