@@ -15,3 +15,4 @@ dip	: dip()
 |	: nip ; tos |= nos
 ^	: nip ; tos ^= nos
 2drop	: drop ; drop
+swap	: nip ; dup ; tos = nos
