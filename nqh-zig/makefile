@@ -25,7 +25,7 @@ forth_zig.m4 : genprims code.prims ../fpp fpp.config
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims dict.map > forth_zig.m4
 rom.zig : rom.m4 rom_zig.m4
 	m4 rom.m4 > rom.zig
-rom_zig.m4 : ../rom.4th ../fpp fpp.config genrom patchrom
+rom_zig.m4 : ../rom.4th ../fpp fpp.config genrom patchrom code.prims
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map | ./patchrom > rom_zig.m4
 
 clean :

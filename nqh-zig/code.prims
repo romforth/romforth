@@ -4,3 +4,5 @@ drop	: drop()
 emit	: var c: u8 = @truncate(@as(usize,@intCast(tos))) ; try stdout.print("{c}", .{c}) ; drop
 key	: dup ; tos = try stdin.readByte()
 neg	: tos = -tos
+inc	: tos += 1
+dec	: tos -= 1
