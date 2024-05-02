@@ -9,3 +9,5 @@ dec	: tos -= 1
 inv	: tos = ~tos
 nip	: nip()
 dip	: dip()
++	: nip ; tos += nos
+-	: nip ; tos = nos-tos

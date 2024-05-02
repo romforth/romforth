@@ -277,7 +277,7 @@ my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
-			print "\t&&", $map->{$f}, "-&&next, // $f\n";
+			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.$m}}, // $f\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			variable($m);		# push their address
 		} elsif (defined($m=$defs->{$f})) { # definitions just need
@@ -319,8 +319,7 @@ while (<>) {				# map forth words in the standard input
 				print "0,";
 				next;
 			}
-			#die "unknown word: $f"
-			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.$f}}, // $f\n";
+			die "unknown word: $f"
 		}
 	}
 }
