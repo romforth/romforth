@@ -148,6 +148,7 @@ INDEX
 	* 29 Apr '24
 	* 30 Apr '24
 	* 01 May '24
+	* 03 May '24
 
 04 Nov '22
 ----------
@@ -5171,3 +5172,33 @@ genrom, I've decided to set the MSB of the 8+5==13 bit number to 1 to denote
 negative values but since there is no auto mapping to two's complement, I do
 that explicitly in the code for lit2 handling which also implies that all
 negative numbers need two bytes since they have to be encoded using lit2.
+
+03 May '24
+----------
+Things were moving along pretty smoothly until I hit a speed bump at step 13
+while trying to implement memory access. Given the current implementation of
+`lit2`, the max value that can be used as a constant is limited to 8+5-1==12
+bits but memory addresses seem to need atleast ~24 bits so rather than change
+`lit2`, I've decided to extend the available opcodes to implement `lit3` which
+can handle literals up to 32 bits. For now, I've chosen the expedient approach
+of encoding this within the `jmp` opcode when the offset is 0 despite the fact
+that in the JOURNAL entry of 26 Apr '24 I had documented this as reserved for
+exit/return. I'll deal with that when I get around to implementing call/return
+linkage, I guess.
+
+With a means of representing addresses out of the way, the next question was
+what addresses and values to use. After changing the code (for the most part by
+adding and removing printf's as documented in the JOURNAL entry for 11 Aug '23)
+and re-running make and looking at the addresses that change vs don't change
+(which is for the most part a repeat of the work documented in the JOURNAL for
+20 Apr '23), I've settled on using the starting address for the .rodata segment
+which appears to remain constant. With that address (and the value retrieved
+from the output of printf) added to the fpp.config.nqh configuration, I was
+still seeing a failure at step 13 and it looked like the value at the start of
+the .rodata address changes on each build. So I retrieved the value at that
+address directly using gdb without a rebuild by running `print *ADDRESS` and
+using that output in the configuration file resulted in a successful build.
+
+I need to come up with a robust solution for this issue since I'm running into
+it over and over again. Changing zig versions will also bump into this issue so
+I'll go ahead document it here as $TECHDEBT and move on for now.

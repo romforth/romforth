@@ -262,7 +262,17 @@ sub lit {
 		$o>>=5;
 		print "\tBytecode{.byte=$o},\n";
 	} else {
-		die "$o is too large to fit in 13 bits";
+		if ($o<1<<31) {
+			print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp)) << 5)|0},\n";
+			# adapted from perldoc -f pack
+			for my $u (unpack("W*", pack L=>$o)) {
+				my $s=sprintf("\tBytecode\{.byte=%#02x\},\n", $u);
+				$s=~s/\=00\}/\=0\}/;
+				print $s;
+			}
+		} else {
+			die "$o is too large to fit in 32 bits";
+		}
 	}
 }
 

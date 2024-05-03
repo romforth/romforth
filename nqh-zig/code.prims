@@ -16,3 +16,4 @@ dip	: dip()
 ^	: nip ; tos ^= nos
 2drop	: drop ; drop
 swap	: nip ; dup ; tos = nos
+@	: var p: *isize = @ptrFromInt(@as(usize, @intCast(tos))) ; tos = p.*

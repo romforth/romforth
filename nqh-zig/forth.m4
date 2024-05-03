@@ -50,7 +50,18 @@ fn jmp(o: rom.Prims) void {
     if (ofs > 15) {
         ip -= (ofs-15);
     } else {
-        ip += ofs;
+        if (ofs == 0) {
+            // treat this as a lit3 which can handle 32 bits
+            dup();
+            tos = 0;
+            comptime var k = 0;
+            inline while (k < 4) : (k += 1) {
+                tos |= @as(isize, rom.bytes[ip].byte) << k*8;
+                ip += 1;
+            }
+        } else {
+            ip += ofs;
+        }
     }
 }
 
