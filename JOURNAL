@@ -149,6 +149,7 @@ INDEX
 	* 30 Apr '24
 	* 01 May '24
 	* 03 May '24
+	* 10 May '24
 
 04 Nov '22
 ----------
@@ -5202,3 +5203,29 @@ using that output in the configuration file resulted in a successful build.
 I need to come up with a robust solution for this issue since I'm running into
 it over and over again. Changing zig versions will also bump into this issue so
 I'll go ahead document it here as $TECHDEBT and move on for now.
+
+10 May '24
+----------
+Sigh, yet another step, yet another speed bump. This time I needed to spend a
+fair bit of quality time with the zig docs in langref.html to figure out how a
+variable can be shared between Forth and Zig. In the C implementation which was
+done over a year ago, I didn't have to struggle against the compiler, whereas
+like Rust, this turned into an uphill battle with the Zig compiler at almost
+every step of the way. Part of it may have been due to my hubris in trying to
+power my way through the errors without reading through the docs in any detail.
+
+After wading through the docs (which are very good, BTW), I started writing a
+series of increasingly elaborate code so that I could test out the behaviour
+that I want to implement in isolation and now I think I finally have something
+that I'm happy with and so that's the code that I've used at this step. I'm not
+fully convinced though that it was worth all the annoyance but only time will
+tell if this is actually better than just implementing it all in assembly which
+I assume might be a walk in the park, comparatively speaking.
+
+Unlike C which I can hold in my head, I seem to need to reach for the Zig docs
+quite a bit, so for now I've hardcoded the offset to the 'here' variable to 0
+rather than try to figure out how offsets are handled in Zig and I'll try to
+address that ugly bit of duct tape in a later commit.
+
+Also, in the C version, I'd used a primitive called 'var' for variable mappings
+but since 'var' is a reserved word in Zig, I've changed it to 'vr' instead.

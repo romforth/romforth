@@ -18,6 +18,15 @@ var sp: usize = 0;		// the current stack which is in use
 var d: [ds]usize = undefined;	// set of stack pointers (indexed by sp)
 var datastack: [ns][ds]isize = undefined;	// set of stacks
 
+const Memory = [256]u8;
+var mem: Memory = undefined;
+
+const Mix = packed union { i: isize, p: *Memory };
+
+var varalias = [_]Mix{
+    Mix{ .p = &mem }, // here is at index 0, hardcoded in genrom for now
+};
+
 fn dup() void {
     datastack[sp][d[sp]] = tos;
     d[sp] += 1;

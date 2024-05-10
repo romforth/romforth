@@ -243,6 +243,17 @@ sub branch {
 	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.$t)) << 5) | ";
 }
 
+sub lit32 {
+	my ($o)=@_;
+	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0},\n";
+	# adapted from perldoc -f pack
+	for my $u (unpack("W*", pack L=>$o)) {
+		my $s=sprintf("\tBytecode\{.byte=%#02x\},\n", $u);
+		$s=~s/\=00\}/\=0\}/;
+		print $s;
+	}
+}
+
 sub lit {
 	my ($o)=@_;
 	if ($o<0) {
@@ -263,13 +274,7 @@ sub lit {
 		print "\tBytecode{.byte=$o},\n";
 	} else {
 		if ($o<1<<31) {
-			print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp)) << 5)|0},\n";
-			# adapted from perldoc -f pack
-			for my $u (unpack("W*", pack L=>$o)) {
-				my $s=sprintf("\tBytecode\{.byte=%#02x\},\n", $u);
-				$s=~s/\=00\}/\=0\}/;
-				print $s;
-			}
+			lit32($o);
 		} else {
 			die "$o is too large to fit in 32 bits";
 		}
@@ -277,10 +282,13 @@ sub lit {
 }
 
 my $ref=0;
+my $varhash={
+	'here' => 0,
+};
 sub variable {
 	my ($o)=@_;
-	print "\t&&var-&&next, ";
-	print "\tVAR($o),\n";
+	lit($varhash->{$o});
+	print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.vr}},\n";
 }
 
 my $m;					# cache for the map from name to label
