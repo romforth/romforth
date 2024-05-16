@@ -17,6 +17,10 @@ dip	: dip()
 2drop	: drop ; drop
 swap	: nip ; dup ; tos = nos
 @	: var p: *isize = @ptrFromInt(@as(usize, @intCast(tos))) ; tos = p.*
+c@	: var p: *i8 = @ptrFromInt(@as(usize, @intCast(tos))) ; tos = p.*
 !	: var p: *isize = @ptrFromInt(@as(usize, @intCast(tos))) ; nip ; p.* = nos ; drop
+c!	: var p: *i8 = @ptrFromInt(@as(usize, @intCast(tos))) ; nip ; p.* = @intCast(nos) ; drop
 vr	: tos = @intCast(@intFromPtr(&varalias[@as(usize,@intCast(tos))].i))
+
 var here
+var state

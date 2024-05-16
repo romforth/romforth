@@ -24,7 +24,8 @@ var mem: Memory = undefined;
 const Mix = packed union { i: isize, p: *Memory };
 
 var varalias = [_]Mix{
-    Mix{ .p = &mem }, // here is at index 0, hardcoded in genrom for now
+    Mix{ .p = &mem },	// here is at index 0, hardcoded in genrom for now
+    Mix{ .i = 1 },	// state is at index 1, hardcoded in genrom for now
 };
 
 fn dup() void {

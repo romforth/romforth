@@ -284,6 +284,7 @@ sub lit {
 my $ref=0;
 my $varhash={
 	'here' => 0,
+	'state' => 1,
 };
 sub variable {
 	my ($o)=@_;
