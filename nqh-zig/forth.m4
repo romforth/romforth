@@ -12,11 +12,17 @@ var i: rom.Nqhcode = undefined;
 var tos: isize = undefined;
 var nos: isize = undefined;
 
-const ns = 10;			// number of stacks
-const ds = 8;			// depth of the each stack
-var sp: usize = 0;		// the current stack which is in use
-var d: [ds]usize = undefined;	// set of stack pointers (indexed by sp)
-var datastack: [ns][ds]isize = undefined;	// set of stacks
+const ns = 10;			// number of data stacks
+const ds = 8;			// depth of each data stack
+var sp: usize = 0;		// the current data stack which is in use
+var d: [ds]usize = undefined;	// set of data stack pointers (indexed by sp)
+var datastack: [ns][ds]isize = undefined;	// set of data stacks
+
+const nr = 10;			// number of return stacks
+const rs = 8;			// depth of each return stack
+var rp: usize = 0;		// the current return stack which is in use
+var r: [rs]usize = undefined;	// set of return stack pointers (indexed by rp)
+var retstack: [nr][rs]usize = undefined;	// set of return stacks
 
 const Memory = [256]u8;
 var mem: Memory = undefined;
