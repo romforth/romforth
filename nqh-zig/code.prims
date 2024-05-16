@@ -21,6 +21,7 @@ c@	: var p: *i8 = @ptrFromInt(@as(usize, @intCast(tos))) ; tos = p.*
 !	: var p: *isize = @ptrFromInt(@as(usize, @intCast(tos))) ; nip ; p.* = nos ; drop
 c!	: var p: *i8 = @ptrFromInt(@as(usize, @intCast(tos))) ; nip ; p.* = @intCast(nos) ; drop
 vr	: tos = @intCast(@intFromPtr(&varalias[@as(usize,@intCast(tos))].i))
+pick	: tos = datastack[sp][d[sp]-@as(usize,@intCast(tos))-1]
 
 var here
 var state
