@@ -75,7 +75,7 @@ my $cnames=[];
 sub mapnames {
 	($f,$l)=@_;		# which provides forth<->label mapping
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
-	print ".$l => ";	# generate the label
+	print ".$l => { // try stdout.print(\"$f\\n\",\.\{\}) ;\n";	# generate the label
 	#print "#ifdef PROFILE\n";
 	#print "count\[$xl\]++;\n";
 	#print "#endif\n";
@@ -98,7 +98,6 @@ while (<>) {
 		} else {
 			mapnames($f, $label++);
 		}
-		print "{";
 		for my $w (split(' ;')) {
 			chomp $w;
 			$w=";" unless ($w);

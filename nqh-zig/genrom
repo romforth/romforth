@@ -245,7 +245,7 @@ sub branch {
 
 sub lit32 {
 	my ($o)=@_;
-	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0},\n";
+	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0}, // lit32\n";
 	# adapted from perldoc -f pack
 	for my $u (unpack("W*", pack L=>$o)) {
 		my $s=sprintf("\tBytecode\{.byte=%#02x\},\n", $u);
@@ -292,10 +292,16 @@ sub variable {
 	print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.vr}},\n";
 }
 
+my $mode='';
 my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
 		if ($m=$map->{$f}) {	# byte offset within the binary
+			if ($mode eq 'literal') {
+				print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.$m}}, // $f\n";
+				$mode='';
+				next;
+			}
 			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.$m}}, // $f\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			variable($m);		# push their address
@@ -335,7 +341,11 @@ while (<>) {				# map forth words in the standard input
 				branch("br1");
 				next;
 			} elsif ($f eq 'pad0') {
-				print "0,";
+				print "\tBytecode{.byte=0},\n";
+				next;
+			} elsif ($f eq 'lit') {
+				print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0}, // lit32\n";
+				$mode='literal';
 				next;
 			}
 			die "unknown word: $f"

@@ -8,6 +8,7 @@ const std = @import("std");
 const rom = @import("rom.zig");
 
 var ip: usize = 0;
+var b: rom.Bytecode = undefined;
 var i: rom.Nqhcode = undefined;
 var tos: isize = undefined;
 var nos: isize = undefined;
@@ -105,31 +106,37 @@ fn br1(o: rom.Prims) void {
     drop();
 }
 
-pub fn main() !void {
+fn decode(op: rom.Opcode) !void {
     const stdout = std.io.getStdOut().writer();
     const stdin = std.io.getStdIn().reader();
 
-    out: while (true) {
-        i = rom.bytes[ip].nqh;
-        ip += 1;
-        switch (i.op) {
-            .lit1 => tos = lit(i.value),
-            .lit2 => {
-                tos = lit(i.value) | @as(isize, rom.bytes[ip].byte) << 5;
-                if (tos & (1<<12) == (1<<12)) {
-                    tos = tos&(-1^(1<<12));
-                    tos = -tos;
-                }
-                ip += 1;
-            },
-            .call1 => call(i.value),
-            .call2 => call(i.value),
-            .jmp => jmp(i.value),
-            .br0 => br0(i.value),
-            .br1 => br1(i.value),
-            .prims => switch (i.value) {
+    // try stdout.print("op: {}\n", .{op});
+    switch (op) {
+        .lit1 => tos = lit(i.value),
+        .lit2 => {
+            tos = lit(i.value) | @as(isize, rom.bytes[ip].byte) << 5;
+            if (tos & (1<<12) == (1<<12)) {
+                tos = tos&(-1^(1<<12));
+                tos = -tos;
+            }
+            ip += 1;
+        },
+        .call1 => call(i.value),
+        .call2 => call(i.value),
+        .jmp => jmp(i.value),
+        .br0 => br0(i.value),
+        .br1 => br1(i.value),
+        .prims => switch (i.value) {
 include(`forth_zig.m4')
-            },
-        }
+        },
+    }
+}
+
+pub fn main() !void {
+    while (true) {
+        b = rom.bytes[ip];
+        i = b.nqh;
+        ip += 1;
+        try decode(i.op);
     }
 }
