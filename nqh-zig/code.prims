@@ -28,6 +28,7 @@ rp@!	: var temp = rp ; rp = @intCast(tos & 0) ; tos = @intCast(temp)
 >r	: retstack[rp][r[rp]] = @intCast(tos) ; r[rp] += 1 ; drop
 r>	: dup ; r[rp] -= 1 ; tos = @intCast(retstack[rp][r[rp]])
 exec	: b.byte = @intCast(tos) ; drop ; i = b.nqh ; try decode(i.op)
+ret	: r[rp] -= 1 ; ip = @intCast(retstack[rp][r[rp]])
 
 var here
 var state

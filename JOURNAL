@@ -150,6 +150,7 @@ INDEX
 	* 01 May '24
 	* 03 May '24
 	* 10 May '24
+	* 30 May '24
 
 04 Nov '22
 ----------
@@ -5229,3 +5230,118 @@ address that ugly bit of duct tape in a later commit.
 
 Also, in the C version, I'd used a primitive called 'var' for variable mappings
 but since 'var' is a reserved word in Zig, I've changed it to 'vr' instead.
+
+30 May '24
+----------
+Things moved along swimmingly (for the most part) until I hit another speedbump
+at step 22 where Forth definitions need to be handled. In the C port, the code
+that generates some of the structures is repeated in both the genprims and the
+genrom scripts so the first order of business was to fix up some of that old
+$TECHDEBT (but only in the new port) by moving some of the common code out into
+yet another perl script (which I've called genheader). This change was done in
+the zig port but not in the C version since I'm reluctant to modify the C code
+when nothing there is really broken.
+
+With those preliminaries out of the way I then tried to map the C structs that
+were generated in the C port to their Zig equivalents which immediately ran
+into trouble. The packed struct in C looks like this:
+
+--begin code--{
+
+static const struct {
+        char name[3];
+        unsigned char nfa;
+        ...
+}__attribute__((packed)) key={
+        "key",
+        3,
+        ...
+};
+
+--end code--}
+
+and so my initial attempt at porting this code to Zig looked like this:
+
+--begin code--{
+
+const Dictionary = packed struct {
+    name: []const u8,
+    nfa: u8,
+};
+
+const dictionary = Dictionary{ .name = "key", .nfa = 3 };
+
+--end code--}
+
+But this fails with the following error:
+
+--begin error--{
+
+pa.zig:2:11: error: packed structs cannot contain fields of type '[]const u8'
+    name: []const u8,
+          ^~~~~~~~~~
+pa.zig:2:11: note: slices have no guaranteed in-memory representation
+
+--end error--}
+
+This was using the zig 0.11 version of the compiler but even using the latest
+version (0.13.0-dev.46+3648d7df1, which was the latest available version from
+ziglang.org when I last checked) gave the same error.
+
+As a workaround I can "expand out" the array so the following code does work:
+
+--begin code--{
+
+const Name3 = packed struct {
+    c1: u8,
+    c2: u8,
+    c3: u8,
+};
+
+const Dictionary = packed struct {
+    name: Name3,
+    nfa: u8,
+};
+
+--end code--}
+
+Since the code used in the C port is generated code, I can live with generating
+the zig code as well so that's what I have done for now. There are some earlier
+discussions about this issue on github (#12547) where there is a suggestion
+about using "extern struct" instead of "packed struct" in such a situation but
+that suggestion is either out of date or there is an outright bug since it also
+results in an identical sort of error:
+
+--begin error--{
+
+pae.zig:2:11: error: extern structs cannot contain fields of type '[]const u8'
+    name: []const u8,
+          ^~~~~~~~~~
+pae.zig:2:11: note: slices have no guaranteed in-memory representation
+
+--end error--}
+
+As mentioned earlier, the code in genheader works around this by generating the
+packed arrays of specific lengths, as needed. Once that was resolved, the next
+issue was generating code for call/ret (enter/exit in C). Although ret is just
+a regular primitive, "call" is not since it is handled as an opcode, so I had
+to go jump through some additional hoops to make that fit in to the overall
+scheme which required the addition of yet another option to the "Bytecode"
+untagged union data structure.
+
+I've also generated a couple of placeholders for the actual dictionary entries
+themselves although they are not currently required at this step. I'm hoping
+that all of the time spent on this step will make the remaining ones a bit
+easier.
+
+I was expecting to wrap up this port in about a month and it is way past that
+now mostly due to various personal reasons that are totally outside my control
+so I'm going to push myself to see how much of this port can be done within the
+next week or so before my kid starts on his summer break. Since I'm in a hurry
+I'm going to add to the ongoing $TECHDEBT of the ADDR/VALUE shenanigans which
+are being made as part of each commit in the fpp.config.nqh changes. Since the
+value at .rodata appears to change at each build, I'm going to play this game
+where I increase the address by 0x10 and update that address and value in the
+config file until I happen to run into an address where the value is fixed.
+Stupid thing to do, but I'm just doing it on a lark since I'm not going to be
+bothered to do a full seach for now.

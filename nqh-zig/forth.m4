@@ -7,7 +7,7 @@
 const std = @import("std");
 const rom = @import("rom.zig");
 
-var ip: usize = 0;
+var ip: usize = @sizeOf(@TypeOf(rom.func));
 var b: rom.Bytecode = undefined;
 var i: rom.Nqhcode = undefined;
 var tos: isize = undefined;
@@ -60,7 +60,11 @@ fn lit(x: rom.Prims) isize {
     return @intFromEnum(x);
 }
 
-fn call(_: rom.Prims) void {}
+fn call(x: rom.Prims) void {
+    retstack[rp][r[rp]] = @intCast(ip);
+    r[rp] += 1;
+    ip = @intFromEnum(x);
+}
 
 fn jmp(o: rom.Prims) void {
     var ofs: u5 = @intFromEnum(o);

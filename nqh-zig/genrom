@@ -174,7 +174,8 @@ my $imm={
 };
 
 my $d=0;
-my $fas=[];
+
+require "./genheader";
 
 sub def {
 	my ($w)=@_;
@@ -194,25 +195,7 @@ sub def {
 		$l=$label++;
 		print $mh "def $w $l $d\n"; # create mapping in "dictionary"
 		if ($gendict) {
-			my $len=length($w);
-			print "static const struct {\n";
-			if ($len%2==0) {
-				print "\tchar pad;\n";
-			}
-			print "\tchar name\[$len\];\n";
-			print "\tunsigned char nfa;\n";
-			print "\tlfa *prev;\n";
-			print "\tunsigned short cfa[];\n";
-			print "}";
-			print "__attribute__((packed)) ${l}={\n";
-			if ($len%2==0) {
-				print "\t0,\n";
-			}
-			push @$fas, $l;
-			print "\t\"$w\",\n";
-			$len |= 0x80 if ($immediate);
-			print "\t$len,\n";
-			print "\t(lfa *)\&$prev\.prev,\n";
+			genheader($w,$l,'def',select,$immediate);
 			$prev=$l;
 		}
 		print " // $w\n";	# and generate C code
@@ -223,12 +206,12 @@ sub def {
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t&&exit-&&next\n};\n";
+			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.ret}},\n};\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\t&&exit-&&next\n};\n";
+			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.ret}},\n};\n";
 			$state=0;
 			$immediate=0;
 			return 1;
@@ -243,55 +226,7 @@ sub branch {
 	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.$t)) << 5) | ";
 }
 
-sub lit32 {
-	my ($o)=@_;
-	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0}, // lit32\n";
-	# adapted from perldoc -f pack
-	for my $u (unpack("W*", pack L=>$o)) {
-		my $s=sprintf("\tBytecode\{.byte=%#02x\},\n", $u);
-		$s=~s/\=00\}/\=0\}/;
-		print $s;
-	}
-}
-
-sub lit {
-	my ($o)=@_;
-	if ($o<0) {
-		if ($o<-(1<<12)) {
-			die "$o is too large to fit in 13 bits";
-		}
-		my $p=-$o;
-		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$p&0x1f,"},\n";
-		$p>>=5;
-		print "\tBytecode{.byte=$p|0x80},\n";
-		return;
-	}
-	if ($o<32) {
-		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit1)) << 5) | $o},\n";
-	} elsif ($o<(1<<12)) {
-		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$o&0x1f,"},\n";
-		$o>>=5;
-		print "\tBytecode{.byte=$o},\n";
-	} else {
-		if ($o<1<<31) {
-			lit32($o);
-		} else {
-			die "$o is too large to fit in 32 bits";
-		}
-	}
-}
-
 my $ref=0;
-my $varhash={
-	'here' => 0,
-	'state' => 1,
-};
-sub variable {
-	my ($o)=@_;
-	lit($varhash->{$o});
-	print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.vr}},\n";
-}
-
 my $mode='';
 my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
@@ -306,7 +241,7 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			variable($m);		# push their address
 		} elsif (defined($m=$defs->{$f})) { # definitions just need
-			print "\t&&enter-&&next, $m, // $f\n";	# their offset
+			print "\tBytecode{.call=Callcode{.op=.call1,.value=Defs\.$f}}, // $f\n";	# their offset
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
@@ -353,11 +288,16 @@ while (<>) {				# map forth words in the standard input
 	}
 }
 if ($gendefs) {
-	print 'static const unsigned short *fp[] = {', "\n";
+	print 'pub const func = ';
 	for my $i (@$deford) {
-		print "\t$i->[0]\.cfa,	// $i->[1]\n";
+		print "\t$i->[0]\_bytes ++ ";
 	}
-	print "};\n";
+	print " [_]Bytecode{};\n";
+	open(my $lh, ">defs_enum.zig");
+	for my $i (@$deford) {
+		print $lh "\t$i->[1],\n";
+	}
+	close $lh;
 }
 print $mh "label fake $label\n";
 if ($gendict) {

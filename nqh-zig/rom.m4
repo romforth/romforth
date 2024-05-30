@@ -20,6 +20,10 @@ pub const Prims = enum(u5) {
 include(`prims.m4')
 };
 
+pub const Defs = enum(u5) {
+include(`defs_enum.zig')
+};
+
 pub const Nqhcode = packed struct {
     // As per the docs bits are packed from left to right in the order declared
     value: Prims,
@@ -27,12 +31,24 @@ pub const Nqhcode = packed struct {
     // so the byte layout is: | op:3 | value:5 |, I think
 };
 
+pub const Callcode = packed struct {
+    // As per the docs bits are packed from left to right in the order declared
+    value: Defs,
+    op: Opcode,
+    // so the byte layout is: | op:3 | value:5 |, I think
+};
 
 pub const Bytecode = packed union {
 	byte: u8,
 	nqh: Nqhcode,
+	call: Callcode,
 };
 
-pub const bytes = [_]Bytecode{
+const Lfa = ?*Lfa;
+
+include(`dict.zig')
+include(`defs_zig.m4')
+
+pub const bytes = func ++ [_]Bytecode{
 include(`rom_zig.m4')
 };

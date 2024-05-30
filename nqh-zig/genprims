@@ -19,54 +19,13 @@ open(my $mh, ">$mf") or die "can't open $mf for writing";
 
 my $lh;
 if ($gendict) {
-	open($lh, ">dict.h");
+	open($lh, ">dict.zig");
 }
 
 my ($f,$l);	# the forth name($f) and the C goto label ($l)
 
 my $prev="0";
-
-sub genheader {
-	my ($f,$l,$flag)=@_;
-	my $len=length($f);
-	my $fh=select $lh;
-	print "static const struct {\n";
-	if ($len%2==0) {
-		print "\tchar pad;\n";
-	}
-	print "\tchar name\[$len\];\n";
-	print "\tunsigned char nfa;\n";
-	print "\tlfa *prev;\n";
-	if ($flag) {	# not a variable
-		print "\tunsigned short cfa[];\n";
-	} else {	# variable
-		print "\tshort cfa;\n";
-		print "\tvoid *var;\n";
-		print "\tshort exit;\n";
-	}
-	print "}";
-	print "__attribute__((packed)) ${l}={\n";
-	if ($len%2==0) {
-		print "\t0,\n";
-	}
-	print "\t\"$f\",\n";
-	print "\t$len,\n";
-	if ($prev) {
-		print "\t(lfa *)\&$prev\.prev,\n";
-	} else {
-		print "\t0,\n";
-	}
-	if ($flag) {	# not a variable
-		print "\t&&$l-&&next,\n";
-		print "\t&&exit-&&next\n};\n";
-	} else {	# variable
-		print "\t&&lit-&&next,\n";
-		print "\t&vars.$l,\n";
-		print "\t&&exit-&&next\n};\n";
-	}
-	$prev=$l;
-	select $fh;
-}
+require "./genheader";
 
 my $headers=[];
 
@@ -122,7 +81,7 @@ while (<>) {
 		($f)=($1);
 		print $mh "var $f $f\n";# create dictionary entry for variables
 		if ($gendict) {
-			genheader($f,$f,0);
+			$prev=genheader($f,$f,'var',$lh,$prev,0);
 		}
 		next;
 	}
@@ -135,7 +94,7 @@ print $mh "label fake $label\n";
 if ($gendict) {
 	select $lh;
 	for my $h (@$headers) {
-		genheader(@$h,1);
+		$prev=genheader(@$h,'prim',$lh,$prev,0);
 	}
 	close $lh;
 	open($lh, ">latest.h");
