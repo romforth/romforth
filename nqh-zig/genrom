@@ -289,6 +289,9 @@ while (<>) {				# map forth words in the standard input
 			} elsif ($f eq '>>') {
 				print "\tBytecode{.nqh=Nqhcode{.op=.br1,.value=\@enumFromInt(13)}}, // >>\n";
 				next;
+			} elsif ($f eq 'over') {
+				print "\tBytecode{.nqh=Nqhcode{.op=.br1,.value=\@enumFromInt(14)}}, // over\n";
+				next;
 			}
 			die "unknown word: $f"
 		}

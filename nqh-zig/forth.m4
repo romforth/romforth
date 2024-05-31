@@ -110,6 +110,7 @@ fn br1(o: rom.Prims) void {
                 switch (ofs-12) {
                     0 => { nip(); tos = (nos<<@intCast(tos)); return; },
                     1 => { nip(); tos = (nos>>@intCast(tos)); return; },
+                    2 => { dup(); tos = datastack[sp][d[sp]-2]; return; },
                     else => {},
                 }
             }
