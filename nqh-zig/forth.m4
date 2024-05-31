@@ -63,7 +63,7 @@ fn lit(x: rom.Prims) isize {
 fn call(x: rom.Prims) void {
     retstack[rp][r[rp]] = @intCast(ip);
     r[rp] += 1;
-    ip = @intFromEnum(x);
+    ip = rom.fp[@intFromEnum(x)];
 }
 
 fn jmp(o: rom.Prims) void {

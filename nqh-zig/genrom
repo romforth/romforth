@@ -35,7 +35,7 @@ sub var {
 }
 sub olddef {
 	my ($f,$l,$d)=@_;
-	$defs->{$f}=$d;
+	$defs->{$f}=[$d,$l];
 	push @$deford, [$l,$f];
 }
 
@@ -199,7 +199,7 @@ sub def {
 			$prev=$l;
 		}
 		print " // $w\n";	# and generate C code
-		$defs->{$w}=$d++;	# for setting up a local mapping
+		$defs->{$w}=[$d++,$l];	# for setting up a local mapping
 		push @$deford, [$l,$w];
 		$state=2;
 		return 1;
@@ -241,7 +241,8 @@ while (<>) {				# map forth words in the standard input
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			variable($m);		# push their address
 		} elsif (defined($m=$defs->{$f})) { # definitions just need
-			print "\tBytecode{.call=Callcode{.op=.call1,.value=Defs\.$f}}, // $f\n";	# their offset
+			print "\tBytecode{.call=Callcode{.op=.call1,"; # their
+			print ".value=Defs\.", $m->[1], "}}, // $f\n"; # enum
 		} elsif ($m=$imm->{$f}) { # immediates need to be run
 			$m->();		  # well, immediately
 		} else {		# or whine if the mapping doesn't exist
@@ -293,9 +294,18 @@ if ($gendefs) {
 		print "\t$i->[0]\_bytes ++ ";
 	}
 	print " [_]Bytecode{};\n";
-	open(my $lh, ">defs_enum.zig");
+	my $lh;
+	open($lh, ">defs_enum.zig");
 	for my $i (@$deford) {
-		print $lh "\t$i->[1],\n";
+		print $lh "\t$i->[0],\n";
+	}
+	close $lh;
+	open($lh, ">func.zig");
+	my $agg=[];
+	print $lh "0,\n";
+	for my $i (@$deford) {
+		push @$agg, "\@sizeOf(\@TypeOf(".$i->[0]."_bytes))";
+		print $lh join('+', @$agg), ",\n";
 	}
 	close $lh;
 }

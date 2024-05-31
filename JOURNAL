@@ -151,6 +151,7 @@ INDEX
 	* 03 May '24
 	* 10 May '24
 	* 30 May '24
+	* 31 May '24
 
 04 Nov '22
 ----------
@@ -5345,3 +5346,23 @@ where I increase the address by 0x10 and update that address and value in the
 config file until I happen to run into an address where the value is fixed.
 Stupid thing to do, but I'm just doing it on a lark since I'm not going to be
 bothered to do a full seach for now.
+
+31 May '24
+----------
+Since the previous step 22 took forever to get done, I had taken some shortcuts
+that came back to haunt me at this step. The first one of these was in the
+implementation of "call" which had diverged from the C implementation since I
+couldn't quite figure out enough of the docs to pacify the Zig compiler (when I
+was starting out on this port) to take a bare pointer to get the equivalent of
+"void *" in C. So my solution was to make a simple enough implementation of
+"call" just to get step 22 done. So at this step I first had to implement the
+C equivalent version of "call". With that out of the way, I got an error where
+the call to ret'urn was triggering an integer overflow and this turned out to
+be because of 2 bugs. The first one was that unlike C, I needed to add up each
+of the "function pointer" offsets and the second was that again, unlike C, the
+first entry in the "function pointer" offsets needed to be 0 - and all of this
+is because the layout of the definitions has changed significantly from the C
+version. In Zig, there is a '++' array concatenation operator whereas no such
+thing is possible in C so I've leveraged that shiny new thing to be able to add
+all of the Forth definitions ahead of the rom contents. The "prefix sum" of the
+offsets to each of the Forth definitions is then used as the offset to it.

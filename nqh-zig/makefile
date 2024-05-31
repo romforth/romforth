@@ -44,4 +44,4 @@ rom_zig.m4 : ../rom.4th ../fpp fpp.config genrom patchrom code.prims
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map | ./patchrom > rom_zig.m4
 
 clean :
-	rm -f forth forth.o fpp.config test.out test.inp test.exp rom_zig.m4 rom.map rom.zig dict.map forth.zig forth_zig.m4 profile.names prims.m4 defs.map defs_zig.m4 latest.h prims_dict.zig test.defs forth_defs forth_defs.o forth_defs.m4 forth_defs.zig dict.zig headers.list defs_enum.zig
+	rm -f forth forth.o fpp.config test.out test.inp test.exp rom_zig.m4 rom.map rom.zig dict.map forth.zig forth_zig.m4 profile.names prims.m4 defs.map defs_zig.m4 latest.h prims_dict.zig test.defs forth_defs forth_defs.o forth_defs.m4 forth_defs.zig dict.zig headers.list defs_enum.zig func.zig

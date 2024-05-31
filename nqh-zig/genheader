@@ -57,9 +57,8 @@ sub variable {
 	print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.vr}},\n";
 }
 
-my $headers;
 if (-f "headers.list") {
-	open($headers, "headers.list");
+	open(my $headers, "headers.list");
 	while (<$headers>) {
 		if (/^Name(\d+)$/) {
 			$name->[$1]=$1;
@@ -67,7 +66,7 @@ if (-f "headers.list") {
 	}
 	close $headers;
 }
-open($headers, ">>headers.list");
+open(my $headers, ">>headers.list");
 
 sub genheader {
 	my ($f,$l,$flag,$lh,$prev,$imm)=@_;

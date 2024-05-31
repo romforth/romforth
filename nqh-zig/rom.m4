@@ -52,3 +52,7 @@ include(`defs_zig.m4')
 pub const bytes = func ++ [_]Bytecode{
 include(`rom_zig.m4')
 };
+
+pub const fp = [_]usize {
+include(`func.zig')
+};
