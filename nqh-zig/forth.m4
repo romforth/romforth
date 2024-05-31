@@ -104,7 +104,15 @@ fn br1(o: rom.Prims) void {
         if (ofs > 15) {
             ip -= (ofs-15);
         } else {
-            ip += ofs;
+            if (ofs < 12) {
+                ip += ofs;
+            } else {
+                switch (ofs-12) {
+                    0 => { nip(); tos = (nos<<@intCast(tos)); return; },
+                    1 => { nip(); tos = (nos>>@intCast(tos)); return; },
+                    else => {},
+                }
+            }
         }
     }
     drop();

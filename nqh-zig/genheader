@@ -39,6 +39,8 @@ sub lit {
 	} else {
 		if ($o<1<<31) {
 			lit32($o);
+		} elsif ($o>-(1<<31)) {
+			lit32($o);
 		} else {
 			die "$o is too large to fit in 32 bits";
 		}

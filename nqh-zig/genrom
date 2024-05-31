@@ -283,6 +283,12 @@ while (<>) {				# map forth words in the standard input
 				print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0}, // lit32\n";
 				$mode='literal';
 				next;
+			} elsif ($f eq '<<') {
+				print "\tBytecode{.nqh=Nqhcode{.op=.br1,.value=\@enumFromInt(12)}}, // <<\n";
+				next;
+			} elsif ($f eq '>>') {
+				print "\tBytecode{.nqh=Nqhcode{.op=.br1,.value=\@enumFromInt(13)}}, // >>\n";
+				next;
 			}
 			die "unknown word: $f"
 		}
