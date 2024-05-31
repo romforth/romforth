@@ -137,8 +137,14 @@ sub runthen {
 sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
-	die "$f has no mapping" unless $m;
-	print "\tNqhcode{.op=.prims,.value=.$m}, // $f\n";
+	if ($f ne 'over') {
+		die "$f has no mapping" unless $m;
+	}
+	if ($f eq 'over') {
+		print "\tBytecode{.nqh=Nqhcode{.op=.br1,.value=\@enumFromInt(14)}}, // over\n";
+	} else {
+		print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.$m}}, // $f\n";
+	}
 }
 
 sub runfor {
