@@ -212,7 +212,7 @@ sub def {
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.ret}},\n};\n";
+			print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.exit}},\n};\n";
 			$state=0;
 			return 1;
 		}
