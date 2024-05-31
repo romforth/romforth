@@ -49,7 +49,7 @@ while(<>) {
 	if (/^\tPATCH\s+(\S+)\}$/) {	# if this is a patch location
 		$v=\$label->{$1};	# see if this label was seen already
 		if ($vv=$$v) {		# and if so,
-			push @$agg, $vv-$dot . "},\n";	# patch a backward jump
+			push @$agg, 15-($vv-$dot) . "},\n";	# patch a backward jump
 		} else {		# otherwise, if it is a new label
 			$v=\$want->{$1};	# see if it was wanted already
 			unless ($vv=$$v) {	# if not
