@@ -152,6 +152,7 @@ INDEX
 	* 10 May '24
 	* 30 May '24
 	* 31 May '24
+	* 01 Jun '24
 
 04 Nov '22
 ----------
@@ -5366,3 +5367,49 @@ version. In Zig, there is a '++' array concatenation operator whereas no such
 thing is possible in C so I've leveraged that shiny new thing to be able to add
 all of the Forth definitions ahead of the rom contents. The "prefix sum" of the
 offsets to each of the Forth definitions is then used as the offset to it.
+
+01 Jun '24
+----------
+At step 40 I ran into a weird bug with a data stack underflow. One of the nicer
+things about coding all of this in zig is that a stack underflow can be caught
+immediately and zig is gracious enough to even show a full stack trace which
+helps debugging stuff tremendously (especially when coming from C). The best
+part is that the underflow is caught when the counter goes negative so your CPU
+does not even need MMU's to catch these types of bugs. So this definitely will
+count as an awesome superpower if you are coding in Zig. Yes, yes, I'm aware
+that Rust can do this too. Just get off my back you RIIR Rustaceans! ;)
+
+So far, many of the bugs that I've run into were easily caught this way and it
+was, in most cases, trivially solvable. But unfortunately, the bug that I ran
+into at step 40 wasn't that easy to crack open so I fell back to my regularly
+scheduled "print based" debugging.
+
+Unfortunately, while trying to get that done though, Zig turned tail and became
+a bit obtuse and in the way since unlike C, I couldn't quite figure out how to
+easily create an array of strings in zig, despite going through the docs. So as
+usual, I then resorted to modifying genrom to generate the code to initialize
+an array with the names of all of the defined words and used that to print out
+the names of each one as it was being call'ed. There is code that is currently
+in genprims which generates "print" statements to trace each primitive as it is
+executed which is currently commented out and so that was also uncommented and
+for good measure I added explicit print statements to the code implementing br1
+to trace through the primitives that were shoehorned into it.
+
+With all of that tracing in place, it was clear that there was a logic bug in
+the implementation of "over" (within br1) since it appeared to be invoked just
+once despite it being listed twice in the bytecode definition of "atoi"
+
+Looking through the code for br1 I figured out that the ordering of the tests
+was wrong and after fixing up that stupid bug in the logic, things have started
+to work as expected. Whew!
+
+While searching around for the equivalent of C's conditional/preprocessor based
+debug printf's, I saw some docs mentioning that using a boolean test in zig was
+enough/equivalent to it since the debug code would automatically be optimized
+out by the compiler so the tracing code is now available under trace conditions
+in case bugs like this pop up again in the future.
+
+If I have to come up with a reason for why this bug crept in, it is clear that
+the code implementing br1 was convoluted since it involved a last minute design
+change that was kludged in to handle the additional primitives that couldn't
+fit into the existing scheme. Anyway, that's my only excuse for this silly bug.

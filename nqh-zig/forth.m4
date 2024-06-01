@@ -60,7 +60,13 @@ fn lit(x: rom.Prims) isize {
     return @intFromEnum(x);
 }
 
-fn call(x: rom.Prims) void {
+const trace_calls = false;
+
+fn call(x: rom.Prims) !void {
+    if (trace_calls) {
+        const stdout = std.io.getStdOut().writer();
+        try stdout.print("call {s}\n", .{rom.fnames[@intFromEnum(x)]});
+    }
     retstack[rp][r[rp]] = @intCast(ip);
     r[rp] += 1;
     ip = rom.fp[@intFromEnum(x)];
@@ -98,32 +104,45 @@ fn br0(o: rom.Prims) void {
     drop();
 }
 
-fn br1(o: rom.Prims) void {
-    var ofs: u5 = @intFromEnum(o);
+const trace_br1 = false;
+
+fn br1(o: rom.Prims) !void {
+    const ofs: u5 = @intFromEnum(o);
+    if (trace_br1) {
+        const stdout = std.io.getStdOut().writer();
+        try stdout.print("br1 {} ", .{ofs});
+    }
+    if (12 <= ofs and ofs < 15) {
+        switch (ofs-12) {
+            0 => { // try stdout.print("<<\n", .{});
+                   nip(); tos = (nos<<@intCast(tos)); return; },
+            1 => { // try stdout.print(">>\n", .{});
+                   nip(); tos = (nos>>@intCast(tos)); return; },
+            2 => { // try stdout.print("over\n", .{});
+                   dup(); tos = datastack[sp][d[sp]-2]; return; },
+            else => { // try stdout.print("invalid opcode\n", .{})
+	            },
+        }
+    }
     if (tos!=0) {
         if (ofs > 15) {
             ip -= (ofs-15);
-        } else {
-            if (ofs < 12) {
-                ip += ofs;
-            } else {
-                switch (ofs-12) {
-                    0 => { nip(); tos = (nos<<@intCast(tos)); return; },
-                    1 => { nip(); tos = (nos>>@intCast(tos)); return; },
-                    2 => { dup(); tos = datastack[sp][d[sp]-2]; return; },
-                    else => {},
-                }
-            }
+        } else { // ofs < 12 since other cases are handled above
+            ip += ofs;
         }
     }
     drop();
 }
 
+const trace_ops = false;
+
 fn decode(op: rom.Opcode) !void {
     const stdout = std.io.getStdOut().writer();
     const stdin = std.io.getStdIn().reader();
 
-    // try stdout.print("op: {}\n", .{op});
+    if (trace_ops) {
+        try stdout.print("op: {}\n", .{op});
+    }
     switch (op) {
         .lit1 => tos = lit(i.value),
         .lit2 => {
@@ -134,11 +153,11 @@ fn decode(op: rom.Opcode) !void {
             }
             ip += 1;
         },
-        .call1 => call(i.value),
-        .call2 => call(i.value),
+        .call1 => try call(i.value),
+        .call2 => try call(i.value),
         .jmp => jmp(i.value),
         .br0 => br0(i.value),
-        .br1 => br1(i.value),
+        .br1 => try br1(i.value),
         .prims => switch (i.value) {
 include(`forth_zig.m4')
         },

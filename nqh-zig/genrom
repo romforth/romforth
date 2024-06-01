@@ -304,11 +304,17 @@ while (<>) {				# map forth words in the standard input
 	}
 }
 if ($gendefs) {
-	print 'pub const func = ';
 	for my $i (@$deford) {
-		print "\t$i->[0]\_bytes ++ ";
+		my $l=length($i->[1]);
+		print "const ", $i->[0], "_name = ";
+		print '[_]*const [', $l, ':0]u8{"', $i->[1], '"};', "\n";
 	}
-	print " [_]Bytecode{};\n";
+	print "pub const fnames =\n";
+	print join(" \+\+\n", map { "\t" . $_->[0] . "_name" } @$deford);
+	print ";\n";
+	print "pub const func =\n";
+	print join(" \+\+\n", map { "\t" . $_->[0] . "_bytes" } @$deford);
+	print ";\n";
 	my $lh;
 	open($lh, ">defs_enum.zig");
 	for my $i (@$deford) {
