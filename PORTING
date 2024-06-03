@@ -27,6 +27,7 @@ The following ports are complete:
 | z80-stc      |  16  | little | 4 | Baremetal | sdasz80    | ucsim/sz80    |
 | msp430-fcode |  16  | little | 5 | Baremetal | msp430-gcc | mspdebug      |
 | msp430-f     |  16  | little | 6 | Baremetal | msp430-gcc | mspdebug      |
+| nqh-zig      |  64  | little | 7 | Baremetal | zig        | DIY Emulator  |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
@@ -82,6 +83,11 @@ Notes for the table above:
 	to terminate definitions in keeping with the slogan "definitions are
 	strings, named by characters". This is a space optimized version which
 	does not have a dictionary, just a lookup table for each character.
+
+	Thread type 7 is used to denote "Not Quite Huffman"/nqh bytecode with
+	the invocation format:
+		| bytecode |
+	as documented in the JOURNAL entry for 26 Apr '24.
 
 	There is also a prim_var_deref setting which is meant to modify the
 	semantics of how cfa's are handled by the various threading schemes.
