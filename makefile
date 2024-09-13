@@ -23,6 +23,7 @@ all :
 	(cd msp430-fcode ; make)
 	(cd msp430-f ; make)
 	(cd nqh-zig ; make)
+	(cd wasm32-c ; make)
 
 allsteps :
 	./runallsteps
@@ -54,3 +55,4 @@ clean :
 	(cd msp430-fcode ; make clean)
 	(cd msp430-f ; make clean)
 	(cd nqh-zig ; make clean)
+	(cd wasm32-c ; make clean)

@@ -31,6 +31,7 @@ my $z80stc_check=1;
 my $msp430f_check=1;
 my $msp430_f_check=1;
 my $nqhzig_check=1;
+my $wasm32c_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -55,6 +56,7 @@ if (@ARGV) {
 	$msp430f_check=0;
 	$msp430_f_check=0;
 	$nqhzig_check=0;
+	$wasm32c_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -79,6 +81,7 @@ if (@ARGV) {
 		$msp430f_check=1 if ( $d eq "msp430-fcode");
 		$msp430_f_check=1 if ( $d eq "msp430-f");
 		$nqhzig_check=1 if ( $d eq "nqh-zig");
+		$wasm32c_check=1 if ( $d eq "wasm32-c");
 	}
 }
 
@@ -221,6 +224,12 @@ $x=`cat nqh-zig/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $nqhzig_step=$step;
+
+my $wasm32c_step;
+$x=`cat wasm32-c/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$wasm32c_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -574,6 +583,19 @@ nqhzig_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the nqh-zig port\n";
 	system("cd nqh-zig ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+wasm32c_port: {
+	last wasm32c_port unless ($wasm32c_check);
+	last wasm32c_port if ($i>$wasm32c_step);
+	@ARGV=("wasm32-c/fpp.config.C");
+	open(my $fh, ">wasm32-c/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the C port\n";
+	system("cd wasm32-c ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }
