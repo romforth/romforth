@@ -165,6 +165,7 @@ testing, older/newer versions may or may not work)
 	- msp430-gcc ((GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched))
 	- mspdebug(from github.com/romforth/mspdebug, until my changes
 		are upstreamed)
+	- wasmtime (wasmtime-cli 9.0.4)
 
 After installing all the above dependencies, running `make` will build each of
 the ports and run each of them in an emulator and should complete successfully.
@@ -202,4 +203,5 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | msp430-fcode |     344    |   2064 (2408)   |   3308 (3652)   |
 | msp430-f     |     344    |   602  (946)    |   1408 (1752)   |
 | nqh-zig      |    9387    |   341  (9728)   |   1009 (10396)  |
+| wasm32-c     |    1735    |   2840 (4575)   |   5552 (7287)   |
 '--------------'------------'-----------------'-----------------'

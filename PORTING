@@ -28,6 +28,7 @@ The following ports are complete:
 | msp430-fcode |  16  | little | 5 | Baremetal | msp430-gcc | mspdebug      |
 | msp430-f     |  16  | little | 6 | Baremetal | msp430-gcc | mspdebug      |
 | nqh-zig      |  64  | little | 7 | Baremetal | zig        | DIY Emulator  |
+| wasm32-c     |  32  | little | 3 | Baremetal | zig cc     | wasmtime      |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
@@ -210,7 +211,10 @@ defs.4th. If these are defined as primitives (or by other means), these can be
 set to 0 (or removed).
 
 THREAD denotes the type of Forth "threading" used by the interpreter. The
-current options are 1, 2, 3 and 4.
+current options can be any of the values listed in the 'T' column of the table
+of completed ports listed at the beginning of this document. You could also
+choose to create a new threading type of your own making - which must be
+appropriately documented though.
 
 More notes documenting the THREAD configuration parameter is given as part of
 the explanation of the 'T'hread type in the "Notes" section below the table of

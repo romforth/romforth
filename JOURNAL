@@ -154,6 +154,7 @@ INDEX
 	* 31 May '24
 	* 01 Jun '24
 	* 03 Jun '24
+	* 13 Sep '24
 
 04 Nov '22
 ----------
@@ -5463,3 +5464,54 @@ to store the Forth dictionary, stopping at step 40 seems to be fine for now.
 If I run into a device with a small ROM and a large RAM, I can revisit this
 decision at that point in time but for now, all of that work can be deferred to
 a faraway future time since I'm now preparing to go off on a long summer break.
+
+13 Sep '24
+----------
+I was on vacation in India for a while during which time my mother-in-law
+passed away. We were in India for about two months while we looked after her
+while she was on her deathbed and then performed her funeral and other related
+ceremonies. So I'll dedicate this port, in memoriam, to my in-laws who were a
+hardworking couple - very forthright, hands-on, practical, no nonsense people.
+
+After coming back from India, I didn't immediately start working on yet another
+port as I tried to think through which way this needs to go and I was mulling
+over what to work on next and one of the ideas that had been floating around in
+the back of my head was to use a "well known" virtual processor instead of the
+"Not Quite Huffman"/nqh homegrown DIY virtual processor that I'd used for the
+previous port. WASM has been one of the leading contenders on that list since
+it is the new hotness and my guess is that it is small enough that it might
+eventually work in every browser, thus making it a very "popular" platform.
+
+To build the wasm binaries, I decided to use the superpowers enabled by Zig
+since it turns out that generating wasm binaries is just a "zig cc" away. So I
+have used the existing C code as the base for this port as well and it made the
+whole porting experience so much smoother compared to most of the other ports.
+
+To run wasm though, I was faced with a plentitude of choices and I've gone with
+the one that seems to be the "official" runtime : wasmtime. While I was out
+there experimenting, I also ran it through wasmer and that seemed to work fine
+too but for now I'll just stick with wasmtime and leave the wasmer option as a
+comment in the makefile. Adding wasm to the mix adds yet more build and runtime
+dependencies but given the number of dependencies I already have, adding one
+more shouldn't be much more of a burden (I hope).
+
+Measuring the ROM/RAM sizes turned out to be a bit different since wasm-objdump
+generates output which is quite different from "$arch-unknown-elf-objdump -dx"
+output. If I'm to believe the output from `wasm-objdump forth_dict`, even if I
+ignore all the support code, the forth kernel core amounts to 1735 bytes which
+makes it the largest of all the implementations that I've done so far.
+
+This was one of the relatively easier ports since it just needed some research
+into the Zig output options to generate wasm and then figuring out the runtime
+to actually exec the generated code. The only real hiccup happened at step 13
+and even that turned out to be a relatively easy fix. This helped me ease back
+into this project after the long break that I had taken from it.
+
+Looking ahead and thinking through what I should work on next, I'm feeling my
+way on attempting a Padauk port since part of the purpose of the "Not Quite
+Huffman"/nqh port was to assess the feasibility of fitting a really smallish
+runtime into a size constrained ROM. The PMS150C with 1K words of OTP ROM and
+just 64 bytes of RAM seems to perfectly fit that bill but if it turns out to be
+too hard to fit in or difficult to debug, I may just turn tail and move on to
+something else which is easier to bite off as I slowly transition back to
+working on this again after a long break.
