@@ -129,6 +129,27 @@ the following command after each step:
 from within that directory and this will take care of creating a git commit
 with the appropriate subject line for each step.
 
+It may be useful to also check if the instruction set provides support for
+a decent subset of the Forth primitives that are needed during the port.
+
+The following comparison table of the arithemetic, logic and bit operations
+across the various processors could be used to evaluate porting feasibility:
+---------------------------------------------------------------------------.
+Forth:  INC DEC INV NEG     -   +   &       |   ^   <<    >>      BYE      |
+---------------------------------------------------------------------------+
+x86     inc dec not neg     neg:add and     or  xor shl   shr     halt     |
+pdp11   inc dec com com,inc neg:add com,bic bis xor ash   neg,ash halt     |
+m68k+   inc dec not neg     neg:add and     or  eor lsl   lsr     SYS_exit |
+sparc+  inc dec not neg     neg:add and     or  xor sll   srl     SYS_exit |
+z80     inc dec cpl cpl,inc neg:add and     or  xor add*8 srl*8   halt     |
+msp430  inc dec inv inv,inc neg:add and     bis xor rla*8 rra*8   ?        |
+arm+    +1  -1  mvn neg     neg:add and     orr eor lsl   lsr     SYS_exit |
+riscv+  inc dec not neg     neg:add and     or  xor sll   srl     SYS_exit |
+padauk  inc dec not neg     neg:add and     or  xor sl    sr      stopsys  |
+---------------------------------------------------------------------------'
+Note: The + denotes that the Linux SYS_exit syscall is used for halting within
+qemu user emulation
+
 Since the makefile is very target dependent, you could make a copy of any one
 of the existing ports and modify as appropriate.
 

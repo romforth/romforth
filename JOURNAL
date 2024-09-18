@@ -155,6 +155,7 @@ INDEX
 	* 01 Jun '24
 	* 03 Jun '24
 	* 13 Sep '24
+	* 18 Sep '24
 
 04 Nov '22
 ----------
@@ -5515,3 +5516,43 @@ just 64 bytes of RAM seems to perfectly fit that bill but if it turns out to be
 too hard to fit in or difficult to debug, I may just turn tail and move on to
 something else which is easier to bite off as I slowly transition back to
 working on this again after a long break.
+
+18 Sep '24
+----------
+Jay Carlson says in his blog about the Padauk PMS150 family of microcontrollers
+https://jaycarlson.net/2019/09/06/whats-up-with-these-3-cent-microcontrollers
+"When you're working on a part with no peripherals, 1K of program memory, and
+64 bytes of RAM, you are probably not going to the moon (that would require 70K
+of program memory and 2K of RAM https://www.youtube.com/watch?v=2KSahAoOLdU)."
+
+He's talking about a microcontroller which was priced at just 3 cents in 2019.
+
+I haven't checked the prices recently, but even if we assume that inflation and
+COVID have pushed up the prices by a whopping 33% so that it now costs 4 cents,
+it might still be a pretty decent price for a processor that can run Forth even
+if it can't take you to the moon.
+
+The lowest end of these 8 bit microcontrollers has only 512 bytes of ROM and 64
+bytes of RAM and just one accumulator register. So this will be quite a step
+down from the heady heights of the earlier architectures with their cornucopia
+of registers but in terms of finding an extremely low cost CPU with limited
+features, this fits the bill perfectly.
+
+Looking around for build and test tools for this family of microcontrollers, it
+turns out that SDCC has built in support for these microcontrollers and ucsim
+can do the emulation of these processors as well. Who could ask for more?
+
+I first tried to see if the code under the z80*-sdcc port could be modified to
+"just work" using the -mpdk13/14/15 options to sdcc but that generates too much
+code and the data is also too large to fit into the ROM/RAM constraints.
+
+So I gave up on using sdcc and tried to see if I could use its assembler and
+linker. After doing some testing with various combinations of sdaspdk13/14/15
+and the ucsim_pdk, it looks like Padauk 13 emulation is not yet supported fully
+on the SDCC 4.2.0 version of spdk/ucsim_pdk that I currently have on my system,
+so I'll start with Padauk 14 which may cost a few more cents but may still be
+cheaper than the 10 cent RISC-V.
+
+---
+
+Happy birthday and miss you Lisamma, this one's for you.
