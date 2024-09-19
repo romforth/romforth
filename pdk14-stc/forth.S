@@ -5,6 +5,18 @@
 ; Please see the LICENSE file for the Affero GPL 3.0 license details
 
 start:
-	goto halt
-halt:
+	goto cold
+
+cold:
+	mov     a, 0
+	mov.io  sp, a
+
+	call rom
 	stopsys
+
+bye:
+	popaf
+	ret
+
+rom:
+	call bye

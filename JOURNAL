@@ -156,6 +156,7 @@ INDEX
 	* 03 Jun '24
 	* 13 Sep '24
 	* 18 Sep '24
+	* 19 Sep '24
 
 04 Nov '22
 ----------
@@ -5556,3 +5557,63 @@ cheaper than the 10 cent RISC-V.
 ---
 
 Happy birthday and miss you Lisamma, this one's for you.
+
+19 Sep '24
+----------
+Given that I'm still easing myself back into this work after a long break, I'm
+going to take it a bit easy and try a simpler STC implementation instead of
+jumping into the "Not Quite Huffman"/nqh interpreter as per my previous plan.
+
+I guess I'm feeling loquacious today or perhaps I just need to explain why, for
+a change, I'm going to use a type of "threading" which is referred to in the
+Forth community as "STC" (subroutine threaded code) for the Padauk port.
+
+STC is just an old fashioned Forth way of saying that words are "threaded"
+using the native subroutine calls of the processor instead of having Forth's
+"next interpreter" process each of the equivalent bytecodes.
+
+For example if a Forth word "foo" is defined using: def{ foo a b c }def
+the body of foo when STC is used will contain
+	call a
+	call b
+	call c
+
+The length of each of these instructions is architecture dependent, and usually
+never less than the word length of that architecture. From taking a quick look
+at the disassembed code on Padauk we can see that these will be turned into:
+	38 offset_a
+	38 offset_b
+	38 offset_c
+for a total of 6 bytes. In many cases, it is more space efficient to use one of
+the alternate Forth threading types. For example, using what I've denoted as
+the "THREAD=1" type, the equivalent bytecodes will just need to be:
+       offset_a
+       offset_b
+       offset_c
+which uses just 3 bytes instead of 6, which might be a reasonable space-time
+tradeoff.
+
+Unfortunately after lots of experimenting, I've decided against using THREAD=1
+on Padauk since I couldn't find an easy way to get the idxm opcode to read byte
+constants stored in ROM. The bytes themselves can be stored in ROM by using
+code such as this:
+	rom:
+		.area CODE
+		.area CONST
+		.db 3
+		.db 2
+		.db 1
+		.db 0
+Note that the number of elements needs to round out to an even number otherwise
+the emulator will whine about it.
+
+I couldn't quite figure out how to read these values back out using idxm and I
+did see that sdcc uses executable code (ret $value) to do the same thing so I
+assume this might be a "feature" of the architecture that I haven't quite
+grokked yet.
+
+Since I couldn't get THREAD=1 working, that rules out using THREAD=7 which is
+in many ways even more complicated. Rather than continue to struggle with all
+of that research for even more time than I've already spent on it, I'm going to
+just generate the code for the "call" opcodes and leverage the Padauk assembler
+to do all the heavy lifting by just using STC.
