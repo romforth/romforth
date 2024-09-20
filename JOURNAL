@@ -157,6 +157,7 @@ INDEX
 	* 13 Sep '24
 	* 18 Sep '24
 	* 19 Sep '24
+	* 20 Sep '24
 
 04 Nov '22
 ----------
@@ -5617,3 +5618,12 @@ in many ways even more complicated. Rather than continue to struggle with all
 of that research for even more time than I've already spent on it, I'm going to
 just generate the code for the "call" opcodes and leverage the Padauk assembler
 to do all the heavy lifting by just using STC.
+
+20 Sep '24
+----------
+To bring the Padauk port into the fold, I've used the z80 assembly code (which
+also used sdcc/sdasz80) as the template. The genrom was slightly modified to
+make calls as required by STC type threading (which is denoted by THREAD=4 in
+the config file). The z80 genprims script is used as is. The makefile was
+modified from the z80 version to use a different assembler and linker and the
+config file is also a modified version from z80.

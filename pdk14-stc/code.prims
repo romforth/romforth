@@ -1,0 +1,7 @@
+# code.prims : mapping from the Forth primitives to Padauk assembly
+#
+# Copyright (c) 2024 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+bye	: popaf ; ret
