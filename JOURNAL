@@ -5627,3 +5627,11 @@ make calls as required by STC type threading (which is denoted by THREAD=4 in
 the config file). The z80 genprims script is used as is. The makefile was
 modified from the z80 version to use a different assembler and linker and the
 config file is also a modified version from z80.
+
+21 Sep '24
+----------
+I've been trying to make the most of the z80 infrastructure for this port as
+well but that clearly fell apart at this step when trying to emit a character.
+I assume the difference might be due to memory layout, but rather than debug
+it for too long, I've used the expedient approach of changing a constant from
+0x7FFF which worked in the z80 port to 0x7F which appears to work in this port.

@@ -35,3 +35,8 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+	.area   PREG (ABS)
+	.org 0
+	.ds 32 ; reserve some space for the stack
+p:	.ds 2
