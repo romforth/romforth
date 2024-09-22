@@ -240,8 +240,8 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\t.db lit-cold\n);
-	print qq(\t.dw $o\n);
+	print qq(\tcall dup\n);
+	print qq(\tmov a, #$o\n);
 }
 
 my $m;					# cache for the map from name to label

@@ -5,7 +5,7 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	: popaf ; ret
-key	: mov a, #0x7f ; mov p, a ; mov a, #'r' ; idxm p, a ; idxm a, p ; ret
-emit	: pushaf ; mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; popaf ; idxm p, a ; ret
+key	: call dup ; mov a, #0x7f ; mov p, a ; mov a, #'r' ; idxm p, a ; idxm a, p ; ret
+emit	: pushaf ; mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; popaf ; idxm p, a ; call drop ; ret
 dup	: idxm dp, a ; dec dp ; ret
 drop	: inc dp ; idxm a, dp ; ret
