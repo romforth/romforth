@@ -9,3 +9,4 @@ key	: call dup ; mov a, #0x7f ; mov p, a ; mov a, #'r' ; idxm p, a ; idxm a, p ;
 emit	: pushaf ; mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; popaf ; idxm p, a ; call drop ; ret
 dup	: idxm dp, a ; dec dp ; ret
 drop	: inc dp ; idxm a, dp ; ret
+neg	: neg a ; ret
