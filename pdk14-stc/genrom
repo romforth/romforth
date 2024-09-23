@@ -269,7 +269,12 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
+				next if ($i eq 4); # huge kludge
 				print qq(\t.db $i\n);
+				next;
+			} elsif ($f eq "j") {
+				print qq(\t; goto label\n);
+				print qq(\t.dw 0x3032\n);
 				next;
 			}
 			die "unknown word: $f"
