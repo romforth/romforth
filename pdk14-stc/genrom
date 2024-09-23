@@ -244,6 +244,9 @@ sub lit {
 	print qq(\tmov a, #$o\n);
 }
 
+my $jzc=0;
+my $comefrom='';
+
 my $m;					# cache for the map from name to label
 while (<>) {				# map forth words in the standard input
 	for $f (split) {		# for each word to their equivalent
@@ -269,12 +272,35 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
-				next if ($i eq 4); # huge kludge
+				if ($i eq 4) { # huge kludge
+					if ($comefrom eq 'j') {
+						$comefrom='';
+						print qq(\t.dw 0x3032\n);
+						next;
+					}
+					if ($comefrom eq 'jz') {
+						$comefrom='';
+						print qq(\t.dw 0x3040\n);
+						print qq(_test_jz_endif$jzc:\n);
+						next;
+					}
+				}
 				print qq(\t.db $i\n);
 				next;
 			} elsif ($f eq "j") {
 				print qq(\t; goto label\n);
-				print qq(\t.dw 0x3032\n);
+				#print qq(\t.dw 0x3032\n);
+				$comefrom=$f;
+				next;
+			} elsif ($f eq "jz") {
+				$jzc++;
+				print qq(\tceqsn a, 0\n);
+				print qq(\tgoto _test_jz_else$jzc\n);
+				print qq(\tcall drop\n);
+				print qq(\tgoto _test_jz_endif$jzc\n);
+				print qq(_test_jz_else$jzc:\n);
+				print qq(\tcall drop\n);
+				$comefrom=$f;
 				next;
 			}
 			die "unknown word: $f"
