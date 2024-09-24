@@ -285,6 +285,14 @@ while (<>) {				# map forth words in the standard input
 						next;
 					}
 				}
+				if ($i eq -2) { # another huge kludge
+					if ($comefrom eq 'jz') {
+						$comefrom='';
+						print qq(\t.dw 0x3047\n);
+						print qq(_test_jz_endif$jzc:\n);
+						next;
+					}
+				}
 				print qq(\t.db $i\n);
 				next;
 			} elsif ($f eq "j") {
