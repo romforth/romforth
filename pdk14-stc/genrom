@@ -281,13 +281,14 @@ while (<>) {				# map forth words in the standard input
 					}
 					if ($comefrom eq 'jz') {
 						$comefrom='';
-						print qq(\t.dw 0x3040\n);
-						print qq(_test_jz_endif$jzc:\n);
+						print qq(\t.dw 0x303F\n);
+						print qq(_test_jz_else$jzc:\n);
+						print qq(\tcall drop\n);
 						next;
 					}
 					if ($comefrom eq 'jnz') {
 						$comefrom='';
-						print qq(\t.dw 0x3058\n);
+						print qq(\t.dw 0x3055\n);
 						print qq(_test_jnz_endif$jnzc:\n);
 						next;
 					}
@@ -295,8 +296,15 @@ while (<>) {				# map forth words in the standard input
 				if ($i eq -2) { # another huge kludge
 					if ($comefrom eq 'jz') {
 						$comefrom='';
-						print qq(\t.dw 0x3047\n);
+						print qq(\t.dw 0x3046\n);
+						print qq(_test_jz_else$jzc:\n);
 						print qq(_test_jz_endif$jzc:\n);
+						next;
+					}
+					if ($comefrom eq 'jnz') {
+						$comefrom='';
+						print qq(\t.dw 0x305C\n);
+						print qq(_test_jnz_endif$jnzc:\n);
 						next;
 					}
 				}
@@ -309,17 +317,14 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f eq "jz") {
 				$jzc++;
-				print qq(\tceqsn a, 0\n);
+				print qq(\tceqsn a, #0\n);
 				print qq(\tgoto _test_jz_else$jzc\n);
-				print qq(\tcall drop\n);
-				print qq(\tgoto _test_jz_endif$jzc\n);
-				print qq(_test_jz_else$jzc:\n);
 				print qq(\tcall drop\n);
 				$comefrom=$f;
 				next;
 			} elsif ($f eq "jnz") {
 				$jnzc++;
-				print qq(\tceqsn a, 0\n);
+				print qq(\tceqsn a, #0\n);
 				print qq(\tgoto _test_jnz_else$jnzc\n);
 				print qq(\tcall drop\n);
 				print qq(\tgoto _test_jnz_endif$jnzc\n);

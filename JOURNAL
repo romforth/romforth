@@ -158,6 +158,7 @@ INDEX
 	* 18 Sep '24
 	* 19 Sep '24
 	* 20 Sep '24
+	* 26 Sep '24
 
 04 Nov '22
 ----------
@@ -5635,3 +5636,10 @@ well but that clearly fell apart at this step when trying to emit a character.
 I assume the difference might be due to memory layout, but rather than debug
 it for too long, I've used the expedient approach of changing a constant from
 0x7FFF which worked in the z80 port to 0x7F which appears to work in this port.
+
+26 Sep '24
+----------
+I don't remember offhand who it was that said that a programming language is
+low level if you have to pay attention to the irrelevant. Quite clearly, I had
+to pay a lot of attention to the irrelevance of using #0 instead of 0 while
+debugging the bug that crept in here.
