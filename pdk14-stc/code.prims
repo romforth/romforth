@@ -10,3 +10,5 @@ emit	: pushaf ; mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; popaf ; idxm
 dup	: idxm dp, a ; dec dp ; ret
 drop	: inc dp ; idxm a, dp ; ret
 neg	: neg a ; ret
+inc	: add a, #1 ; ret
+dec	: add a, #-1 ; ret
