@@ -112,24 +112,30 @@ sub runrepeat {
 }
 
 sub runif {
-	print "\t.db ", $mapjz, "-cold # branch if zero\n";
-	print "\t.db ", $label, '_then-.-1', "\n";
+	print "\tceqsn a, #0\n";
+	print "\tgoto $label", "_skip\n";
+	print "\tgoto $label", "_then\n";
+	print "$label", "_skip:\n";
+	print "\tcall drop\n";
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\t.db ", $mapjmp, "-cold # branch\n";
-	print "\t.db ", $ol->[0], '_endif-.-1', "\n";
+	print "\tgoto ", $ol->[0], '_endif_plus1', "\n";
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
+	print qq(\tcall drop\n);
 	$ol->[1]="endif";
 	push @labelstack, $ol;
 }
 
 sub runthen {
 	my $ol=pop @labelstack;
+	print "\tgoto ", join('_', @$ol,"plus1"), "\n";
 	print join('_', @$ol), ":\n";
+	print qq(\tcall drop\n);
+	print join('_', @$ol,"plus1"), ":\n";
 }
 
 sub genprim {
