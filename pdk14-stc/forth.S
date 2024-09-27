@@ -45,5 +45,7 @@ rom:
 	.ds 16 ; reserve some space for the call stack
 p:	.ds 2
 dp:	.ds 1
+nos: 	.ds 1
+sa:	.ds 1  ; save/restore for the accumulator
 	.ds 16 ; reserve some space for the data stack
 datastack:
