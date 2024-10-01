@@ -22,6 +22,7 @@ dip	: mov sa, a ; mov a, nos ; dec dp ; idxm dp, a ; mov a, sa ; ret
 |	: call nip ;  or a, nos ; ret
 ^	: call nip ; xor a, nos ; ret
 swap	: call nip ; call dup ; mov a, nos ; ret
+pick	: add a, dp
 @	: mov sa, a ; idxm a, sa ; ret
 !	: mov sa, a ; call drop ; idxm sa, a ; call drop ; ret
 c@	: @
