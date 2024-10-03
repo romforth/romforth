@@ -55,7 +55,7 @@ sa:	.ds 1  ; save/restore for the accumulator
 	.ds 16 ; reserve some space for the data stack
 datastack:
 	.ds 16 ; reserve some space for the return stack
-rp:	.ds 1
 here:	.dw mem
 state:	.ds 1
+rp:	.ds 1
 mem:	.ds 1 ; reserve some space for alloc
