@@ -342,6 +342,8 @@ while (<>) {				# map forth words in the standard input
 				print qq(\tcall drop\n);
 				$comefrom=$f;
 				next;
+			} elsif ($f eq 'lit') {
+				next;
 			}
 			die "unknown word: $f"
 		}
