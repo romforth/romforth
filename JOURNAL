@@ -159,6 +159,7 @@ INDEX
 	* 19 Sep '24
 	* 20 Sep '24
 	* 26 Sep '24
+	* 03 Oct '24
 
 04 Nov '22
 ----------
@@ -5643,3 +5644,21 @@ I don't remember offhand who it was that said that a programming language is
 low level if you have to pay attention to the irrelevant. Quite clearly, I had
 to pay a lot of attention to the irrelevance of using #0 instead of 0 while
 debugging the bug that crept in here.
+
+03 Oct '24
+----------
+To switch the return stack safely in an STC implementation, I need to be able
+to push and pop the machine stack. As per the PMS150C data sheet (just 67 pages
+long!), there are only 2 ways to access the machine stack : pushaf and popaf
+which push and pop the accumulator and the flags register as a single "word"
+and this explains why the docs insist on keeping the LSB of SP at 0 (ie an even
+value).
+
+Unfortunately though, retreiving the call stack entry by reading the popped
+value via the flag register is not possible since the top 4 bits are always
+hardcoded to 1. This makes the machine stack unusable for Forth's use (either
+as the data stack or the return stack).
+
+For now. I haven't fully thought out the rest of the steps so I'll reserve some
+additional space for the return stack (which is distinct from the "machine"
+stack) and see how far I can muddle through on this port.

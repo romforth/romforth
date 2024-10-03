@@ -29,6 +29,8 @@ stick	: add a, dp
 c@	: @
 c!	: !
 sp@!	: xch a, dp ; ret
+rp@!	: xch a, rp ; ret
+# rp@!	: mov sa, a ; mov.io a, sp ; call dup ; mov a, sa ; mov.io sp, a ; call drop ; ret
 
 var here
 var state
