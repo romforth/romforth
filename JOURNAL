@@ -5662,3 +5662,30 @@ as the data stack or the return stack).
 For now. I haven't fully thought out the rest of the steps so I'll reserve some
 additional space for the return stack (which is distinct from the "machine"
 stack) and see how far I can muddle through on this port.
+
+---
+
+In the current STC port, although I've completed all of the steps upto 22, step
+23 will need an implementation of "call" which requires a working version of
+"r>" and it now appears that it may not be possible to code "r> to retrieve the
+machine stack contents. So it looks like a "full" Forth implementation using
+STC on the Padauk microcontroller may not be possible. I'll leave this partial
+version in here, just in case there is a clever hack to move it further ahead.
+
+I'm hesitant to label this an incomplete port since you can define new words
+in Forth and run them machine independently (for example, take a look at the
+working definition of "bl", which is tested at step 22). This port currently
+uses up 250 bytes (without tests enabled) so there should be plenty of space
+leftover to add definitions even on the smallest OTP device.
+
+Although this port will work as an umbilical host, I'd like to see this ported
+all the way to the same levels as the 'f' bytecode interpreters and so in that
+narrow sense, it can be regarded as incomplete.
+
+All is not lost however since part of the reason I started off with an STC port
+rather than the initial plan to use a bytecode interpreter was as a warm up
+exercise to get more familiar with the ISA of this microcontroller. Rather than
+jump directly into the "Not Quite Huffman"/nqh bytecode, I'll take a detour yet
+again through a bytecode implementation for this microcontroller since I have
+most of the required pieces now in place for an attempt at what I hope can be a
+relatively quick port.

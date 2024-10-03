@@ -29,6 +29,7 @@ The following ports are complete:
 | msp430-f     |  16  | little | 6 | Baremetal | msp430-gcc | mspdebug      |
 | nqh-zig      |  64  | little | 7 | Baremetal | zig        | DIY Emulator  |
 | wasm32-c     |  32  | little | 3 | Baremetal | zig cc     | wasmtime      |
+| pdk14-stc    |   8  |   -    | 4 | Baremetal | sdaspdk14  | ucsim/pdk     |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
