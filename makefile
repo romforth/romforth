@@ -25,6 +25,7 @@ all :
 	(cd nqh-zig ; make)
 	(cd wasm32-c ; make)
 	(cd pdk14-stc ; make)
+	(cd pdk14-thr1 ; make)
 
 allsteps :
 	./runallsteps
@@ -58,3 +59,4 @@ clean :
 	(cd nqh-zig ; make clean)
 	(cd wasm32-c ; make clean)
 	(cd pdk14-stc ; make clean)
+	(cd pdk14-thr1 ; make clean)

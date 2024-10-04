@@ -160,6 +160,7 @@ INDEX
 	* 20 Sep '24
 	* 26 Sep '24
 	* 03 Oct '24
+	* 04 Oct '24
 
 04 Nov '22
 ----------
@@ -5689,3 +5690,20 @@ jump directly into the "Not Quite Huffman"/nqh bytecode, I'll take a detour yet
 again through a bytecode implementation for this microcontroller since I have
 most of the required pieces now in place for an attempt at what I hope can be a
 relatively quick port.
+
+04 Oct '24
+----------
+I'm starting a THREAD type 1 port for the PDK14 microcontroller mostly to see
+how much farther I might be able to progress compared to the STC port where I
+had to unfortunately call an early halt and stop rather suddenly because it was
+not possible to manipulate the return stack (read/write via the SP register).
+
+For this port though, I'll be using a return stack which is directly under my
+control, so I can definitely squeak past step 23 where the STC port foundered
+but knowing how limited the ROM on this family of microcontrollers is, I worry
+whether I will be able to go much farther than where I got to with the STC port
+
+I think that if I can fit the dictionary and the REPL into the OTP ROM, that
+may be sufficient enough progress to declare victory and call this a successful
+port. The only way to find out if that's possible and see what happens is to
+make an attempt at doing it - so that's what I'm attempting with this port.

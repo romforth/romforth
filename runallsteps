@@ -33,6 +33,7 @@ my $msp430_f_check=1;
 my $nqhzig_check=1;
 my $wasm32c_check=1;
 my $pdk14stc_check=1;
+my $pdk14thr1_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -59,6 +60,7 @@ if (@ARGV) {
 	$nqhzig_check=0;
 	$wasm32c_check=0;
 	$pdk14stc_check=0;
+	$pdk14thr1_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -85,6 +87,7 @@ if (@ARGV) {
 		$nqhzig_check=1 if ( $d eq "nqh-zig");
 		$wasm32c_check=1 if ( $d eq "wasm32-c");
 		$pdk14stc_check=1 if ( $d eq "pdk14-stc");
+		$pdk14thr1_check=1 if ( $d eq "pdk14-thr1");
 	}
 }
 
@@ -239,6 +242,12 @@ $x=`cat pdk14-stc/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $pdk14stc_step=$step;
+
+my $pdk14thr1_step;
+$x=`cat pdk14-thr1/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$pdk14thr1_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -618,6 +627,19 @@ pdk14stc_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the pdk port\n";
 	system("cd pdk14-stc ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+pdk14thr1_port: {
+	last pdk14thr1_port unless ($pdk14thr1_check);
+	last pdk14thr1_port if ($i>$pdk14thr1_step);
+	@ARGV=("pdk14-thr1/fpp.config.pdk");
+	open(my $fh, ">pdk14-thr1/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the pdk port\n";
+	system("cd pdk14-thr1 ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }
