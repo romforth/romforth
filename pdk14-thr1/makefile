@@ -8,7 +8,7 @@ AS=sdaspdk14
 LD=sdldpdk
 all : forth.ihx
 	cat cmds.ucsim | ucsim_pdk forth.ihx > test.log
-	grep -q 'Stop at 0x000002: (101) Halted' test.log
+	grep -q 'Stop at 0x000008: (101) Halted' test.log
 forth.ihx : forth.rel
 	$(LD) -i $<
 forth.rel : forth.s

@@ -5,6 +5,24 @@
 ; Please see the LICENSE file for the Affero GPL 3.0 license details
 
 start:
-	goto halt
+	mov a, 0
+	mov.io sp, a
+	clear ip
+	inc ip
+repl:
+	call read
+	pcadd a
+	goto repl
 halt:
 	stopsys
+read:
+	mov a, ip
+	inc ip
+	pcadd a
+rom:
+	ret #2
+
+	.area PREG (ABS)
+	.org 0
+	.ds 16 ; reserve some space for the call stack
+ip:	.ds 1
