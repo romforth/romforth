@@ -8,19 +8,18 @@ start:
 	mov a, 0
 	mov.io sp, a
 	clear ip
-	inc ip
 repl:
 	call read
 	pcadd a
-	goto repl
-halt:
-	stopsys
+decode:
+#include "prims.s"
+
 read:
-	mov a, ip
 	inc ip
+	mov a, ip
 	pcadd a
 rom:
-	ret #2
+#include "rom.s"
 
 	.area PREG (ABS)
 	.org 0
