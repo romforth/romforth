@@ -7,13 +7,18 @@
 start:
 	mov a, 0
 	mov.io sp, a
-	clear ip
+	call init
 repl:
 	call read
 	pcadd a
 decode:
 #include "prims.s"
 
+init:
+	clear ip
+	mov a, #datastack
+	mov dp, a
+	ret
 read:
 	inc ip
 	mov a, ip
@@ -26,3 +31,7 @@ rom:
 	.ds 16 ; reserve some space for the call stack
 p:	.ds 1
 ip:	.ds 1
+dp:	.ds 1
+tos:	.ds 1
+	.ds 16 ; reserve some space for the data stack
+datastack:

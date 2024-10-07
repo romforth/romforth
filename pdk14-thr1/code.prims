@@ -6,5 +6,7 @@
 
 next	: goto repl
 bye	: stopsys
-key	: mov a, #0x7f ; mov p, a ; mov a, #'r' ; idxm p, a ; idxm a, p ; pushaf ;
-emit	: mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; popaf ; idxm p, a ;
+dup	: mov a, tos ; idxm dp, a ; dec dp ;
+drop	: inc dp ; idxm a, dp ; mov tos, a ;
+key	: dup ; mov a, #0x7f ; mov p, a ; mov a, #'r' ; idxm p, a ; idxm a, p ; mov tos, a ;
+emit	: mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; mov a, tos ; idxm p, a ; drop ;
