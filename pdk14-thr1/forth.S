@@ -24,4 +24,5 @@ rom:
 	.area PREG (ABS)
 	.org 0
 	.ds 16 ; reserve some space for the call stack
+p:	.ds 1
 ip:	.ds 1

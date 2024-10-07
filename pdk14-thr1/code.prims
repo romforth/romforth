@@ -6,3 +6,5 @@
 
 next	: goto repl
 bye	: stopsys
+key	: nop ;
+emit	: mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; mov a, #'f' ; idxm p, a ;

@@ -136,7 +136,7 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\tret \#$m-decode # $f\n";
+	print "\tret \#($m-decode)/2+1# $f\n";
 }
 
 sub gendef {
