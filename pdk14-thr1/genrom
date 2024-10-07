@@ -240,8 +240,8 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\t.db lit-cold\n);
-	print qq(\t.dw $o\n);
+	print qq(\tret \#(lit-decode)/2+1\n);
+	print qq(\tret \#$o\n);
 }
 
 my $m;					# cache for the map from name to label
