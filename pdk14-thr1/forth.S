@@ -33,5 +33,6 @@ p:	.ds 1
 ip:	.ds 1
 dp:	.ds 1
 tos:	.ds 1
+nos:	.ds 1
 	.ds 16 ; reserve some space for the data stack
 datastack:

@@ -18,3 +18,5 @@ jnz	: mov a, tos ; pushaf ; drop ; popaf ; ceqsn a, #0 ; goto j ; skip: inc ip ;
 inc	: inc tos ;
 dec	: dec tos ;
 inv	: not tos ;
+nip	: inc dp ; idxm a, dp ; mov nos, a ;
+dip	: mov a, nos ; idxm dp, a ; dec dp ;
