@@ -20,3 +20,5 @@ dec	: dec tos ;
 inv	: not tos ;
 nip	: inc dp ; idxm a, dp ; mov nos, a ;
 dip	: mov a, nos ; idxm dp, a ; dec dp ;
++	: mov a, tos ; pushaf ; nip ; popaf ; add a, nos ; mov tos, a ;
+-	: mov a, tos ; neg a ; pushaf ; nip ; popaf ; add a, nos ; mov tos, a ;
