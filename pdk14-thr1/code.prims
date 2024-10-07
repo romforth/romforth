@@ -12,3 +12,4 @@ key	: dup ; mov a, #0x7f ; mov p, a ; mov a, #'r' ; idxm p, a ; idxm a, p ; mov 
 emit	: mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; mov a, tos ; idxm p, a ; drop ;
 lit	: dup ; call read ; mov tos, a ;
 neg	: neg tos ;
+j	: call read ; add a, ip ; mov ip, a ;
