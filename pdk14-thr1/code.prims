@@ -15,3 +15,5 @@ neg	: neg tos ;
 j	: call read ; add a, ip ; mov ip, a ;
 jz	: mov a, tos ; pushaf ; drop ; popaf ; ceqsn a, #0 ; goto skip ; goto j
 jnz	: mov a, tos ; pushaf ; drop ; popaf ; ceqsn a, #0 ; goto j ; skip: inc ip ;
+inc	: inc tos ;
+dec	: dec tos ;
