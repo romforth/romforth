@@ -161,6 +161,7 @@ INDEX
 	* 26 Sep '24
 	* 03 Oct '24
 	* 04 Oct '24
+	* 08 Oct '24
 
 04 Nov '22
 ----------
@@ -5707,3 +5708,26 @@ I think that if I can fit the dictionary and the REPL into the OTP ROM, that
 may be sufficient enough progress to declare victory and call this a successful
 port. The only way to find out if that's possible and see what happens is to
 make an attempt at doing it - so that's what I'm attempting with this port.
+
+08 Oct '24
+----------
+Some of the changes to forth.S need some explanation since they may seem to be
+superfluous. Let's start with the change I made yesterday where the data layout
+of tos and nos were swapped. Superfluous, right? Well, not really - without
+that change, the linker whines with the following warning message:
+
+?ASlink-Warning-Invalid address for instruction
+         file              module            area              offset
+  Refby  forth.rel                           _CODE                  00010C
+  Defin  forth.rel                           PREG0                  810013
+makefile:40: recipe for target 'forth.ihx' failed
+
+It was to fix this issue that I swapped the locations of nos and tos and for
+some mysterious reason, the linker appears to be ok with it. Today, I ran into
+an identical linker error. And this time I resorted to shuffling the variables
+around and adding a pad byte to the datastack array. This was based on a hunch
+I had that the linker was whining about even/odd address locations. To test the
+speculation, I added the pad byte and sure enough the warning disappeared.
+
+If this problem continues to pop up I may have to do some actual research and
+figure out exactly what it is that the linker is whining about.

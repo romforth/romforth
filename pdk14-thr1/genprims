@@ -1,1 +1,117 @@
-../z80/genprims
+#!/usr/bin/perl -w
+
+# genprims : convert code.prims into Padauk pdk14 assembly code
+#
+# Copyright (c) 2022-2024 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+my $mf=shift;	# the map file to be generated
+
+my $gendict=0;
+if ($mf eq "-d") {
+	$gendict=1;
+	$mf=shift;	# the map file to be generated
+}
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
+my ($f,$l);	# the forth name($f) and the assembler label ($l)
+
+my $prev="0";
+
+sub genheader {
+	my ($f,$l,$flag)=@_;
+	my $len=length($f);
+	# print "\t.align 1\n";
+	if ($len%2==0) {
+		print "$l","_pad:\t.db 0\n";
+	}
+	print qq{\t.ascii "$f"\n};
+	print "$l","_nfa:\t.db $len\n";
+	print "$l","_lfa:\t.dw $prev\n";
+	print "$l","_cfa:\n";
+	if ($flag) {
+		print "\t.db $l-cold\n";
+		print "\t.db exit-cold\n";
+	} else {
+		print "\t.db lit-cold\n";
+		print "\t.dw $l\n";
+		print "\t.db exit-cold\n";
+	}
+	$prev="$l"."_lfa";
+}
+
+my $headers=[];
+
+sub mapnames {
+	($f,$l)=@_;		# which provides forth<->label mapping
+	print $mh "code $f $l\n";	# create dictionary entry for primitives
+	print "$l:\n";	# generate the label for the assembler
+	if ($gendict) {
+		push @$headers, [$f,$l,1];
+	}
+}
+
+my $hash={};
+my $agg=[];
+my $label="lbl000";
+while (<>) {
+	/^\#/ and next;
+	if (s/^\s*(\S+)\s+:\s+//) {
+		$f=$1;
+		if ($f=~/^[a-z]\w*$/) {
+			mapnames($f, $f);
+		} else {
+			mapnames($f, $label++);
+		}
+		for my $w (split(' ;')) {
+			chomp $w;
+			$w="next" unless ($w);
+			$w=~s/^\s+//;
+			if ($l=$hash->{$w}) {
+				print "\t", join("\n\t",@$l), "\n";
+				push @$agg, @$l unless ($w eq "next");
+			} else {
+				print "\t$w\n";
+				push @$agg, $w;
+			}
+		}
+		$hash->{"$f"}=[@$agg];
+		$agg=[];
+		next;
+	}
+	if (/^define\s+(\S+)\s+(.*)$/) {	# definitions
+		print "#define $1 $2\n";
+		next;
+	} elsif (/^var\s+(\S+)\s+(.*)$/) {	# variables
+		($f)=($1);
+		print $mh "var $f $f\n";# create dictionary entry for variables
+		if ($gendict) {
+			unshift @$headers, [$f,$f,0];
+		}
+		next;
+	}
+	next if (/^\s*$/);
+	chomp;
+	die "unknown declaration: '$_'";
+}
+
+print $mh "label fake $label\n";
+if ($gendict) {
+	my $lh;
+	open($lh, ">dict.s");
+	select $lh;
+	for my $h (@$headers) {
+		genheader(@$h);
+	}
+	close $lh;
+	open($lh, ">latest.s");
+	select $lh;
+	print "\t.word $prev\n";
+	close $lh;
+	print $mh "label prev $prev\n";
+}
+
+close $mh;

@@ -18,6 +18,8 @@ init:
 	clear ip
 	mov a, #datastack
 	mov dp, a
+	mov a, #mem
+	mov here, a
 	ret
 read:
 	inc ip
@@ -32,7 +34,9 @@ rom:
 p:	.ds 1
 ip:	.ds 1
 dp:	.ds 1
-nos:	.ds 1
+here:	.ds 1
 tos:	.ds 1
-	.ds 16 ; reserve some space for the data stack
-datastack:
+	.ds 17	; reserve some space for the data stack
+datastack:	; pad 1 byte: '?ASlink-Warning-Invalid address for instruction'
+nos:	.ds 1
+mem:	.ds 1 ; reserve some space for alloc
