@@ -33,6 +33,7 @@ stick	: inc tos ; mov a, tos ; add a, dp ; mov tos, a
 !	: store: ; nip ; mov a, tos ; xch a, nos ; idxm nos, a ; drop ;
 c@	: goto fetch
 c!	: goto store
+sp@!	: mov a, tos ; xch a, dp ; mov tos, a ;
 
 var here
 var state
