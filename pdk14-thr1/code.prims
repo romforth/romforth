@@ -34,6 +34,7 @@ stick	: inc tos ; mov a, tos ; add a, dp ; mov tos, a
 c@	: goto fetch
 c!	: goto store
 sp@!	: mov a, tos ; xch a, dp ; mov tos, a ;
+rp@!	: mov a, tos ; xch a, rp ; mov tos, a ;
 
 var here
 var state

@@ -64,4 +64,5 @@ datastack:	; pad 1 byte: '?ASlink-Warning-Invalid address for instruction'
 nos:	.ds 1
 state:	.ds 1
 bank:	.ds 1
+rp:	.ds 1
 mem:	.ds 1 ; reserve some space for alloc
