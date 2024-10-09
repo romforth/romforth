@@ -29,6 +29,7 @@ dip	: mov a, nos ; idxm dp, a ; dec dp ;
 swap	: nip ; dup ; mov a, nos ; mov tos, a ;
 pick	: inc tos ; mov a, tos ; add a, dp ; mov tos, a
 @	: fetch: ; idxm a, tos ; mov tos, a ;
+stick	: inc tos ; mov a, tos ; add a, dp ; mov tos, a
 !	: store: ; nip ; mov a, tos ; xch a, nos ; idxm nos, a ; drop ;
 c@	: goto fetch
 c!	: goto store
