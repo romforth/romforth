@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-next	: goto repl
+next	: ret
 bye	: stopsys
 dup	: mov a, tos ; idxm dp, a ; dec dp ;
 2drop	: inc dp
@@ -27,7 +27,10 @@ dip	: mov a, nos ; idxm dp, a ; dec dp ;
 |	: mov a, tos ; pushaf ; nip ; popaf ; or a, nos ; mov tos, a ;
 ^	: mov a, tos ; pushaf ; nip ; popaf ; xor a, nos ; mov tos, a ;
 swap	: nip ; dup ; mov a, nos ; mov tos, a ;
-@	: idxm a, tos ; mov tos, a ;
-!	: nip ; mov a, tos ; xch a, nos ; idxm nos, a ; drop ;
+@	: fetch: ; idxm a, tos ; mov tos, a ;
+!	: store: ; nip ; mov a, tos ; xch a, nos ; idxm nos, a ; drop ;
+c@	: goto fetch
+c!	: goto store
 
 var here
+var state

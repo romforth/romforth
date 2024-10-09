@@ -9,9 +9,21 @@ start:
 	mov.io sp, a
 	call init
 repl:
-	call read
-	pcadd a
+	call read0
+	call decode
+	goto repl
+
+bank1:
+	popaf
+	clear ip
+	inc bank
+repl1:
+	call read1
+	call decode
+	goto repl1
+
 decode:
+	pcadd a
 #include "prims.s"
 
 init:
@@ -20,8 +32,19 @@ init:
 	mov dp, a
 	mov a, #mem
 	mov here, a
+	mov a, #1
+	mov state, a
+	mov bank, a
 	ret
+
 read:
+	mov a, bank
+	pcadd a
+	goto read0
+	goto read1
+	; TODO: everything else should panic
+
+read0:
 	inc ip
 	mov a, ip
 	pcadd a
@@ -39,4 +62,6 @@ tos:	.ds 1
 	.ds 17	; reserve some space for the data stack
 datastack:	; pad 1 byte: '?ASlink-Warning-Invalid address for instruction'
 nos:	.ds 1
+state:	.ds 1
+bank:	.ds 1
 mem:	.ds 1 ; reserve some space for alloc

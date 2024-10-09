@@ -18,18 +18,18 @@ fourforth : test.dict
 test.dict : forth_dict.ihx test.inp test.exp
 	cp test.inp test.in
 	cat cmds.ucsim | ucsim_pdk -I in=test.in,out=test.dict,if=ram'[0x7f]' forth_dict.ihx > test.log
-	grep -q 'Stop at 0x000007: (101) Halted' test.log
+	grep -q 'Stop at 0x00000f: (101) Halted' test.log
 	cmp test.dict test.exp
 test.defs : forth_defs.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	cat cmds.ucsim | ucsim_pdk -I in=test.in,out=test.defs,if=ram'[0x7f]' forth_defs.ihx > test.log
-	grep -q 'Stop at 0x000007: (101) Halted' test.log
+	grep -q 'Stop at 0x00000f: (101) Halted' test.log
 	cmp test.defs test.exp
 test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	touch test.out
 	cat cmds.ucsim | ucsim_pdk -I in=test.in,out=test.out,if=ram'[0x7f]' forth.ihx > test.log
-	grep -q 'Stop at 0x000007: (101) Halted' test.log
+	grep -q 'Stop at 0x00000f: (101) Halted' test.log
 	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp

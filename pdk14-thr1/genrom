@@ -111,16 +111,47 @@ sub runrepeat {
 	print join('_', @$ol), ":\n";
 }
 
+my $inst_count=0;
+my $bank=0;
+sub count_inst {
+	if ($bank==0) {
+		if ($inst_count==246) {
+			$bank++;
+			print "\tgoto bank$bank\n";
+			print "read$bank:\n";
+			print "\tinc ip\n";
+			print "\tmov a, ip\n";
+			print "\tpcadd a\n";
+			$inst_count=0;
+		} else {
+			$inst_count++;
+		}
+	}
+	if ($bank==1) {
+		if ($inst_count==255) {
+			$bank++;
+			$inst_count=0;
+		}
+	}
+	if ($bank > 1) {
+		die "currently supporting just 1 additional ROM bank";
+	}
+}
+
 sub runif {
-	print "\tret #(", $mapjz, "-decode)/2+1 # branch if zero\n";
+	print "\tret #(", $mapjz, "-decode)/2 # branch if zero\n";
+	count_inst();
 	print "\tret #(", $label, '_then-.)/2-1', "\n";
+	count_inst();
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\tret #(", $mapjmp, "-decode)/2+1 # branch\n";
+	print "\tret #(", $mapjmp, "-decode)/2 # branch\n";
+	count_inst();
 	print "\tret #(", $ol->[0], '_endif-.)/2-1', "\n";
+	count_inst();
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
 	$ol->[1]="endif";
@@ -136,7 +167,8 @@ sub genprim {
 	my ($f)=@_;
 	my $m=$map->{$f};
 	die "$f has no mapping" unless $m;
-	print "\tret \#($m-decode)/2+1# $f\n";
+	print "\tret \#($m-decode)/2 # $f\n";
+	count_inst();
 }
 
 sub gendef {
@@ -240,8 +272,10 @@ sub def {
 
 sub lit {
 	my ($o)=@_;
-	print qq(\tret \#(lit-decode)/2+1\n);
+	print qq(\tret \#(lit-decode)/2\n);
+	count_inst();
 	print qq(\tret \#$o\n);
+	count_inst();
 }
 
 my $m;					# cache for the map from name to label
@@ -279,6 +313,9 @@ while (<>) {				# map forth words in the standard input
 		}
 	}
 }
+
+print "read1:\n" if ($bank<1);
+
 print $mh "label fake $label\n";
 if ($gendict) {
 	open(my $lh, ">latest.s");

@@ -162,6 +162,7 @@ INDEX
 	* 03 Oct '24
 	* 04 Oct '24
 	* 08 Oct '24
+	* 09 Oct '24
 
 04 Nov '22
 ----------
@@ -5731,3 +5732,50 @@ speculation, I added the pad byte and sure enough the warning disappeared.
 
 If this problem continues to pop up I may have to do some actual research and
 figure out exactly what it is that the linker is whining about.
+
+09 Oct '24
+----------
+The large set of changes that are being committed as part of this change needs
+some explanation. Usually it is at step 15 that the "c@" and "c!" primitives
+are implemented and the support for the "state" variable is added. Since the
+Padauk microcontrollers are 8 bit micros, "c@" and "c!" can just call the word
+equivalents '@' and '!' respectively. With that change in place, I ran into a
+hang. Breaking out the debugger (ucsim_pdk) and stepping through the code that
+was added did not show any obvious bugs but I was able to trace the cause of
+the hang to a counter overflow: if the rom grows to more than 255 bytes, the
+"ip" counter wraps around from 255 to 0 which causes the accumulator 'a' to be
+set to 0 which results in "pcadd a" in the "read" function to loop endlessly at
+the instruction it is currently at. I had expected this situation that the ROM
+would grow larger than 255 bytes when I coded up the initial version but I had
+decided to defer the $TECHDEBT and it was clearly time to pay it down. The nice
+part was that I was already prepared with the solution to it as well.
+
+Let's step back and look at the genesis of this bug. It starts with the fact
+that the Padauk microcontrollers use a Harvard architecture with no obvious
+addressing modes for indexed read from the code area. So I'm left with the only
+remaining option of a computed jump using "pcadd a" ... "ret #CONSTANT" to read
+bytes out of the ROM. This works fine if the ROM is smaller than 255 bytes. For
+larger ROMs, we need to split it into 255 byte (or smaller) "chunks" each of
+which can be addressed individually.
+
+My attempt at fixing this was straightforward - use something similar to the
+duct tape that the hardware folks usually apply when they find the address
+bus to be too small/limiting: use "bank switching". Hardware bank switching
+typically involves an additional GPIO line repurposed as an additional address
+line. I used a similar idea in software so that the code is now split into
+multiple ROM "banks", each of which is addressed by its own "pcadd". After
+fixing up the bugs introduced by that set of changes so that I could have a
+ROM larger than 255 bytes I ran into a test failure. This turned out to be
+due to the fact that "read"ing immediate values from the ROM is also hardcoded
+into the implementations of "lit" and "j". After fixing up those paths through
+the code, things are finally working.
+
+While I could do bank switching at run time, for efficiency reasons, the switch
+is done at compile time by having the genrom script add the hooks at the right
+places. The only places where there is a run time overhead is for the "lit" and
+"j" primitives which call through the original "read' code.
+
+I'm also leveraging the fact that the emulator (ucsim_pdk) currently chooses
+not to impose any limits on the size of the ROM. So I should be able to get
+away with emulating a larger ROM (which is only needed for testing when TESTROM
+is enabled) than would be possible on a real hardware device.
