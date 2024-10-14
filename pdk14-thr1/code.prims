@@ -35,6 +35,8 @@ c@	: goto fetch
 c!	: goto store
 sp@!	: mov a, tos ; xch a, dp ; mov tos, a ;
 rp@!	: mov a, tos ; xch a, rp ; mov tos, a ;
+>r	: mov a, tos ; dec rp ; idxm rp, a ; drop ;
+r>	: dup ; idxm a, rp ; inc rp ; mov tos, a ;
 
 var here
 var state

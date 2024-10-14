@@ -163,6 +163,7 @@ INDEX
 	* 04 Oct '24
 	* 08 Oct '24
 	* 09 Oct '24
+	* 14 Oct '24
 
 04 Nov '22
 ----------
@@ -5779,3 +5780,11 @@ I'm also leveraging the fact that the emulator (ucsim_pdk) currently chooses
 not to impose any limits on the size of the ROM. So I should be able to get
 away with emulating a larger ROM (which is only needed for testing when TESTROM
 is enabled) than would be possible on a real hardware device.
+
+14 Oct 2024
+-----------
+The linker error manifested itself again at this step and so after doing a fair
+bit of research it appears that adding a SDCC/Padauk specific padding directive
+called ".bndry" is sufficient to fix this issue. I haven't bothered to go back
+and clean up the older hacks that were done prior to this to workaround this
+linker warning.
