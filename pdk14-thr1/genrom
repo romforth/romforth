@@ -173,8 +173,10 @@ sub genprim {
 
 sub gendef {
 	my ($m, $f)=@_;
-	print "\t.db enter-cold\n";
-	print "\t.dw $m # $f\n";
+	print "\tret #(enter-decode)/2\n";
+	count_inst();
+	print "\tret #($m-read$bank)/2-3 # $f\n";
+	count_inst();
 }
 
 sub gencode {
@@ -255,12 +257,12 @@ sub def {
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print "\t.db exit-cold\n";
+			print "\tret #(exit-decode)/2\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print "\t.db exit-cold\n";
+			print "\tret #(exit-decode)/2\n";
 			$state=0;
 			$immediate=0;
 			return 1;
@@ -314,7 +316,7 @@ while (<>) {				# map forth words in the standard input
 	}
 }
 
-print "read1:\n" if ($bank<1);
+print "read1:\n" if ($bank<1 and !$gendefs);
 
 print $mh "label fake $label\n";
 if ($gendict) {

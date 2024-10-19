@@ -9,7 +9,7 @@ LD=sdldpdk
 
 ASFLAGS=-l
 
-all : oneforth
+all : twoforth
 
 oneforth : test.out
 twoforth : test.defs

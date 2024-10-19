@@ -51,6 +51,18 @@ read0:
 rom:
 #include "rom.s"
 
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
+
 	.area PREG (ABS)
 	.org 0
 	.ds 16 ; reserve some space for the call stack
