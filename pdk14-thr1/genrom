@@ -91,9 +91,11 @@ sub runbegin {
 }
 
 sub rununtil {
-	print "\t.db ", $mapjnz, "-cold # branch if not zero\n";
+	print "\tret #(", $mapjnz, "-decode)/2 # branch if not zero\n";
+	count_inst();
 	my $ol=pop @labelstack;
-	print "\t.db ", join('_', @$ol), '-.-1', "\n";
+	print "\tret #(", join('_', @$ol), '-.)/2-1', "\n";
+	count_inst();
 	push @labelstack, $ol;
 }
 
@@ -106,8 +108,10 @@ sub runwhile {
 
 sub runrepeat {
 	my $ol=pop @labelstack;
-	print "\t.db ", $mapjmp, "-cold # branch\n";
-	print "\t.db ", $ol->[0], '_begin-.-1', "\n";
+	print "\tret #(", $mapjmp, "-decode)/2 # branch\n";
+	count_inst();
+	print "\tret #(", $ol->[0], '_begin-.)/2-1', "\n";
+	count_inst();
 	print join('_', @$ol), ":\n";
 }
 
