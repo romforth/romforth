@@ -44,6 +44,26 @@ read:
 	goto read1
 	; TODO: everything else should panic
 
+shiftleft:
+	pushaf
+	call drop
+	popaf
+sl1:
+	sl tos
+	dzsn a
+	goto sl1
+	ret
+
+shiftright:
+	pushaf
+	call drop
+	popaf
+sr1:
+	sr tos
+	dzsn a
+	goto sr1
+	ret
+
 read0:
 	inc ip
 	mov a, ip

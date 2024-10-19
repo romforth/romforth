@@ -42,6 +42,8 @@ enter	: call read ; pushaf
 resume	: mov a, ip ; dec rp ; idxm rp, a ; popaf ; mov ip, a ;
 exit	: idxm a, rp ; inc rp ; mov ip, a ;
 call	: mov a, tos ; pushaf ; drop ; goto resume
+<<	: mov a, tos ; ceqsn a, #0 ; goto shiftleft ; goto drop
+>>	: mov a, tos ; ceqsn a, #0 ; goto shiftright ; goto drop
 
 var here
 var state
