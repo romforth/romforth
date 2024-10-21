@@ -27,6 +27,7 @@ dip	: mov a, nos ; idxm dp, a ; dec dp ;
 |	: mov a, tos ; pushaf ; nip ; popaf ; or a, nos ; mov tos, a ;
 ^	: mov a, tos ; pushaf ; nip ; popaf ; xor a, nos ; mov tos, a ;
 swap	: nip ; dup ; mov a, nos ; mov tos, a ;
+over	: dup ; mov a, #1 ; mov tos, a
 pick	: inc tos ; mov a, tos ; add a, dp ; mov tos, a
 @	: fetch: ; idxm a, tos ; mov tos, a ;
 stick	: inc tos ; mov a, tos ; add a, dp ; mov tos, a
