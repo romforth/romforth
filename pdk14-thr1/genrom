@@ -100,9 +100,11 @@ sub rununtil {
 }
 
 sub runwhile {
-	print "\t.db ", $mapjz, "-cold # branch if zero\n";
+	print "\tret #(", $mapjz, "-decode)/2 # branch if zero\n";
+	count_inst();
 	my $ol=pop @labelstack;
-	print "\t.db ", join('_', @$ol), '-.-1', "\n";
+	print "\tret #(", join('_', @$ol), '-.)/2-1', "\n";
+	count_inst();
 	push @labelstack, $ol;
 }
 
@@ -132,12 +134,27 @@ sub count_inst {
 		}
 	}
 	if ($bank==1) {
+		if ($inst_count==110) {
+			$bank++;
+			print "\tgoto bank$bank\n";
+			print "read$bank:\n";
+			print "\tinc ip\n";
+			print "\tmov a, ip\n";
+			print "\tpcadd a\n";
+			$inst_count=0;
+		} else {
+			$inst_count++;
+		}
+	}
+	if ($bank==2) {
 		if ($inst_count==255) {
 			$bank++;
 			$inst_count=0;
+		} else {
+			$inst_count++;
 		}
 	}
-	if ($bank > 1) {
+	if ($bank > 2) {
 		die "currently supporting just 1 additional ROM bank";
 	}
 }
@@ -179,7 +196,7 @@ sub gendef {
 	my ($m, $f)=@_;
 	print "\tret #(enter-decode)/2\n";
 	count_inst();
-	print "\tret #($m-read$bank)/2-3 # $f\n";
+	print "\tret #($m-read2)/2-3 # $f\n";
 	count_inst();
 }
 
@@ -321,6 +338,7 @@ while (<>) {				# map forth words in the standard input
 }
 
 print "read1:\n" if ($bank<1 and !$gendefs);
+print "read2:\n" if ($bank<2 and !$gendefs);
 
 print $mh "label fake $label\n";
 if ($gendict) {

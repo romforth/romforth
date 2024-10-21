@@ -42,6 +42,7 @@ read:
 	pcadd a
 	goto read0
 	goto read1
+	goto read2
 	; TODO: everything else should panic
 
 shiftleft:
@@ -63,6 +64,15 @@ sr1:
 	dzsn a
 	goto sr1
 	ret
+
+bank2:
+	popaf
+	clear ip
+	inc bank
+repl2:
+	call read2
+	call decode
+	goto repl2
 
 read0:
 	inc ip
