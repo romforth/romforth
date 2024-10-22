@@ -164,6 +164,7 @@ INDEX
 	* 08 Oct '24
 	* 09 Oct '24
 	* 14 Oct '24
+	* 21 Oct '24
 
 04 Nov '22
 ----------
@@ -5788,3 +5789,39 @@ bit of research it appears that adding a SDCC/Padauk specific padding directive
 called ".bndry" is sufficient to fix this issue. I haven't bothered to go back
 and clean up the older hacks that were done prior to this to workaround this
 linker warning.
+
+21 Oct '24
+----------
+Rather reluctantly, I'm going to call an early halt to this port as well. The
+hassle of dealing with the tight constraints of this architecture is getting to
+me, I guess. For now, this is just a hobby project which is meant to be fun,
+but this port is starting to feel like a $DAYJOB what with all the grunt work
+involved in trying to shuffle stuff around to make it all fit.
+
+At step 27 I did make a valiant attempt at sneaking past the 256 byte limit of
+each ROM bank that needs to hold both the TESTROM bytes and the definitions by
+the expedient approach of carving out yet another bank just for the definitions
+and the TESTROM calls to it but at step 32 I hit the 256 byte wall on that as
+well. So, rather than continue with this seemingly never ending struggle, I'll
+mark this as a good stopping point with the consolation that I was able to wade
+past the step that caused the STC port on Padauk to come to a grinding halt.
+
+Since all of the Forth primitives (usually coded in assembly) are available for
+use, this port is also at a much more usable level than the STC port. Disabling
+TESTROM shows that it used up just 304 ROM words leaving over 200 remaining
+words for use by any application level code - even on the lowest end Padauk 13
+devices (which only have 512 words of OTP ROM).
+
+With the TESTROM disabled, I'm able to successfully run `make` all the way to
+step 41 - obviously with the caveat that none of the definitions can be tested
+(since testing was disabled, duh). Note that by the time we get to step 38, all
+of the comparison operators are available, while using up a whopping total of
+just 357 words. So for anyone who really cares enough to use Forth on Padauk's
+"3 cent" microcontrollers, this port should be good enough to be fairly usable
+even on the lowest end OTP devices.
+
+While I may revisit this (and the -stc) port at some later point in time, the
+next porting target that enthuses me the most right now is to see if, instead
+of trying to fit a square peg into a round hole, I actually port this to one of
+Chuck Moore's Forth processors. According to Wikipedia the "Novix" processor
+was one of his earliest designs. So I'll take a look at that next.

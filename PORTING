@@ -30,6 +30,7 @@ The following ports are complete:
 | nqh-zig      |  64  | little | 7 | Baremetal | zig        | DIY Emulator  |
 | wasm32-c     |  32  | little | 3 | Baremetal | zig cc     | wasmtime      |
 | pdk14-stc    |   8  |   -    | 4 | Baremetal | sdaspdk14  | ucsim/pdk     |
+| pdk14-thr1   |   8  |   -    | 1 | Baremetal | sdaspdk14  | ucsim/pdk     |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
