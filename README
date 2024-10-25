@@ -1,6 +1,12 @@
-At a superficial level, romforth is just a collection of ports of Forth. It is
-a portable, small, baremetal version of Forth that can run from Flash/ROM and
-has been ported to a number of CPUs.
+romforth is a small, portable, baremetal version of Forth which has been ported
+to various 8/16/32/64-bit microcontrollers with support for both big and little
+endian architectures. So far, it has been ported to the following instruction
+sets: x86 (16-bit, 32-bit and 64-bit), PDP11, 68000, SPARC, Z80, MSP430, ARM64,
+RISC-V(rv32, rv64), WASM, Padauk
+
+So, at a superficial level, romforth is just yet another Forth which has been
+ported to a wide variety of CPUs and is meant to be runnable directly from the
+Flash/ROM of the microcontroller.
 
 Dig deeper though, and you might see that romforth can also be considered a
 "porting toolkit" which enables a "stepwise porting framework" that allows you
@@ -112,7 +118,7 @@ run threads or invoke semi/full-coroutines (if your proclivities tend that way)
 It is reasonable to ask what distinguishes this Forth implementation from
 the zillion other implementations that already exist. I think the main
 distinguishing features are that it is portable, small and runs baremetal:
-1. Portable : romforth currently runs on 16/32/64 bits architectures as well
+1. Portable : romforth currently runs on 8/16/32/64 bit architectures as well
 	as little and big endian CPUs. It was designed with portability in mind
 	so as to eventually be able to run on "most" microcontrollers. The
 	primitives implemented in native code are only a few instructions

@@ -165,6 +165,7 @@ INDEX
 	* 09 Oct '24
 	* 14 Oct '24
 	* 21 Oct '24
+	* 25 Oct '24
 
 04 Nov '22
 ----------
@@ -5825,3 +5826,16 @@ next porting target that enthuses me the most right now is to see if, instead
 of trying to fit a square peg into a round hole, I actually port this to one of
 Chuck Moore's Forth processors. According to Wikipedia the "Novix" processor
 was one of his earliest designs. So I'll take a look at that next.
+
+25 Oct '24
+----------
+After looking at the Novix docs and thinking through the logistics, my decision
+is to not work on a port to the Novix since it seems a little too easy. Another
+reason is that a Novix port will need even more build time and emulation time
+dependencies which I'd rather not add to my ever growing list of dependencies
+right now. Instead, since I have (semi?) successfully completed my first 8-bit
+port with the Padauk pdk14 port (but only if I take the liberty of categorizing
+the z80 port as 16 bits), I'm thinking of using another 8-bit microcontroller
+which is supported by SDCC since it is already a build time dependency. The end
+of the output from `sdcc --version` lists "mos6502" so the 6502 is what I think
+I'll target next.
