@@ -166,6 +166,7 @@ INDEX
 	* 14 Oct '24
 	* 21 Oct '24
 	* 25 Oct '24
+	* 28 Oct '24
 
 04 Nov '22
 ----------
@@ -5839,3 +5840,18 @@ the z80 port as 16 bits), I'm thinking of using another 8-bit microcontroller
 which is supported by SDCC since it is already a build time dependency. The end
 of the output from `sdcc --version` lists "mos6502" so the 6502 is what I think
 I'll target next.
+
+28 Oct '24
+----------
+Since I have no experience with 6502 assembler, rather than start struggling
+with trying to code at the low level right from the get go, I'm going to ease
+myself into this port by leveraging SDCC to do all the heavy lifting in the
+beginning. Currently, I don't have any 6502 docs handy and I haven't searched
+for any docs online so if I go ahead with an assembly port later, the generated
+code should come in handy as well.
+
+This port is based on the z80-c port which used sdcc so I've symlinked all the
+Perl scripts to that port. Unlike the Z80, the 6502 does not halt at the end of
+main cleanly so I've changed the code for 'bye' to leverage the "exit using the
+'s' command" side channel of the ucsim emulator.
+

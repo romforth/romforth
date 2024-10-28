@@ -34,6 +34,7 @@ my $nqhzig_check=1;
 my $wasm32c_check=1;
 my $pdk14stc_check=1;
 my $pdk14thr1_check=1;
+my $m6502c_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -61,6 +62,7 @@ if (@ARGV) {
 	$wasm32c_check=0;
 	$pdk14stc_check=0;
 	$pdk14thr1_check=0;
+	$m6502c_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -88,6 +90,7 @@ if (@ARGV) {
 		$wasm32c_check=1 if ( $d eq "wasm32-c");
 		$pdk14stc_check=1 if ( $d eq "pdk14-stc");
 		$pdk14thr1_check=1 if ( $d eq "pdk14-thr1");
+		$m6502c_check=1 if ( $d eq "6502-sdcc");
 	}
 }
 
@@ -248,6 +251,12 @@ $x=`cat pdk14-thr1/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $pdk14thr1_step=$step;
+
+my $m6502c_step;
+$x=`cat 6502-sdcc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$m6502c_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -640,6 +649,19 @@ pdk14thr1_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the pdk port\n";
 	system("cd pdk14-thr1 ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+m6502c_port: {
+	last m6502c_port unless ($m6502c_check);
+	last m6502c_port if ($i>$m6502c_step);
+	@ARGV=("6502-sdcc/fpp.config.C");
+	open(my $fh, ">6502-sdcc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the 6502 port\n";
+	system("cd 6502-sdcc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

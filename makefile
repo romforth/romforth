@@ -26,6 +26,7 @@ all :
 	(cd wasm32-c ; make)
 	(cd pdk14-stc ; make)
 	(cd pdk14-thr1 ; make)
+	(cd 6502-sdcc ; make)
 
 allsteps :
 	./runallsteps
@@ -60,3 +61,4 @@ clean :
 	(cd wasm32-c ; make clean)
 	(cd pdk14-stc ; make clean)
 	(cd pdk14-thr1 ; make clean)
+	(cd 6502-sdcc ; make clean)
