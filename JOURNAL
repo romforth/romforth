@@ -167,6 +167,7 @@ INDEX
 	* 21 Oct '24
 	* 25 Oct '24
 	* 28 Oct '24
+	* 29 Oct '24
 
 04 Nov '22
 ----------
@@ -5855,3 +5856,14 @@ Perl scripts to that port. Unlike the Z80, the 6502 does not halt at the end of
 main cleanly so I've changed the code for 'bye' to leverage the "exit using the
 's' command" side channel of the ucsim emulator.
 
+29 Oct '24
+----------
+This turned out to be a fairly trivial port with the only hiccup showing up at
+step 13 as usual, where the fpp.config.C parameters for the memory address and
+values needed to be changed using the info documented in the 11 Aug '23 JOURNAL
+entry. Now that I have the generated assembly code, I can use it to move on to
+the lower level assembly port but while I'm here and since I'm anyway in 6502
+territory I'm really tempted to take a little traipse to get a taste of SWEET16
+which I've heard so much about, for so long. It might be interesting to make a
+comparison of code density vs speed comparing sdcc vs SWEET16 vs baremetal, all
+on the same processor.

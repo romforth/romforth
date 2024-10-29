@@ -2,7 +2,7 @@ romforth is a small, portable, baremetal version of Forth which has been ported
 to various 8/16/32/64-bit microcontrollers with support for both big and little
 endian architectures. So far, it has been ported to the following instruction
 sets: x86 (16-bit, 32-bit and 64-bit), PDP11, 68000, SPARC, Z80, MSP430, ARM64,
-RISC-V(rv32, rv64), WASM, Padauk
+RISC-V(rv32, rv64), WASM, Padauk, 6502.
 
 So, at a superficial level, romforth is just yet another Forth which has been
 ported to a wide variety of CPUs and is meant to be runnable directly from the
@@ -212,6 +212,7 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | wasm32-c     |    1735    |   2840 (4575)   |   5552 (7287)   |
 | pdk14-stc*   |       0    |     15 (125)    |    503 (613)    |
 | pdk14-thr1*  |     264    |     40 (304)    |    609 (873)    |
+| 6502-sdcc    |    2624    |   2060 (4684)   |   3495 (6119)   |
 '--------------'------------'-----------------'-----------------'
 
 *Note: The units for pdk14-stc and pdk14-thr1 are in "words" which can be

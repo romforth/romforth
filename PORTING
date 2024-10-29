@@ -31,6 +31,7 @@ The following ports are complete:
 | wasm32-c     |  32  | little | 3 | Baremetal | zig cc     | wasmtime      |
 | pdk14-stc    |   8  |   -    | 4 | Baremetal | sdaspdk14  | ucsim/pdk     |
 | pdk14-thr1   |   8  |   -    | 1 | Baremetal | sdaspdk14  | ucsim/pdk     |
+| 6502-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/smos6502|
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
