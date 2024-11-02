@@ -17,5 +17,11 @@
 
 	.area	CODE
 start:
+	ldx #0xff
+	txs
+	jsr rom
 	lda #'s'
 	sta 0x7fff
+
+rom:
+	rts

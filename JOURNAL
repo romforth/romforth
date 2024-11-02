@@ -168,6 +168,7 @@ INDEX
 	* 25 Oct '24
 	* 28 Oct '24
 	* 29 Oct '24
+	* 02 Nov '24
 
 04 Nov '22
 ----------
@@ -5867,3 +5868,12 @@ territory I'm really tempted to take a little traipse to get a taste of SWEET16
 which I've heard so much about, for so long. It might be interesting to make a
 comparison of code density vs speed comparing sdcc vs SWEET16 vs baremetal, all
 on the same processor.
+
+02 Nov '24
+----------
+After a lot of soul searching, I've decided to give SWEET16 a pass since it is
+just a wannabe PDP11 and I'm forging ahead with a baremetal 6502 port. Since I
+couldn't use "Not Quite Huffman"/nqh for the Padauk port (since PDK is just too
+... weird, I guess), I considered using nqh for the 6502 which has plenty of
+ROM and RAM but decided that I'll keep that for a later port and just make this
+a really simple and straight forward STC port.
