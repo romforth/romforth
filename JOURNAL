@@ -169,6 +169,7 @@ INDEX
 	* 28 Oct '24
 	* 29 Oct '24
 	* 02 Nov '24
+	* 04 Nov '24
 
 04 Nov '22
 ----------
@@ -5877,3 +5878,42 @@ couldn't use "Not Quite Huffman"/nqh for the Padauk port (since PDK is just too
 ... weird, I guess), I considered using nqh for the 6502 which has plenty of
 ROM and RAM but decided that I'll keep that for a later port and just make this
 a really simple and straight forward STC port.
+
+04 Nov '24
+----------
+Wow, two years already! Time flies when you are having fun I guess.
+
+Although I'm tempted to change direction and start working on real hardware,
+- I've kept postponing that for a while now, I want to make sure that most of
+the edge cases are covered before I move on to doing that.
+
+One of the shortcomings of the current way of testing was clear while working
+on the Padauk port (which foundered due to a lack of sufficient ROM). Currently
+the testing is, in some sense, "all or nothing" : with TESTROM set to 0, there
+are no tests whatsoever whereas with TESTROM enabled (by default), every single
+test needs to be in the ROM. For devices with low ROM, I'm trying to see if a
+middle ground could be useful where the current word being tested is the only
+code that needs to be in the ROM. So if a word "foo" needs to be tested, the
+closure on the code for "foo" is the only code that needs to be present in ROM
+at the time of testing. Looking back at the older JOURNAL entries, I see that
+this idea has been brought up earlier in the entry for 18 Jan '23 and even as
+early as 20 Dec '22 when I was just getting started. Even if this does not help
+with testing (since I assume that all of the code is currently necessary by the
+time we get to the last step) this is still useful if someone wants to use a
+"shrink to fit" mode of operation.
+
+Since the 6502 appears to not have any of the artificial constraints that the
+Padauk suffered from, I'm thinking that I'll test out some of those ideas as
+part of this port.
+
+My knee jerk reaction on how to generate the "closure" was to reach for a macro
+processor and since m4 is already part of the build dependencies, I tried using
+that. My plan was to define each primitive in m4 but that immediately ran into
+trouble because m4 has the well meaning limitation that it does not allow words
+such as "2drop" which starts with a number to be used as definitions. So, I've
+decided to roll my own macro processor which I'm calling "m2" (== m4/2) since
+it will probably only need half the bells and whistles of m4.
+
+For this port although it is an STC port, I've copied z80's genrom/genprims as
+the starting templates since I assume the 6502 with its (8bit data, 16bit addr)
+more closely matches the z80 than MSP430.
