@@ -170,6 +170,7 @@ INDEX
 	* 29 Oct '24
 	* 02 Nov '24
 	* 04 Nov '24
+	* 06 Nov '24
 
 04 Nov '22
 ----------
@@ -5917,3 +5918,12 @@ it will probably only need half the bells and whistles of m4.
 For this port although it is an STC port, I've copied z80's genrom/genprims as
 the starting templates since I assume the 6502 with its (8bit data, 16bit addr)
 more closely matches the z80 than MSP430.
+
+06 Nov '24
+----------
+Just like the Padauk port, I'll use the Accumulator register 'A' on the 6502 as
+the "top of stack"/TOS and see how far I can get with that simple approach. For
+the dup/drop implementation I've chosen to use the 'X' register as the index
+register. Moving the data stack to the "Zero Page" would save a few bytes but
+since I'm not under any ROM size pressure to do that, I'll keep it in the DATA
+segment for now, unless it becomes a necessity.

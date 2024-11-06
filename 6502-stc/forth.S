@@ -23,7 +23,31 @@ start:
 	lda #'s'
 	sta 0x7fff
 
+realemit:
+	pha
+	lda #'w'
+	sta 0x7fff
+	pla
+	sta 0x7fff
+realdrop:
+	dex
+	lda dstk,x
+	rts
+
+realdup:
+	sta dstk,x
+	inx
+	rts
+
+realkey:
+	jsr realdup
+	lda #'r'
+	sta 0x7fff
+	lda 0x7fff
+	rts
+
 rom:
+	ldx #0
 #include "rom.s"
 
 #define USEDEFS 0
@@ -37,3 +61,7 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+	.area DATA
+dstk:
+	.ds 32

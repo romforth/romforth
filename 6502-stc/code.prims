@@ -5,5 +5,7 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	: rts
-key	: lda #'r' ; sta 0x7fff ; lda 0x7fff
-emit	: pha ; lda #'w' ; sta 0x7fff ; pla ; sta 0x7fff
+dup	: jsr realdup
+drop	: jsr realdrop
+key	: jsr realkey
+emit	: jsr realemit
