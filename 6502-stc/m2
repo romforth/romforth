@@ -26,9 +26,11 @@ while (<>) {
 @ARGV=("rom.s");
 
 while (<>) {
-	if (/^\s+(\S+)\s*(\;.*)?/) {
+	if (/^\t(\S+)\s*(\;.*)?/) {
 		 $v=\$def->{$1};
 		 die "$1 is not defined" unless ($vv=$$v);
 		 print join("",@$vv);
+	} else {
+		print;
 	}
 }
