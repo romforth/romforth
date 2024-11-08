@@ -269,7 +269,7 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
-				print qq(\t.db $i\n);
+				print qq(\t\tjmp .+$i\n);
 				next;
 			} elsif ($f eq 'pad0') {
 				print "\t.db 0\n";
