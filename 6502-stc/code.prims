@@ -9,3 +9,4 @@ dup	: jsr realdup
 drop	: jsr realdrop
 key	: jsr realkey
 emit	: jsr realemit
+neg	: jsr realneg

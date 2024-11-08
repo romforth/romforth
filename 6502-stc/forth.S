@@ -46,6 +46,12 @@ realkey:
 	lda 0x7fff
 	rts
 
+realneg:
+	eor #0xff
+	clc
+	adc #0x1
+	rts
+
 rom:
 	ldx #0
 #include "rom.s"
