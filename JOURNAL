@@ -171,6 +171,7 @@ INDEX
 	* 02 Nov '24
 	* 04 Nov '24
 	* 06 Nov '24
+	* 08 Nov '24
 
 04 Nov '22
 ----------
@@ -5927,3 +5928,24 @@ the dup/drop implementation I've chosen to use the 'X' register as the index
 register. Moving the data stack to the "Zero Page" would save a few bytes but
 since I'm not under any ROM size pressure to do that, I'll keep it in the DATA
 segment for now, unless it becomes a necessity.
+
+08 Nov '24
+----------
+I tried using the "Branch Always"/BRA 6502 (opcode 0x80) for the "jmp"/'j'
+operation, but the ucsim emulator flags it as an invalid instruction:
+	... Invalid instruction 0x0080.
+
+From consulting the SY65C02 "one page" datasheet on page 23 from Synertek's
+6502.pdf which happens to be the first datasheet that the search engine that I
+used was able to locate, to figure out the 6502 instruction set, it appears
+that as per that datasheet, opcode 0x80 is a valid "branch always" operation
+which uses a relative jump. It is quite possible that the Rockwell CPU that
+ucsim emulates does not support this opcode. So for now, I've just taken the
+expedient approach of replacing that 0x80 opcode with a "clc ; bcc .." sequence
+rather than spend even more time on this discrepancy.
+
+After searching for Rockwell's datasheets and looking through one for 6502 that
+I found on archive.org, this opcode should, in theory, be supported on the
+Rockwell 6502/65C02 so I'm not sure if this could just be a bug in ucsim or if
+it is implementing a stricter subset of the opcodes for an earlier version of
+the processor.

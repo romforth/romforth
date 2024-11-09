@@ -10,4 +10,5 @@ drop	: jsr realdrop
 key	: jsr realkey
 emit	: jsr realemit
 neg	: jsr realneg
-j	:
+j	: clc ; .db 0x90
+jz	: cmp #0 ; php ; jsr realdrop ; plp ; .db 0xF0
