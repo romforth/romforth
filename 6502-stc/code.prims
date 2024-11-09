@@ -15,3 +15,4 @@ jz	: cmp #0 ; php ; jsr realdrop ; plp ; .db 0xF0
 jnz	: cmp #0 ; php ; jsr realdrop ; plp ; .db 0xD0
 inc	: clc ; adc #1
 dec	: clc ; adc #-1
+inv	: eor #0xFF
