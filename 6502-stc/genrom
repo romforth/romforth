@@ -112,15 +112,15 @@ sub runrepeat {
 }
 
 sub runif {
-	print "\t.db ", $mapjz, "-cold # branch if zero\n";
-	print "\t.db ", $label, '_then-.-1', "\n";
+	print "\tjz\n";
+	print "\t\t.db ", $label, '_then-.-1', "\n";
 	push @labelstack, [$label++, "then"];
 }
 
 sub runelse {
 	my $ol=pop @labelstack;
-	print "\t.db ", $mapjmp, "-cold # branch\n";
-	print "\t.db ", $ol->[0], '_endif-.-1', "\n";
+	print "\tj\n";
+	print "\t\t.db ", $ol->[0], '_endif-.-1', "\n";
 	die unless ($ol->[1] eq "then");
 	print join('_', @$ol), ":\n";
 	$ol->[1]="endif";
