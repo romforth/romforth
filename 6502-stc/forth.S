@@ -52,6 +52,24 @@ realneg:
 	adc #0x1
 	rts
 
+realnip:
+	dex
+	; ldy dstk,x	; ucsim treats this as an illegal instruction
+	pha
+	lda dstk,x
+	tay
+	pla
+	rts
+
+realdip:
+	; sty dstk,x	; ucsim treats this as an illegal instruction
+	pha
+	tya
+	sta dstk,x
+	pla
+	inx
+	rts
+
 rom:
 	ldx #0
 #include "rom.s"
