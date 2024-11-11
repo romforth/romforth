@@ -18,3 +18,5 @@ dec	: clc ; adc #-1
 inv	: eor #0xFF
 nip	: jsr realnip
 dip	: jsr realdip
++	: dex ; clc ; adc dstk,x
+-	: neg ; +
