@@ -20,3 +20,4 @@ nip	: jsr realnip
 dip	: jsr realdip
 +	: dex ; clc ; adc dstk,x
 -	: neg ; +
+&	: dex ; and dstk,x
