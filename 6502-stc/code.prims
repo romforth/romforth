@@ -24,3 +24,4 @@ dip	: jsr realdip
 |	: dex ; ora dstk,x
 ^	: dex ; eor dstk,x
 2drop	: drop ; drop
+swap	: nip ; dup ; tya
