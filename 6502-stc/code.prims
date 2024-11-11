@@ -23,3 +23,4 @@ dip	: jsr realdip
 &	: dex ; and dstk,x
 |	: dex ; ora dstk,x
 ^	: dex ; eor dstk,x
+2drop	: drop ; drop
