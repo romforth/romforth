@@ -89,3 +89,7 @@ rom:
 	.area DATA
 dstk:
 	.ds 32
+
+	.area BSS
+mem:
+	.ds 1024
