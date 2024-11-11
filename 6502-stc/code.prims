@@ -22,3 +22,4 @@ dip	: jsr realdip
 -	: neg ; +
 &	: dex ; and dstk,x
 |	: dex ; ora dstk,x
+^	: dex ; eor dstk,x
