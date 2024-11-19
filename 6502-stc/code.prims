@@ -26,3 +26,6 @@ dip	: jsr realdip
 2drop	: drop ; drop
 swap	: nip ; dup ; tya
 @	: tay ; lda mem,y
+!	: tay ; drop ; sta mem,y ; drop
+
+var here

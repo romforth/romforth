@@ -87,9 +87,10 @@ rom:
 #endif
 
 	.area DATA
+here:	.db 0
 dstk:
 	.ds 32
 
 	.area BSS
-mem:
+mem:	.ds 1		; reserve the first byte for "here"
 	.ds 1024
