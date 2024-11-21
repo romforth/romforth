@@ -32,6 +32,7 @@ c!	: !
 pick	: jsr realpick
 stick	: jsr realstick
 sp@!	: nop
+rp@!	: jsr swapsp
 
 var here
 var state

@@ -90,6 +90,21 @@ realstick:
 	jsr realdrop
 	rts
 
+swapsp:
+	stx temp
+	tsx
+	stx temp1
+	tax
+	txs
+	lda temp1
+	ldx temp
+	; now restore it so the return will work
+	stx temp
+	tax
+	txs
+	ldx temp
+	rts
+
 rom:
 	ldx #0
 	ldy #state
@@ -117,6 +132,7 @@ dstk:
 
 	.area BSS
 temp:	.ds 1
+temp1:	.ds 1
 mem:	.ds 1		; reserve the first byte for "here"
 	.ds 1		; reserve the second byte for "state"
 	.ds 1024
