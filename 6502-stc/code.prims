@@ -27,5 +27,8 @@ dip	: jsr realdip
 swap	: nip ; dup ; tya
 @	: tay ; lda mem,y
 !	: tay ; drop ; sta mem,y ; drop
+c@	: @
+c!	: !
 
 var here
+var state

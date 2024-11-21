@@ -72,6 +72,9 @@ realdip:
 
 rom:
 	ldx #0
+	ldy #state
+	lda #1
+	sta mem,y
 #include "rom.s"
 
 #define USEDEFS 0
@@ -88,9 +91,11 @@ rom:
 
 	.area DATA
 here:	.db 0
+state:	.ds 1
 dstk:
 	.ds 32
 
 	.area BSS
 mem:	.ds 1		; reserve the first byte for "here"
+	.ds 1		; reserve the second byte for "state"
 	.ds 1024
