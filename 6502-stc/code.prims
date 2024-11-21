@@ -35,6 +35,7 @@ sp@!	: nop
 rp@!	: jsr swapsp
 >r	: pha ; drop
 r>	: dup ; pla
+exec	: nop
 
 var here
 var state

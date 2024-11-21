@@ -274,6 +274,8 @@ while (<>) {				# map forth words in the standard input
 			} elsif ($f eq 'pad0') {
 				print "\t.db 0\n";
 				next;
+			} elsif ($f eq 'lit1') {
+				next;
 			}
 			die "unknown word: $f"
 		}
