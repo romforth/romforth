@@ -70,6 +70,15 @@ realdip:
 	inx
 	rts
 
+realpick:
+	sta temp
+	txa
+	clc
+	sbc temp
+	tay
+	lda dstk,y
+	rts
+
 rom:
 	ldx #0
 	ldy #state
@@ -96,6 +105,7 @@ dstk:
 	.ds 32
 
 	.area BSS
+temp:	.ds 1
 mem:	.ds 1		; reserve the first byte for "here"
 	.ds 1		; reserve the second byte for "state"
 	.ds 1024

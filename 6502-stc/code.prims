@@ -29,6 +29,7 @@ swap	: nip ; dup ; tya
 !	: tay ; drop ; sta mem,y ; drop
 c@	: @
 c!	: !
+pick	: jsr realpick
 
 var here
 var state
