@@ -79,6 +79,17 @@ realpick:
 	lda dstk,y
 	rts
 
+realstick:
+	sta temp
+	txa
+	clc
+	sbc temp
+	tay
+	jsr realdrop
+	sta dstk,y
+	jsr realdrop
+	rts
+
 rom:
 	ldx #0
 	ldy #state

@@ -30,6 +30,7 @@ swap	: nip ; dup ; tya
 c@	: @
 c!	: !
 pick	: jsr realpick
+stick	: jsr realstick
 
 var here
 var state
