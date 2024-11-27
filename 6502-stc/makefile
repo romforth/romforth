@@ -50,6 +50,8 @@ forth_defs.S : forth.S
 forth_defs.s : forth_defs.S prims.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs.s
+	./m2 defs.s > defs.s2
+	mv defs.s2 defs.s
 	cpp -P forth_defs.S > forth_defs.s
 forth_dict.ihx : forth_dict.rel
 	$(LD) forth_dict.rel
@@ -75,7 +77,7 @@ fpp.config : stepfile fpp.config.6502
 	cat stepfile fpp.config.6502 > fpp.config
 rom.s : ../rom.4th ../fpp fpp.config prims.s genrom defs.s
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
-	./m2 > rom.s2
+	./m2 rom.s > rom.s2
 	mv rom.s2 rom.s
 clean :
 	rm -f forth.ihx dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.rel forth_defs.S forth_defs.rel forth_defs.ihx forth_defs.lst defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.rel forth_dict.ihx forth_dict.lst test.dict forth.s forth_defs.s forth_dict.s test.in test.log forth.lst forth.lk forth.map forth.noi

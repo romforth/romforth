@@ -21,6 +21,10 @@ def{ bl 32 }def
 
 def{ 2ret	[	| r ]
 	r>	[ r	|   ]
+#{if THREAD==8
+	r>	[ r1 r2	|   ]
+#}if
+
 }def
 
 def{ testnest

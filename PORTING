@@ -93,6 +93,11 @@ Notes for the table above:
 		| bytecode |
 	as documented in the JOURNAL entry for 26 Apr '24.
 
+	Thread type 8 is used to denote STC (almost the same as THREAD type 4)
+	except that it is used for architectures (eg: 6502) where the data bus
+	is just 8 bits while addresses are 16 bits. More generally, it can be
+	used where the register containing TOS is only half as wide as the PC.
+
 	There is also a prim_var_deref setting which is meant to modify the
 	semantics of how cfa's are handled by the various threading schemes.
 

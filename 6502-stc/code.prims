@@ -36,6 +36,7 @@ rp@!	: jsr swapsp
 >r	: pha ; drop
 r>	: dup ; pla
 exec	: nop
+call	: jsr trampoline
 
 var here
 var state

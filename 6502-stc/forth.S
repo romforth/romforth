@@ -105,6 +105,13 @@ swapsp:
 	ldx temp
 	rts
 
+trampoline:
+	pha
+	jsr realdrop
+	pha
+	jsr realdrop
+	rts		; which results in a "call" to the pushed address
+
 rom:
 	ldx #0
 	ldy #state

@@ -11,6 +11,8 @@ use strict;
 my ($v,$vv);
 my $def={};
 
+my @save=(@ARGV);
+
 @ARGV=("prims.s");
 
 while (<>) {
@@ -23,7 +25,7 @@ while (<>) {
 	}
 }
 
-@ARGV=("rom.s");
+@ARGV=(@save);
 
 while (<>) {
 	if (/^\t(\S+)\s*(\;.*)?/) {

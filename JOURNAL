@@ -172,6 +172,7 @@ INDEX
 	* 04 Nov '24
 	* 06 Nov '24
 	* 08 Nov '24
+	* 27 Nov '24
 
 04 Nov '22
 ----------
@@ -5949,3 +5950,27 @@ I found on archive.org, this opcode should, in theory, be supported on the
 Rockwell 6502/65C02 so I'm not sure if this could just be a bug in ucsim or if
 it is implementing a stricter subset of the opcodes for an earlier version of
 the processor.
+
+27 Nov '24
+----------
+Things were sailing along without too much trouble on this port until I hit a
+problem similar to the one I ran into on the Padauk which is the problem of
+reconciling the difference in bit width between the data and address bus which
+shows up as differences in register sizes usually between the register used for
+the accumulator/TOS vs the PC register. On the 6502, the A register can hold
+8 bits but to jump to a subroutine, you need 16 bits which cannot fit in the
+data stack. I was stalled on this for almost a week obsessing over the possible
+solutions while going over the ISA with a fine tooth comb trying to see if the
+indirect jump could be a solution. Luckily, a better solution came to me in the
+shower yesterday morning. As I get ready for Thanksgiving I know that I'm truly
+grateful for these rare strokes of brilliance that show up, out of nowhere, in
+the most mundane of activities in life.
+
+Anyway, the nice property of the solution that I came up with is that it does
+not require me to go back and redo all of the earlier code to use a wider data
+stack or use the Zero Page to hold the TOS since the Accumulator register would
+no longer be usable as the TOS. Instead, this change only modifies "2ret" so
+that it makes an additional call to "r>", but only in the case that we use the
+newly introduced THREAD type of 8 which is identical to THREAD type 6 (which is
+used to denote "subroutine threaded code"/STC) except that it adds this new
+functionality to "2ret" to handle this specific test.
