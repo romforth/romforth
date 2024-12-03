@@ -112,6 +112,30 @@ trampoline:
 	jsr realdrop
 	rts		; which results in a "call" to the pushed address
 
+shiftleft:
+	tay
+	jsr realdrop
+	cpy #0
+	beq retleft
+leftshift:
+	asl a
+	dey
+	bne leftshift
+retleft:
+	rts
+
+shiftright:
+	tay
+	jsr realdrop
+	cpy #0
+	beq retright
+rightshift:
+	lsr a
+	dey
+	bne rightshift
+retright:
+	rts
+
 rom:
 	ldx #0
 	ldy #state

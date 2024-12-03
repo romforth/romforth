@@ -37,6 +37,8 @@ rp@!	: jsr swapsp
 r>	: dup ; pla
 exec	: nop
 call	: jsr trampoline
+<<	: jsr shiftleft
+>>	: jsr shiftright
 
 var here
 var state
