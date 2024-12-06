@@ -70,6 +70,9 @@ realdip:
 	inx
 	rts
 
+realover:
+	jsr realdup
+	lda #1
 realpick:
 	sta temp
 	txa
