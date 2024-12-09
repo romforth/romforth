@@ -80,10 +80,22 @@ def{ fourth 3 pick }def
 
 def{ i		[		| ret i n ]
 	r>	[ ret		|     i n ]
+#{if THREAD!=8
 	r>	[ ret i		|       n ]
 	swap	[ i ret		|       n ]
 	over	[ i ret i	|       n ]
 	>r	[ i ret		|     i n ]
+#}if
+#{if THREAD==8
+	0	[ ret 0		| rtn i n ]
+	swap	[ 0 ret		|     i n ]
+	r>	[ 0 ret rtn	|     i n ]
+	r>	[ 0 ret rtn i	|       n ]
+	dup	[ 0 ret rtn i i	|       n ]
+	>r	[ 0 ret rtn i	|     i n ]
+	3 stick	[ i ret rtn	|     i n ]
+	>r	[ i ret		| rtn i n ]
+#}if
 	>r	[ i		| ret i n ]
 }def
 #}if
