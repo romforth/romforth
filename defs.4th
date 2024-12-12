@@ -108,8 +108,19 @@ def{ ~			[ a b
 	-		[ s=a-b
 	dup		[ s s
 	if{ 		[ s	// a!=b
-		0x8000	[ s 0x8000
-		&	[ s&8000
+#{if LITC==8
+		0x8000000000000000	[ s mask:0x8000000000000000
+#}if
+#{if LITC==4
+		0x80000000		[ s mask:0x80000000
+#}if
+#{if LITC==2
+		0x8000			[ s mask:0x8000
+#}if
+#{if LITC==1
+		0x80			[ s mask:0x80
+#}if
+		&	[ s&mask
 		if{	[	// a<b
 			1
 		}else{	[	// a>b

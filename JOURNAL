@@ -173,6 +173,7 @@ INDEX
 	* 06 Nov '24
 	* 08 Nov '24
 	* 27 Nov '24
+	* 12 Dec '24
 
 04 Nov '22
 ----------
@@ -5974,3 +5975,18 @@ that it makes an additional call to "r>", but only in the case that we use the
 newly introduced THREAD type of 8 which is identical to THREAD type 6 (which is
 used to denote "subroutine threaded code"/STC) except that it adds this new
 functionality to "2ret" to handle this specific test.
+
+12 Dec '24
+----------
+There was a bug lurking in the definition of the signum/'~' operator which used
+a hardcoded value of 0x8000 irrespective of the word size of the architecture.
+I ran into it at step 33 of this port so I've cleaned up the code to handle all
+of the current word sizes that LITC can be set to : 1, 2, 4, 8
+
+Although the earlier Padauk port also falls in the 8 bit LITC category, those
+ports had not progressed all the way to this step so they didn't encounter this
+bug. And I just noticed that LITC on the Padauk port is incorrectly set to 2.
+Oh well, I'll leave fixing that up for another day if I redo that port. Anyway,
+the good part about this fix is that if I can push this port all the way to
+step 62, I can be certain that all the corner cases for all ports are covered
+(well, for the most part).

@@ -40,6 +40,7 @@ call	: jsr trampoline
 <<	: jsr shiftleft
 >>	: jsr shiftright
 over	: jsr realover
+exit	: rts
 
 var here
 var state
