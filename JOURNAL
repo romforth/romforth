@@ -174,6 +174,7 @@ INDEX
 	* 08 Nov '24
 	* 27 Nov '24
 	* 12 Dec '24
+	* 17 Dec '24
 
 04 Nov '22
 ----------
@@ -5990,3 +5991,51 @@ Oh well, I'll leave fixing that up for another day if I redo that port. Anyway,
 the good part about this fix is that if I can push this port all the way to
 step 62, I can be certain that all the corner cases for all ports are covered
 (well, for the most part).
+
+17 Dec '24
+----------
+After getting step 41 built (but without getting that step to pass), I've again
+decided rather reluctantly to leave this port also "partially complete" at step
+40 since taking it all the way to step 62 will require me to rework the code
+starting all the way back at step 13 where '@' and '!' were implemented (or
+perhaps, even earlier, since the TOS needs to be 16 bits wide for full memory
+access). For now, I'll leave the changes that I made to get step 41 built as
+a new file called "unmerged.diffs", in case I revisit this later.
+
+In retrospect, I should not have decided to take the expedient approach of just
+using the 8-bit A'ccumulator as the TOS since that resulted in these knock on
+effects. My thinking at that time was that 8 bits would allow 256 variables,
+and for a STC port, I assume that should be plenty. But that decision does not
+sit well if we need to press on and use a dictionary since that requires being
+able to access the full 16-bit address space. Rather than redo things from
+scratch, I'm going to mark this as a good enough stopping point for this port
+since it does allow you to use a decent enough subset, since we are 2/4'th of
+the way there, ie "twoforth") on the 6502 while using up just ~160 bytes for
+the primitives. This is far smaller than even the much vaunted ~300 bytes used
+by Woz's SWEET-16 VM and is definitely way faster than his estimate that it
+runs 10x slower. My estimate for the speed of this port is that it is likely
+to run at near native speeds since this is just an STC port with the thinnest
+of shim layers. And unlike SWEET-16, you do get all of the power of Forth for
+free. What you don't get though is a VM with 16 bit address and data spaces.
+
+My initial thinking while starting this port was that it could help me flesh
+out most of the code needed to eventually get me to a "Not Quite Huffman"/nqh
+port running on the 6502 since I couldn't get it completed on the Padauk but
+the lack of good bit shift ops on the 6502 gave me enough of a pause to make me
+stay away from going down that rabbit hole. If I ever decide to revisit the
+6502 in the future with another "Not Quite Huffman"/nqh port, I may decide to
+address the 8 bit vs 16 bit issue there. If not, I assume there are plenty of
+other 6502 Forth's to go around so I don't think of it as important enough for
+anyone to kvetch too much over it.
+
+Now that I know what I don't want to do, the remaining question is what _do_
+I want to do. Since we are getting close to the end of the year, I'm going to
+spend some time relaxing but also thinking through an idea for yet another VM
+that has been playing around in the back of my head. I even have a name for it:
+the "F16". Just like SWEET-16, it has just 16 opcodes which is a considerable
+slim down from the 30+ "primitives" that I've currently based all the ports on.
+
+Unfortunately, reducing the number of primitives always results in a hit on the
+performance side so I'll be carefully thinking through my options to see if
+there is a nice "Wirth balance" that I can find where the space-time tradeoff
+will be worth it. You did you see that pun coming didn't you? ;)

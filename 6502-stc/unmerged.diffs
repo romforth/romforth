@@ -1,0 +1,120 @@
+diff --git a/6502-stc/code.prims b/6502-stc/code.prims
+index 9b96535..61740e5 100644
+--- a/6502-stc/code.prims
++++ b/6502-stc/code.prims
+@@ -44,3 +44,4 @@ exit	: rts
+ 
+ var here
+ var state
++var latest
+diff --git a/6502-stc/forth.S b/6502-stc/forth.S
+index 96bf81c..c764827 100644
+--- a/6502-stc/forth.S
++++ b/6502-stc/forth.S
+@@ -161,6 +161,8 @@ rom:
+ 	.area DATA
+ here:	.db 0
+ state:	.ds 1
++latest:
++#include "latest.s"
+ dstk:
+ 	.ds 32
+ 
+diff --git a/6502-stc/genprims b/6502-stc/genprims
+index cca916f..e94c0c5 100755
+--- a/6502-stc/genprims
++++ b/6502-stc/genprims
+@@ -26,19 +26,19 @@ sub genheader {
+ 	my $len=length($f);
+ 	# print "\t.align 1\n";
+ 	if ($len%2==0) {
+-		print "$l","_pad:\t.db 0\n";
++		#print "$l","_pad:\t.db 0\n";
+ 	}
+-	print qq{\t.ascii "$f"\n};
++	print qq{\t\t.ascii "$f"\n};
+ 	print "$l","_nfa:\t.db $len\n";
+ 	print "$l","_lfa:\t.dw $prev\n";
+ 	print "$l","_cfa:\n";
+ 	if ($flag) {
+-		print "\t.db $l-cold\n";
+-		print "\t.db exit-cold\n";
++		print "\t$l\n";
++		print "\t\trts\n";
+ 	} else {
+-		print "\t.db lit-cold\n";
+-		print "\t.dw $l\n";
+-		print "\t.db exit-cold\n";
++		print "\t\tjsr realdup\n";
++		print "\t\tlda \#$l\n";
++		print "\t\trts\n";
+ 	}
+ 	$prev="$l"."_lfa";
+ }
+diff --git a/6502-stc/genrom b/6502-stc/genrom
+index 3da8ffc..b5ed86b 100755
+--- a/6502-stc/genrom
++++ b/6502-stc/genrom
+@@ -210,7 +210,7 @@ sub def {
+ 			if ($len%2==0) {
+ 				print "$l","_pad:\t.db 0\n";
+ 			}
+-			print qq{\t.ascii "$w"\n};
++			print qq{\t\t.ascii "$w"\n};
+ 			$len |= 0x80 if ($immediate);
+ 			print "$l","_nfa:\t.db $len\n";
+ 			print "$l","_lfa:\t.dw $prev\n";
+diff --git a/6502-stc/makefile b/6502-stc/makefile
+index cc0a94f..d024ca2 100644
+--- a/6502-stc/makefile
++++ b/6502-stc/makefile
+@@ -7,7 +7,7 @@
+ AS=sdas6500
+ ASFLAGS=-l -o
+ LD=sdld -i
+-all : twoforth
++all : threeforth
+ oneforth : test.out
+ twoforth : test.defs
+ threeforth : test.dict
+@@ -67,10 +67,14 @@ forth_dict.S : forth.S forth_defs.S
+ 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S
+ defs_dict.s : ../defs.4th ../fpp fpp.config genrom
+ 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map > defs_dict.s
++	./m2 defs_dict.s > defs_dict.s2
++	mv defs_dict.s2 defs_dict.s
+ defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
+ 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g defs.map dict.map > defs.s
+ prims_dict.s : prims.s genprims code.prims ../fpp fpp.config
+ 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims -d dict.map > prims_dict.s
++	./m2 dict.s > dict.s2
++	mv dict.s2 dict.s
+ prims.s : genprims code.prims ../fpp fpp.config
+ 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims dict.map > prims.s
+ fpp.config : stepfile fpp.config.6502
+diff --git a/6502-stc/stepfile b/6502-stc/stepfile
+index 752d000..df59825 100644
+--- a/6502-stc/stepfile
++++ b/6502-stc/stepfile
+@@ -1 +1 @@
+-step=40
++step=41
+diff --git a/defs.4th b/defs.4th
+index 392ff51..861bfc8 100644
+--- a/defs.4th
++++ b/defs.4th
+@@ -415,8 +415,14 @@ def{ same			[ addr name n
+ 	for{			[ addr name		| i n ]
+ 		over		[ addr name addr	| i n ]
+ 		c@		[ addr name c1		| i n ]
++#{if debug==1
++dup emit
++#}if
+ 		over		[ addr name c1 name	| i n ]
+ 		c@		[ addr name c1 c2	| i n ]
++#{if debug==1
++dup emit
++#}if
+ 		-		[ addr name c1-c2	| i n ]
+ 		if{		[ addr name 		| i n ] // c1 != c2
+ 			r>	[ addr name n		|   n ]
