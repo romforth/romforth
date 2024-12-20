@@ -150,8 +150,13 @@ To make a local copy:
 	git clone https://github.com/romforth/romforth
 
 To build/test, the following dependencies need to be installed:
-(Note: the version number in parentheses is the "known to work" version used in
-testing, older/newer versions may or may not work)
+(Note 1: the version number in parentheses is the "known to work" version used
+	in testing, older/newer versions may or may not work)
+(Note 2: If you are only doing a partial build for a specific processor by
+	running `make` within a subdirectory, a subset of these dependencies is
+	sufficient. For example, for the x86 port, a C compiler and the `nasm`
+	x86 assembler might be more than sufficient.)
+
 	- perl (v5.22.1)
 	- nasm (version 2.15.05 compiled on Aug 28 2020)
 	- gcc (version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2))
@@ -175,6 +180,9 @@ testing, older/newer versions may or may not work)
 
 After installing all the above dependencies, running `make` will build each of
 the ports and run each of them in an emulator and should complete successfully.
+
+To do a partial build, you can go into any individual processor specific
+directory and run `make` within that subdirectory.
 
 ROM/RAM Requirements
 ====================
