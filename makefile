@@ -28,6 +28,7 @@ all :
 	(cd pdk14-thr1 ; make)
 	(cd 6502-sdcc ; make)
 	(cd 6502-stc ; make)
+	(cd f16-zig ; make)
 
 allsteps :
 	./runallsteps
@@ -64,3 +65,4 @@ clean :
 	(cd pdk14-thr1 ; make clean)
 	(cd 6502-sdcc ; make clean)
 	(cd 6502-stc ; make clean)
+	(cd f16-zig ; make clean)

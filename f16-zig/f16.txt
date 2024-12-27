@@ -1,0 +1,128 @@
+# f16.txt : Design doc and opcodes for the F16 ISA
+
+# Copyright (c) 2024 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+The F16 is a 16 bit virtual processor meant to be used as a compact encoding
+for a Forth VM.
+
+Like the "Not Quite Huffman"/nqh encoding that was done earlier, it is meant to
+be yet another exploration of the design space.
+
+The F16 takes inspiration from the EDSAC, Intel 4004 and Motorola's PDP-11
+along with some of the ideas I got from designing the "Not Quite Huffman"/nqh
+ISA a while back.
+
+The F16 ISA consists of 16 opcodes encodable in 4 bits (to fit in a "nybble")
+	0. push 1. pop 2. mov 3. xch 4. inv 5. neg  6. add   7. sub
+	8. and  9. or  A. xor B. shl C. shr D. exec E. enter F. call
+
+It has 3 address/pointer registers:
+	1. D (data stack pointer),
+	2. R (return stack pointer)
+	3. I (instruction pointer)
+
+It also has 2 data registers:
+	1. T (top of stack)
+	2. N (next on stack).
+
+The F16 ISA uses the MEM address space to access memory and an IO address space
+for put/get operations to ports. In addition, it has a STACK address space for
+random access to the data stack and if we squint, it can be regarded as a RISC
+CPU register set. All of the accesses to these address spaces are unified under
+the MOV instruction for data transfers. The MOV mnemonic is obviously inspired
+by the PDP-11.
+
+All of the data movement between memory and the address registers and/or the
+data registers is covered by the PUSH/POP/MOV/XCH opcodes. Unlike the PDP-11 in
+which the instruction encoding is orthogonal to the addressing modes, the F16
+makes no attempt at orthogonality and is thus able to reduce the ISA to look
+more like a really small RISC processor.
+
+The auto-decrement addressing mode of the PDP-11 is turned into the PUSH opcode
+and the auto-increment address mode is turned into the POP opcode. The PUSH/POP
+opcodes enable auto-increment/decrement on the address registers while moving
+data between memory and registers. The MOV opcode is purely for data movement
+between memory and registers and does not use increment/decrement addressing
+but allows indexing and access to alternate address spaces (MEM/IO/STACK).
+The eXCHange opcode enables swaps between the various registers (via the T
+register).
+
+The unary operators (INV/NEG) operate on just the T register while the binary
+operators (ADD/SUB/AND/OR/XOR/SHL/SHR) uses data in both the N and T registers
+and writes the result back into the T register.
+
+Each opcode is described below along with the byte/nybble encoding it. Encoding
+of an operation may not fit in a nybble and may need a full byte if an opcode
+needs another nybble to express the extended instruction.
+
+If a opcode needs to be split over the 2 nybbles of a byte, they are listed as
+"first" (denoted F) and "second" (denoted S) and are shown below in hex
+under the "FS" column along with the opc'ode and the optional oper'and :
+
+	FS : opc  oper	// Additional notes	# implementation in pseudo/C
+	-- - ---- ----	-------------------	----------------------------
+PUSH:
+	# data move with auto decrement operator
+	00 : push d<-t	// dup			# *--d = t
+	01 : push d<-n	// dip			# *--d = n
+	02 : push r<-t	// this + drop : >r	# *--r = t
+	03 : push r<-i	// save			# *--r = i
+
+POP:
+	# data move with auto increment operator
+	10 : pop d->t	// drop			# t = *d++
+	11 : pop d->n	// nip			# n = *d++
+	12 : pop r->t	// dup + this : r>	# t = *r++
+	13 : pop r->i	// exit			# i = *r++
+
+	# conditional return
+	14 : pop r->i, t==0	// ret0		# if (t==0) exit
+
+	# literals
+	15 : pop i->t, 1	// lit4		# t = *(u4  *)i; i += 1;
+	16 : pop i->t, 2	// lit8		# t = *(i8  *)i; i += 2;
+	17 : pop i->t, 4	// lit16	# t = *(i16 *)i; i += 4;
+
+MOV:
+	# this is like PUSH / POP except there is no auto increment/decrement
+	20 : mov MEM[t]->t	// @			# t = mem[t]
+	21 : mov MEM[t]<-n	// nip + this : !	# mem[t] = n
+	22 : mov d[t]->t	// pick			# t = d[t]
+	23 : mov d[t]<-t	// nip + this : stick	# d[t]=t
+	24 : mov IO[t]->t	// p@			# t = io[t]
+	25 : mov IO[t]<-n	// nip + this : p!	# io[t] = n
+
+XCH:
+	# data exchange operators
+	30 : xch d, t		// sp@!			# swap(d,t)
+	31 : xch r, t		// rp@!			# swap(r,t)
+	32 : xch i, t		// resume		# swap(i,t)
+	33 : xch n, t		// swap			# swap(n,t)
+
+unary ops:
+	4  : inv		// inv			# t = -1^t
+	5  : neg		// neg			# t = -t
+
+binary ops:
+	6  : add		// nip + this : +	# t = n+t
+	7  : sub		// nip + this : -	# t = n-t
+	8  : and		// nip + this : &	# t = n&t
+	9  :  or		// nip + this : |	# t = n|t
+	A  : xor		// nip + this : ^	# t = n^t
+	B  : shl		// nip + this : <<	# t = n<<t
+	C  : shr		// nip + this : >>	# t = n>>t
+
+"efficiency" ops
+	D  : exec		// this + drop : exec	# resume drop
+	E  : call		// call			# resume >r
+	F  : enter		// enter		# lit X call
+
+Since there is no equivalent of a halt instruction, the VM handles a write of
+the byte 4 (== ASCII ^D) to port 0xFF as the equivalent of a VM exit/"bye".
+
+If there is any discrepancy between this doc and the actual implementation
+the implementation is "more" correct, since it can be checked. This doc just
+captures the theoretical design so far and the actual implementation is when
+the rubber meets the road so I'll leave myself some room for flexibility there.
