@@ -175,6 +175,7 @@ INDEX
 	* 27 Nov '24
 	* 12 Dec '24
 	* 17 Dec '24
+	* 09 Jan '25
 
 04 Nov '22
 ----------
@@ -6039,3 +6040,26 @@ Unfortunately, reducing the number of primitives always results in a hit on the
 performance side so I'll be carefully thinking through my options to see if
 there is a nice "Wirth balance" that I can find where the space-time tradeoff
 will be worth it. You did you see that pun coming didn't you? ;)
+
+09 Jan '25
+----------
+I've gone ahead and documented the "F16" ISA in f16.txt and started off an
+initial implementation in forth.zig. Although it appears smaller in theory
+with just 16 opcodes, the full set of ~39 Forth primitives still needs to be
+shoehorned in somehow, so I've "extended" the ISA by borrowing the next nybble
+to encode the remaining operations. In doing this, it looks like I'm in august
+company, since I'm just following the examples set in the mists of time by some
+of the earliest microprocessors like the EDSAC and the Intel 4004. Unlike the
+"Not Quite Huffman"/nqh encoding, this is not going to be great in terms of
+code density but might make the implementation simpler - especially on the
+lowest end 8 bit processors such as the Padauk which provides a 4 bit SWAP
+opcode to swap the high and low nybbles within the accumulator byte.
+
+Just like the "Not Quite Huffman"/nqh emulator (and the x86 emulator before it)
+I will be adding "just enough emulation" at each step along the way to get the
+tests to pass rather than implementing the entire emulator in one shot.
+
+---
+
+Personal note: Thambi Uncle passed away rather suddenly due to complications
+from a stroke yesterday. I'm dedicating this port in his memory. :RIP:

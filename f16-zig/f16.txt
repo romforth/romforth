@@ -82,7 +82,7 @@ POP:
 
 	# literals
 	15 : pop i->t, 1	// lit4		# t = *(u4  *)i; i += 1;
-	16 : pop i->t, 2	// lit8		# t = *(i8  *)i; i += 2;
+	16 : pop i->t, 2	// lit8		# t = *(u8  *)i; i += 2;
 	17 : pop i->t, 4	// lit16	# t = *(i16 *)i; i += 4;
 
 MOV:
