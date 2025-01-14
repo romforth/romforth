@@ -11,6 +11,7 @@
 // checked/verified.
 
 const std = @import("std");
+const rom = @import("rom.zig");
 
 var ip: usize = 0;
 
@@ -23,32 +24,7 @@ var datastack: [ns][ds]isize = undefined;	// set of data stacks
 var tos: u16 = undefined;
 var nos: isize = undefined;
 
-const Opcode = enum(u4) {
-    Push,	// 0
-    Pop,	// 1
-    Mov,	// 2
-    Xch,	// 3
-    Inv,	// 4
-    Neg,	// 5
-    Add,	// 6
-    Sub,	// 7
-    And,	// 8
-    Or,		// 9
-    Xor,	// A
-    Shl,	// B
-    Shr,	// C
-    Exec,	// D
-    Call,	// E
-    Enter,	// F
-};
-
-var b: Opcode = undefined;
-
-const bytes = [_]Opcode{
-    .Pop, .Neg, .Inv,		// lit4 4	[ 4		# aka: ^D
-    .Pop, .Add, .Enter, .Enter,// lit8 0xff	[ 4 0xff	# port 0xff
-    .Mov, .Pop,		// p!		[ # assume that IO[0xff]=^D:bye
-};
+var b: rom.Opcode = undefined;
 
 fn dup() void {
     datastack[sp][d[sp]] = tos;
@@ -60,11 +36,11 @@ fn nip() void {
     nos = datastack[sp][d[sp]];
 }
 
-fn decode(i: Opcode) !void {
+fn decode(i: rom.Opcode) !void {
     switch (i) {
         .Push => {},
         .Pop => {
-            b = bytes[ip];
+            b = rom.bytes[ip];
             ip += 1;
             switch (b) {
                 .Push => {},
@@ -73,7 +49,7 @@ fn decode(i: Opcode) !void {
                 .Xch => {},
                 .Inv => {},
                 .Neg => {		// lit4
-                    b = bytes[ip];
+                    b = rom.bytes[ip];
                     ip += 1;
                     dup();
                     tos = @intFromEnum(b);
@@ -81,11 +57,11 @@ fn decode(i: Opcode) !void {
                     // try stdout.print("lit4 {d}\n", .{tos});
                 },
                 .Add => {		// lit8
-                    b = bytes[ip];
+                    b = rom.bytes[ip];
                     ip += 1;
                     dup();
                     tos = @intFromEnum(b);
-                    b = bytes[ip];
+                    b = rom.bytes[ip];
                     ip += 1;
                     tos <<= 4; // just use big endian - don't want to struggle
                     tos |= @intFromEnum(b); // too much with zig casts right now
@@ -104,21 +80,21 @@ fn decode(i: Opcode) !void {
             }
         },
         .Mov => {
-            b = bytes[ip];
+            b = rom.bytes[ip];
             ip += 1;
             switch (b) {
                 .Push => {},
-                .Pop => {		// p! but special cased to handle bye
+                .Pop => {},
+                .Mov => {},
+                .Xch => {},
+                .Inv => {},
+                .Neg => {		// p! but special cased to handle bye
                     nip();
                     if (tos == 0xFF and nos == 0x4) {
                         std.process.exit(0);
                     } else { 		// p!
                     }
-                },
-                .Mov => {},
-                .Xch => {},
-                .Inv => {},
-                .Neg => {},
+		},
                 .Add => {},
                 .Sub => {},
                 .And => {},
@@ -148,7 +124,7 @@ fn decode(i: Opcode) !void {
 }
 pub fn main() !void {
     while (true) {
-        b = bytes[ip];
+        b = rom.bytes[ip];
         ip += 1;
         try decode(b);
     }

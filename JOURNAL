@@ -176,6 +176,7 @@ INDEX
 	* 12 Dec '24
 	* 17 Dec '24
 	* 09 Jan '25
+	* 14 Jan '25
 
 04 Nov '22
 ----------
@@ -6063,3 +6064,26 @@ tests to pass rather than implementing the entire emulator in one shot.
 
 Personal note: Thambi Uncle passed away rather suddenly due to complications
 from a stroke yesterday. I'm dedicating this port in his memory. :RIP:
+
+14 Jan '25
+----------
+Using zig was overall a pleasant experience during the nqh-zig port (unless I
+factor in the amount of casting that was necessary to keep the compiler happy,
+but I'll ignore that for now). So, I'm again planning to use zig for the F16
+port as well. Rather than start over from scratch, I'm going to do a fair bit
+of copy-pasta and reuse most of the boilerplate used in nqh-zig (makefiles, gen
+scripts etc) and change stuff only when necessary. So far, my usage of zig has
+been to write it like C so I assume any power programmer in zig will laugh at
+all the plumbing I've placed around it with all the m4 and perl wrappers when
+I should probably just use `comptime`. My only/lame excuse for this is that I
+haven't really tried to figure out everything that `comptime` can be used for
+other than just browsing the docs and copy paste directly from the examples and
+then modding it as necessary. For this port also, I'm going to continue in that
+same vein. Maybe, for the next port where I use zig again, I'll try to do a
+"pure" zig build and use comptime in earnest to get rid of all these other
+accoutrements (or at least get rid of m4 - it's only purpose is to expand all
+the "include" preprocessor directives).
+
+Most of the generator scripts except genf16 (ie genprims, genrom, genheader and
+patchrom) are 1-1 "template" copies of the nqh-zig implementation scripts. They
+will need modification as this port progresses.

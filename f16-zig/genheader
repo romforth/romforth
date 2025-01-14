@@ -1,0 +1,132 @@
+# genheader : misc header generation shared between genrom and genprims
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+my $name=[];
+my $dict_decl={};
+
+sub lit32 {
+	my ($o)=@_;
+	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0}, // lit32\n";
+	# adapted from perldoc -f pack
+	for my $u (unpack("W*", pack L=>$o)) {
+		my $s=sprintf("\tBytecode\{.byte=%#02x\},\n", $u);
+		$s=~s/\=00\}/\=0\}/;
+		print $s;
+	}
+}
+
+sub lit {
+	my ($o)=@_;
+	if ($o<0) {
+		if ($o<-(1<<12)) {
+			die "$o is too large to fit in 13 bits";
+		}
+		my $p=-$o;
+		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$p&0x1f,"},\n";
+		$p>>=5;
+		print "\tBytecode{.byte=$p|0x80},\n";
+		return;
+	}
+	if ($o<32) {
+		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit1)) << 5) | $o},\n";
+	} elsif ($o<(1<<12)) {
+		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$o&0x1f,"},\n";
+		$o>>=5;
+		print "\tBytecode{.byte=$o},\n";
+	} else {
+		if ($o<1<<31) {
+			lit32($o);
+		} elsif ($o>-(1<<31)) {
+			lit32($o);
+		} else {
+			die "$o is too large to fit in 32 bits";
+		}
+	}
+}
+
+my $varhash={
+	'here' => 0,
+	'state' => 1,
+};
+
+sub variable {
+	my ($o)=@_;
+	die $o unless defined ($varhash->{$o});
+	lit($varhash->{$o});
+	print "\tBytecode{.nqh=Nqhcode{.op=.prims,.value=.vr}},\n";
+}
+
+if (-f "headers.list") {
+	open(my $headers, "headers.list");
+	while (<$headers>) {
+		if (/^Name(\d+)$/) {
+			$name->[$1]=$1;
+		}
+	}
+	close $headers;
+}
+open(my $headers, ">>headers.list");
+
+sub genheader {
+	my ($f,$l,$flag,$lh,$prev,$imm)=@_;
+	my $len=length($f);
+	my $fh=select $lh;
+	unless (defined $name->[$len]) {
+		print $headers "Name$len\n";
+		$name->[$len]=$len;
+		print "const Name$len = packed struct {\n";
+		for my $i (1..$len) {
+			print "\tc$i: u8,\n";
+		}
+		print "};\n\n";
+	}
+	my $v=\$dict_decl->{$l};
+	if (my $vv=$$v) {
+	} else {
+		$$v=$l;
+		print "const Dictionary_${l} = packed struct {\n";
+		print "\tname: Name$len,\n";
+		print "\tnfa: u8,\n";
+		if ($prev) {
+			print "\tlfa: Lfa,\n";
+		} else {
+			print "\tlfa: ?Lfa,\n";
+		}
+		print "\tcfa: *Bytecode,\n";
+		print "};\n\n";
+	}
+	print "const ${l}_dict = Dictionary_${l}{\n";
+	print "\t.name = .{\n";
+	my $snames=[split('',$f)];
+	for my $i (1..$len) {
+		print "\t\t.c$i = '", $snames->[$i-1], "',\n";
+	}
+	print "\t},\n";
+	print "\t.nfa = $len";
+	print "|0x80" if ($imm);
+	print ",\n";
+	if ($prev) {
+		print "\t.lfa = \&${prev}_dict.lfa,\n";
+	} else {
+		print "\t.lfa = null,\n";
+	}
+	print "\t.cfa = \@ptrCast(\&${l}_bytes),\n";
+	print "};\n\n";
+	print "const ${l}_bytes = [_]Bytecode{\n";
+	if ($flag eq 'prim') {		# primitive
+		print "\tPrims.$l,\n";
+		print "};\n";
+	} elsif ($flag eq 'var') {	# variable
+		variable($f);
+		print "};\n";
+	} elsif ($flag eq 'def') {	# definition
+	} else {
+		die "unknown type";
+	}
+	$prev=$l;
+	select $fh;
+	return $l;
+}

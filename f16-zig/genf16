@@ -1,0 +1,111 @@
+#!/usr/bin/perl -w
+# genf16 : convert Forth code primitives to F16 "nybble"code
+
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+my $file=shift or die "usage: $0 file ";
+
+my $dict={};
+
+sub mapf16 {			# map from a number 0-15 to F16 opcode
+	my ($n)=@_;
+	die if ($n<0);
+	die if ($n>15);
+	return '.'.(
+		"Push",		# 0
+		"Pop",		# 1
+		"Mov",		# 2
+		"Xch",		# 3
+		"Inv",		# 4
+		"Neg",		# 5
+		"Add",		# 6
+		"Sub",		# 7
+		"And",		# 8
+		"Or",		# 9
+		"Xor",		# A
+		"Shl",		# B
+		"Shr",		# C
+		"Exec",		# D
+		"Call",		# E
+		"Enter",	# F
+	)[$n];
+}
+
+sub pushf16 {			# generate opcodes to handle literals
+	my ($p,$n)=@_;
+	die "negative number $n" if ($n<0);
+	if ($n<16) {		# lit4
+		push @$p, ".Pop", ".Neg", mapf16($n);
+	} elsif ($n<256) {	# lit8
+		push @$p, ".Pop", ".Add", mapf16($n>>4), mapf16($n&0xf)
+	} else {		# lit16, faked for now
+		my @t;
+		while ($n>=16) {
+			unshift @t, $n&0xf;
+			$n>>=4;
+		}
+		push @$p, map(mapf16,@t);
+	}
+}
+
+sub expand {		# expand a given word into the corresponding opcode(s)
+	my ($p,$d)=@_;
+	if ($d=~/^\./) {			# primitives
+		push @$p, $d;
+		return;
+	}
+	my $n;
+	if ($d=~/^(-?0x[\dA-Fa-f]+)$/) {	# hexadecimal
+		$n=oct($1);
+		pushf16($p,$n);
+		return;
+	}
+	if ($d=~/^(-?\d+)$/) {			# decimal
+		$n=0+$1;
+		pushf16($p,$n);
+		return;
+	}
+	my $vv;
+	my $v=\$dict->{$d};			# will expand definitions
+	unless ($vv=$$v) {
+		die "undefined: $d";
+	}
+	push @$p, @$vv;
+}
+
+while (<>) {
+	/^\s*\#/ and next;
+	my $vv;				# definitions are of the form
+	if (s/([^\:\s]+)\s*\:\s*//) {	# foo : bar baz ...
+		my $def=$1;		# def will contain foo
+		my $v=\$dict->{$def};	# and the dictionary entry is created
+		unless ($vv=$$v) {
+			$vv=$$v=[];
+		}
+	}
+	for my $dep (split) {		# fill up the dictionary entry with
+		expand($vv,$dep);	# expanded definitions of each word
+	}
+}
+
+# generate the opcode mapping enum in zig
+open(my $fh,">$file") or die "can't open $file for writing";
+print $fh 'pub const Opcode = enum(u4) {', "\n";
+my $s;
+for my $i (0..15) {
+	$s=mapf16($i);
+	$s=~s/^\.//;
+	print $fh "\t$s,\t\/\/ $i\n";
+}
+print $fh "};\n";
+close $fh;
+
+# for each definition, list out its correponding opcode(s)
+my ($k,$v);
+while (($k,$v)=each %$dict) {
+	print "$k\t:\t", join(', ', @$v), "\n";
+}
