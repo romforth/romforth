@@ -243,7 +243,7 @@ while (<>) {				# map forth words in the standard input
 				$mode='';
 				next;
 			}
-			print "\t}++$m\n";
+			print "\t$m ++\n";
 		} elsif ($m=$varmap->{$f}) {	# variables just need to
 			variable($m);		# push their address
 		} elsif (defined($m=$defs->{$f})) { # definitions just need

@@ -19,9 +19,9 @@ const ns = 10;			// number of data stacks
 const ds = 8;			// depth of each data stack
 var sp: usize = 0;		// the current data stack which is in use
 var d: [ds]usize = undefined;	// set of data stack pointers (indexed by sp)
-var datastack: [ns][ds]isize = undefined;	// set of data stacks
+var datastack: [ns][ds]i16 = undefined;	// set of data stacks
 
-var tos: u16 = undefined;
+var tos: i16 = undefined;
 var nos: isize = undefined;
 
 var b: rom.Opcode = undefined;
@@ -31,12 +31,19 @@ fn dup() void {
     d[sp] += 1;
 }
 
+fn drop() void {
+    d[sp] -= 1;
+    tos = datastack[sp][d[sp]];
+}
+
 fn nip() void {
     d[sp] -= 1;
     nos = datastack[sp][d[sp]];
 }
 
 fn decode(i: rom.Opcode) !void {
+    const stdout = std.io.getStdOut().writer();
+
     switch (i) {
         .Push => {},
         .Pop => {
@@ -93,8 +100,14 @@ fn decode(i: rom.Opcode) !void {
                     if (tos == 0xFF and nos == 0x4) {
                         std.process.exit(0);
                     } else { 		// p!
+                        if (tos == 1) {	// emit
+                            var c: u8 = @truncate(@as(usize,@intCast(nos)));
+                            try stdout.print("{c}", .{c});
+                            drop();
+                        } else {	// ignore, no other ports are supported
+                        }
                     }
-		},
+                },
                 .Add => {},
                 .Sub => {},
                 .And => {},

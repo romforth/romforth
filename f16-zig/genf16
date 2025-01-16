@@ -69,6 +69,10 @@ sub expand {		# expand a given word into the corresponding opcode(s)
 		pushf16($p,$n);
 		return;
 	}
+	if ($d=~/^\'(.)\'$/) {			# ASCII character
+		pushf16($p,ord($1));
+		return;
+	}
 	my $vv;
 	my $v=\$dict->{$d};			# will expand definitions
 	unless ($vv=$$v) {

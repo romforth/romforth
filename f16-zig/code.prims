@@ -8,3 +8,5 @@ mov	: .Mov
 IO[t]<-n: .Neg
 p!	: mov IO[t]<-n
 bye	: 4 0xff p!
+key	: 'f'
+emit	: 1 p!

@@ -29,11 +29,11 @@ forth_defs.zig : forth.zig
 	cp forth.zig forth_defs.zig
 defs_zig.m4 : ../defs.4th ../fpp fpp.config prims_dict.zig genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map | ./patchrom > defs_zig.m4
-prims_dict.zig : genprims code.prims ../fpp fpp.config
+prims_dict.zig : genprims code.prims ../fpp fpp.config genf16
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genf16 opc.m4 | ./genprims -d dict.map > prims_dict.zig
 forth : forth.zig rom.zig
 	zig build-exe forth.zig
-prims.zig : genprims code.prims ../fpp fpp.config
+prims.zig : genprims code.prims ../fpp fpp.config genf16
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genf16 opc.m4 | ./genprims dict.map > prims.zig
 rom.zig : rom.m4 bytes.m4
 	m4 rom.m4 > rom.zig
