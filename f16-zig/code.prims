@@ -18,3 +18,4 @@ dup	: push d<-t
 pop	: .Pop
 d->t	: .Push
 drop	: pop d->t
+neg	: .Neg

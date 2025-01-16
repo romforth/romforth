@@ -97,7 +97,25 @@ fn decode(i: rom.Opcode) !void {
                     tos |= @intFromEnum(b); // too much with zig casts right now
                     if (debug == 1) { try stdout.print("lit8 {d}\n", .{tos}); }
                 },
-                .Sub => {},
+                .Sub => {
+                    b = rom.bytes[ip];
+                    ip += 1;
+                    dup();
+                    tos = @intFromEnum(b);
+                    b = rom.bytes[ip];
+                    ip += 1;
+                    tos <<= 4; // just use big endian - don't want to struggle
+                    tos |= @intFromEnum(b); // too much with zig casts right now
+                    b = rom.bytes[ip];
+                    ip += 1;
+                    tos <<= 4; // just use big endian - don't want to struggle
+                    tos |= @intFromEnum(b); // too much with zig casts right now
+                    b = rom.bytes[ip];
+                    ip += 1;
+                    tos <<= 4; // just use big endian - don't want to struggle
+                    tos |= @intFromEnum(b); // too much with zig casts right now
+                    if (debug == 1) { try stdout.print("lit16 {d}\n", .{tos}); }
+                },
                 .And => {},
                 .Or => {},
                 .Xor => {},
@@ -155,7 +173,7 @@ fn decode(i: rom.Opcode) !void {
         },
         .Xch => {},
         .Inv => {},
-        .Neg => {},
+        .Neg => { tos = -tos; },
         .Add => {},
         .Sub => {},
         .And => {},
