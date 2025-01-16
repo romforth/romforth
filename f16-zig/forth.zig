@@ -43,6 +43,7 @@ fn nip() void {
 
 fn decode(i: rom.Opcode) !void {
     const stdout = std.io.getStdOut().writer();
+    const stdin = std.io.getStdIn().reader();
 
     switch (i) {
         .Push => {},
@@ -94,7 +95,13 @@ fn decode(i: rom.Opcode) !void {
                 .Pop => {},
                 .Mov => {},
                 .Xch => {},
-                .Inv => {},
+                .Inv => {
+                    dup();
+                    if (tos == 0) {	// p@
+                        tos = try stdin.readByte();
+                    } else {		// ignore, no other ports are supported
+                    }
+                },
                 .Neg => {		// p! but special cased to handle bye
                     nip();
                     if (tos == 0xFF and nos == 0x4) {
