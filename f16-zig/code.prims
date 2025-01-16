@@ -12,3 +12,9 @@ IO[t]->n: .Inv
 p@	: mov IO[t]->n
 key	: 0 p@
 emit	: 1 p!
+push	: .Push
+d<-t	: .Push
+dup	: push d<-t
+pop	: .Pop
+d->t	: .Push
+drop	: pop d->t

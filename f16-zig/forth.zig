@@ -46,12 +46,33 @@ fn decode(i: rom.Opcode) !void {
     const stdin = std.io.getStdIn().reader();
 
     switch (i) {
-        .Push => {},
+        .Push => {
+            b = rom.bytes[ip];
+            ip += 1;
+            switch (b) {
+                .Push => { dup(); },
+                .Pop => {},
+                .Mov => {},
+                .Xch => {},
+                .Inv => {},
+                .Neg => {},
+                .Add => {},
+                .Sub => {},
+                .And => {},
+                .Or => {},
+                .Xor => {},
+                .Shl => {},
+                .Shr => {},
+                .Exec => {},
+                .Call => {},
+                .Enter => {},
+            }
+        },
         .Pop => {
             b = rom.bytes[ip];
             ip += 1;
             switch (b) {
-                .Push => {},
+                .Push => { drop(); },
                 .Pop => {},
                 .Mov => {},
                 .Xch => {},
