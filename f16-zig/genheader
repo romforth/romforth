@@ -7,6 +7,30 @@
 my $name=[];
 my $dict_decl={};
 
+sub mapf16 {			# map from a number 0-15 to F16 opcode
+	my ($n)=@_;
+	die if ($n<0);
+	die if ($n>15);
+	return '.'.(
+		"Push",		# 0
+		"Pop",		# 1
+		"Mov",		# 2
+		"Xch",		# 3
+		"Inv",		# 4
+		"Neg",		# 5
+		"Add",		# 6
+		"Sub",		# 7
+		"And",		# 8
+		"Or",		# 9
+		"Xor",		# A
+		"Shl",		# B
+		"Shr",		# C
+		"Exec",		# D
+		"Call",		# E
+		"Enter",	# F
+	)[$n];
+}
+
 sub lit32 {
 	my ($o)=@_;
 	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.jmp))<<5)|0}, // lit32\n";
@@ -20,31 +44,43 @@ sub lit32 {
 
 sub lit {
 	my ($o)=@_;
-	if ($o<0) {
-		if ($o<-(1<<12)) {
-			die "$o is too large to fit in 13 bits";
+	if ($o<0) {	# -ve numbers always use the full 16 bit representation
+			# pop sub a b c d
+		if ($o<-32768) {
+			die "$o is too large to fit in 16 bits. Range: -32768..32767 ";
 		}
-		my $p=-$o;
-		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$p&0x1f,"},\n";
-		$p>>=5;
-		print "\tBytecode{.byte=$p|0x80},\n";
+		print "\t[_]Opcode{ .Pop, .Sub, ";
+		my $n=$o&0xffff;
+		my $mask=0xf000;
+		my $rsh=16;
+		while ($rsh>0) {
+			$rsh-=4;
+			print mapf16(($o&$mask) >> $rsh), ", ";
+			$mask>>=4;
+		}
+		print "} ++\n";
 		return;
 	}
-	if ($o<32) {
-		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit1)) << 5) | $o},\n";
-	} elsif ($o<(1<<12)) {
-		print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.lit2)) << 5)|",$o&0x1f,"},\n";
-		$o>>=5;
-		print "\tBytecode{.byte=$o},\n";
-	} else {
-		if ($o<1<<31) {
-			lit32($o);
-		} elsif ($o>-(1<<31)) {
-			lit32($o);
-		} else {
-			die "$o is too large to fit in 32 bits";
-		}
+	if ($o<16) { # use lit4
+		print "\t[_]Opcode{ .Pop, .Neg, ",
+			mapf16($o), "} ++\n";
+		return;
 	}
+	if ($o<256) { # use lit8
+		print "\t[_]Opcode{ .Pop, .Add, ",
+			mapf16($o>>4), ", ",
+			mapf16($o&0xf), "} ++\n";
+		return;
+	}
+	if ($o<32768) { # use lit16
+		print "\t[_]Opcode{ .Pop, .Sub, ",
+			mapf16($o>>12), ", ",
+			mapf16($o>>8), ", ",
+			mapf16($o>>4), ", ",
+			mapf16($o&0xf), "} ++\n";
+		return;
+	}
+	die "$o is too large to fit in 16 bits. Range: -32768..32767 ";
 }
 
 my $varhash={

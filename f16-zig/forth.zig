@@ -10,6 +10,8 @@
 // the implementation, this implementation is "more" correct since it can be
 // checked/verified.
 
+const debug = 0;
+
 const std = @import("std");
 const rom = @import("rom.zig");
 
@@ -82,8 +84,7 @@ fn decode(i: rom.Opcode) !void {
                     ip += 1;
                     dup();
                     tos = @intFromEnum(b);
-                    // const stdout = std.io.getStdOut().writer();
-                    // try stdout.print("lit4 {d}\n", .{tos});
+                    if (debug == 1) { try stdout.print("lit4 {d}\n", .{tos}); }
                 },
                 .Add => {		// lit8
                     b = rom.bytes[ip];
@@ -94,8 +95,7 @@ fn decode(i: rom.Opcode) !void {
                     ip += 1;
                     tos <<= 4; // just use big endian - don't want to struggle
                     tos |= @intFromEnum(b); // too much with zig casts right now
-                    // const stdout = std.io.getStdOut().writer();
-                    // try stdout.print("lit8 {d}\n", .{tos});
+                    if (debug == 1) { try stdout.print("lit8 {d}\n", .{tos}); }
                 },
                 .Sub => {},
                 .And => {},
@@ -117,14 +117,19 @@ fn decode(i: rom.Opcode) !void {
                 .Mov => {},
                 .Xch => {},
                 .Inv => {
-                    dup();
-                    if (tos == 0) {	// p@
+                    if (tos == 0) {	// p@, tos==0 implies key
                         tos = try stdin.readByte();
+                        if (debug == 1) {
+                            try stdout.print("key : got {d}\n", .{tos});
+                        }
                     } else {		// ignore, no other ports are supported
                     }
                 },
                 .Neg => {		// p! but special cased to handle bye
                     nip();
+                    if (debug == 1) {
+                        try stdout.print("nip : got {d}\n", .{nos});
+                    }
                     if (tos == 0xFF and nos == 0x4) {
                         std.process.exit(0);
                     } else { 		// p!
