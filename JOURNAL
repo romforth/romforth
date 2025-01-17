@@ -177,6 +177,7 @@ INDEX
 	* 17 Dec '24
 	* 09 Jan '25
 	* 14 Jan '25
+	* 17 Jan '25
 
 04 Nov '22
 ----------
@@ -6087,3 +6088,34 @@ the "include" preprocessor directives).
 Most of the generator scripts except genf16 (ie genprims, genrom, genheader and
 patchrom) are 1-1 "template" copies of the nqh-zig implementation scripts. They
 will need modification as this port progresses.
+
+17 Jan '25
+----------
+While designing the F16 ISA, I assumed that save/exit was sufficient to handle
+backward jumps and along with the conditional ret0, conditionals and loops were
+also covered. I guess I was feeling a little too self congratulatory that I'd
+managed to excise 'goto' entirely - even from the instruction set itself.
+
+While attempting to generate code for j'umps at step 4.1, which is used for the
+implementation of the 'else' part of an if-then-else, I realized that getting
+rid of jumps was not such a great idea after all since at least a forward skip
+type operation is necessary for efficiency.
+
+Imagine for a moment that I continue with the current scheme. Without forward
+jumps, the code to implement it might look something like this:
+	save r> N + exec
+which expands to 9 nybbles (4.5 bytes) - even in the best case, where the jump
+offset fits in a nybble. Going ahead without some form of a 'goto' will cause a
+lot of code space bloat, so I've decided to retrofit a 'skip' instruction back
+into the ISA.
+
+For now, jumps are restricted to forward jumps and come in 2 flavors: 16 byte
+or 256 byte offsets which take 1 nybble or 2 nybbles respectively and they are
+shoehorned under the POP instruction since they resemble the LIT instructions.
+
+Using these new instructions, a 16 byte jump can be encoded in 3 nybbles and a
+256 byte jump in 4 nybbles so I'm hopeful that this will help keep the code
+more compact compared to not having it. I'll hold off on enabling backward jump
+with this extension for now since backward jumps using the combination of:
+	save ... exit
+which has an overhead of 3 nybbles, is already fairly compact.

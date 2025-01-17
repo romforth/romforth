@@ -85,6 +85,10 @@ POP:
 	16 : pop i->t, 2	// lit8		# t = *(u8  *)i; i += 2;
 	17 : pop i->t, 4	// lit16	# t = *(i16 *)i; i += 4;
 
+	# skips
+	18 : pop i->i, 1	// skip1	# i += *(u4 *)i;
+	19 : pop i->i, 2	// skip2	# i += *(u8 *)i;
+
 MOV:
 	# this is like PUSH / POP except there is no auto increment/decrement
 	20 : mov MEM[t]->t	// @			# t = mem[t]
