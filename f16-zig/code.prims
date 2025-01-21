@@ -19,3 +19,4 @@ pop	: .Pop
 d->t	: .Push
 drop	: pop d->t
 neg	: .Neg
+j	: .Pop

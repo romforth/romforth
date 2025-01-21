@@ -228,8 +228,8 @@ sub def {
 }
 
 sub branch {
-	my ($t)=@_;
-	print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.$t)) << 5) | ";
+	#my ($t)=@_;
+	#print "\tBytecode{.byte=(\@as(u8,\@intFromEnum(Opcode.$t)) << 5) | ";
 }
 
 my $ref=0;
@@ -265,13 +265,18 @@ while (<>) {				# map forth words in the standard input
 				next;
 			} elsif ($f=~/^\#(-?\d+)$/) {
 				my $i=int($1); # "immediate" assembly equivalent
-				if ($i>=16 or $i<-16) {
+				if ($i<0) {
+					die "only forward jumps are allowed ";
+				} elsif ($i<=16) {
+					$i--;
+					print "\t", '[_]Opcode{ .And, @enumFromInt(', $i, ")";
+				} elsif ($i<=256) {
+					$i--;
+					print '[_]Opcode{ .Or, @enumFromInt(', $i, ")";
+				} else {
 					die "jump offset is too large";
 				}
-				if ($i<0) {
-					$i=15-$i;
-				}
-				print $i&0x1f, "},\n";
+				print "} ++\n";
 				next;
 			} elsif ($f eq 'j') {
 				branch("jmp");

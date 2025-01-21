@@ -16,6 +16,7 @@ const std = @import("std");
 const rom = @import("rom.zig");
 
 var ip: usize = 0;
+var n: usize = 0;
 
 const ns = 10;			// number of data stacks
 const ds = 8;			// depth of each data stack
@@ -116,8 +117,20 @@ fn decode(i: rom.Opcode) !void {
                     tos |= @intFromEnum(b); // too much with zig casts right now
                     if (debug == 1) { try stdout.print("lit16 {d}\n", .{tos}); }
                 },
-                .And => {},
-                .Or => {},
+                .And => {
+                    b = rom.bytes[ip];
+                    ip += @intFromEnum(b);
+                },
+                .Or => {
+                    b = rom.bytes[ip];
+                    ip += 1;
+                    n = @intFromEnum(b);
+                    n <<= 4;
+                    b = rom.bytes[ip];
+                    ip += 1;
+                    n |= @intFromEnum(b);
+                    ip += n;
+                },
                 .Xor => {},
                 .Shl => {},
                 .Shr => {},
