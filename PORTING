@@ -99,6 +99,11 @@ Notes for the table above:
 	is just 8 bits while addresses are 16 bits. More generally, it can be
 	used where the register containing TOS is only half as wide as the PC.
 
+	Thread type 9 is used to denote F16 "nybblecode" with the invocation
+	format:
+		| nybble(s) |
+	as documented in the f16-zig/f16.txt
+
 	There is also a prim_var_deref setting which is meant to modify the
 	semantics of how cfa's are handled by the various threading schemes.
 
