@@ -70,6 +70,10 @@ PUSH:
 	02 : push r<-t	// this + drop : >r	# *--r = t
 	03 : push r<-i	// save			# *--r = i
 
+	# 0skip # kludgy addition: see JOURNAL entry for 21 Jan '25 for details
+	08 : push i<-i, 1, t==0	// 0skip1	# if (t==0) i += *(u4 *)i;
+	09 : push i<-i, 2, t==0	// 0skip2	# if (t==0) i += *(u8 *)i;
+
 POP:
 	# data move with auto increment operator
 	10 : pop d->t	// drop			# t = *d++
@@ -97,6 +101,10 @@ MOV:
 	23 : mov d[t]<-t	// nip + this : stick	# d[t]=t
 	24 : mov IO[t]->t	// p@			# t = io[t]
 	25 : mov IO[t]<-n	// nip + this : p!	# io[t] = n
+
+	# 1skip # kludgy addition: see JOURNAL entry for 21 Jan '25 for details
+	28 : mov *i->i, 1, t!=0	// 1skip1	# if (t!=0) i += *(u4 *)i;
+	29 : mov *i->i, 2, t!=0	// 1skip2	# if (t!=0) i += *(u8 *)i;
 
 XCH:
 	# data exchange operators

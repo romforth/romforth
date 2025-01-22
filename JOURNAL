@@ -178,6 +178,7 @@ INDEX
 	* 09 Jan '25
 	* 14 Jan '25
 	* 17 Jan '25
+	* 21 Jan '25
 
 04 Nov '22
 ----------
@@ -6119,3 +6120,20 @@ more compact compared to not having it. I'll hold off on enabling backward jump
 with this extension for now since backward jumps using the combination of:
 	save ... exit
 which has an overhead of 3 nybbles, is already fairly compact.
+
+21 Jan '25
+----------
+While trying to implement 'jz', I realized that the 'skip' extension to the ISA
+was not sufficient since we also need conditional skips. I'll stick to Forth
+convention and call the extended conditional skip instruction '0skip'.
+
+Since 'skip' is implemented as an extended 'Pop' instruction, it makes sense to
+bring '0skip' also under the 'Pop' instruction umbrella. But for ease of coding
+I'm moving it under the 'Push' instruction set since I need a means of spelling
+out 'j' and 'jz' differently in code.prims.
+
+Rather than wait for the same scenario that I ran into at this step to play out
+again when I get around to implementing 'jnz', I'll preemptively define '1skip'
+now and move it under the umbrella of the 'Mov' instruction so j/jz/jnz can all
+have different starting prefix nybbles to make the disambiguation in code.prims
+between them fairly easy/trivial.
