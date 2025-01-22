@@ -21,3 +21,4 @@ drop	: pop d->t
 neg	: .Neg
 j	: .Pop
 jz	: .Push
+jnz	: .Mov

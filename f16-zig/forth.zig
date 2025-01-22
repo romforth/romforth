@@ -194,8 +194,28 @@ fn decode(i: rom.Opcode) !void {
                 },
                 .Add => {},
                 .Sub => {},
-                .And => {},
-                .Or => {},
+                .And => {		// 1skip1
+                    if (tos != 0) {
+                        b = rom.bytes[ip];
+                        ip += @intFromEnum(b);
+                    } else {
+                        ip += 1;
+                    }
+                },
+                .Or => {		// 1skip2
+                    if (tos != 0) {
+                        b = rom.bytes[ip];
+                        ip += 1;
+                        n = @intFromEnum(b);
+                        n <<= 4;
+                        b = rom.bytes[ip];
+                        ip += 1;
+                        n |= @intFromEnum(b);
+                        ip += n;
+                    } else {
+                        ip += 2;
+                    }
+                },
                 .Xor => {},
                 .Shl => {},
                 .Shr => {},
