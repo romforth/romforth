@@ -109,10 +109,16 @@ emit	[ > ' '
 
 #{if step>=4.5
 
+[ F16 does not have negative jumps, disable this test when THREAD==9 (ie F16)
+
+#{if THREAD!=9
+
 0		[ 0
 1		[ 0 1
 jnz		[	// raw opcode test of the 'jnz' operator
 #JUMPBACK	[	// negative jump
+
+#}if
 
 #}if
 
