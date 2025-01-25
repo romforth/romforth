@@ -179,6 +179,7 @@ INDEX
 	* 14 Jan '25
 	* 17 Jan '25
 	* 21 Jan '25
+	* 25 Jan '25
 
 04 Nov '22
 ----------
@@ -6137,3 +6138,22 @@ again when I get around to implementing 'jnz', I'll preemptively define '1skip'
 now and move it under the umbrella of the 'Mov' instruction so j/jz/jnz can all
 have different starting prefix nybbles to make the disambiguation in code.prims
 between them fairly easy/trivial.
+
+25 Jan '25
+----------
+While working on step 5 for the f16 VM, I've run into a stumbling block. So far
+for all of the previous architectures, I've been able to patch the generated
+output (using the "patchrom" script). This has worked reasonably well so far
+since the "intermediate code" (if you want to call it that) was just a sequence
+of numbers. But in this case, the "intermediate code" is in Zig which requires
+the patchrom script to become more complex.
+
+Rather than continue with that hack, that I've successfully used for this long,
+I'm planning to step back a bit and think through whether I should restructure
+the overall code - especially to pay down the ongoing tech debt of having quite
+a numerous number of copies of the 'genrom' scripts - each a unique little
+snowflake almost the same, yet different from all of the others.
+
+My plan is to use a "Abstract Syntax Tree"/AST that the "front end" code can
+generate out of the .4th code and then have a "back end" that takes the AST as
+input to generate the native/processor specific code.
