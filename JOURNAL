@@ -180,6 +180,7 @@ INDEX
 	* 17 Jan '25
 	* 21 Jan '25
 	* 25 Jan '25
+	* 04 Feb '25
 
 04 Nov '22
 ----------
@@ -6157,3 +6158,63 @@ snowflake almost the same, yet different from all of the others.
 My plan is to use a "Abstract Syntax Tree"/AST that the "front end" code can
 generate out of the .4th code and then have a "back end" that takes the AST as
 input to generate the native/processor specific code.
+
+04 Feb '25
+----------
+For a while now, I've not been adhering to the DRY (don't repeat yourself)
+principle resulting in a fair bit of code duplication in the code base. Most of
+the versions of the various "genrom" scripts in each architecture are similar
+enough to each other but each is a slight variant such that they can't all be
+consolidated into a unified script.
+
+Just comparing z80/genrom and z80-stc/genrom, for example, shows that they need
+to differ since the code to take a branch in Z80 assembly has to differ from
+the equivalent bytecode. Similarly, calls to subroutines also need to be coded
+differently for equivalent reasons.
+
+Now, the genrom script for each architecture has 2 pieces of functionality - it
+first needs to parse the .4th input (which is architecture independent) and
+then generate the arch/machine dependent code. Since much of the parsing code
+is common across all of the genrom scripts, one viable approach is to use an
+approach that most modern compilers use, which is to have a common "front end"
+which generates an "abstract syntax tree"/AST which is generic across all
+architectures. The AST can then be used as input to a "back end" which is tuned
+for a specific architecture to turn the AST into actual machine code.
+
+I now have a choice to make: should I stick to one of the well known back ends
+(say, LLVM) and generate an AST to match it or should I strike out on my own?
+
+The machine code that I need to generate is, in most cases, quite limited in
+scope (just need opcodes for branch, mov, arithmetic, bitshift and call+return) and in many cases back ends don't exist, at least for some of the architectures
+that I've focused on so far, so I'm going to choose to use my own "simple" AST.
+
+The AST that I'll choose to use is a direct reflection of the code in the .4th
+files, and for simplicity, I've chosen to use a nested array of values as the
+AST. For basic blocks which are a sequence of primitives, for example, the
+notation can be something along the lines of:
+	[ 'bb', ... list of primitives or defined words ... ]
+where the [ ... ] is just the Perl notation for an array.
+
+The AST to represent if{ ... }else{ ... }if conditionals can also be a direct
+reflection of that structure : [ 'cond', [ then ] [ else ] ] where the 'then'
+and 'else' parts are themselves ASTs.
+
+Similarly, a looping AST equivalent of loop{ ... }loop can be represented using
+	[ 'loop', [ body ] ] where the 'body' is itself an AST
+and by leveraging that, loop{ ... }while{ ... }loop can be represented using
+	[ 'while', [ test ] [ body ] ] where test and body are also ASTs
+and loop{ ... }until{ ... }loop can be represented using
+	[ 'until', [ test ] [ body ] ] where test and body are also ASTs
+and that pretty much covers all of the AST representations that are required.
+
+My hope is that by splitting each genrom script into a front end "genast" script
+(which is common across architectures) and a "genbin" script (which is specific
+to each architecture), I can reduce the amount of code duplication that has
+happened in the code base across all the genrom's.
+
+My initial attempt at this was to make it a one shot deal to change everything
+in one massive change set, but that has taken a while to get done so I'm going
+back to my usual technique of making tiny incremental changes instead.
+
+I'll start with making this change just for the f16 architecture and roll it
+out slowly to the older ports for the existing architectures as time permits.
