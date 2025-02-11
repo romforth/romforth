@@ -181,6 +181,7 @@ INDEX
 	* 21 Jan '25
 	* 25 Jan '25
 	* 04 Feb '25
+	* 11 Feb '25
 
 04 Nov '22
 ----------
@@ -6218,3 +6219,30 @@ back to my usual technique of making tiny incremental changes instead.
 
 I'll start with making this change just for the f16 architecture and roll it
 out slowly to the older ports for the existing architectures as time permits.
+
+11 Feb '25
+----------
+My initial attempt at implementing the AST described in the previous JOURNAL
+entry of 04 Fed '25 helped to bring to the surface an underlying problem with
+it. But before I jump into the problem, let me start with the code (that has
+been shelved for now) that I initially implemented. The Perl6/Raku grammar to
+implement an AST represented by a "Perl nested array" is available in the file
+`shelved/ast.raku` in this repo.
+
+To ensure that the grammar didn't have shift/reduce or other conflicts, I also
+rewrote it in Yacc/Bison (available from `shelved/ast.y` in this repo) and
+confirmed that there were no warnings. While this was a perfectly workable
+solution, there is a major problem with it when this scheme is used to interact
+with Forth. The major problem is that the tokens '[', ']' and ',' have now
+become "special" characters and unlike their use in Forth words, you now have
+to be careful about where they can be used. I could attempt to get rid of at
+least ',' and get a more Lisp-like AST but that still has the problem that
+whatever characters are used for parentheses, become "reserved"/"special"
+characters. So I had to rethink this entire design and go in for a redesign of
+the AST. For the new design I'll add the constraint that only whitespace
+delimiters can be used (just like in Forth) and that's the new AST that I'll
+try to focus on next. Since whitespace is significant, I may end up with Python
+code for all I know ;)
+
+The code that I've shelved has been moved to "shelved" for documentation and/or
+historical purposes.
