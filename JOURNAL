@@ -182,6 +182,7 @@ INDEX
 	* 25 Jan '25
 	* 04 Feb '25
 	* 11 Feb '25
+	* 17 Feb '25
 
 04 Nov '22
 ----------
@@ -6246,3 +6247,19 @@ code for all I know ;)
 
 The code that I've shelved has been moved to "shelved" for documentation and/or
 historical purposes.
+
+17 Feb '25
+----------
+My exploration of parsing and AST design soon took a turn into research on
+"Futamura Projections" and its applicability here. Rather than continue chasing
+down rabbit holes, I'll go ahead and add a tangible artifact of the work done
+so far - which was the whitespace delimited AST that I'd mentioned in the
+previous JOURNAL entry of 11 Feb '25 and postpone all of the other stuff that I
+was working on for later commits.
+
+Since this is mostly for research purposes without a direct applicability for
+how I'm going to use it (yet), I've added it under 'shelved/ws/ast.y' as a
+placeholder until my plans firm up. The grammar documented in 'ast.y' is in
+YACC/Bison (so as to flush out any shift/reduce type conflicts) and also gets
+rid of the '[', ']' and ',' delimiters that were used in the previous grammar
+and instead uses newlines(\n) as the only delimiter.
