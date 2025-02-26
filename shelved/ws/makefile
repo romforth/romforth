@@ -1,4 +1,5 @@
 all : ast.tab
+	./ast.raku
 	echo -n '' | ./$<
 	echo 'B1' | ./$<
 	echo 'B1 2' | ./$<

@@ -183,6 +183,7 @@ INDEX
 	* 04 Feb '25
 	* 11 Feb '25
 	* 17 Feb '25
+	* 26 Feb '25
 
 04 Nov '22
 ----------
@@ -6263,3 +6264,45 @@ placeholder until my plans firm up. The grammar documented in 'ast.y' is in
 YACC/Bison (so as to flush out any shift/reduce type conflicts) and also gets
 rid of the '[', ']' and ',' delimiters that were used in the previous grammar
 and instead uses newlines(\n) as the only delimiter.
+
+26 Feb '25
+----------
+Almost exactly a month after I started off on a tangent I think I've come full
+circle back to where I began. Let me review the sequence of (mis?)steps: the
+initial impetus for stepping out of the rigid porting framework that I had
+structured for myself was that a newer/better patchrom was required for step 5
+of the f16-zig port and this was because I was generating zig code - not just a
+simple sequence of bytes as I was doing earlier for all of the C based ports
+(and even the previous zig based nqh-zig port). That line of thinking led to a
+domino like effect of thinking about replacing the multitude of genrom scripts
+that have sprouted up so far - currently 18 different snowflakes, all slightly
+different from each other. This led to an investigation of whether I was better
+off generating just an "abstract syntax tree"/AST using a parser for the Forth
+code (tentatively named genast, common across all architectures) and then have
+an architecture specific machine/assembly code generator (tentatively named
+genbin, which would need to be coded anew for each port to a new architecture)
+which would turn the AST into machine/assembly code.
+
+From there it then became yet another rabbit hole investigation into which AST
+representation would be appropriate to use as the intermediate format between
+genast and genbin. Rather than use LLVM or some other "industry standard" AST,
+I decided to build something homegrown/small enough that it didn't need any
+effort whatsoever - just a nested Perl array. While that works fine as an AST,
+it had an unintended side effect: the characters '[', ']' and ',' will become
+"reserved words" in that grammar which precludes them from being used as Forth
+words.
+
+To solve that problem, I then coded up yet another yacc/bison based grammar
+(which I was understandably rather proud of) where all of the "punctuation"
+can only be whitespace. With that issue resolved, I then started looking at
+coding up genast but ski break intervened and I took some time to read through
+the parsing literature before deciding that using ~20 lines of raku grammar to
+encode the syntax of Forth is a deal just too good to pass up and as with the
+earlier parsers, I've left it as a placeholder in `shelved/ws/ast.raku`.
+
+The key observation here, from doing all this work, was that the grammar to
+parse Forth and the grammar to walk an AST representation of it are both fairly
+identical (length wise), so it does not make much sense to separate it into the
+two halves of genast + genbin since it will not result in any savings in terms
+of code length. I'm going to take a bit of a break and think through this as I
+weigh my options on how to deal with this moving forward.
