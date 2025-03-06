@@ -1,5 +1,5 @@
 all : ast.tab
-	./ast.raku
+	cat ../../rom.4th | ../../fpp -DTESTROM -c fpp.config | sed 's/\[.*//' | ./ast.raku
 	echo -n '' | ./$<
 	echo 'B1' | ./$<
 	echo 'B1 2' | ./$<

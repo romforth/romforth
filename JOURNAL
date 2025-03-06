@@ -184,6 +184,7 @@ INDEX
 	* 11 Feb '25
 	* 17 Feb '25
 	* 26 Feb '25
+	* 06 Mar '25
 
 04 Nov '22
 ----------
@@ -6306,3 +6307,25 @@ identical (length wise), so it does not make much sense to separate it into the
 two halves of genast + genbin since it will not result in any savings in terms
 of code length. I'm going to take a bit of a break and think through this as I
 weigh my options on how to deal with this moving forward.
+
+06 Mar '25
+----------
+Despite my misgivings about doing a rewrite of the various versions of genrom
+to consolidate them into a pair of frontend/genast and backend/genbin scripts,
+as I talked about in my previous entry, sunk cost fallacy kicked in and after
+some prototyping efforts, I decided to see if I could get all of rom.4th to be
+parsed either using the existing Perl6/Raku parser or anything else that would
+enable it to be done with the least amount of code.
+
+After looking at some other options (including Ragel), I've concluded that
+improving on the previous Perl6/Raku parser is the best/simplest approach. The
+changes to handle rom.4th has ballooned up the code size by ~3x (starting from
+all of 20 lines) so it is only a small price to pay for the elegance of this
+approach.
+
+Since I haven't yet made up my mind whether this is the final/future course I
+want to take, the code is still left as a placeholder in `shelved/ws`.
+
+For testing, I needed a sample `fpp.config` that could be used and since this
+effort started off with f16-zig, I've just used the fpp.config file from the C
+port since that matches many of the other configurations.
