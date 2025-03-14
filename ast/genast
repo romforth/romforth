@@ -1,0 +1,42 @@
+#!/usr/bin/perl6
+
+# genast : Perl6/Raku based parser replacement for genrom
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+multi MAIN(
+    Str $out,       #= output map
+    Str $in,        #= input map
+    Bool :g(:$gendefs) = False,
+    Bool :d(:$gendict) = False,
+) {
+    process($out, [$in]);
+}
+
+multi MAIN(
+    Str $out,       #= output map
+    Str $in,        #= input map
+    Str $extras,    #= zero or more other input maps
+    Bool :g(:$gendefs) = False,
+    Bool :d(:$gendict) = False,
+) {
+    process($out, [$in, $extras]);
+}
+
+grammar triplet {
+	rule TOP {
+		^ <triples>* $
+	}
+	rule triples {
+			'code' <name> <value>
+		|	'label' <name> <value>
+	}
+	regex name { \S+ }
+	regex value { \S+ }
+}
+
+sub process($out, @ins) {
+	say triplet.parse(map { $_.IO.lines }, @ins);
+}

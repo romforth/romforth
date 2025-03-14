@@ -185,6 +185,7 @@ INDEX
 	* 17 Feb '25
 	* 26 Feb '25
 	* 06 Mar '25
+	* 14 Mar '25
 
 04 Nov '22
 ----------
@@ -6329,3 +6330,35 @@ want to take, the code is still left as a placeholder in `shelved/ws`.
 For testing, I needed a sample `fpp.config` that could be used and since this
 effort started off with f16-zig, I've just used the fpp.config file from the C
 port since that matches many of the other configurations.
+
+14 Mar '25
+----------
+I've decided to go full steam ahead on rewriting genrom and turning it into the
+genast+genbin pair (a plan that I've already documented in a fair bit of detail
+in some of the recent JOURNAL entries). Before getting started in earnest on
+that work though, I needed to see how genrom's usage has (organically?) evolved
+over time as it got modified 18 different times. Running the following pipeline
+	grep genrom */makefile |grep \| |perl -pe 's/.*\| ..genrom/genrom/'|sort -u
+shows that it takes one or more input maps and generates an output map and uses
+the -d and -g options to conditionally generate additional files as needed.
+
+So that is the overall external interface that genast will need to conform to.
+To summarize that explicity, the usage needs to be something along these lines:
+  ./genast [-g|--gendefs] [-d|--gendict] out.map in.map(s)
+
+Since I'm in no mood to muck with the makefiles in addition to everything else
+that's going to happen with this complex change, I will religiously stick to
+the interface just the way it is used today. To minimize the blast radius, I'll
+replace only the genrom in f16-zig to begin with and expand out from there as
+necessary. Since even that involves a fair bit of refactoring, I'll do this in
+baby steps as I try to understand all of the implications of the changes as it
+materializes.
+
+The one downside I already see is that the number of dependencies has now
+increased by 1 since Perl6/Raku has now been added to the mix but its builtin
+grammar functionality is just too good to pass up so I'll also be doing a fair
+bit of "learning by doing" as I go along. It looks like I needed to use Perl6's
+multi-dispatch capability to be able to match Perl5's fiddling with the ARGV
+list that I was doing earlier in genrom.
+
+For testing, I'm using a copy of the dict.map that was generated in f16-zig.
