@@ -25,18 +25,33 @@ multi MAIN(
     process($out, [$in, $extras]);
 }
 
+my $map={};
+
+my $prev="0";
+my $label="lbl000";
+
+sub savelabel($f,$l) {
+	if ($f eq "fake") {
+		$label=$l;
+	} elsif ($f eq "prev") {
+		$prev=$l;
+	} else {
+		die "unknown label";
+	}
+}
+
 grammar triplet {
 	rule TOP {
 		^ <triples>* $
 	}
 	rule triples {
-			'code' <name> <value>
-		|	'label' <name> <value>
+			'code' <name> <value> { $map.{$<name>}=$<value>; }
+		|	'label' <name> <value> { savelabel($<name>, $<value>); }
 	}
 	regex name { \S+ }
 	regex value { \S+ }
 }
 
 sub process($out, @ins) {
-	say triplet.parse(map { $_.IO.lines }, @ins);
+	triplet.parse(map { $_.IO.lines }, @ins);
 }
