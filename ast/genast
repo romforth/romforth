@@ -31,6 +31,7 @@ my $prev="0";
 my $label="lbl000";
 
 sub savelabel($f,$l) {
+	# say "in savelabel $f $l\n";
 	if ($f eq "fake") {
 		$label=$l;
 	} elsif ($f eq "prev") {
@@ -42,16 +43,19 @@ sub savelabel($f,$l) {
 
 grammar triplet {
 	rule TOP {
-		^ <triples>* $
+		^ <line>* $
+	}
+	token line {
+		<triples>+ %% "\n"
 	}
 	rule triples {
-			'code' <name> <value> { $map.{$<name>}=$<value>; }
-		|	'label' <name> <value> { savelabel($<name>, $<value>); }
+			'code' <name> <value>	{ $map.{$<name>}=$<value>; }
+		|	'label' <name> <value>	{ savelabel($<name>, $<value>); }
 	}
 	regex name { \S+ }
 	regex value { \S+ }
 }
 
 sub process($out, @ins) {
-	triplet.parse(map { $_.IO.lines }, @ins);
+	triplet.parse(map { $_.IO.lines }, @ins) or die;
 }
