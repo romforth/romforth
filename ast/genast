@@ -56,6 +56,63 @@ grammar triplet {
 	regex value { \S+ }
 }
 
+grammar ast {
+	rule TOP {
+		^ <ast> $
+	}
+	rule ast {
+		<atom>*
+	}
+	rule atom {
+			'if{'	<ast> '}else{' <ast> '}if'
+		|	'if{'	<ast> '}if'
+		|	'loop{'	<ast> '}while{' <ast> '}loop'
+		|	'loop{'	<ast> '}until{' <ast> '}loop'
+		|	'loop{'	<ast> '}loop'
+		|	'for{'	<ast> '}for'
+		|	<opcodes>
+	}
+	token opcodes {
+		<opcode>+ %% ' '
+	}
+	token opcode {
+			sp\@\!
+		|	rp\@\!
+		|	\>r
+		|	r\>
+		|	\<\<
+		|	\>\>
+		|	\>\=
+		|	\<\=
+		|	0\=
+		|	c\@
+		|	p\@
+		|	\@
+		|	c\!
+		|	p\!
+		|	c\,
+		|	s\,
+		|	\,
+		|	\:
+		|	\;
+		|	\<
+		|	\>
+		|	\!
+		|	\+
+		|	\-
+		|	\&
+		|	\|
+		|	\^
+		|	\~
+		|	\#\-\d+
+		|	\#\d+
+		|	\-\d+
+		|	\'.\'
+		|	\w+
+	}
+}
+
 sub process($out, @ins) {
 	triplet.parse(map { $_.IO.lines }, @ins) or die;
+	say ast.parse($*IN.slurp-rest);
 }

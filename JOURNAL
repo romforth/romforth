@@ -186,6 +186,7 @@ INDEX
 	* 26 Feb '25
 	* 06 Mar '25
 	* 14 Mar '25
+	* 20 Mar '25
 
 04 Nov '22
 ----------
@@ -6362,3 +6363,24 @@ multi-dispatch capability to be able to match Perl5's fiddling with the ARGV
 list that I was doing earlier in genrom.
 
 For testing, I'm using a copy of the dict.map that was generated in f16-zig.
+
+20 Mar '25
+----------
+As part of the continuing work on moving functionality over from genrom while
+making sure that genast can be a drop in replacement, I tried to make sure that
+all of the current fpp.config'urations can be handled by genast. This ran into
+an issue that I had glossed over in the parser that I'd previously created in
+`shelved/ws/ast.raku`. This was the issue of how to deal with stack comments.
+
+Ideally, comments should be handled by a preprocessor and since I already have
+the `fpp` preprocessor handy, my first thought was to shove that functionality
+into it. But that backfired when it triggered regressions at various places.
+The most egregious of these was in `msp430-f` where the '[' character is used
+as a valid opcode - not as a comment delimiter. So I've decided to postpone
+the problem for a bit by using yet another filter Perl script `rmcom` to remove
+comments. The output of this is then fed to genast which is then freed up to
+focus purely on parsing.
+
+For the most part, the code used in genast is a 1-1 copy of the code that was
+already coded in `shelved/ws/ast.raku` which was the fruit of all of the
+research that I'd done earlier on generating a parser.

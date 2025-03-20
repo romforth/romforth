@@ -1,0 +1,10 @@
+#!/bin/bash -x
+trap "rm -f /tmp/$0.$$.exp /tmp/$0.$$.out" SIGINT SIGTERM SIGKILL
+echo 'Nil' > /tmp/$0.$$.exp
+for i in "$@" ; do
+	#cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i | ./genast rom.map dict.map > /tmp/$0.$$.out
+	cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i | ./rmcom | ./genast rom.map dict.map > /tmp/$0.$$.out
+	cmp /tmp/$0.$$.out /tmp/$0.$$.exp >/dev/null && exit 1
+	mkdir -p test/test/$i
+done
+exit 0
