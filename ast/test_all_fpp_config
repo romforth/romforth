@@ -2,8 +2,11 @@
 trap "rm -f /tmp/$0.$$.exp /tmp/$0.$$.out" SIGINT SIGTERM SIGKILL
 echo 'Nil' > /tmp/$0.$$.exp
 for i in "$@" ; do
-	#cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i | ./genast rom.map dict.map > /tmp/$0.$$.out
-	cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i | ./rmcom | ./genast rom.map dict.map > /tmp/$0.$$.out
+	list="$(dirname $i)/rom.map"
+	list="$list $(dirname $i)/dict.map"
+	list="$list $(ls $(dirname $i)/defs*.map 2>/dev/null)"
+	cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i | ./rmcom |
+		./genast $list > /tmp/$0.$$.out || exit 1
 	cmp /tmp/$0.$$.out /tmp/$0.$$.exp >/dev/null && exit 1
 	mkdir -p test/test/$i
 done

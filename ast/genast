@@ -49,11 +49,14 @@ grammar triplet {
 		<triples>+ %% "\n"
 	}
 	rule triples {
-			'code' <name> <value>	{ $map.{$<name>}=$<value>; }
+			'code' <name> <value> <d>?	{ $map.{$<name>}=$<value>; }
 		|	'label' <name> <value>	{ savelabel($<name>, $<value>); }
+		|	'def' <name> <value> <d>? 	{ $map.{$<name>}=$<value>; }
+		|	'var' <name> <value>	{ $map.{$<name>}=$<value>; }
 	}
 	regex name { \S+ }
 	regex value { \S+ }
+	regex d { \d+ }
 }
 
 grammar ast {
@@ -76,39 +79,142 @@ grammar ast {
 		<opcode>+ %% ' '
 	}
 	token opcode {
-			sp\@\!
-		|	rp\@\!
-		|	\>r
-		|	r\>
-		|	\<\<
-		|	\>\>
-		|	\>\=
-		|	\<\=
-		|	0\=
-		|	c\@
-		|	p\@
-		|	\@
-		|	c\!
-		|	p\!
-		|	c\,
-		|	s\,
-		|	\,
-		|	\:
-		|	\;
-		|	\<
-		|	\>
-		|	\!
-		|	\+
-		|	\-
-		|	\&
-		|	\|
-		|	\^
-		|	\~
-		|	\#\-\d+
-		|	\#\d+
-		|	\-\d+
+		|	'^'
+		|	'~'
+		|	'<'
+		|	'<<'
+		|	'<='
+		|	'>'
+		|	'>='
+		|	'>>'
+		|	'|'
+		|	'-'
+		|	','
+		|	';'
+		|	':'
+		|	'!'
+		|	'@'
+		|	'&'
+		|	'+'
+		|	'0='
+		|	'10*'
+		|	'2drop'
+		|	'2dup'
+		|	'2ret'
+		|	'3ret'
+		|	'align'
+		|	'alloc'
+		|	'alloca'
+		|	'append'
+		|	'atoi'
+		|	'bl'
+		|	'bye'
+		|	'c,'
+		|	'c!'
+		|	'c@'
+		|	'call'
+		|	'cell'
+		|	'cfaexec'
+		|	'cold'
+		|	'compcfa'
+		|	'compdef'
+		|	'compile'
+		|	'cpl_ex'
+		|	'cpl_ex_imm'
+		|	'create'
+		|	'dec'
+		|	'defexec'
+		|	'defprefix'
+		|	'dip'
+		|	'drop'
+		|	'd<-t'
+		|	'd->t'
+		|	'dup'
+		|	'emit'
+		|	'enter'
+		|	'ESCAPE'
+		|	'exec'
+		|	'exit'
+		|	'fake'
+		|	'_fa_ke_'
+		|	'find'
+		|	'fourth'
+		|	'here'
+		|	'i'
+		|	'immediate'
+		|	'immediatelfa'
+		|	'inc'
+		|	'inner'
+		|	'inv'
+		|	'IO[t]<-n'
+		|	'IO[t]->n'
+		|	'isdefn'
+		|	'isimmediate'
+		|	'j'
+		|	'#j'
+		|	'jdrop'
+		|	'jnz'
+		|	'#jnz'
+		|	'jz'
+		|	'#jz'
+		|	'key'
+		|	'latest'
+		|	'lfa2nfa'
+		|	'lit'
+		|	'lit1'
+		|	'literal'
+		|	'match'
+		|	'mov'
+		|	'neg'
+		|	'next'
+		|	'nip'
+		|	'num'
+		|	'number'
+		|	'offset,'
+		|	'outer'
+		|	'over'
+		|	'override'
+		|	'override!'
+		|	'override@'
+		|	'p!'
+		|	'p@'
+		|	'parse'
+		|	'pick'
+		|	'pop'
+		|	'prev'
+		|	'push'
+		|	'>r'
+		|	'r>'
+		|	'repl'
+		|	'resume'
+		|	'revstrdup'
+		|	'rot'
+		|	'rp@!'
+		|	'}run'
+		|	'run{'
+		|	's,'
+		|	'same'
+		|	'sp@!'
+		|	'state'
+		|	'stick'
+		|	'suffixret'
+		|	'swap'
+		|	'testnest'
+		|	'third'
+		|	't_n'
+		|	'tuck'
+		|	'var'
+		|	'vr'
+		|	'ws?'
+		|	'wscmpr'
+		|	'xchg'
 		|	\'.\'
-		|	\w+
+		|	\-\d+
+		|	\#\d+
+		|	\d+
+		|	\#\-\d+
+		|	0x<[0..9 a..f A..F]>+
+		|	'pad0'
 	}
 }
 

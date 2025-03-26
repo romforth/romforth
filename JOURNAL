@@ -187,6 +187,7 @@ INDEX
 	* 06 Mar '25
 	* 14 Mar '25
 	* 20 Mar '25
+	* 26 Mar '25
 
 04 Nov '22
 ----------
@@ -6384,3 +6385,20 @@ focus purely on parsing.
 For the most part, the code used in genast is a 1-1 copy of the code that was
 already coded in `shelved/ws/ast.raku` which was the fruit of all of the
 research that I'd done earlier on generating a parser.
+
+26 Mar '25
+----------
+I was unhappy with the fact that the list of "opcodes" used in genast happened
+to be whatever needed to be added to the list of tokens to get the original
+version of the code in shelved/ws/ast.raku to run successfully.
+
+The more comprehensive list of strings that the parser needs to accept can be
+found by running a top level make and then using the following one-liner:
+	awk '{print $2}' ../*/{rom,dict,defs}.map | sort -u > words
+
+I've added the current snapshot of all of the valid "words" as part of this
+commit along with some additional regex patterns that were needed to get the
+parsing to successfully complete.
+
+While I was there, I decided to make sure that all of the map file combinations
+for each of the existing ports are tested as well.
