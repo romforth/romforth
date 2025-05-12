@@ -188,6 +188,7 @@ INDEX
 	* 14 Mar '25
 	* 20 Mar '25
 	* 26 Mar '25
+	* 12 May '25
 
 04 Nov '22
 ----------
@@ -6402,3 +6403,24 @@ parsing to successfully complete.
 
 While I was there, I decided to make sure that all of the map file combinations
 for each of the existing ports are tested as well.
+
+12 May '25
+----------
+There were a bunch of distractions that kept me preoccupied for the past ~month
+or so. First, there was a short trip to Texas (Dallas and Austin) to meet up
+with relatives during spring break followed by the yearly tax time rituals.
+
+Once all of that was done, I decided to try to get the recent version of Gentoo
+"livegui" working on my old laptop which then led to me trying to see how much
+of GNU/Linux I should try to build myself rather than depend on a collage of
+Ubuntu + Gentoo + Nix binaries, which then led to a bit of research on seL4 and
+Redox to see if I could use any of those as my daily drivers.
+
+As a result of all those investigations, I finally have Gentoo + olvwm working
+on my laptop but I haven't switched over to it fully yet. So, now that I have
+reached a good stopping point on all of that research, I think I can now resume
+working where I left off on genast. The first order of business was to make sure
+that everything could build just by running make and this uncovered a bug in
+the stuff that I've pushed to Github which is that a make in the ast subdir
+will fail. Rather than force push the change, I'm going to add the fix as an
+additional commit (it should ideally have been part of step 5).
