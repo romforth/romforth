@@ -309,7 +309,7 @@ emul(byte *mem, int *pip) {
 		if (n&0xC0) {
 			regs[d].s.lsb=regs[s].s.lsb;
 			// printf("mov %s.l <- %s.l\n", regnames[d], regnames[s]);
-		} else if (n&7==7) {
+		} else if ((n&7)==7) {
 			mem[bx.val]=regs[s].s.lsb;
 			// printf("mov [bx] <- %s.l (%d)\n", regnames[s], mem[bx.val]);
 		} else {
@@ -434,9 +434,9 @@ emul(byte *mem, int *pip) {
 		int r=getreg(n);
 		x86register *x=&regs[r];
 		if (n&0x8) {
-			x->val >>= cx.val;
+			x->val >>= cx.s.lsb;
 		} else {
-			x->val <<= cx.val;
+			x->val <<= cx.s.lsb;
 		}
 		break;
 	}

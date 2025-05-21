@@ -189,6 +189,7 @@ INDEX
 	* 20 Mar '25
 	* 26 Mar '25
 	* 12 May '25
+	* 21 May '25
 
 04 Nov '22
 ----------
@@ -6424,3 +6425,17 @@ that everything could build just by running make and this uncovered a bug in
 the stuff that I've pushed to Github which is that a make in the ast subdir
 will fail. Rather than force push the change, I'm going to add the fix as an
 additional commit (it should ideally have been part of step 5).
+
+21 May '25
+----------
+As I mentioned in my previous JOURNAL entry I'm trying to migrate from the
+ancient Ubuntu distro that I'm currently on (16.04) to the latest Gentoo.
+
+While testing out the romforth build on Gentoo, I decided to switch from using
+the latest C compiler (available on Gentoo) to use `zig cc` instead, so that I
+can minimize the overall set of build dependencies that are needed for a full
+build. This ran into an bug in the x86 emulator that has been there all along
+but surfaced only when `zig cc` was used for compiling the code. The bug was
+that the shift value needed to use the 8 bit LSB rather the 16 bit value since
+the MSB may be uninitialized. While fixing that, I also fixed a warning that
+`zig cc` noted about an incorrect conditional.

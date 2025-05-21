@@ -1,3 +1,4 @@
+CC=zig cc
 fourforth : test.dict
 threeforth : test.dict
 twoforth : test.out
