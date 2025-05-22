@@ -9,5 +9,6 @@ for i in "$@" ; do
 		./genast $list > /tmp/$0.$$.out || exit 1
 	cmp /tmp/$0.$$.out /tmp/$0.$$.exp >/dev/null && exit 1
 	mkdir -p test/test/$i
+	rm -f /tmp/$0.$$.out /tmp/$0.$$.exp
 done
 exit 0
