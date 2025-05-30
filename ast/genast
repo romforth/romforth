@@ -1,37 +1,49 @@
-#!/usr/bin/perl6
+#!/usr/bin/perl -w
 
-# genast : Perl6/Raku based parser replacement for genrom
+# genast : convert the .4th files into a Perl nested array "AST"
 #
 # Copyright (c) 2025 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-multi MAIN(
-    Str $out,       #= output map
-    Str $in,        #= input map
-    Bool :g(:$gendefs) = False,
-    Bool :d(:$gendict) = False,
-) {
-    process($out, [$in]);
+use strict;
+
+use Getopt::Long;
+my ($gendict,$gendefs)=(0,0);
+GetOptions(
+	'dict' => \$gendict,
+	'gendefs' => \$gendefs,
+);
+
+my $mf=shift;   # the map file to which new defs are written
+open(my $mh, ">$mf") or die "can't open $mf for writing";
+
+my $map={}; # mapping from forth words to C labels
+my $varmap={};  # mapping from forth words to variables
+my $defs={};	# mapping from forth words to definition labels
+my $deford=[];  # ordered list of definitions
+
+my ($t,$f,$l);  # the type($t), forth name($f) and the C label ($l)
+
+sub code {
+	my ($f,$l)=@_;
+	$map->{$f}=$l;  # generate the mapping from name to label
+}
+sub var {
+	my ($f,$l)=@_;
+	$varmap->{$f}=$l;
 }
 
-multi MAIN(
-    Str $out,       #= output map
-    Str $in,        #= input map
-    Str $extras,    #= zero or more other input maps
-    Bool :g(:$gendefs) = False,
-    Bool :d(:$gendict) = False,
-) {
-    process($out, [$in, $extras]);
+sub olddef {
+	my ($f,$l,$d)=@_;
+	$defs->{$f}=[$d,$l];
+	push @$deford, [$l,$f];
 }
-
-my $map={};
 
 my $prev="0";
 my $label="lbl000";
-
-sub savelabel($f,$l) {
-	# say "in savelabel $f $l\n";
+sub savelabel {
+	my ($f,$l)=@_;
 	if ($f eq "fake") {
 		$label=$l;
 	} elsif ($f eq "prev") {
@@ -41,184 +53,46 @@ sub savelabel($f,$l) {
 	}
 }
 
-grammar triplet {
-	rule TOP {
-		^ <line>* $
-	}
-	token line {
-		<triples>+ %% "\n"
-	}
-	rule triples {
-			'code' <name> <value> <d>?	{ $map.{$<name>}=$<value>; }
-		|	'label' <name> <value>	{ savelabel($<name>, $<value>); }
-		|	'def' <name> <value> <d>? 	{ $map.{$<name>}=$<value>; }
-		|	'var' <name> <value>	{ $map.{$<name>}=$<value>; }
-	}
-	regex name { \S+ }
-	regex value { \S+ }
-	regex d { \d+ }
-}
-
-grammar ast {
-	rule TOP {
-		^ <ast> $
-	}
-	rule ast {
-		<atom>*
-	}
-	rule atom {
-			'if{'	<ast> '}else{' <ast> '}if'
-		|	'if{'	<ast> '}if'
-		|	'loop{'	<ast> '}while{' <ast> '}loop'
-		|	'loop{'	<ast> '}until{' <ast> '}loop'
-		|	'loop{'	<ast> '}loop'
-		|	'for{'	<ast> '}for'
-		|	<opcodes>
-	}
-	token opcodes {
-		<opcode>+ %% ' '
-	}
-	token opcode {
-		|	'^'
-		|	'~'
-		|	'<'
-		|	'<<'
-		|	'<='
-		|	'>'
-		|	'>='
-		|	'>>'
-		|	'|'
-		|	'-'
-		|	','
-		|	';'
-		|	':'
-		|	'!'
-		|	'@'
-		|	'&'
-		|	'+'
-		|	'0='
-		|	'10*'
-		|	'2drop'
-		|	'2dup'
-		|	'2ret'
-		|	'3ret'
-		|	'align'
-		|	'alloc'
-		|	'alloca'
-		|	'append'
-		|	'atoi'
-		|	'bl'
-		|	'bye'
-		|	'c,'
-		|	'c!'
-		|	'c@'
-		|	'call'
-		|	'cell'
-		|	'cfaexec'
-		|	'cold'
-		|	'compcfa'
-		|	'compdef'
-		|	'compile'
-		|	'cpl_ex'
-		|	'cpl_ex_imm'
-		|	'create'
-		|	'dec'
-		|	'defexec'
-		|	'defprefix'
-		|	'dip'
-		|	'drop'
-		|	'd<-t'
-		|	'd->t'
-		|	'dup'
-		|	'emit'
-		|	'enter'
-		|	'ESCAPE'
-		|	'exec'
-		|	'exit'
-		|	'fake'
-		|	'_fa_ke_'
-		|	'find'
-		|	'fourth'
-		|	'here'
-		|	'i'
-		|	'immediate'
-		|	'immediatelfa'
-		|	'inc'
-		|	'inner'
-		|	'inv'
-		|	'IO[t]<-n'
-		|	'IO[t]->n'
-		|	'isdefn'
-		|	'isimmediate'
-		|	'j'
-		|	'#j'
-		|	'jdrop'
-		|	'jnz'
-		|	'#jnz'
-		|	'jz'
-		|	'#jz'
-		|	'key'
-		|	'latest'
-		|	'lfa2nfa'
-		|	'lit'
-		|	'lit1'
-		|	'literal'
-		|	'match'
-		|	'mov'
-		|	'neg'
-		|	'next'
-		|	'nip'
-		|	'num'
-		|	'number'
-		|	'offset,'
-		|	'outer'
-		|	'over'
-		|	'override'
-		|	'override!'
-		|	'override@'
-		|	'p!'
-		|	'p@'
-		|	'parse'
-		|	'pick'
-		|	'pop'
-		|	'prev'
-		|	'push'
-		|	'>r'
-		|	'r>'
-		|	'repl'
-		|	'resume'
-		|	'revstrdup'
-		|	'rot'
-		|	'rp@!'
-		|	'}run'
-		|	'run{'
-		|	's,'
-		|	'same'
-		|	'sp@!'
-		|	'state'
-		|	'stick'
-		|	'suffixret'
-		|	'swap'
-		|	'testnest'
-		|	'third'
-		|	't_n'
-		|	'tuck'
-		|	'var'
-		|	'vr'
-		|	'ws?'
-		|	'wscmpr'
-		|	'xchg'
-		|	\'.\'
-		|	\-\d+
-		|	\#\d+
-		|	\d+
-		|	\#\-\d+
-		|	0x<[0..9 a..f A..F]>+
-		|	'pad0'
+my $handle={
+	'code'	=> \&code,
+	'var'	=> \&var,
+	'def'	=> \&olddef,
+	'label'	=> \&savelabel,
+};
+my @l;
+my @args=@ARGV;	# all the args are assumed to have name to label mappings
+for my $a (@args) {
+	@ARGV=($a);               # read each of the args passed in as a file
+	while(<>) {               # reading one line at a time
+		($t,$f,@l)=split;     # split'ing the line into type, name and label
+		$handle->{$t}($f,@l); # and handle each type separately
 	}
 }
 
-sub process($out, @ins) {
-	triplet.parse(map { $_.IO.lines }, @ins) or die;
-	say ast.parse($*IN.slurp-rest);
+print '[';
+while (<>) {
+	s/^\[$// && next;		# standalone picture comment: [
+	s/^\[\s+.*$// && next;	# starting comment: [ 1 2 3
+	s/\s+\[$//;				# embedded picture comment: foo [
+	s/\s+\[\s+.*$//;		# trailing comment: foo [ 1 2 3
+	for my $w (split) {
+		if ($w eq 'loop{') { print '[ "loop", [', "\n"; next}           #loop{
+		if ($w eq '}while{') { print '],1,[', "\n"; next}               #}while{
+		if ($w eq '}until{') { print '],0,[', "\n"; next}               #}until{
+		if ($w eq '}loop') { print ']],', "\n"; next}                   #}loop
+		if ($w eq 'if{') { print '[ "cond", [ ', "\n"; next}            #if{
+		if ($w eq '}else{') { print "\n",'],[', "\n"; next}             #}else{
+		if ($w eq '}if') { print ']],',"\n"; next}                      #}if
+		if ($w =~ /^\'(.)\'$/) { print "[ 'lit', ord('$1')],\n"; next}  #chr
+		if ($w =~ /^(-?\d+)$/) { print "[ 'lit', int($1)],\n"; next}    #int
+		if ($w =~ /^\#(-?\d+)$/) { print "[ 'skip', int($1)],\n"; next} #skip
+		if ($w =~ /^(-?0x[\dA-Fa-f]+)$/){print "['lit',oct('$1')],\n";next} #hex
+		print "[ 'word', '$w'],\n";                            # everything else
+	}
 }
+print '];';
+print $mh "label fake $label\n";
+if ($gendict) {
+	print $mh "label prev $prev\n";
+}
+close $mh;

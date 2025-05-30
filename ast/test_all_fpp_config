@@ -1,14 +1,13 @@
 #!/bin/bash -x
-trap "rm -f /tmp/$0.$$.exp /tmp/$0.$$.out" SIGINT SIGTERM SIGKILL
-echo 'Nil' > /tmp/$0.$$.exp
+trap "rm -f /tmp/$0.$$.out" SIGINT SIGTERM SIGKILL
 for i in "$@" ; do
 	list="$(dirname $i)/rom.map"
 	list="$list $(dirname $i)/dict.map"
 	list="$list $(ls $(dirname $i)/defs*.map 2>/dev/null)"
-	cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i | ./rmcom |
+	cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i |
 		./genast $list > /tmp/$0.$$.out || exit 1
-	cmp /tmp/$0.$$.out /tmp/$0.$$.exp >/dev/null && exit 1
+	cat /tmp/$0.$$.out | perl || exit 1
 	mkdir -p test/test/$i
-	rm -f /tmp/$0.$$.out /tmp/$0.$$.exp
+	rm -f /tmp/$0.$$.out
 done
 exit 0

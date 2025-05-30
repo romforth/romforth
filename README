@@ -177,7 +177,6 @@ To build/test, the following dependencies need to be installed:
 	- mspdebug(from github.com/romforth/mspdebug, until my changes
 		are upstreamed)
 	- wasmtime (wasmtime-cli 9.0.4)
-	- perl6 (version 2015.11 built on MoarVM version 2015.11)
 
 After installing all the above dependencies, running `make` will build each of
 the ports and run each of them in an emulator and should complete successfully.
