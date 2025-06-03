@@ -2,6 +2,7 @@
 trap "rm -f /tmp/$0.$$.out" SIGINT SIGTERM SIGKILL
 for i in "$@" ; do
 	list="$(dirname $i)/rom.map"
+	[ -f $list ] || make -C $(dirname $i)
 	list="$list $(dirname $i)/dict.map"
 	list="$list $(ls $(dirname $i)/defs*.map 2>/dev/null)"
 	cat ../rom.4th | ../fpp -DTESTROM -Dstep=62 -c $i |
