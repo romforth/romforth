@@ -1,3 +1,4 @@
+CC=cpp
 fourforth : test.dict
 threeforth : test.dict
 twoforth : test.out

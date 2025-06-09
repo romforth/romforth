@@ -157,6 +157,7 @@ To build/test, the following dependencies need to be installed:
 	sufficient. For example, for the x86 port, a C compiler and the `nasm`
 	x86 assembler might be more than sufficient.)
 
+	- make (GNU Make 4.1)
 	- perl (v5.22.1)
 	- nasm (version 2.15.05 compiled on Aug 28 2020)
 	- gcc (version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2))
