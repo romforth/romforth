@@ -162,6 +162,7 @@ To build/test, the following dependencies need to be installed:
 	- nasm (version 2.15.05 compiled on Aug 28 2020)
 	- gcc (version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2))
 	- binutils ((GNU Binutils) 2.38)
+		- i386-elf
 		- pdp11
 		- m68k
 		- sparc
