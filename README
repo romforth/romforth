@@ -163,6 +163,7 @@ To build/test, the following dependencies need to be installed:
 	- gcc (version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2))
 	- binutils ((GNU Binutils) 2.38)
 		- i386-elf
+		- x86_64-elf
 		- pdp11
 		- m68k
 		- sparc

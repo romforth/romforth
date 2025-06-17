@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+AS=x86_64-elf-as
+LD=x86_64-elf-ld
 all : fourforth
 oneforth : test.out
 twoforth : test.defs
@@ -33,8 +35,10 @@ forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
 forth_dict : forth_dict.o
-	ld -o forth_dict forth_dict.o
-forth_dict.o : forth_dict.S prims_dict.s defs_dict.s rom.s
+	${LD} -o forth_dict forth_dict.o
+forth_dict.o : forth_dict.s
+forth_dict.s : prims_dict.s defs_dict.s rom.s forth_dict.S
+	cpp -E forth_dict.S > forth_dict.s
 forth_dict.S : forth.S forth_defs.S rom.s
 	cp forth_defs.S forth_dict.S
 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S
@@ -51,4 +55,4 @@ fpp.config : stepfile fpp.config.x86
 rom.s : ../rom.4th ../fpp fpp.config prims.s genrom defs.s
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
 clean :
-	rm -f forth dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.o forth_defs.S forth_defs.o forth_defs defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.o forth_dict test.dict
+	rm -f forth dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.o forth_defs.S forth_defs.o forth_defs defs.s defs.map test.defs dict.s forth_dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.o forth_dict test.dict

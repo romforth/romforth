@@ -6277,3 +6277,8 @@ while also calling out `make` as a build dependency in the README.
 I'm trying to disentangle the binutils dependencies from the C compiler and so
 for the x86-as build, I've built the i386-elf binutils on Gentoo and used that
 to replace the default linker and assembler.
+
+17 Jun '25
+----------
+Continue to separate out the binutils binaries from the C compiler dependencies
+by building the x86_64-elf binaries on Gentoo and used that to build x86-sys.
