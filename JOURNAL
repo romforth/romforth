@@ -6282,3 +6282,36 @@ to replace the default linker and assembler.
 ----------
 Continue to separate out the binutils binaries from the C compiler dependencies
 by building the x86_64-elf binaries on Gentoo and used that to build x86-sys.
+
+25 Jun '25
+----------
+One of the things that I've painfully learnt as part of the ongoing move from
+Ubuntu 16.04 (to the Gentoo "livegui") was the fact that I'd built up a huge
+toolchain (over a fairly long period) on Ubuntu and running the full build of
+romforth on Gentoo required a rebuild of that entire toolchain on Gentoo (in
+addition to a hodge-podge of stuff that was pulled in via Nix).
+
+For someone who is unfamiliar with the set of tools required to build this repo
+just getting all the tools required to build it can be a huge hurdle. I want to
+see if I can make things as easy and smooth as possible (maybe even for myself,
+if I ever need to, God forbid, switch distros again). For those using Nix or
+Ubuntu, I assume it shouldn't be very hard to get the full set of tools that
+are required for the full build but just to be accommodating and cater to the
+"rest of the world", I've decided to create a `toolchain` repo that can build
+most of the tools that are required to build romforth. The major ones that I'll
+skip are the C compiler, M4, Make, Perl, Zig and QEMU since I assume that these
+are common enough and should be available pretty much "everywhere".
+
+Even the most well stocked distros are not going to have the extremely arcane
+stuff that are required (for example, the `bin2load` binary which is required
+as part of the PDP11 build is not available even in Nixpkgs). So I'll start
+with just the ones that are less common. But rather than make it part of this
+repository, I'm going to split it out into a separate repository which I will
+make available at https://github.com/romforth/toolchain
+
+This will also pull in the https://github.com/romforth/build-binutils repo
+which I had created a little while back which will take care of building all
+the binutils binaries that are required.
+
+Hopefully, providing build scripts to help build the toolchain will help in the
+long term even if it is a bit of distraction for now.

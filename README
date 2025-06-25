@@ -150,6 +150,13 @@ To make a local copy:
 	git clone https://github.com/romforth/romforth
 
 To build/test, the following dependencies need to be installed:
+(Note 0: many of the toolchain dependencies required to build this repo are
+    available in https://github.com/romforth/toolchain - clone and build that
+    first by running `make` in the `toolchain` subdirectory and that will
+    populate many of the binaries required for the `romforth` build toolchain.
+    Many of the tools that are usually available as distro packages such as the
+    C compiler, M4, Make, Perl, Zig and QEMU are currently not built as part of
+    the `toolchain` - these need to be installed separately.)
 (Note 1: the version number in parentheses is the "known to work" version used
 	in testing, older/newer versions may or may not work)
 (Note 2: If you are only doing a partial build for a specific processor by
