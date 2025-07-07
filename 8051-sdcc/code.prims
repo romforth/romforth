@@ -1,0 +1,54 @@
+# code.prims : mapping from the Forth primitives to C code
+#
+# Copyright (c) 2022-2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+bye	: exits()
+dup	: *d++=tos ;
+2drop	: tos=*--d
+drop	: tos=*--d ;
+key	: dup ; tos=getchar() ;
+emit	: putchar(tos) ; drop ;
+lit	: dup ; tos=*(int *)ip ; ip+=sizeof(int)/sizeof(*ip) ;
+neg	: tos=-tos ;
+jnz	: tos=!tos
+jz	: if (tos==0) {{} ; drop
+j	: i=*ip++ ; ip+=i ; } else { ip++ ; drop ; } ;
+inc	: tos++ ;
+dec	: tos-- ;
+inv	: tos=~tos ;
+nip	: nos=*--d ;
+dip	: *d++=nos ;
+-	: neg
++	: nip ; bin(+) ;
+&	: nip ; bin(&) ;
+|	: nip ; bin(|) ;
+^	: nip ; bin(^) ;
+swap	: nip ; dup
+t_n	: tos=nos ;
+@	: tos=*(int *)tos ;
+!	: nip ; *(int *)tos=nos ; drop ;
+var	: dup ; tos=(int)&varalias[*ip++] ;
+c@	: tos=*(char *)tos ;
+c!	: nip ; *(char *)tos=nos ; drop ;
+pick	: tos=*(d-tos-1) ;
+stick	: nip ; *(d-tos)=nos ; drop ;
+sp@!	: swapstk(tos, d, datastk) ;
+rp@!	: { int temp=tos; tos=(int)r; r=(int *)temp; } ;
+>r	: *r++=(int)tos ; drop ;
+r>	: dup ; tos=*--r ;
+exec	: w=tos ; drop ; goto next
+enter	: w=*ip++ ; *r++=(int)ip ; ip=fp[w] ; trace(1) ;
+exit	: ip=(short *)*--r ; trace(0) ;
+call	: *r++=(int)ip ; ip=(short *)tos ; drop ; trace(1) ;
+<<	: nip ; bin(<<) ;
+>>	: nip ; bin(>>) ;
+over	: dup ; tos=*(d-2) ;
+0=	: tos=!tos ;
+#show	: showname(tos) ;
+
+var here
+#var debug
+var state
+var latest

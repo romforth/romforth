@@ -37,6 +37,7 @@ my $pdk14thr1_check=1;
 my $m6502c_check=1;
 my $m6502stc_check=1;
 my $f16zig_check=1;
+my $m8051c_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -67,6 +68,7 @@ if (@ARGV) {
 	$m6502c_check=0;
 	$m6502stc_check=0;
 	$f16zig_check=0;
+	$m8051c_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -97,6 +99,7 @@ if (@ARGV) {
 		$m6502c_check=1 if ( $d eq "6502-sdcc");
 		$m6502stc_check=1 if ( $d eq "6502-stc");
 		$f16zig_check=1 if ( $d eq "f16-zig");
+		$m8051c_check=1 if ( $d eq "8051-sdcc");
 	}
 }
 
@@ -275,6 +278,12 @@ $x=`cat f16-zig/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $f16zig_step=$step;
+
+my $m8051c_step;
+$x=`cat 8051-sdcc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$m8051c_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -706,6 +715,19 @@ f16zig_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the f16 port\n";
 	system("cd f16-zig ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+m8051c_port: {
+	last m8051c_port unless ($m8051c_check);
+	last m8051c_port if ($i>$m8051c_step);
+	@ARGV=("8051-sdcc/fpp.config.C");
+	open(my $fh, ">8051-sdcc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the C port\n";
+	system("cd 8051-sdcc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

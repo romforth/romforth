@@ -6315,3 +6315,40 @@ the binutils binaries that are required.
 
 Hopefully, providing build scripts to help build the toolchain will help in the
 long term even if it is a bit of distraction for now.
+
+07 Jul '25
+----------
+Given the amount of work required to pull in dependencies, I wanted to leverage
+the dependencies that have already been baked into this codebase and looking
+back through the JOURNAL entry for 25 Oct '24, I can see that a similar line of
+reasoning resulted in the 6502 being picked since it was the last in the list
+of processors supported by SDCC (as listed by `sdcc --version`). This time,
+since the 8051 is the first in that list, I'm going to pick that as my next
+porting target.
+
+I'm going to move the work on f16-zig and genast to the backburner since that
+is turning into a complete distraction and a major time sink. To make life a
+little easier for me, as always, I'll start off with a C/sdcc port first and to
+make it really simple, I'm just going to copy over the code from 6502 and
+modify it as appropriate.
+
+But even that turned out to be not so easy to pull off since even using C,
+porting between processors is not all that trivial. The first change that was
+needed was that the code didn't fit into the smaller hardware that the MCS51
+(aka 8051) microcontroller series offers. To workaround that issue, I've decided
+to use the --model-large option while running sdcc (for now).
+
+Once I got past that blocker, the next problem was that the code to do a clean
+shutdown (by writing 's' to a special emulator addr, which worked on the 6502),
+did not work here. After spending a fair bit of time digging into that, I
+decided to crack open the ucsim docs (yet again) and realized that it plainly
+documents the exact steps needed for the 8051 in plain sight right there in the
+very first page of sdcc4.20/share/doc/ucsim/simif.html as
+	`ucsim_51 -I if=xram[0xffff]`.
+I then remembered that when I started off using sdcc/ucsim for the z80 (and the
+6502 later) they didn't support the 'xram' option that was documented there so
+I had figured out after a fair bit of research that I needed to replace the
+special interface address with if=rom'[0x7fff]' (and for the Padauk this had
+be re-jiggered yet again and replaced with if=ram'[0x7f]'). So in a sense I had
+to undo all of that research to return to the pristine documented state of
+if=xram'[0xffff]' to get step 0 working on the 8051.
