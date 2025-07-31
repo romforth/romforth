@@ -14,16 +14,16 @@ fourforth : test.dict
 test.defs : forth_defs.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	cat cmds.ucsim | ucsim_51 -I in=test.in,out=test.defs,if=xram'[0xffff]' ./forth_defs.ihx > test.log
-	grep 'Stop at 0x000e31: (110) Program stopped itself' test.log > /dev/null
+	grep 'Stop at 0x000e2e: (110) Program stopped itself' test.log > /dev/null
 	cmp test.defs test.exp
 test.dict : forth_dict.ihx test.inp test.exp
 	cat cmds.ucsim | ucsim_51 -I in=test.inp,out=test.dict,if=xram'[0xffff]' ./forth_dict.ihx > test.log
-	grep 'Stop at 0x000e31: (110) Program stopped itself' test.log > /dev/null
+	grep 'Stop at 0x000e2e: (110) Program stopped itself' test.log > /dev/null
 	cmp test.dict test.exp
 test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
 	cat cmds.ucsim | ucsim_51 -I in=test.in,out=test.out,if=xram'[0xffff]' ./forth.ihx > test.log
-	grep 'Stop at 0x000e31: (110) Program stopped itself' test.log > /dev/null
+	grep 'Stop at 0x000e2e: (110) Program stopped itself' test.log > /dev/null
 	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp

@@ -40,7 +40,7 @@ rp@!	: { int temp=tos; tos=(int)r; r=(int *)temp; } ;
 r>	: dup ; tos=*--r ;
 exec	: w=tos ; drop ; goto next
 enter	: w=*ip++ ; *r++=(int)ip ; ip=fp[w] ; trace(1) ;
-exit	: ip=(short *)*--r ; trace(0) ;
+exit	: ip=(__code short *)*--r ; trace(0) ;
 call	: *r++=(int)ip ; ip=(short *)tos ; drop ; trace(1) ;
 <<	: nip ; bin(<<) ;
 >>	: nip ; bin(>>) ;
