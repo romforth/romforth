@@ -41,7 +41,7 @@ r>	: dup ; tos=*--r ;
 exec	: w=tos ; drop ; goto next
 enter	: w=*ip++ ; *r++=(int)ip ; ip=fp[w] ; trace(1) ;
 exit	: ip=(__code short *)*--r ; trace(0) ;
-call	: *r++=(int)ip ; ip=(short *)tos ; drop ; trace(1) ;
+call	: *r++=(int)ip ; ip=(__code short *)tos ; drop ; trace(1) ;
 <<	: nip ; bin(<<) ;
 >>	: nip ; bin(>>) ;
 over	: dup ; tos=*(d-2) ;
