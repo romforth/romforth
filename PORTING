@@ -33,6 +33,7 @@ The following ports are complete:
 | pdk14-thr1   |   8  |   -    | 1 | Baremetal | sdaspdk14  | ucsim/pdk     |
 | 6502-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/smos6502|
 | 6502-stc     |   8  | little | 8 | Baremetal | sdas6500   | ucsim/smos6502|
+| 8051-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/s51     |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:

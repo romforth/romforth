@@ -6457,3 +6457,63 @@ More debugging led me to the suspicion that the cast within the code for `exit`
 was causing this issue and after more internet browsing and searches of the
 SDCC docs, I prefixed the cast with an SDCC specific `__code` and casting that
 spell got me through step 22 as well.
+
+20 Aug '25
+----------
+I ran into yet another surprising failure at step 41 and so far it seems to be
+an insurmountable issue given the 8051's Harvard architecture. Note that the
+8051 is only the second Harvard architecture that I've worked on so far (the
+first one was the Padauk) and it is the first one where I've managed to make
+progress all the way to step 40. Note that the problem here is a variation of
+the issue first noted in 21 Feb '23 - but that was self-inflicted whereas in
+this case, SDCC is part of the problem, I think.
+
+To start off, let me try to describe the problem by walking through the failed
+test. Running `make` fails with `cmp: EOF on test.exp` and diff shows output as:
+
+```
+--- test.exp    2025-08-21 06:31:23.107701709 -0700
++++ test.dict   2025-08-21 06:31:23.243702383 -0700
+@@ -1 +1 @@
+-forth rom !
++forth rom !gh
+```
+The additional characters at the tail end are due to failed asserts and looking
+at the output listing in the file `forth_dict.lst` shows that these are from the
+final two asserts in the `rom` array. Since there are a total of 5 tests in
+step 41, the first three related to parsing and evaluating the string "1000"
+passed successfully, but looking up the string "repl" in the dictionary failed.
+
+Since I'm past step 39, I can enable the relatively lighter weight "Forth print"
+debug instead of the "C printf" debug scheme that I used before which I had
+documented in the previous JOURNAL entry (of 31 Jul '25) by setting 'debug=1'
+in `fpp.config.C` but that didn't give me much more information than what I had
+previously gleaned just from the assembly listing so I didn't have much of a
+choice except to roll out the heavyweight "C printf" based debugging.
+
+Due to all of the logging, the `make` can take a while to complete but the
+resulting output allows tracing the code flow at the granularity of each Forth
+word. Since the failure happens after the second call to `repl`, I can skip
+most of the voluminous logs and just get to that particular spot in the logs.
+
+Stepping through each operation shows that the problem starts when `repl` calls
+`lfa2cfa` (when the input is `repl`, ie after it has parse'd the `1000` that was
+in the input stream ahead of it). Instead of getting a value of 4 for the length
+from the length byte of the repl dictionary header when `lfa2cfa` issues `c@`,
+it got 0x55 and things go south fairly rapidly from there.
+
+Now given that we have a Harvard architecture for the 8051, stuff can be stored
+either in the "code space" or in the "data space". So far, I've stored the
+static parts of the code (which also includes the dictionary headers) in the
+"code space" and that explains why the `c@` which is meant to read from the
+"data space" got the wrong value since I need it to read from the "code space".
+
+I could use the same bandaid fix that was applied in step 22 and 23 of this port
+but it cannot just be a simple cast as it would need to be fairly complex since
+it needs to replicate SDCC's notion of how pointers work at runtime.
+
+Rather than go down that path, I'm going to call an early halt to this port
+since the only reason to use SDCC was to see if the port could be done easily.
+Instead of going into contortions trying to make things fit the SDCC world view,
+I might as well just write 8051 assembly which I'm sure will be simpler so that
+is just what I'm going to attempt next.
