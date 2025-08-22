@@ -30,6 +30,7 @@ all :
 	(cd 6502-stc ; make)
 	(cd f16-zig ; make)
 	(cd 8051-sdcc ; make)
+	(cd 8051-stc ; make)
 
 allsteps :
 	./runallsteps
@@ -68,3 +69,4 @@ clean :
 	(cd 6502-stc ; make clean)
 	(cd f16-zig ; make clean)
 	(cd 8051-sdcc ; make clean)
+	(cd 8051-stc ; make clean)
