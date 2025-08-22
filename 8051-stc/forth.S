@@ -6,6 +6,19 @@
 
 	.area CSEG (CODE)
 start:
+	mov sp, #mcstk
+	acall rom
 	mov dptr, #0xffff
 	mov a, #'s'
 	movx @dptr, a
+rom:
+bye:
+	ret
+
+;--------------------------------------------------------
+; Stack segment in internal ram
+;--------------------------------------------------------
+
+	.area SSEG
+mcstk:
+	.ds 10
