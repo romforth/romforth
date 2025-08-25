@@ -18,15 +18,26 @@ sub lit {
 	print qq(mov a, #$o\n);
 }
 
+my $jmp;
+
 sub word {
 	my ($w)=@_;
 	my $o=$w->[1];
+	if ($o eq 'j') { $jmp='j' ; return; }
 	print "\t$o ; $w->[1]\n";
+}
+
+sub skip {
+	my ($s)=@_;
+	my $o=$s->[1];
+	#print "$jmp $o\n";
+	print ".db 0x80, $o ; sjmp offset\n";
 }
 
 my $fhash={
 	'word' => \&word,
 	'lit' => \&lit,
+	'skip' => \&skip,
 };
 
 my $fn;
