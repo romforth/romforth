@@ -13,3 +13,5 @@ inc	: inc a
 dec	: dec a
 inv	: cpl a
 neg	: inv ; inc a
+nip	: acall realnip
+dip	: acall realdip

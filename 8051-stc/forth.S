@@ -25,6 +25,20 @@ realemit:
 	pop a
 	movx @dptr, a
 	ret
+realnip:
+	push a			; This is just a long winded way of saying
+	mov a, @r0		; 	mov @r0+, r1 ; or equivalently:
+	inc r0			; 	[r0++] <- r1
+	mov r1, a		; because the 8051 has neither a Rx to Ry
+	pop a			; register move nor a post-increment
+	ret			; addressing mode.
+realdip:
+	push a			; This is just a long winded way of saying
+	mov a, r1		; 	mov r1, @-r0 ; or equivalently:
+	dec r0			;	r1 <- [--r0]
+	mov @r0, a		; because the 8051 has neither a Rx to Ry
+	pop a			; register move nor a pre-decrement
+	ret			; addressing mode.
 rom:
 	mov r0, #dstk
 #include "rom.s"
