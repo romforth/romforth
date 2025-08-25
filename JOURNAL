@@ -6537,3 +6537,16 @@ the previous 8051-sdcc port the coding required for this port is a relatively
 easy exercise and most of the boilerplate just uses the code in the 6502-stc as
 a direct template. For example, fpp.config.8051 is a direct copy of the 6502
 equivalent config with the only change being ARCH modified to 8051.
+
+23 Aug '25
+----------
+Although genast was initially coded for testing the f16-zig port, it is, by
+design meant to be generic and usable across ISAs and so I'm choosing the
+8051-stc port as the first guinea pig, so that I can try it out on a real CPU.
+
+I could have used the 8051-sdcc port for testing genast but since that port
+uses the genrom, genprims and patchrom scripts which are just symlinks to their
+z80-c equivalents, it didn't make much sense to experiment there. But in this
+case, rather than proliferate even more copies of genrom, I'm going to try using
+genast here - even if it may end up slowing down this port by a bit, it is an
+investment for the future.

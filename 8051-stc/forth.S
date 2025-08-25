@@ -12,8 +12,19 @@ start:
 	mov a, #'s'
 	movx @dptr, a
 rom:
-bye:
-	ret
+#include "rom.s"
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
 
 ;--------------------------------------------------------
 ; Stack segment in internal ram
