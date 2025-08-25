@@ -12,7 +12,10 @@ start:
 	mov a, #'s'
 	movx @dptr, a
 realkey:
-	mov a, #'f'
+	mov dptr, #0xffff
+	mov a, #'r'
+	movx @dptr, a
+	movx a, @dptr
 	ret
 realemit:
 	push a
