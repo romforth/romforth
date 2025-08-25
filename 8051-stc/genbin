@@ -24,6 +24,7 @@ sub word {
 	my ($w)=@_;
 	my $o=$w->[1];
 	if ($o eq 'j') { $jmp='j' ; return; }
+	if ($o eq 'jz') { $jmp='jz' ; return; }
 	print "\t$o ; $w->[1]\n";
 }
 
@@ -31,7 +32,14 @@ sub skip {
 	my ($s)=@_;
 	my $o=$s->[1];
 	#print "$jmp $o\n";
-	print ".db 0x80, $o ; sjmp offset\n";
+	if ($jmp eq 'j') {
+		print ".db 0x80, $o ; sjmp offset\n";
+	} elsif ($jmp eq 'jz') {
+		print "cpl a\n";
+		print "mov r1, a\n";
+		print "\tdrop ; drop\n";
+		print ".db 0xB9, 0, $o ; cjne r1, #0, offset\n";
+	}
 }
 
 my $fhash={
