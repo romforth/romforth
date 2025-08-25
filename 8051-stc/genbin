@@ -48,10 +48,35 @@ sub skip {
 	}
 }
 
+my $label="lbl000";
+
+sub cond {
+	my ($s)=@_;
+	my $i=$s->[1];	# AST for the 'if' part
+	my $e=$s->[2];	# AST for the 'else' part
+	print "jz $label", "_then\n";
+	print "\tdrop ; drop\n";
+	my ($l,$c)=($label++, "_then");
+	my $si = walk($i);	# expand out the 'if' part of the AST
+	if (defined $e and @$e != 0) {
+		print "sjmp ", $l, "_endif\n";
+		print $l, $c, ":\n";
+		print "\tdrop ; drop\n";
+		$c='_endif';
+		my $se = walk($e);	# expand out the 'else' part of the AST
+		print $l, $c, ":\n";
+	} else {
+		print ".db 0x80, 2 ; sjmp +2\n";
+		print $l, $c, ":\n";
+		print "\tdrop ; drop\n";
+	}
+}
+
 my $fhash={
 	'word' => \&word,
 	'lit' => \&lit,
 	'skip' => \&skip,
+	'cond' => \&cond,
 };
 
 my $fn;
