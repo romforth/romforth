@@ -17,3 +17,4 @@ nip	: acall realnip
 dip	: acall realdip
 +	: nip ; add a, r1
 -	: neg ; +
+&	: nip ; anl a, r1
