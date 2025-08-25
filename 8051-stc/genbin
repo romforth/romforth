@@ -20,6 +20,11 @@ sub lit {
 
 my $jmp;
 
+sub prim {
+	my ($w)=@_;
+	my $o=$w->[1];
+	print "\t$o ; $w->[0]\n";
+}
 sub word {
 	my ($w)=@_;
 	my $o=$w->[1];
@@ -77,6 +82,7 @@ my $fhash={
 	'lit' => \&lit,
 	'skip' => \&skip,
 	'cond' => \&cond,
+	'prim' => \&prim,
 };
 
 my $fn;

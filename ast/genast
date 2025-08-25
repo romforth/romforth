@@ -87,6 +87,7 @@ while (<>) {
 		if ($w =~ /^(-?\d+)$/) { print "[ 'lit', int($1)],\n"; next}    #int
 		if ($w =~ /^\#(-?\d+)$/) { print "[ 'skip', int($1)],\n"; next} #skip
 		if ($w =~ /^(-?0x[\dA-Fa-f]+)$/){print "['lit',oct('$1')],\n";next} #hex
+		if ($l = $map->{$w}) { print "['prim','$l','$w'],\n"; next}  # primitive
 		print "[ 'word', '$w'],\n";                            # everything else
 	}
 }
