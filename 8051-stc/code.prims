@@ -9,6 +9,7 @@ dup	: dec r0 ; mov @r0, a
 drop	: mov a, @r0 ; inc r0
 key	: dup ; acall realkey
 emit	: acall realemit ; drop
-neg	: cpl a ; inc a
 inc	: inc a
 dec	: dec a
+inv	: cpl a
+neg	: inv ; inc a
