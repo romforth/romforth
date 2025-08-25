@@ -5,7 +5,7 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	: ret
-key	: acall realkey
-emit	: acall realemit
 dup	: dec r0 ; mov @r0, a
 drop	: mov a, @r0 ; inc r0
+key	: dup ; acall realkey
+emit	: acall realemit ; drop

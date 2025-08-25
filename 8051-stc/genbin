@@ -11,6 +11,13 @@ use strict;
 my $f=shift or die "usage: $0 file";
 my $x=require $f or die "parse failed";
 
+sub lit {
+	my ($l)=@_;
+	my $o=$l->[1];
+	print qq(\tdup ; dup\n);
+	print qq(mov a, #$o\n);
+}
+
 sub word {
 	my ($w)=@_;
 	my $o=$w->[1];
@@ -19,6 +26,7 @@ sub word {
 
 my $fhash={
 	'word' => \&word,
+	'lit' => \&lit,
 };
 
 my $fn;
