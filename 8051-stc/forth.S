@@ -39,6 +39,11 @@ realdip:
 	mov @r0, a		; because the 8051 has neither a Rx to Ry
 	pop a			; register move nor a pre-decrement
 	ret			; addressing mode.
+drop2:
+	inc r0
+	mov a, @r0
+	inc r0
+	ret
 rom:
 	mov r0, #dstk
 #include "rom.s"
