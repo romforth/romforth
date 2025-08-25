@@ -7,3 +7,5 @@
 bye	: ret
 key	: acall realkey
 emit	: acall realemit
+dup	: dec r0 ; mov @r0, a
+drop	: mov a, @r0 ; inc r0

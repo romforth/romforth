@@ -6,7 +6,7 @@
 
 	.area CSEG (CODE)
 start:
-	mov sp, #mcstk
+	mov sp, #rstk
 	acall rom
 	mov dptr, #0xffff
 	mov a, #'s'
@@ -26,6 +26,7 @@ realemit:
 	movx @dptr, a
 	ret
 rom:
+	mov r0, #dstk
 #include "rom.s"
 
 #define USEDEFS 0
@@ -45,5 +46,10 @@ rom:
 ;--------------------------------------------------------
 
 	.area SSEG
-mcstk:
-	.ds 10
+bank0: .ds 8
+bank1: .ds 8
+bank2: .ds 8
+bank3: .ds 8
+bits: .ds 16
+rstk: .ds 80
+dstk:

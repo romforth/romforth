@@ -6550,3 +6550,23 @@ z80-c equivalents, it didn't make much sense to experiment there. But in this
 case, rather than proliferate even more copies of genrom, I'm going to try using
 genast here - even if it may end up slowing down this port by a bit, it is an
 investment for the future.
+
+25 Aug '25
+----------
+I spent a good part of the weekend going over the MCS51 docs despite my fond
+hopes that I could skip reading through 300+ pages of arcana, since I was sure
+that I could just use sdcc to generate as much assembly code as needed. At this
+step though, I need to part ways with SDCC generated code since I'm choosing to
+only use an 8 bit TOS (just like I'd done earlier for the Padauk and 6502 ports)
+
+This will necessarily cause me to abandon this port when step 40 rolls around
+just as I had done for all the previous ones where I chose to make this decision
+but I guess if you have plenty of memory to spare and want to binge on all 64K
+of it, you could not go wrong choosing CamelForth's 8051 port instead of this
+one. I'll continue to make the choice to prefer small code that fits the ISA
+especially when plenty of alternative Forths are available.
+
+Obviously, using DPTR might be the right choice for a 16 bit implementation but
+I'm choosing not to go down that path so I don't need `movx A, @DPTR` and `movx
+@DPTR, A` and I can just make do with `mov A, @R0` and `mov @R0, A` which makes
+the register R0 the data stack pointer for this port.
