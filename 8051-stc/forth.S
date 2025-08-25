@@ -11,6 +11,17 @@ start:
 	mov dptr, #0xffff
 	mov a, #'s'
 	movx @dptr, a
+realkey:
+	mov a, #'f'
+	ret
+realemit:
+	push a
+	mov dptr, #0xffff
+	mov a, #'w'
+	movx @dptr, a
+	pop a
+	movx @dptr, a
+	ret
 rom:
 #include "rom.s"
 
