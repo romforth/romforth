@@ -32,6 +32,8 @@ sp@!	: xch a, r0
 rp@!	: xch a, sp
 >r	: push a ; drop
 r>	: dup ; pop a
+lit1	:
+exec	:
 
 var here
 var state
