@@ -7,7 +7,7 @@
 AS=sdas8051
 ASFLAGS=-l -o
 LD=sdld -i
-all : oneforth
+all : twoforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
