@@ -51,6 +51,14 @@ store:
 	mov a, @r0
 	inc r0
 	ret
+trampoline:
+	push a
+	mov a, @r0
+	inc r0
+	push a
+	mov a, @r0
+	inc r0
+	ret
 rom:
 	mov r0, #dstk
 	mov state, #1

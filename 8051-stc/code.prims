@@ -34,6 +34,7 @@ rp@!	: xch a, sp
 r>	: dup ; pop a
 lit1	:
 exec	:
+call	: acall trampoline
 
 var here
 var state

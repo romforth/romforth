@@ -82,12 +82,12 @@ sub def {
 	}
 	if ($state == 2) {
 		if ($w eq '}def') {
-			print ']]', "\n";
+			print ']],', "\n";
 			$state=0;
 			return 1;
 		}
 		if ($w eq '}imm') {
-			print ']', ']', "\n";
+			print ']],', "\n";
 			$state=0;
 			$immediate=0;
 			return 1;
@@ -134,7 +134,14 @@ while (<>) {
 		if ($w =~ /^(-?0x[\dA-Fa-f]+)$/){print "['lit',oct('$1')],\n";next} #hex
 		if ($l = $map->{$w}) { print "['prim','$l','$w'],\n"; next}  # primitive
 		if ($l = $varmap->{$w}) { print "['lit','$l'],\n"; next}      # variable
-		if ($l = $defs->{$w}) { print "['call','$l->[1]','$w'],\n"; next} # defs
+		if ($l = $defs->{$w}) {
+			if (ref $l eq 'ARRAY') {
+				print "['visit','$l->[1]','$w'],\n"
+			} else {
+				print "['visit','$l','$w'],\n"
+			}
+			next;
+		}
 		print "[ 'word', '$w'],\n";                            # everything else
 	}
 }
