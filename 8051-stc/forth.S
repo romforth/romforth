@@ -44,6 +44,13 @@ drop2:
 	mov a, @r0
 	inc r0
 	ret
+store:
+	acall realnip
+	xch a, r1
+	mov @r1, a
+	mov a, @r0
+	inc r0
+	ret
 rom:
 	mov r0, #dstk
 #include "rom.s"
@@ -70,5 +77,7 @@ bank1: .ds 8
 bank2: .ds 8
 bank3: .ds 8
 bits: .ds 16
-rstk: .ds 80
+rstk: .ds 80-11
+here: .db mem
+mem:  .ds 10
 dstk:

@@ -23,3 +23,6 @@ dip	: acall realdip
 2drop	: acall drop2
 swap	: xch a, @r0
 @	: mov r1, a ; mov a, @r1
+!	: acall store
+
+var here
