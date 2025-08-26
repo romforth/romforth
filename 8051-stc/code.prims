@@ -21,3 +21,4 @@ dip	: acall realdip
 |	: nip ; orl a, r1
 ^	: nip ; xrl a, r1
 2drop	: acall drop2
+swap	: xch a, @r0
