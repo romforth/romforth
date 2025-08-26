@@ -27,6 +27,7 @@ swap	: xch a, @r0
 c@	: @
 c!	: !
 pick	: add a, r0 ; @
+stick	: add a, r0 ; !
 
 var here
 var state
