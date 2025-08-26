@@ -29,6 +29,7 @@ c!	: !
 pick	: add a, r0 ; @
 stick	: add a, r0 ; !
 sp@!	: xch a, r0
+rp@!	: xch a, sp
 
 var here
 var state

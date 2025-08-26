@@ -54,6 +54,7 @@ store:
 rom:
 	mov r0, #dstk
 	mov state, #1
+	mov here, #rstk+2
 #include "rom.s"
 
 #define USEDEFS 0
@@ -79,7 +80,7 @@ bank2: .ds 8
 bank3: .ds 8
 bits: .ds 16
 rstk: .ds 80-11
-here: .db mem
+here: .ds 1
 state: .ds 1
 mem:  .ds 9
 dstk:
