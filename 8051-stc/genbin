@@ -94,6 +94,15 @@ sub visit {
 	print "acall $s->[1] ; $s->[2]\n";
 }
 
+sub loop {
+	my ($l)=@_;
+	my $i=$l->[1];
+	my $d=$l->[2];
+	my $b=$l->[3];
+	my $li = walk($i);
+	my $lb = walk($b);
+}
+
 my $fhash={
 	'word' => \&word,
 	'lit' => \&lit,
@@ -102,6 +111,7 @@ my $fhash={
 	'prim' => \&prim,
 	'def' => \&def,
 	'visit' => \&visit,
+	'loop'	=> \&loop,
 };
 
 my $fn;
