@@ -59,6 +59,26 @@ trampoline:
 	mov a, @r0
 	inc r0
 	ret
+shiftleft:
+	mov r1, a
+	mov a, @r0
+	inc r0
+	cjne r1, #0, leftshift
+	ret
+leftshift:
+	rl a
+	djnz r1, leftshift
+	ret
+shiftright:
+	mov r1, a
+	mov a, @r0
+	inc r0
+	cjne r1, #0, rightshift
+	ret
+rightshift:
+	rr a
+	djnz r1, rightshift
+	ret
 rom:
 	mov r0, #dstk
 	mov state, #1

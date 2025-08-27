@@ -35,6 +35,8 @@ r>	: dup ; pop a
 lit1	:
 exec	:
 call	: acall trampoline
+<<	: acall shiftleft
+>>	: acall shiftright
 
 var here
 var state
