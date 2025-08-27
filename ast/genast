@@ -113,6 +113,33 @@ for my $a (@args) {
 	}
 }
 
+sub prim {
+	my ($w)=@_;
+	if ($l = $map->{$w}) {	# primitive
+		print "['prim','$l','$w'],\n";
+	} else {
+		die "expected $w to be a primitive";
+	}
+}
+
+sub runfor {
+	print '[ "loop", [', "\n";
+	for my $i (qw(over over >r >r -)) {
+		prim($i);
+	}
+	print '],1,[', "\n";
+}
+
+sub runendfor {
+	for my $i (qw(r> inc r>)) {
+		prim($i);
+	}
+	print ']],', "\n";
+	for my $i (qw(r> r> 2drop)) {
+		prim($i);
+	}
+}
+
 print '[';
 while (<>) {
 	s/^\[$// && next;		# standalone picture comment: [
@@ -128,6 +155,8 @@ while (<>) {
 		if ($w eq 'if{') { print '[ "cond", [ ', "\n"; next}            #if{
 		if ($w eq '}else{') { print "\n",'],[', "\n"; next}             #}else{
 		if ($w eq '}if') { print ']],',"\n"; next}                      #}if
+		if ($w eq 'for{') { runfor(); next}                             #for{
+		if ($w eq '}for') { runendfor(); next}                          #}for
 		if ($w =~ /^\'(.)\'$/) { print "[ 'lit', ord('$1')],\n"; next}  #chr
 		if ($w =~ /^(-?\d+)$/) { print "[ 'lit', int($1)],\n"; next}    #int
 		if ($w =~ /^\#(-?\d+)$/) { print "[ 'skip', int($1)],\n"; next} #skip
