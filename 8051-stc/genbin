@@ -11,6 +11,9 @@ use strict;
 my $f=shift or die "usage: $0 file";
 my $x=require $f or die "parse failed";
 
+my $prefix=$f;
+$prefix=~s/^(\w+).*$/$1/;
+
 sub lit {
 	my ($l)=@_;
 	my $o=$l->[1];
@@ -53,7 +56,7 @@ sub skip {
 	}
 }
 
-my $label="lbl000";
+my $label="${prefix}lbl000";
 
 sub cond {
 	my ($s)=@_;
