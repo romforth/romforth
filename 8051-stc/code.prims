@@ -37,6 +37,7 @@ exec	:
 call	: acall trampoline
 <<	: acall shiftleft
 >>	: acall shiftright
+over	: dup ; mov a, #1 ; pick
 
 var here
 var state
