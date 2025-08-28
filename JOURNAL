@@ -6570,3 +6570,31 @@ Obviously, using DPTR might be the right choice for a 16 bit implementation but
 I'm choosing not to go down that path so I don't need `movx A, @DPTR` and `movx
 @DPTR, A` and I can just make do with `mov A, @R0` and `mov @R0, A` which makes
 the register R0 the data stack pointer for this port.
+
+27 Aug '25
+----------
+Just like the Padauk and 6502 STC ports, I'm going to call an early halt to this
+port as well. To get past step 32 seems to require the addition of yet another
+threading type and I feel that we already have enough threading types that are
+way too confusing already. The issue here is that `acall` pushes 2 bytes of the
+return address on to the stack but push/pop (which are used in `>r`/`r>`) only
+operate 1 byte at a time on the stack. Modifying `i` just like at step 32 of the
+6502-stc port might be a workable solution - see
+	git log -p 2939f417c13d9d7006489271bc9b6d0f39bdd661
+
+So just like the THREAD=8 type addition to the 6502-stc port at step 23, which
+changed `2ret`, it appears that I'll need to add yet another threading type to
+handle the implementation of `i` - just for the 8051. Rather than continue down
+that path for a port that will only be able to address 128 bytes on the low end
+configuration, and will need to stop at step 40 anyway, I'll call a stop a bit
+earlier than expected since we are well along the way to a fairly decent and
+capable Forth for the 8051 with definitions, conditionals, loops and even for
+loops - except for the `i` ;)
+
+During the course of this port, it was interesting to see that `genast` (and
+`genbin`, of course) needed changes, despite the feeling that I had initially,
+that they were for the most part complete. So, for the next port, I plan to
+pick an ISA where I can go through the full set of 62 steps so that I can flesh
+out any remaining parts of genast/genbin. I'm thinking that redoing the x86 port
+using QEMU instead of my dinky little emulator might be a fairly quick and fun
+little exercise.

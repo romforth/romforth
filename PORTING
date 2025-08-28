@@ -34,6 +34,7 @@ The following ports are complete:
 | 6502-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/smos6502|
 | 6502-stc     |   8  | little | 8 | Baremetal | sdas6500   | ucsim/smos6502|
 | 8051-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/s51     |
+| 8051-stc     |   8  | little | 8 | Baremetal | sdas8051   | ucsim/s51     |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
@@ -162,6 +163,7 @@ arm+    +1  -1  mvn neg     neg:add and     orr eor lsl   lsr     SYS_exit |
 riscv+  inc dec not neg     neg:add and     or  xor sll   srl     SYS_exit |
 padauk  inc dec not neg     neg:add and     or  xor sl    sr      stopsys  |
 6502    adc adc eor eor,adc neg:adc and     ora eor asl   asr     ucsim/'s'|
+8051    inc dec cpl cpl,inc neg:add anl     orl xrl rl    rr      ucsim/'s'|
 ---------------------------------------------------------------------------'
 Note: The + denotes that the Linux SYS_exit syscall is used for halting within
 qemu user emulation

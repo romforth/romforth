@@ -233,6 +233,7 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | 6502-sdcc    |    2624    |   2060 (4684)   |   3495 (6119)   |
 | 6502-stc     |       0    |    859 (859)    |   3386 (3386)   |
 | 8051-sdcc    |    3502    |   1342 (4844)   |   2379 (5881)   |
+| 8051-stc     |       0    |    143 (181)    |   1494 (1653)   |
 '--------------'------------'-----------------'-----------------'
 
 *Note: The units for pdk14-stc and pdk14-thr1 are in "words" which can be
