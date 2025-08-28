@@ -1,6 +1,6 @@
 # makefile : drive the build and test for the "not quite Huffman" encoding
 #
-# Copyright (c) 2024 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2024-2025 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -10,9 +10,11 @@ oneforth : test.out
 test.defs : forth_defs test.inp test.exp
 	cat test.inp | perl -pe chomp | ./forth_defs > test.defs
 	cmp test.defs test.exp
+	rm -f headers.list
 test.out : forth test.inp test.exp
 	cat test.inp | perl -pe chomp | ./forth > test.out
 	cmp test.out test.exp
+	rm -f headers.list
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp
 	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config >> test.inp
@@ -23,7 +25,7 @@ fpp.config : stepfile fpp.config.nqh
 forth_defs : forth_defs.zig rom.zig
 	zig fmt forth_defs.zig
 	zig build-exe forth_defs.zig
-forth_defs.zig : forth_defs.m4 forth_zig.m4 defs_zig.m4
+forth_defs.zig : forth_defs.m4 forth_zig.m4 defs_zig.m4 rom.zig
 	m4 forth_defs.m4 > forth_defs.zig
 forth_defs.m4 : forth.m4
 	cp forth.m4 forth_defs.m4
@@ -38,7 +40,7 @@ forth.zig : forth.m4 forth_zig.m4
 	m4 forth.m4 > forth.zig
 forth_zig.m4 : genprims code.prims ../fpp fpp.config
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ./genprims dict.map > forth_zig.m4
-rom.zig : rom.m4 rom_zig.m4
+rom.zig : rom.m4 prims.m4 defs_enum.zig dict.zig defs_zig.m4 rom_zig.m4 func.zig
 	m4 rom.m4 > rom.zig
 rom_zig.m4 : ../rom.4th ../fpp fpp.config genrom patchrom code.prims
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map | ./patchrom > rom_zig.m4

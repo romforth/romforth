@@ -2,7 +2,7 @@
 
 # genrom : convert the .4th files into zig code
 #
-# Copyright (c) 2022-2024 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2022-2025 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -309,11 +309,19 @@ if ($gendefs) {
 		print "const ", $i->[0], "_name = ";
 		print '[_]*const [', $l, ':0]u8{"', $i->[1], '"};', "\n";
 	}
-	print "pub const fnames =\n";
-	print join(" \+\+\n", map { "\t" . $_->[0] . "_name" } @$deford);
+	print "pub const fnames = \n";
+	if (@$deford) {
+		print join(" \+\+\n", map { "\t" . $_->[0] . "_name" } @$deford);
+	} else {
+		print '[_]*const[0]u8{}';
+	}
 	print ";\n";
 	print "pub const func =\n";
-	print join(" \+\+\n", map { "\t" . $_->[0] . "_bytes" } @$deford);
+	if (@$deford) {
+		print join(" \+\+\n", map { "\t" . $_->[0] . "_bytes" } @$deford);
+	} else {
+		print '[_]Bytecode{}';
+	}
 	print ";\n";
 	my $lh;
 	open($lh, ">defs_enum.zig");
