@@ -1,6 +1,6 @@
 # makefile : drive the build and test for the x86 assembly userland code
 #
-# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2023.2025 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -29,12 +29,18 @@ test.exp : ../test.expected ../fpp fpp.config
 	cat ../test.expected | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.exp
 forth.o : forth.S prims.s rom.s
 forth_defs : forth_defs.o
-forth_defs.o : forth_defs.S defs.s rom.s
+forth_defs.o : forth_defs.s defs.s
+	$(CC) -c -o forth_defs.o forth_defs.s
+forth_defs.s : rom.s forth_defs.S
+	$(CC) -E forth_defs.S > forth_defs.s
 forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
 forth_dict : forth_dict.o
-forth_dict.o : forth_dict.S prims_dict.s defs_dict.s rom.s
+forth_dict.o : forth_dict.s prims_dict.s defs_dict.s
+	$(CC) -c -o forth_dict.o forth_dict.s
+forth_dict.s : rom.s defs_dict.s forth_dict.S
+	$(CC) -E forth_dict.S > forth_dict.s
 forth_dict.S : forth.S forth_defs.S rom.s
 	cp forth_defs.S forth_dict.S
 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S
@@ -51,4 +57,4 @@ fpp.config : stepfile fpp.config.x86
 rom.s : ../rom.4th ../fpp fpp.config prims.s genrom defs.s
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ./genrom rom.map dict.map defs.map > rom.s
 clean :
-	rm -f forth dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.o forth_defs.S forth_defs.o forth_defs defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.o forth_dict test.dict
+	rm -f forth dict.map fpp.config prims.s rom.map rom.s test.out test.inp test.exp forth.o forth_defs.S forth_defs.o forth_defs defs.s defs.map test.defs dict.s forth_dict.S latest.s defs_dict.s prims_dict.s forth_dict.o forth_dict test.dict forth_defs.s forth_dict.s
