@@ -6598,3 +6598,17 @@ pick an ISA where I can go through the full set of 62 steps so that I can flesh
 out any remaining parts of genast/genbin. I'm thinking that redoing the x86 port
 using QEMU instead of my dinky little emulator might be a fairly quick and fun
 little exercise.
+
+28 Aug '25
+----------
+Before starting off on the next port, I want to make sure that some of the tiny
+little breakages that have made their way into the code are taken care of first.
+
+This fix addresses an irritant that shows up when you run 2 or more make's one
+after the other, either back to back or more typically, when you run a toplevel
+make which succeeds, then if you happen to take a break and when you get back,
+you run make again since it is part of your muscle memory and this time it will
+fail for no good reason.
+
+For now, I'll just fix the first instance of this breakage that I run into in
+the build for 6502-stc and address the remaining ones in later commits.

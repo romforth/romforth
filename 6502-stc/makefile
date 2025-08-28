@@ -1,6 +1,6 @@
 # makefile : drive the build and test for the 6502 assembly code
 #
-# Copyright (c) 2024 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2024-2025 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -48,19 +48,19 @@ forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
 forth_defs.s : forth_defs.S prims.s rom.s
-	../fix_comments rom.s
 	../fix_comments defs.s
 	./m2 defs.s > defs.s2
 	mv defs.s2 defs.s
+	../fix_comments rom.s
 	cpp -P forth_defs.S > forth_defs.s
 forth_dict.ihx : forth_dict.rel
 	$(LD) forth_dict.rel
 forth_dict.rel : forth_dict.s
 	$(AS) $(ASFLAGS) forth_dict.s
 forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
-	../fix_comments rom.s
 	../fix_comments defs_dict.s
 	../fix_comments prims_dict.s
+	../fix_comments rom.s
 	cpp -P forth_dict.S > forth_dict.s
 forth_dict.S : forth.S forth_defs.S
 	cp forth_defs.S forth_dict.S
