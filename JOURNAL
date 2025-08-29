@@ -6612,3 +6612,18 @@ fail for no good reason.
 
 For now, I'll just fix the first instance of this breakage that I run into in
 the build for 6502-stc and address the remaining ones in later commits.
+
+29 Aug '25
+----------
+Given the bunch of breakages that were uncovered by running `make allsteps` I
+wanted to be able to successfully run it across all architectures but nqh-zig
+turns out to be stumbling block given the way I went about patching the memory
+address (and value) for most of the steps (after step 12) of the nqh-zig port.
+
+After investigating a bunch of options, I've decided that fixing it is just too
+difficult and rather than struggle with it, I'm going to turn it off just for
+the default setting of `nqh-zig`, by disabling it in the `runallsteps` script.
+It can still be run manually as: `./runallsteps nqh-zig`.
+
+With that change in place, `make allsteps` can now successfully run all the way
+to completion.
