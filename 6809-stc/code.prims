@@ -5,5 +5,7 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	: .db 0x39
+dup	: .db 0x36, 6
+drop	: .db 0x37, 6
 key	: .db 0xbd ; .dw realkey
 emit	: .db 0xbd ; .dw realemit

@@ -41,6 +41,8 @@ realkey:
 	.dw 0x7fff	; 0x7fff
 	.db 0x39	; rts
 rom:
+	.db 0xCE	; ldu
+	.dw dstk	; #dstk
 
 #include "rom.s"
 
@@ -55,3 +57,5 @@ rom:
 #include "defs.s"
 #endif
 #endif
+	.ds	100	; reserve 100 bytes for the data stack (grows low)
+dstk:
