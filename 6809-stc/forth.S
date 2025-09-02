@@ -8,8 +8,14 @@
 	.org	0xfffe
 	.dw	start
 
+	.area	ZP
+	.ds	100		; reserve 100 bytes for the return stack (grows low)
+rstk:
+
 	.area	CODE
 start:
+	.db 0x10, 0xCE	; lds
+	.dw rstk	; #rstk
 	.db 0xbd	; jsr
 	.dw rom		; rom
 	.db 0x86	; lda
@@ -17,4 +23,17 @@ start:
 	.db 0xB7	; sta
 	.dw 0x7fff	; 0x7fff
 rom:
-	.db 0x39	; rts
+
+#include "rom.s"
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
