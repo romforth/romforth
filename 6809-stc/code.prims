@@ -7,5 +7,5 @@
 bye	: .db 0x39
 dup	: .db 0x36, 6
 drop	: .db 0x37, 6
-key	: .db 0xbd ; .dw realkey
-emit	: .db 0xbd ; .dw realemit
+key	: dup ; .db 0xbd ; .dw realkey
+emit	: .db 0xbd ; .dw realemit ; drop

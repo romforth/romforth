@@ -18,7 +18,8 @@ sub lit {
 	my ($l)=@_;
 	my $o=$l->[1];
 	print qq(\tdup ; dup\n);
-	print qq(mov a, #$o\n);
+	print qq(.db 0xCC ; ldd\n);
+	print qq(.dw #$o\n);	# $o ; tos <- $o
 }
 
 my $jmp;

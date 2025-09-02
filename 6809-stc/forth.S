@@ -23,13 +23,11 @@ start:
 	.db 0xB7	; sta
 	.dw 0x7fff	; 0x7fff
 realemit:
-	.db 0x34, 2	; pshs a
 	.db 0x86	; lda
 	.db #'w'	; 'w'
 	.db 0xB7	; sta
 	.dw 0x7fff	; 0x7fff
-	.db 0x35, 2	; puls a
-	.db 0xB7	; sta
+	.db 0xF7	; stb
 	.dw 0x7fff	; 0x7fff
 	.db 0x39	; rts
 realkey:
@@ -37,7 +35,7 @@ realkey:
 	.db #'r'	; 'w'
 	.db 0xB7	; sta
 	.dw 0x7fff	; 0x7fff
-	.db 0xB6	; lda
+	.db 0xF6	; ldb
 	.dw 0x7fff	; 0x7fff
 	.db 0x39	; rts
 rom:
