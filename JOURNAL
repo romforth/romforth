@@ -6627,3 +6627,43 @@ It can still be run manually as: `./runallsteps nqh-zig`.
 
 With that change in place, `make allsteps` can now successfully run all the way
 to completion.
+
+02 Sep '25
+----------
+As I mentioned in the JOURNAL entry of 27 Aug '25, I've been looking at options
+to make sure that genast/genbin work for _all_ of the porting steps by redoing
+a port from scratch and my initial choice was to redo x86 running on QEMU. After
+thinking through it though I felt that rather than redo yet another x86 port
+(which already has 5 variations currently), I've decided to do a port to the
+Motorola 6809 instead, which will add a new ISA as well. I'd looked at 6809 over
+the summer break and even sent in a PR to https://github.com/spc476/a09 while
+testing out the 6809 assembler. But it was while I was reviewing the recently
+concluded 8051 port, that I saw my grumpy comments about the 8051 (see the code
+comments added while implementing `nip`/`dip`) and felt that the snark was a bit
+misplaced since the choice of the processor for a new port was always mine to
+make. It seemed obviously clear that choosing a 16-bit processor in the PDP11
+lineage seems to be the best fitting match for a Forth implementation and the
+6809 is in many ways a perfect match. So that's the long and rather involved
+reasoning behind the pivot from doing the x86 port which I had planned on doing
+earlier to the Motorola 6809 which was on my list of ISAs for future ports that
+I had been researching.
+
+Tools wise, I was in for a nasty surprise though. Although there is a simulator
+for the 6809 (ucsim_m6809), which is part of the SDCC toolchain, it does not
+appear to have support for 6809 assembly. SDCC has the hc08/s08 options both of
+which support only the Motorola 68HC(S)08. So I tried to see if using sdas6808
+to assemble the code and ucsim_m6809 for the emulation would "just work" since
+the 6809 docs promised "upward compatibility" - at least between 6800 and 6809.
+
+That combination, unsurprisingly enough, did not work so my remaining option is
+to add yet another external dependency to the toolchain. I looked at a couple
+of alternatives: ASM6809, LWTOOLS, and the a09 (https://github.com/spc476/a09)
+mentioned earlier but decided against using any of them since it will be adding
+yet another dependency to the toolchain.
+
+For now, I can just use genbin to generate "binary assembly" code compatible
+with the SDCC/sdas6808 assembler using the .db/.dw assembler directives which
+will continue to get assembled by the current toolchain and can be tested by
+ucsim_m6809. Ugly, I know, but it works - and so for now I'm going to just
+rubber stamp a "looks good to me" despite the dodginess of it and move on since
+it will be my own cross to bear if/when things go sideways later on in this port
