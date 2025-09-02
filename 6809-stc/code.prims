@@ -10,3 +10,5 @@ drop	: .db 0x37, 6
 key	: dup ; .db 0xbd ; .dw realkey
 emit	: .db 0xbd ; .dw realemit ; drop
 neg	: .db 0x50
+inc	: .db 0xC3,0,1
+dec	: .db 0x83,0,1
