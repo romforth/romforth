@@ -49,10 +49,9 @@ sub skip {
 		print "\tdrop ; drop\n";
 		print ".db 0x27, $o ; beq $o\n";
 	} elsif ($jmp eq 'jnz') {
-		print "nop\n"; # to keep the number of bytes the same as jz
-		print "mov r1, a\n";
+		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
 		print "\tdrop ; drop\n";
-		print ".db 0xB9, 0, $o ; cjne r1, #0, offset\n";
+		print ".db 0x26, $o ; bne $o\n";
 	}
 }
 
