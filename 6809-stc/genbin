@@ -43,7 +43,7 @@ sub skip {
 	my $o=$s->[1];
 	#print "$jmp $o\n";
 	if ($jmp eq 'j') {
-		print ".db 0x80, $o ; sjmp offset\n";
+		print ".db 0x20, $o ; bra $o\n";
 	} elsif ($jmp eq 'jz') {
 		print "cpl a\n";
 		print "mov r1, a\n";
