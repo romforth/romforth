@@ -10,7 +10,11 @@
 
 	.area	CODE
 start:
+	.db 0xbd	; jsr
+	.dw rom		; rom
 	.db 0x86	; lda
 	.db #'s'	; 's'
 	.db 0xB7	; sta
 	.dw 0x7fff	; 0x7fff
+rom:
+	.db 0x39	; rts
