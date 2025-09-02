@@ -22,6 +22,18 @@ start:
 	.db #'s'	; 's'
 	.db 0xB7	; sta
 	.dw 0x7fff	; 0x7fff
+realemit:
+	.db 0x86	; lda
+	.db #'w'	; 'w'
+	.db 0xB7	; sta
+	.dw 0x7fff	; 0x7fff
+	.db 0x86	; lda
+	.db #'f'	; 'f'
+	.db 0xB7	; sta
+	.dw 0x7fff	; 0x7fff
+	.db 0x39	; rts
+realkey:
+	.db 0x39	; rts
 rom:
 
 #include "rom.s"
