@@ -61,22 +61,18 @@ sub cond {
 	my ($s)=@_;
 	my $i=$s->[1];	# AST for the 'if' part
 	my $e=$s->[2];	# AST for the 'else' part
-	print "jz $label", "_then\n";
+	print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
 	print "\tdrop ; drop\n";
+	print ".db 0x27, $label", "_then-.-1\n";
 	my ($l,$c)=($label++, "_then");
 	my $si = walk($i);	# expand out the 'if' part of the AST
 	if (defined $e and @$e != 0) {
-		print "sjmp ", $l, "_endif\n";
+		print ".db 0x20,", $l, "_endif-.-1\n";
 		print $l, $c, ":\n";
-		print "\tdrop ; drop\n";
 		$c='_endif';
 		my $se = walk($e);	# expand out the 'else' part of the AST
-		print $l, $c, ":\n";
-	} else {
-		print ".db 0x80, 2 ; sjmp +2\n";
-		print $l, $c, ":\n";
-		print "\tdrop ; drop\n";
 	}
+	print $l, $c, ":\n";
 }
 
 sub def {
