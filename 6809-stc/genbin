@@ -80,13 +80,13 @@ sub def {
 	#print "$s->[0]  name:$s->[1],  label:$s->[2], imm: $s->[3]\n";
 	print "$s->[2] : ; $s->[1]\n";
 	my $se = walk($s->[4]);	# expand out the body of the definition
-	print "ret\n";
+	print ".db 0x39\n";
 }
 
 sub visit {
 	my ($s)=@_;
 	#print "$s->[0]  label:$s->[1],  name:$s->[2]\n";
-	print "acall $s->[1] ; $s->[2]\n";
+	print ".db 0xbd\n.dw $s->[1] ; $s->[2]\n";
 }
 
 sub loop {
