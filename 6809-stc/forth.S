@@ -42,6 +42,34 @@ trampoline:
 	.db 0x34, 6	; pshs d
 	.db 0x37, 6	; drop
 	.db 0x39	; rts
+shiftleft:
+	.db 0x37, 0x10	; nip # temp <- *dp++
+leftshift:
+	.db 0x10, 0x83, 0, 0	; cmpd #0	# tos == 0 ?
+	.db 0x27, retleft-.-1	; jeq retleft
+	.db 0x1E, 1	; exg d,x	# tos<->temp
+	.db 0x58	; aslb	c<-b<<1	# tos << 1
+	.db 0x49	; rola  c<-a<<1<-c
+	.db 0x1E, 1	; exg d,x	# tos<->temp
+	.db 0x83,0,1	; d--		# tos--
+	.db 0x20, leftshift-.-1	; jmp leftshift
+retleft:
+	.db 0x1F, 0x10	; tfr x, d	# tos <- temp
+	.db 0x39	; rts
+shiftright:
+	.db 0x37, 0x10	; nip # temp <- *dp++
+rightshift:
+	.db 0x10, 0x83, 0, 0	; cmpd #0	# tos == 0 ?
+	.db 0x27, retright-.-1	; jeq retright
+	.db 0x1E, 1	; exg d,x	# tos<->temp
+	.db 0x47	; asra	a>>1->c	# tos >> 1
+	.db 0x56	; rorb  c->b>>1->c
+	.db 0x1E, 1	; exg d,x	# tos<->temp
+	.db 0x83,0,1	; d--		# tos--
+	.db 0x20, rightshift-.-1	; jmp rightshift
+retright:
+	.db 0x1F, 0x10	; tfr x, d	# tos <- temp
+	.db 0x39	; rts
 rom:
 	.db 0xCE	; ldu
 	.dw dstk	; #dstk

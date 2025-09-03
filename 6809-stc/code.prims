@@ -35,6 +35,8 @@ r>	: dup ; .db 0x35, 6
 lit	:
 exec	:
 call	: .db 0xbd ; .dw trampoline
+<<	: .db 0xbd ; .dw shiftleft
+>>	: .db 0xbd ; .dw shiftright
 
 var here
 var state
