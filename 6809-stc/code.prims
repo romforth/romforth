@@ -37,6 +37,7 @@ exec	:
 call	: .db 0xbd ; .dw trampoline
 <<	: .db 0xbd ; .dw shiftleft
 >>	: .db 0xbd ; .dw shiftright
+over	: dup ; .db 0xEC, 0x42
 
 var here
 var state
