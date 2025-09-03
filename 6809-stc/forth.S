@@ -58,4 +58,5 @@ rom:
 	.ds	100	; reserve 100 bytes for the data stack (grows low)
 dstk:
 here: .dw mem
+state: .db 1
 mem:  .ds 1024
