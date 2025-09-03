@@ -23,3 +23,6 @@ nip	: .db 0x37, 0x10
 2drop	: drop ; drop
 swap	: nip ; .db 0x1E, 1 ; dip
 @	: .db 0x1F, 1, 0xEC, 0x84
+!	: .db 0x1F, 1 ; drop ; .db 0xED, 0x84 ; drop
+
+var here

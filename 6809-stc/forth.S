@@ -57,3 +57,5 @@ rom:
 #endif
 	.ds	100	; reserve 100 bytes for the data stack (grows low)
 dstk:
+here: .dw mem
+mem:  .ds 1024
