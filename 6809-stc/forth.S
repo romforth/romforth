@@ -38,6 +38,10 @@ realkey:
 	.db 0xF6	; ldb
 	.dw 0x7fff	; 0x7fff
 	.db 0x39	; rts
+trampoline:
+	.db 0x34, 6	; pshs d
+	.db 0x37, 6	; drop
+	.db 0x39	; rts
 rom:
 	.db 0xCE	; ldu
 	.dw dstk	; #dstk

@@ -34,6 +34,7 @@ rp@!	:
 r>	: dup ; .db 0x35, 6
 lit	:
 exec	:
+call	: .db 0xbd ; .dw trampoline
 
 var here
 var state
