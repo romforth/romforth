@@ -113,16 +113,20 @@ sub loop {
 		$b=$l->[3];
 	}
 	if ($t==1) {			# conditional while loop
-		print "jz $lbl", "_end\n";
+		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "\tdrop ; drop\n";
+		print ".db 0x27, ", $lbl, "_end-.-1 ; beq\n";
 	} elsif ($t==0) {		# conditional while/until loop
-		print "jnz $lbl", "_end\n";
+		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "\tdrop ; drop\n";
+		print ".db 0x26, ", $lbl, "_end-.-1 ; bne\n";
 	} else {			# unconditional loop
 		# no code needs to be generated
 	}
 	my $lb = walk($b);
-	print "sjmp $lbl", "_begin\n";
+	print ".db 0x20,", $lbl,"_begin-.-1 ; bra\n";
 	print "$lbl", "_end:\n";
-	print "\tdrop ; drop\n";
+	#print "\tdrop ; drop\n";
 }
 
 my $fhash={
