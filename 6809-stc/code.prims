@@ -32,6 +32,8 @@ sp@!	: .db 0x1E, 3
 rp@!	:
 >r	: .db 0x34, 6 ; drop
 r>	: dup ; .db 0x35, 6
+lit	:
+exec	:
 
 var here
 var state
