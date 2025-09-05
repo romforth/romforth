@@ -1,3 +1,9 @@
+# gencode : native code generation for the 6809
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
 sub lit {
 	my ($l)=@_;
 	my $o=$l->[1];
