@@ -1038,12 +1038,12 @@ def{ suffixret	[ exit_cfa
 
 #}if
 
-#{if ARCH eq "z80"
+#{if ARCH eq "z80" or ARCH eq "6809"
 c@		[ ret (exit_cfa:ret)    // exit_cfa is expected to contain ...
 c,		[ \ ret			// ... the opcode of ret, so append it
 #}if
 
-#{if ARCH ne "msp430" and ARCH ne "z80"
+#{if ARCH ne "msp430" and ARCH ne "z80" and ARCH ne "6809"
 [ catch any missing architectures as early as possible
 step_50_assertion_failure_to_catch_missing_suffixret_modifications
 #}if
