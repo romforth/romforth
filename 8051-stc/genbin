@@ -84,7 +84,7 @@ sub def {
 	my ($s)=@_;
 	#print "$s->[0]  name:$s->[1],  label:$s->[2], imm: $s->[3]\n";
 	print "$s->[2] : ; $s->[1]\n";
-	my $se = walk($s->[4]);	# expand out the body of the definition
+	my $se = walk($s->[5]);	# expand out the body of the definition
 	print "ret\n";
 }
 
