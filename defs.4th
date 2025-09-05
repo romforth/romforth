@@ -1424,7 +1424,17 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ cfa enter // padding escaped by lit
 	,		[ \ cfa	// so the dictionary now contains: call #cfa
 #}if
 
-#{if ARCH ne "msp430" and ARCH ne "z80"
+#{if ARCH eq "6809"
+[ Sample machine code for calls to absolute addresses on 6809 looks like this:
+[   01EC BD                  296  .db 0xbd
+[   01ED 00 0C               297  .dw realemit
+
+[ so it is clear that the 0xBD opcode just needs to be prefixed to the cfa
+	0xBD c,		[ cfa \ call #...
+	,		[ \ cfa	// so the dictionary now contains: jsr #cfa
+#}if
+
+#{if ARCH ne "msp430" and ARCH ne "z80" and ARCH ne "6809"
 step_53_assertion_failure_to_catch_missing_compdef_modifications
 #}if
 
