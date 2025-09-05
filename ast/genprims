@@ -70,7 +70,6 @@ while (<>) {
 		next;
 	} elsif (/^var\s+(\S+)\s+(.*)$/) {	# variables
 		($f)=($1);
-		$prev=$f;
 		print $mh "var $f $f\n";	# create dictionary entry for variables
 		print "\t},\n\t'var' => {\n" if ($state ne'var');
 		$state='var';
