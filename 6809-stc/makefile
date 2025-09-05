@@ -79,7 +79,7 @@ defs.s : ../defs.4th ../fpp fpp.config prims.ast ../ast/genast ../ast/genbin gen
 	../ast/genbin defs.ast > defs.s
 prims_dict.s : dict.map ../ast/genprims code.prims ../fpp fpp.config ../ast/gendict gencode
 	cat code.prims | ../fpp -DTESTROM -c fpp.config | ../ast/genprims -d dict.map > prims_dict.ast
-	../ast/gendict prims_dict.ast > prims_dict.s
+	../ast/gendict prims_dict.ast dict.map > prims_dict.s
 	[ -L dict.s ] || ln -s prims_dict.s dict.s
 rom.s : ../rom.4th ../fpp fpp.config prims.ast ../ast/genast defs.s ../ast/genbin gencode
 	cat ../rom.4th | ../fpp -DTESTROM -c fpp.config | ../ast/genast rom.map dict.map defs.map > rom.ast

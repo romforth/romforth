@@ -15,6 +15,23 @@ my $x=require(shift) or die "parse failed";
 my $prev='0';
 
 my $c=$x->{'code'};
-while (my ($k,$v)=each %$c) {
-	$prev=fullheader($k,$v,$prev);
+my $v=$x->{'var'};
+
+my $p;
+
+my @l=();
+while (<>) {
+	my ($k,$w,$l)=split;
+	last unless ($p=$x->{$k}->{$w});
+	if ($k eq 'var') {
+		unshift @l, [$w,$p,1];
+	} elsif ($k eq 'code') {
+		push @l, [$w,$p,0];
+	} else {
+		last;
+	}
+}
+for my $i (@l) {
+	my ($w,$p,$flag)=@$i;
+	$prev=fullheader($w,$p,$prev,$flag);
 }

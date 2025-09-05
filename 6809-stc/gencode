@@ -70,18 +70,18 @@ sub cond {
 	print $l, $c, ":\n";
 }
 
-my $prev="0";
-
 my $gendict=0;
 sub setgendict {
 	my ($v)=@_;
 	$gendict=$v;
 }
 
+my $prev="0";
+
 sub def {
 	my ($s)=@_;
-	my ($w,$l,$imm)=($s->[1], $s->[2], $s->[3]);
-	print "; $s->[0] name:$w, label:$l, imm: $imm\n";
+	my ($k,$w,$l,$imm,$p,$a)=@$s;
+	print "; $k name:$w, label:$l, imm: $imm\n";
 	if ($gendict) {
 		my $len=length($w);
 		# print "\t.align 1\n";
@@ -91,11 +91,12 @@ sub def {
 		print qq{.ascii "$w"\n};
 		$len |= 0x80 if ($imm);
 		print "$l","_nfa:\t.db $len\n";
-		print "$l","_lfa:\t.dw $prev\n";
+		print "$l","_lfa:\t.dw $p\n";
+		$prev=$p;
 		$prev="$l"."_lfa";
 	}
 	print "$l", "_cfa : ; $w\n";
-	my $se = walk($s->[4]);	# expand out the body of the definition
+	my $se = walk($a);	# expand out the body of the definition
 	print ".db 0x39\n";
 }
 
@@ -146,7 +147,7 @@ sub loop {
 }
 
 sub header {
-	my ($k,$w,$l,$imm,$prev)=@_;
+	my ($k,$w,$l,$imm,$prev,$var)=@_;
 	my $len=length($k);
 	# print "\t.align 1\n";
 	if ($len%2==0) {
@@ -158,6 +159,11 @@ sub header {
 	print "$l","_lfa:\t.dw $prev\n";
 	$prev="$l"."_lfa";
 	print "$l", "_cfa : ; $k\n";
+	if ($var) {
+		print qq(.db 0x36, 6 ; dup\n);
+		print qq(.db 0xCC ; ldd\n);
+		print qq(.dw #$l ;	# $l ; tos <- $l\n)
+	}
 	return $prev;
 }
 
@@ -166,10 +172,10 @@ sub ret {
 }
 
 sub fullheader {
-	my ($k,$v,$prev)=@_;
+	my ($k,$v,$prev,$var)=@_;
 	my ($w,$l,$imm,$a)=@$v;
-	$prev=header($k,$w,$l,$imm,$prev);
-	print join("", @$a);
+	$prev=header($k,$w,$l,$imm,$prev,$var);
+	print join("", @$a) if ($var==0);
 	ret();
 	return $prev;
 }

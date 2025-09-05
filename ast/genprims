@@ -27,6 +27,7 @@ sub mapnames {
 	($f,$l)=@_;	# which provides forth<->label mapping
 	print $mh "code $f $l\n";	# create dictionary entry for primitives
 	print "\t\t'$f' => [ '$f', '$l', 0, [\n";
+	$prev=$l;
 }
 
 my $hash={};
@@ -69,6 +70,7 @@ while (<>) {
 		next;
 	} elsif (/^var\s+(\S+)\s+(.*)$/) {	# variables
 		($f)=($1);
+		$prev=$f;
 		print $mh "var $f $f\n";	# create dictionary entry for variables
 		print "\t},\n\t'var' => {\n" if ($state ne'var');
 		$state='var';
@@ -80,5 +82,6 @@ while (<>) {
 	die "unknown declaration: '$_'";
 }
 print $mh "label fake $label\n";
+print $mh "label prev $prev\n";
 close $mh;
 print "\t},\n\t'fake' => '$label'\n}\n";

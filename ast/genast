@@ -79,7 +79,8 @@ sub def {
 		print $mh "def $w $l\n"; # create mapping in "dictionary"
 		my $ew=$w;
 		$ew=~s/\"/\\\"/g;
-		print qq([ "def", "$ew", "$l", $immediate, [ );
+		print qq([ "def", "$ew", "$l", $immediate, "$prev), qq(_lfa", [ );
+		$prev=$l;
 		$defs->{$w}=$l;	# for setting up a local mapping
 		$state=2;
 		return 1;
