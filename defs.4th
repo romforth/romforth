@@ -1202,7 +1202,21 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ n lit	// padding escaped by lit
 
 #}if
 
-#{if ARCH ne "msp430" and ARCH ne "z80"
+#{if ARCH eq "6809"
+
+[ Sample machine code for pushing literals on the 6809 looks like this:
+[  0053 36 06                74 .db 0x36, 6
+[  0055 CC                   75 .db 0xCC ; ldd
+[  0056 00 6F                76 .dw #111
+
+[ so the words that needed to be added to the dictionary are:
+[	0x3606 0xCC
+[ Note that the actual literal value (0x006f) is added later (below)
+	0x3606 , 0xCC c,
+
+#}if
+
+#{if ARCH ne "msp430" and ARCH ne "z80" and ARCH ne "6809"
 step_52_assertion_failure_to_catch_missing_literal_modifications
 #}if
 
