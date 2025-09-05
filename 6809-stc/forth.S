@@ -88,8 +88,17 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
 	.ds	100	; reserve 100 bytes for the data stack (grows low)
 dstk:
+
 here: .dw mem
 state: .db 1
+
+latest:
+
+#if USEDICT
+#include "latest.s"
+#endif
+
 mem:  .ds 1024

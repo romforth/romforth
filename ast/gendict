@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+
+# gendict : generate the dictionary headers
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+require("gencode");
+
+my $x=require(shift) or die "parse failed";
+
+my $prev='0';
+
+my $c=$x->{'code'};
+while (my ($k,$v)=each %$c) {
+	$prev=fullheader($k,$v,$prev);
+}

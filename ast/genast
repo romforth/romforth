@@ -71,7 +71,11 @@ sub def {
 		return 0;
 	}
 	if ($state == 1) {
-		$l=$label++;
+		if ($w=~/^[a-z]\w*$/) {
+			$l=$w;
+		} else {
+			$l=$label++;
+		}
 		print $mh "def $w $l\n"; # create mapping in "dictionary"
 		my $ew=$w;
 		$ew=~s/\"/\\\"/g;

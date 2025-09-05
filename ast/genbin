@@ -1,0 +1,58 @@
+#!/usr/bin/perl -w
+
+# genbin : convert the Perl nested array "AST" into native code
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+require("gencode");
+
+use Getopt::Long;
+my ($gendict,$gendefs)=(0,0);
+GetOptions(
+	'dict' => \$gendict,
+	'gendefs' => \$gendefs,
+);
+
+my $f=shift or die "usage: $0 file";
+my $x=require $f or die "parse failed";
+
+my $prefix=$f;
+$prefix=~s/^(\w+).*$/$1/;
+$prefix=~s/\_//g;
+
+my $label;
+
+$label="${prefix}lbl000";
+
+setlabel($label);
+setgendict($gendict);
+
+my $fhash={
+	'word' => \&word,
+	'lit' => \&lit,
+	'skip' => \&skip,
+	'cond' => \&cond,
+	'prim' => \&prim,
+	'def' => \&def,
+	'visit' => \&visit,
+	'loop'	=> \&loop,
+};
+
+my $fn;
+
+sub walk { # walk through the Abstract Syntax Tree
+	my ($t)=@_;
+	for my $i (@$t) {
+		$fn=$fhash->{$i->[0]} or die "unmapped fn ".$i->[0];
+		$fn->($i);
+	}
+}
+#use Data::Dumper; print Dumper($x);
+walk($x);
+if ($gendict) {
+	latest();
+}

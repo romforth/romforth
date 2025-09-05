@@ -1,19 +1,3 @@
-#!/usr/bin/perl -w
-
-# genbin : convert the Perl nested array "AST" into native code
-#
-# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
-# SPDX-License-Identifier: AGPL-3.0-only
-# Please see the LICENSE file for the Affero GPL 3.0 license details
-
-use strict;
-
-my $f=shift or die "usage: $0 file";
-my $x=require $f or die "parse failed";
-
-my $prefix=$f;
-$prefix=~s/^(\w+).*$/$1/;
-
 sub lit {
 	my ($l)=@_;
 	my $o=$l->[1];
@@ -22,13 +6,14 @@ sub lit {
 	print qq(.dw #$o\n);	# $o ; tos <- $o
 }
 
-my $jmp;
-
 sub prim {
 	my ($w)=@_;
 	my $o=$w->[1];
 	print "\t$o ; $w->[0]\n";
 }
+
+my $jmp='';
+
 sub word {
 	my ($w)=@_;
 	my $o=$w->[1];
@@ -55,7 +40,11 @@ sub skip {
 	}
 }
 
-my $label="${prefix}lbl000";
+my $label;
+sub setlabel {
+	my ($l)=@_;
+	$label=$l;
+}
 
 sub cond {
 	my ($s)=@_;
@@ -75,10 +64,31 @@ sub cond {
 	print $l, $c, ":\n";
 }
 
+my $prev="0";
+
+my $gendict=0;
+sub setgendict {
+	my ($v)=@_;
+	$gendict=$v;
+}
+
 sub def {
 	my ($s)=@_;
-	#print "$s->[0]  name:$s->[1],  label:$s->[2], imm: $s->[3]\n";
-	print "$s->[2] : ; $s->[1]\n";
+	my ($w,$l,$imm)=($s->[1], $s->[2], $s->[3]);
+	print "; $s->[0] name:$w, label:$l, imm: $imm\n";
+	if ($gendict) {
+		my $len=length($w);
+		# print "\t.align 1\n";
+		if ($len%2==0) {
+			print "$l","_pad:\t.db 0\n";
+		}
+		print qq{.ascii "$w"\n};
+		$len |= 0x80 if ($imm);
+		print "$l","_nfa:\t.db $len\n";
+		print "$l","_lfa:\t.dw $prev\n";
+		$prev="$l"."_lfa";
+	}
+	print "$l", "_cfa : ; $w\n";
 	my $se = walk($s->[4]);	# expand out the body of the definition
 	print ".db 0x39\n";
 }
@@ -86,7 +96,7 @@ sub def {
 sub visit {
 	my ($s)=@_;
 	#print "$s->[0]  label:$s->[1],  name:$s->[2]\n";
-	print ".db 0xbd\n.dw $s->[1] ; $s->[2]\n";
+	print ".db 0xbd\n.dw $s->[1]", "_cfa ; $s->[2]\n";
 }
 
 sub loop {
@@ -129,25 +139,39 @@ sub loop {
 	#print "\tdrop ; drop\n";
 }
 
-my $fhash={
-	'word' => \&word,
-	'lit' => \&lit,
-	'skip' => \&skip,
-	'cond' => \&cond,
-	'prim' => \&prim,
-	'def' => \&def,
-	'visit' => \&visit,
-	'loop'	=> \&loop,
-};
-
-my $fn;
-
-sub walk { # walk through the Abstract Syntax Tree
-	my ($t)=@_;
-	for my $i (@$t) {
-		$fn=$fhash->{$i->[0]} or die "unmapped fn ".$i->[0];
-		$fn->($i);
+sub header {
+	my ($k,$w,$l,$imm,$prev)=@_;
+	my $len=length($k);
+	# print "\t.align 1\n";
+	if ($len%2==0) {
+		print "$l","_pad:\t.db 0\n";
 	}
+	print qq{.ascii "$w"\n};
+	$len |= 0x80 if ($imm);
+	print "$l","_nfa:\t.db $len\n";
+	print "$l","_lfa:\t.dw $prev\n";
+	$prev="$l"."_lfa";
+	print "$l", "_cfa : ; $k\n";
+	return $prev;
 }
-#use Data::Dumper; print Dumper($x);
-walk($x);
+
+sub ret {
+	print ".db 0x39\n";
+}
+
+sub fullheader {
+	my ($k,$v,$prev)=@_;
+	my ($w,$l,$imm,$a)=@$v;
+	$prev=header($k,$w,$l,$imm,$prev);
+	print join("", @$a);
+	ret();
+	return $prev;
+}
+
+sub latest {
+	open(my $lh, ">latest.s");
+	print $lh "\t.dw $prev\n";
+	close $lh;
+}
+
+1;

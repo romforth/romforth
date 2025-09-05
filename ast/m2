@@ -1,0 +1,32 @@
+#!/usr/bin/perl -w
+
+# m2 : a simpler(?) macro processor (m2 == m4/2)
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+use strict;
+
+my ($v,$vv);
+my $def={};
+
+my $x=require("prims.ast") or die "parse failed";
+for my $n ('code', 'var') {
+	my $l=$x->{$n};
+	while (my ($k,$v)=each %$l) {
+		my ($w,$l,$imm,$a)=@$v;
+		$def->{$k}=$a;
+		$def->{$l}=$a if ($k ne $l);
+	}
+}
+
+while (<>) {
+	if (/^\t(\S+)\s*(\;.*)?/) {
+		 $v=\$def->{$1};
+		 die "$1 is not defined" unless ($vv=$$v);
+		 print join("",@$vv);
+	} else {
+		print;
+	}
+}

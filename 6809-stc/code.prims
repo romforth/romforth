@@ -42,3 +42,4 @@ exit	: .db 0x39
 
 var here
 var state
+var latest
