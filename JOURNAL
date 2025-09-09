@@ -6667,3 +6667,54 @@ will continue to get assembled by the current toolchain and can be tested by
 ucsim_m6809. Ugly, I know, but it works - and so for now I'm going to just
 rubber stamp a "looks good to me" despite the dodginess of it and move on since
 it will be my own cross to bear if/when things go sideways later on in this port
+
+09 Sep '25
+----------
+At the very last step of the 6809-stc port - at "step 62", instead of what I
+hoped would be an "eazy-breezy" conclusion of the port in under a week, I've
+run into what feels like a literal brick wall.
+
+Since step 62 is just a sanity check to see if the ./"dot" Forth word is working
+as expected by printing out a number, I wasn't expecting much trouble at this
+step. But given that the test was failing and since I couldn't see an obvious
+reason for the failure, I started with my usual "print debug" line of defense
+by appending "debug=1" to fpp.config.6809 and re-running `make` and looking at
+the resulting traces in `test.dict`. Unfortunately that didn't show much of
+anything that would be of any use, so I had to resort to the unthinkable:
+change the common code in rom.4th to test what part of the code path was (not?)
+getting exercised - using the following diff:
+
+--- a/rom.4th
++++ b/rom.4th
+@@ -1344,7 +1344,9 @@ if{               [       // not taken
+
+ #{if step>=62
+
++#assert
+ outer          [ > 0xC0FE
++#assert
+
+ #}if
+
+Running with this diff and looking at the output generated in `test.dict` told
+me that the code in step 62 wasn't getting exercised and clearly pointed to a
+breakage at an earlier step which had gone undetected so far. The next obvious
+course of action was to repeat this for each preceding step and working my way
+backwards using this methodology, I found that the failure had actually started
+all the way back at step 50. The traces showed that control was entering step 50
+but never exited from it since the code managed to bail out early and make an
+"early escape" out of the remaining test code. Due to this, none of the tests
+after that (ie step 51 onwards) were even exercised. It was only at step 62 that
+this breakage was detected since that is the only place where a positive check
+for the output from the test is done.
+
+This clearly pointed to a design flaw in the testing infrastructure which can
+allow a failure to be caught only fairly late in the game. So it was abundantly
+clear that I now have not one, but two bugs. The one specific to the 6809-stc
+code was causing an early exit out of the tests and the second "meta level" bug
+was in the way that the test infrastructure was designed which didn't detect
+this "early escape". After quite a bit of thinking through this issue, it seems
+to me that I should fix the test infrastructure first and then fix any resulting
+fallout from that since it is possible that other architectures may also have
+this latent bug which may have gone undetected so far - especially since many
+of the ports don't progress all the way to step 62.
