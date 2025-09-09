@@ -25,6 +25,8 @@
 
 #{if step>=3
 
+1
+
 'o'	[ 'o'
 
 #}if
@@ -1344,7 +1346,13 @@ if{		[	// not taken
 
 #{if step>=62
 
+#testskip
+
 outer		[ > 0xC0FE
+
+#testskip
+
+drop
 
 #}if
 
