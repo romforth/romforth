@@ -22,7 +22,7 @@ all :
 	(cd z80-stc ; make)
 	(cd msp430-fcode ; make)
 	(cd msp430-f ; make)
-	#(cd nqh-zig ; make)
+	(cd nqh-zig ; make)
 	(cd wasm32-c ; make)
 	(cd pdk14-stc ; make)
 	(cd pdk14-thr1 ; make)

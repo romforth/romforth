@@ -6718,3 +6718,12 @@ to me that I should fix the test infrastructure first and then fix any resulting
 fallout from that since it is possible that other architectures may also have
 this latent bug which may have gone undetected so far - especially since many
 of the ports don't progress all the way to step 62.
+
+10 Sep '25
+----------
+Just a note to self since I'd forgotten how to fix the nqh-zig regression due
+to the address/value mismatch that happens at step 13. To fix the regression, I
+used this one-liner:
+	echo 'print *0x2003C0' | gdb forth_defs
+where 0x2003C0 is content of ADDR in fpp.config.nqh. From the resulting output,
+I copy pasted the value at that address into fpp.config.nqh (for VALUE).
