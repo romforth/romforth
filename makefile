@@ -15,7 +15,7 @@ all :
 	(cd msp430-as ; make)
 	(cd arm-zigcc ; make)
 	(cd arm64-sys ; make)
-	#(cd riscv-zigcc ; make)
+	(cd riscv-zigcc ; make)
 	(cd rv64-sys ; make)
 	(cd rv32-sys ; make)
 	(cd msp430-stc ; make)

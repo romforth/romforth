@@ -6725,5 +6725,11 @@ Just a note to self since I'd forgotten how to fix the nqh-zig regression due
 to the address/value mismatch that happens at step 13. To fix the regression, I
 used this one-liner:
 	echo 'print *0x2003C0' | gdb forth_defs
-where 0x2003C0 is content of ADDR in fpp.config.nqh. From the resulting output,
-I copy pasted the value at that address into fpp.config.nqh (for VALUE).
+where 0x2003C0 is the content of ADDR in fpp.config.nqh. From the resulting
+output, I copy pasted the value at that address into fpp.config.nqh (for VALUE)
+
+---
+
+For the regression in riscv-zigcc, I used the same technique:
+	echo 'print *0x101c8' | gdb forth_dict
+and then changed the VALUE in fpp.config.C to match the generated output.
