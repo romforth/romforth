@@ -30,7 +30,7 @@ dip	: push nos ;
 swap	: nip ; dup ; ld tosl, nosl ; ld tosh, nosh ; jp inner
 pick	: ld (rpsave), rp ; dup ; pop rp ; add rp, rp ; add rp, sp ; jp mfetch
 @	: ld (rpsave), rp ; dup ; pop rp ; jp mfetch
-stick	: ld (rpsave), rp ; dup ; pop rp ; add rp, rp ; add rp, sp ; jp mstore
+stick	: ld (rpsave), rp ; nip ; dec ; dup ; pop rp ; add rp, rp ; add rp, sp ; jp mstore
 !	: ld (rpsave), rp ; nip ; dup ; pop rp ; jp mstore
 c@	: jp cfetch
 c!	: jp cstore

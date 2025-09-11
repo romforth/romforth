@@ -6733,3 +6733,103 @@ output, I copy pasted the value at that address into fpp.config.nqh (for VALUE)
 For the regression in riscv-zigcc, I used the same technique:
 	echo 'print *0x101c8' | gdb forth_dict
 and then changed the VALUE in fpp.config.C to match the generated output.
+
+---
+
+The regression in z80 seems to be a bit more involved. Using `runallsteps`, it
+was easy to see that the failure was happening only at step 62. Since this is a
+"note to self" for my own use if/when I hit a similar problem in the future,
+I'll document the debugging steps here in gory detail. I ran the following set
+of commands (which were run in the z80 subdirectory) :
+	echo 'step=61' > stepfile ; make # success
+	cp -r . /tmp/z80
+	echo 'step=62' > stepfile ; make # fail
+	diff -r /tmp/z80 . | less
+In the resulting voluminous diff output, searching for 'bye' and then for '^---'
+will directly take me to the offset where the newer set of rom content is added.
+From there it is a small matter of stepping laboriously through the code and
+figuring out why things are going awry. But rather than do that, I can see that
+the code contains:
+
+``` forth_dict.lst
+>       00078E 34                    1554  .db lit-cold
+>       00078F 89 00                 1555  .dw 137
+>       000791 28                    1556  .db emit-cold
+```
+which is pushing decimal 137 == 0x89 (hex value is on the left) which exactly
+matches the offending byte in the output file while can be dumped using:
+	od -cx test.dict
+so we can conclude that it is the very first #testskip assertion which is
+failing since it expected the TOS to be 1 and it saw something else instead.
+
+Using ucsim's debug features, we can run the following:
+	( echo 'break rom r 0x788' ;
+	echo 'run' ;
+	echo 'info reg' ) |
+	ucsim_z80 -I in=test.in,out=test.dict,if=rom'[0x7fff]' forth_dict
+to take a quick peek at the register contents at the time of the test and that
+content looked like this:
+```
+BC= 0x0004 [BC]= 21  33 !  DE= 0x0004 [DE]= 21  33 !  HL= 0x0034 [HL]= c3 195 .
+IX= 0x0788 [IX]= 34  52 4  IY= 0x0e7a [IY]= 7e 126 ~  SP= 0xfffb [SP]= 01   1 .
+SP limit= 0xf000
+0x000d    dd 23       INC    IX
+```
+
+This clearly shows that the TOS (==BC on the z80) does not contain a 1, but a 4
+and predictably enough that caused the regression. So that moves the cause of
+the regression back one (or more) steps from step 62 to step 61 (or earlier).
+
+So I moved the #testskip around (using a binary search) as shown in the diff
+below until I could tag the cause of the regression all the way back to step 17
+and confirming that adding it before the start of the test in step 17 didn't
+trigger the regression.
+
+```
+--- a/rom.4th
++++ b/rom.4th
+@@ -359,6 +359,8 @@ if{		[	// not taken
+	#assert
+ }if		[
+
++#testskip
++
+ #}if
+
+ #{if step>=18
+@@ -1346,14 +1348,8 @@ if{		[	// not taken
+
+ #{if step>=62
+
+-#testskip
+-
+ outer		[ > 0xC0FE
+
+-#testskip
+-
+-drop
+-
+ #}if
+
+ #}ifdef
+```
+
+Now that I knew that the regression was just a side effect of a bug in the
+implementation of stick on the Z80 which had gone undetected all this while, I
+took a closer look at the code. Seeing the code with fresh eyes after a gap of
+over 2 years, it was clear that the code had a bug and it was easy enough to fix
+it but the overall test failed again and redoing the binary search for the new
+regression led to step 18. Rather than fix multiple bugs in one commit, I'm
+going to defer that fix to a later commit by setting the step limit for the
+tests (just for the z80 port) to 17.
+
+Since adding the assert at step 17 had helped to uncover a bug, at least in the
+z80 implementation, I wanted to leave it in place to prevent bugs in the future,
+but running a toplevel make showed that I'd opened up a whole new can of worms
+since it uncovered regressions in a couple of other ports as well. So I guess
+that counts as 1 step forward and about 4 steps back in terms of progress since
+I had to disable the builds for pdk1-stc, pdk1-thr1, 8051-stc and lower the
+steps for z80 from step 62 to step 17. This change in rom.4th which is common
+code resulted in yet another regression to nqh-zig as well which I've fixed as
+part of this commit by changing the VALUE in fpp.config.nqh and this is starting
+to get a bit old (and tiring) now.

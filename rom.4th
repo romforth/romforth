@@ -359,6 +359,8 @@ if{		[	// not taken
 	#assert
 }if		[
 
+#testskip
+
 #}if
 
 #{if step>=18
