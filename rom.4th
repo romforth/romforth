@@ -371,6 +371,8 @@ if{		[	// not taken
 	#assert
 }if		[
 
+#testskip
+
 #}if
 
 #}ifdef

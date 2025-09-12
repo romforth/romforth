@@ -6833,3 +6833,18 @@ steps for z80 from step 62 to step 17. This change in rom.4th which is common
 code resulted in yet another regression to nqh-zig as well which I've fixed as
 part of this commit by changing the VALUE in fpp.config.nqh and this is starting
 to get a bit old (and tiring) now.
+
+11 Sep '25
+----------
+After spending a fair bit of time struggling with the Z80 instruction set,
+trying to swap tos with the stack pointer at step 18 of the Z80 port (without
+access to the stack, since SP may be zeroed out), and waffling over whether I
+should even bother with a real implementation since we have neither coroutines
+nor task switching currently, I decided to bite the bullet and just do it.
+
+With the newer implementation of sp@!, the z80 port works fine all the way to
+step 62. As with the earlier change to step 17, I've added a #testskip to this
+step to make the test a bit stricter.
+
+Since the common code in rom.4th changed, there was a regression in nqh-zig as
+usual which I'm fixing as part of this commit.

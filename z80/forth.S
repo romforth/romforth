@@ -135,15 +135,16 @@ mstore:
 	ld rp, (rpsave)
 	jp inner
 spfs:
-	ld (rpsave), rp
-	ld rp, #0
-	add rp, sp
-	push rp
-	push tos
-	pop rp
-	pop tos
-	ld sp, rp
-	ld rp, (rpsave)
+	ld nosl, tosl
+	ld nosh, tosh
+	ld (rpsave), hl
+	ld hl, #0
+	add hl, sp
+	ex nos, hl
+	ld tosl, nosl
+	ld tosh, nosh
+	ld sp, hl
+	ld hl, (rpsave)
 	jp inner
 reallit:
 	push tos
