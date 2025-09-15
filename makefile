@@ -7,7 +7,7 @@ all :
 	(cd x86-sys ; make)
 	(cd x86-32 ; make)
 	(cd m68k ; make)
-	#(cd sparc ; make)
+	(cd sparc ; make)
 	(cd z80 ; make)
 	(cd z80-c ; make)
 	(cd z180-sdcc ; make)

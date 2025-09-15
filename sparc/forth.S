@@ -152,8 +152,9 @@ realstick:
 	sub sp, tos, tos
 	ld [sp-4], temp
 	st temp, [tos]
+	add sp, -8, sp
 	jmp i
-	ld [sp-8], tos
+	ld [sp], tos
 
 spswap:
 	mov tos, sp
