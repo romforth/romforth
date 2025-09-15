@@ -6848,3 +6848,26 @@ step to make the test a bit stricter.
 
 Since the common code in rom.4th changed, there was a regression in nqh-zig as
 usual which I'm fixing as part of this commit.
+
+15 Sep '25
+----------
+So now that the z80 port regressions are resolved and it works fine all the way
+to step 62, it is time to re-enable the build of pdk14-stc (among others) which
+had been disabled so that I could focus my attention on solving just one bug at
+a time.
+
+Debugging the pdk14-stc port showed that the stack contents were getting munged
+starting all the way back at step 4.1 and this was because of the hack that I
+had used to code j/jz/jnz on the pdk14 (as I'd documented in pdk14-stc/genrom
+as a "huge kludge"). Yuuge, really!
+
+So rather than fix the regression by changing the code which will have various
+knock on effects and make the fragile pdk code even hairier, I've hacked around
+it by changing the value expected on the stack which counts as yet another ugly
+kludge.
+
+As I've done in the previous commits, I've added an assert at an earlier point
+so as to catch similar bugs, in future ports, as early as possible, but doing
+that caused yet another regression in nqh-zig (and riscv-zigcc, as usual) which
+I've fixed (as usual). In addition, it also caused an all new regression, this
+time in the sparc build, so I've disabled that build for now.

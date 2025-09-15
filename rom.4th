@@ -25,7 +25,7 @@
 
 #{if step>=3
 
-1
+5
 
 'o'	[ 'o'
 
@@ -135,6 +135,8 @@ if{		[	// taken
 }else{		[	// not taken
 	#assert
 }if		[
+
+#testskip
 
 #}if
 

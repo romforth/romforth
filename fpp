@@ -85,7 +85,7 @@ sub replacevar {
 	die "unknown variable $k";
 }
 
-my $test=1;
+my $test=5;
 
 sub starting {
 	my ($f)=@_;
