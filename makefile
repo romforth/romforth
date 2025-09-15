@@ -25,7 +25,7 @@ all :
 	(cd nqh-zig ; make)
 	(cd wasm32-c ; make)
 	(cd pdk14-stc ; make)
-	#(cd pdk14-thr1 ; make)
+	(cd pdk14-thr1 ; make)
 	(cd 6502-sdcc ; make)
 	(cd 6502-stc ; make)
 	(cd f16-zig ; make)
