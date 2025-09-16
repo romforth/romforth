@@ -6887,3 +6887,30 @@ Although I'm tempted to sprinkle even more of the the stack checks, especially
 at steps 4.[3,4,5] where the control flow can get a bit hairy, I'm afraid that
 it will bloat up the ROM requirements even more so I'm not going to do it for
 now.
+
+With the regression in 8051-stc now fixed, I think all of the regressions that
+were uncovered by adding #testskip have now been resolved satisfactorily. The
+name "#testskip" was chosen since I was trying to figure out why the test at
+step 62 in the 6809-stc port was skipped. With hindsight, I now realize that a
+better name for it is likely "#stackcheck" since that is what it is really
+checking, so it makes sense to go ahead and rename it. Naming _is_ hard.
+
+With all of that out of the way, and before I go back to address the bug in the
+6809-stc implementation that I ran into at step 62 which was the entire impetus
+for tightening the tests, I took a look at all of the regressions that were
+uncovered by the additional stack checks that were added recently. Here's a
+quick summary:
+
+z80 : step 17 : reimplement stick : off by one bug
+sparc : step 17 : reimplement stick : Changed the code from *(sp-1) to *--sp
+z80 : step 18 : reimplement sp@! : don't use the stack when SP is 0
+nqh-zig : inconsequential changes
+riscv-zigcc : inconsequential changes
+pdk14-thr1 : lack of ROM space, workaround it by disabling tests
+pdk14-stc : step 5 : workaround for kludgy stuff done in steps 4.x
+8051-stc : step 4.3 : Confusion between using registers a/r1 for the test
+
+I don't see much of a pattern to this other than the fact that 2 ports ran into
+a bug in the implementation of 'stick' where the stack manipulation can get a
+bit tricky. I'm hopeful that the additional stack checks will go a long way to
+ensure that bugs like this don't creep in to future ports.

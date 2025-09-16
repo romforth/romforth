@@ -136,7 +136,7 @@ if{		[	// taken
 	#assert
 }if		[
 
-#testskip
+#stackcheck
 
 #}if
 
@@ -361,7 +361,7 @@ if{		[	// not taken
 	#assert
 }if		[
 
-#testskip
+#stackcheck
 
 #}if
 
@@ -373,7 +373,7 @@ if{		[	// not taken
 	#assert
 }if		[
 
-#testskip
+#stackcheck
 
 #}if
 
@@ -1352,11 +1352,11 @@ if{		[	// not taken
 
 #{if step>=62
 
-#testskip
+#stackcheck
 
 outer		[ > 0xC0FE
 
-#testskip
+#stackcheck
 
 drop
 

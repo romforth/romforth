@@ -110,7 +110,7 @@ sub starting {
 		return 1;
 	}
 	my $nstep=$test+1;
-	s/\#testskip/$test - if\{ \#assert \}if $nstep/ and $test=$nstep;
+	s/\#stackcheck/$test - if\{ \#assert \}if $nstep/ and $test=$nstep;
 	s/\#assert/$err emit/ and $err++;
 	return 0;
 }
