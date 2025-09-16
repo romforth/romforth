@@ -6871,3 +6871,19 @@ so as to catch similar bugs, in future ports, as early as possible, but doing
 that caused yet another regression in nqh-zig (and riscv-zigcc, as usual) which
 I've fixed (as usual). In addition, it also caused an all new regression, this
 time in the sparc build, so I've disabled that build for now.
+
+16 Sep '25
+----------
+Re-enabling the build for 8051-stc with the newer/stricter stack checks in place
+showed that it had a bug too, introduced all the way back at step 4.3 while I
+was still figuring out control flow on the 8051. Looking back at the timestamps
+on the git commits it is clear that this change was done seemingly in a bit of
+a hurry, in the middle of a marathon ~13 hour coding session when I assume I
+must have been in full "flow" mode which saw most of the hard parts of the 8051
+port get fleshed out in just one day. I'm kind of drawn to the conclusion that
+the lesson here might be "code in a hurry, repent in leisure, debugging".
+
+Although I'm tempted to sprinkle even more of the the stack checks, especially
+at steps 4.[3,4,5] where the control flow can get a bit hairy, I'm afraid that
+it will bloat up the ROM requirements even more so I'm not going to do it for
+now.

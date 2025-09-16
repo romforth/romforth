@@ -30,7 +30,7 @@ all :
 	(cd 6502-stc ; make)
 	(cd f16-zig ; make)
 	(cd 8051-sdcc ; make)
-	#(cd 8051-stc ; make)
+	(cd 8051-stc ; make)
 	(cd 6809-stc ; make)
 
 allsteps :

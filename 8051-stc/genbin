@@ -44,12 +44,10 @@ sub skip {
 	if ($jmp eq 'j') {
 		print ".db 0x80, $o ; sjmp offset\n";
 	} elsif ($jmp eq 'jz') {
-		print "cpl a\n";
 		print "mov r1, a\n";
 		print "\tdrop ; drop\n";
-		print ".db 0xB9, 0, $o ; cjne r1, #0, offset\n";
+		print ".db 0xB9, 1, $o ; cjne r1, #1, offset\n";
 	} elsif ($jmp eq 'jnz') {
-		print "nop\n"; # to keep the number of bytes the same as jz
 		print "mov r1, a\n";
 		print "\tdrop ; drop\n";
 		print ".db 0xB9, 0, $o ; cjne r1, #0, offset\n";
