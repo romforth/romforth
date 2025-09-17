@@ -6914,3 +6914,23 @@ I don't see much of a pattern to this other than the fact that 2 ports ran into
 a bug in the implementation of 'stick' where the stack manipulation can get a
 bit tricky. I'm hopeful that the additional stack checks will go a long way to
 ensure that bugs like this don't creep in to future ports.
+
+17 Sep '25
+----------
+Now that all of the regressions that were recently uncovered are resolved, I'm
+starting to look at the failure that happened in step 62 for the 6809-stc port.
+
+As I had mentioned previously in the JOURNAL entry of 09 Sep '25, that failure
+actually started all the way back at step 50 of the 6809-stc port but went
+undetected until step 62. Note that triggering this failure early using the
+newly introduced `#stackcheck` macro is not possible since the code is just
+bailing out too early and not traversing this code path at all so I need some
+kind of, what I'll call a "positive check", to verify that control reaches this
+part of the code. I've added this check to the common code in rom.4th and
+luckily enough, no new regressions have surfaced in any of the other ports so
+far.
+
+The new check does trigger the failure in the 6809-stc port as expected so I've
+moved the step value back to 49 for just this port. My plan is to debug it and
+make the changes that will be needed to fix this issue separately in a later
+commit.

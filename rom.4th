@@ -1086,6 +1086,8 @@ if{	[ addr n		// not taken
 
 #{if step>=49
 
+bl
+
 immediate	[		// marks foo from step 48 as an immediate word
 32		[ 32 < "foo "
 parse		[ addr n (addr:"foo")
@@ -1097,6 +1099,8 @@ if{		[ addr n	// not taken
 	#assert
 }if		[ addr n
 2drop		[
+
+emit
 
 #}if
 
