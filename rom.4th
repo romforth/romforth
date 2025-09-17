@@ -1106,6 +1106,8 @@ emit
 
 #{if step>=50
 
+'o'
+
 [ The previous set of tests had create'd "foo" in the dictionary without a body
 [ so we now flesh it out in this test with just an "exit" but since it is a
 [ definition, arch specific gyrations are needed. On the PDP11 for example, we
@@ -1178,6 +1180,8 @@ if{		[ addr		// not taken
 	#assert
 }if
 drop		[
+
+emit
 
 #}if
 

@@ -29,6 +29,9 @@ m !
 #{if step>=49
  
 #}if
+#{if step>=50
+o
+#}if
 #{if step>=62
  0xC0FE
 #}if
