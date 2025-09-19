@@ -6934,3 +6934,24 @@ The new check does trigger the failure in the 6809-stc port as expected so I've
 moved the step value back to 49 for just this port. My plan is to debug it and
 make the changes that will be needed to fix this issue separately in a later
 commit.
+
+19 Sep '25
+----------
+Debugging the failure at step 50 shows that the overt cause of the problem is
+the definition of `exit` which currently is just an `rts` (and since this port
+is using "binary assembly", we use the actual opcode: 0x39) which causes the
+code to bail out early so that it never exercised any of the code between steps
+50 to 62. Just like the debug steps that I used to debug the z80 regression on
+10 Sep '25 (see the older JOURNAL entry), I used the following set of commands
+to look at the code in some detail to figure out what was going on at step 50:
+	rm'' -rf /tmp/6809
+	echo 'step=49' > stepfile ; make # success
+	cp -r . /tmp/6809
+	echo 'step=50' > stepfile ; make # fail
+	diff -r /tmp/6809 . | less
+The first thing that stood out in the diff was that I had used the wrong value
+of LITC (a hold over from the fact that the fpp.config was a copy of 6502-stc)
+so I decided to change that first. I also ran:
+	./runallsteps 6809-stc
+to catch any regressions in any of the previous steps due to this change which
+showed no regression up to step 49 so I'll go ahead and merge that change.
