@@ -6955,3 +6955,96 @@ so I decided to change that first. I also ran:
 	./runallsteps 6809-stc
 to catch any regressions in any of the previous steps due to this change which
 showed no regression up to step 49 so I'll go ahead and merge that change.
+
+22 Sep '25
+----------
+To summarize the situation so far, step 62 of the 6809-stc fails because the
+code from step 50 onwards is not executed but this bug was found only at step
+62 since it was the only one which checked for an output ie a "positive check".
+
+As I mentioned in the previous entry, the early bailout from the tests is due
+to the the use of 'exit' (within the #{if big_endian==0 preprocessed block) of
+step 50. This brought up yet another side quest about whether the 6809 is a
+"big_endian" architecture. Based on the layout of the 16 bit registers, (when
+they are saved in memory), as documented in page 41 of the 6809 docs, I assume
+that it is big endian like most other Motorola processors. But I'm going to
+resist the urge to continue on that side quest since fixing that will require
+yet another detour from what I want to focus on just now which is to get step 62
+of the 6809-stc port working.
+
+Looking at the history, 'exit' was defined that way at step 33 following the
+6502-stc template (since it is required by the definition of ~/"signum") but
+if you follow the trail deep enough, it becomes obvious that the real problem
+was the empty definition of 'lit' (defined all the way back at step 21). It is
+clear that we need a working version of 'lit' at step 50 since the escaping
+mechanism used in step 50 depends on it - to be able to "quote" the "exit" that
+comes after it.
+
+The empty implementation of 'lit' was done on Sep 3 when I successfully got
+the 6809-stc implementation steps 8 - 40 done in just one 8 hour session. And I
+see that it also follows the "code in a hurry, repent in leisure, debugging"
+principle that I'm starting to recognize (see my earlier entry of 16 Sep '25).
+
+The dummy/placeholder implementation of 'lit' was probably based on the empty
+definition of 'lit1' in the 8051-stc port which was probably fairly fresh in my
+memory at that time. But now that I'm looking at the other implementations for
+comparison with this one, it is clear that of the 2 STC ports that made it all
+the way to the end (ie all the way to step 62), the z80 and msp430 ports used a
+completely different means of handling "lit" where it was hardcoded into the
+"genrom" script (by using the "evalstr" code path, which looks pretty kludgy,
+in hindsight).
+
+Stepping back to take a look at the big picture, the problem I was trying to
+solve by using 'lit' was that I needed some means of pushing an address of a
+primitive/defined Forth word on to the stack so that it can be exec'ed. This is
+typically solved in Forth by using COMPILE which is usually implemented as:
+	: COMPILE R> DUP @ , CELL+ >R ; ( this is from the eforth implementation )
+which gets the address of the next word in the input and saves it into the
+dictionary.
+
+In the very first implementation of 'exec' (see the ancient commit dated 23 Oct
+2022 with commit id e69e01c9ef228a54546371edc0ff660788211d39), for the test part
+of the code, I needed to have an address on the stack that could be exec'ed and
+for this I used the expedient method of prefixing a word with 'lit' to achieve
+the same effect as COMPILE since the implementation of COMPILE could only be
+done after exec/enter/exit were in place and at that point of the port, it was
+way too early to have all of that working.
+
+Even at that early stage, you can see how grungy the test code looks given that
+I used "lit emit lit" rather than "lit emit" since the x86 literals were coded
+to be 16 bit immediate values and the trailing "lit" is just used for padding
+out a byte to flesh out the single byte "emit" to a little endian zero padded
+16 bit value.
+
+This ugliness then spilled over into the need for an "offset" value in the
+configuration file (see commit id e87b208e35e9e888d4cb2765c9188fec17bd2c5f) to
+handle the case where a address was already word sized, with even more ugliness
+to follow at commit id b89802d24f1deaaa5d02083e65e11031920f692a onwards where
+the padding needed to be modified depending on the architecture's word length.
+
+So to sum up the problem, I need a way of using the equivalent of the COMPILE
+Forth word - without having to define it first. Note that 'lit' has worked fine
+so far. The definition of 'lit' can be expressed in C code as:
+	lit : dup; tos=*ip++;
+This works fine in most cases except for STC where some kind of assembly level
+immediate addressing mode is needed. Using "binary assembly" to shove in .db/.dw
+combos might work but will break in cases where the immediate value is embedded
+as part of the instruction. The "evalstr" hack was how I tried to solve it for
+STC. But now, in the brave new world of genast/genbin/gencode, the double duty
+performed by 'lit' causes more problems than it solves.
+
+A secondary problem that I now recognize with the "evalstr" approach used in the
+z80/msp430 codebases is that they assume a dictionary exists since there is an
+explicit reference to the CFA. This might be a workable solution given how the
+stepwise implementation is done but it can cause problems when we need to, for
+example, reverse direction (to take a given implementation and try to shrink it
+down, say, from "threeforth" to "twoforth")
+
+The current solution that I'm considering is to split the special purpose use
+of "lit" when it is used like this:
+	lit foo [ ... other padding stuff elided ... ] exec
+into something that looks like this instead:
+	cfa foo exec
+and this will also get rid of the "offset" configuration variable. Since this
+will introduce a fair bit of churn to the existing code base, I'm still thinking
+through other options as well.
