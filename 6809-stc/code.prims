@@ -33,7 +33,7 @@ rp@!	:
 >r	: .db 0x34, 6 ; drop
 r>	: dup ; .db 0x35, 6
 lit	:
-exec	:
+exec	: .db 0xbd ; .dw trampoline
 call	: .db 0xbd ; .dw trampoline
 <<	: .db 0xbd ; .dw shiftleft
 >>	: .db 0xbd ; .dw shiftright

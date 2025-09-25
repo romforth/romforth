@@ -145,6 +145,21 @@ sub runendfor {
 	}
 }
 
+my $comp=0;
+sub compile {
+	my ($w)=@_;
+	if ($w eq 'cfa') {
+		$comp=1;
+		return 1;
+	} elsif ($comp==0) {
+		return 0;
+	} else {
+		print "[ 'cfa', '$w' ],\n";
+		$comp=0;
+		return 1;
+	}
+}
+
 print '[';
 while (<>) {
 	s/^\[$// && next;		# standalone picture comment: [
@@ -152,6 +167,7 @@ while (<>) {
 	s/\s+\[$//;				# embedded picture comment: foo [
 	s/\s+\[\s+.*$//;		# trailing comment: foo [ 1 2 3
 	for my $w (split) {
+		next if compile($w);                                            #cfa
 		next if def($w);
 		if ($w eq 'loop{') { print '[ "loop", [', "\n"; next}           #loop{
 		if ($w eq '}while{') { print '],1,[', "\n"; next}               #}while{

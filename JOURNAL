@@ -7048,3 +7048,17 @@ into something that looks like this instead:
 and this will also get rid of the "offset" configuration variable. Since this
 will introduce a fair bit of churn to the existing code base, I'm still thinking
 through other options as well.
+
+25 Sep '25
+----------
+I think I've spent enough time ruminating over the various options and I guess
+it is now time to "just code it" and see how things pan out.
+
+As I discussed in the previous JOURNAL entry of 22 Sep '25, I'll use "cfa foo"
+to quote foo to use its address for exec and since that involves changes to the
+common code in rom.4th, I've decided to add yet another configuration variable
+called USECFA which gates the new code so as to reduce the blast radius of the
+changes to just the 6809-stc port. The new code will be invisible to the older
+ports while the older code needs to be invisible to the 6809-stc port so this
+ended up needing support for #{ifndef ... #}ifndef in the fpp preprocessor in
+addition to the #{ifdef ... #}ifdef directives.

@@ -433,6 +433,11 @@ if{		[	// not taken
 
 1		[ 1
 2		[ 1 2
+#{if USECFA==1
+cfa		[ 1 2	// cfa is equivalent to COMPILE and quotes the ...
+swap		[ 1 2 swap_cfa	// ... next word so its cfa will be pushed
+#}if
+#{ifndef USECFA
 #{if THREAD!=5 and THREAD!=6 and THREAD!=8
 lit		[ 1 2	// lit escapes the following byte(s)
 #}if
@@ -454,6 +459,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ 1 2	// padding escaped by lit
 #{if big_endian==1
 swap		[ 1 2	// escaped by lit
 #}if
+#}ifndef
 exec		[ 2 1
 -		[ 1
 dec		[ 0

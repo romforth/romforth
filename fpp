@@ -99,6 +99,15 @@ sub starting {
 		}
 		return 1;
 	}
+	if (/^\#\{ifndef\s+(\S+)$/) {
+		push @$states, $state;
+		if ($hash->{$1}) {
+			$state=2;
+		} else {
+			$state=$f;
+		}
+		return 1;
+	}
 	if (/^\#\{if\s+(.*)$/) {
 		push @$states, $state;
 		my $m=replace($1);
@@ -118,6 +127,10 @@ sub starting {
 sub stopping {
 	return 1 if starting(@_);
 	if (/^\#\}ifdef$/) {
+		$state=pop @$states;
+		return 1;
+	}
+	if (/^\#\}ifndef$/) {
 		$state=pop @$states;
 		return 1;
 	}
