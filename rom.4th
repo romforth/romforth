@@ -1198,6 +1198,8 @@ emit
 #}if
 
 #{if step>=51
+
+'k'
 		[ < "bar bar "
 :		[ \ nfa lfa prefix
 ;		[ \ exit
@@ -1222,6 +1224,8 @@ if{		[ addr		// not taken
 	#assert
 }if
 drop		[
+
+emit
 
 #}if
 
