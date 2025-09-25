@@ -1119,6 +1119,11 @@ emit
 [ definition, arch specific gyrations are needed. On the PDP11 for example, we
 [ need to add the linkage instruction 0x080c ("JSR ip, (nr)"). On x86, the
 [ "exit" token on its own is sufficient.
+#{if USECFA==1
+cfa		[ 		// cfa is equivalent to COMPILE and quotes ...
+exit		[ exit_cfa	// ... the next word so its cfa will be pushed
+#}if
+#{ifndef USECFA
 #{if THREAD!=5
 lit		[ 	// lit escapes the following byte(s)
 #}if
@@ -1140,6 +1145,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ exit	// padding escaped by lit
 #{if big_endian==1
 exit		[ exit	// escaped by lit
 #}if
+#}ifndef
 
 #{if THREAD==1
 c,		[ \ exit	// append exit to the dictionary,
