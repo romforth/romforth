@@ -1317,6 +1317,8 @@ if{		[	// not taken
 	#assert
 }if
 
+bl emit
+
 #}if
 
 #{if step>=57

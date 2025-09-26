@@ -7062,3 +7062,16 @@ changes to just the 6809-stc port. The new code will be invisible to the older
 ports while the older code needs to be invisible to the 6809-stc port so this
 ended up needing support for #{ifndef ... #}ifndef in the fpp preprocessor in
 addition to the #{ifdef ... #}ifdef directives.
+
+26 Sep '25
+----------
+After successfully working through steps 50 and 51 yesterday, I thought I was
+mostly done by trying to speed run through the rest of the steps but at step 57
+I ran into the problem that the 6809-stc port was not modeled after the older
+msp430-stc/z80-stc ports but the newer 6502-stc/8051-stc ports which currently
+use the definitions of j/jz/jnz in code.prims rather than hardcode them via
+genbin/gencode.
+
+While I'm thinking through how I should resolve that, I want to add a sanity
+checkpoint before embarking on fixing up step 57 by adding an additional check
+at the previous step 56 since I'm feeling a little extra bit cautious today.
