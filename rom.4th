@@ -1330,6 +1330,8 @@ if{		[	// not taken
 	#assert
 }if
 
+'H' emit
+
 #}if
 
 #{if step>=58

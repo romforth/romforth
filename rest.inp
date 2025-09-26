@@ -25,6 +25,9 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 ;
 [ // if{ is just syntax sugar replacement for the traditional Forth IF keyword
 : if{
+
+#{ifndef USECFA
+
 #{if THREAD!=3
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
@@ -54,6 +57,9 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	offset,	[ \ jz
 	offset	[ h \ 0
 #}if
+
+#}ifndef
+
 #{if THREAD==4
 
 #{if ARCH eq "msp430"
@@ -93,6 +99,26 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	0 c,	[ \ 0		// reserved for the offset
 	here	[ here
 	@	[ h
+#}if
+
+#{if ARCH eq "6809"
+[ // machine code for the "conditional jump if zero" looks like this:
+[ //	0100 10 83 00 00         169 .db 0x10, 0x83, 0, 0	; cmpd #0
+[ //	0104 37 06               170 .db 0x37, 6		; drop
+[ //	0106 27 0A               171 .db 0x27, 10		; beq ...
+[ // Unlike MSP430 and Z80, the 6809 was modeled after the 6502 and so it does
+[ // not have a jz_cfa so we just generate all the code required explicitly
+[ // and then reserve 1 byte for the actual jump offset to be "patch"ed later
+	4227	[ 0x1083	// cmpd
+	,	[ \ 0x10 0x83
+	0	[ 0		// #0
+	,	[ \ 0 0
+	14086	[ 0x3706	// drop
+	,	[ \ 0x37 0x06
+	9984	[ 0x2700	// the 6809 uses 2 bytes for a conditional jump
+	,	[ \ 0x27 0	// 1 byte for the beq + 1 byte for the offset
+	here	[ here		// the byte offset is zero filled
+	@	[ h		// and will be "patch"ed later
 #}if
 
 #}if
@@ -169,7 +195,7 @@ immediate
 	!	[ (a:op)	// store it back
 #}if
 
-#{if ARCH eq "z80"
+#{if ARCH eq "z80" or ARCH eq "6809"
 	c!	[ (a:n)
 #}if
 

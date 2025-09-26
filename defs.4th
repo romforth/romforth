@@ -1593,6 +1593,8 @@ def{ outer
 [ // only when used as a prefix to the byte(s) that they precede. So, this is
 [ // just a workaround to provide a means of getting their "primitive" values.
 def{ #jz
+
+#{ifndef USECFA
 #{if THREAD!=5
 	lit	[	// to escape the next "token"
 #}if
@@ -1614,6 +1616,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 #{if big_endian==1
 	jz	[ jz	// so as to get jz on the stack
 #}if
+#}ifndef
 
 }def
 
