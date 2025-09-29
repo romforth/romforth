@@ -207,7 +207,7 @@ def{ .			[ n
 	32 emit		[ n > SPACE
 	48 emit		[ n > 0
 	120 emit	[ n > x
-	$CELL 2 <<	[ n s	// length of the display is 4*cell nibbles
+	$CELL 3 <<	[ n s	// length of the display is 4*cell nibbles
 	loop{		[ n s
 		dup	[ n s s
 	}while{		[ n s
@@ -537,6 +537,7 @@ def{ find			[ addr n
 'i' emit
 'n' emit
 'd' emit
+10 emit
 #}if
 	loop{			[ addr n lfa
 #{if debug==1
@@ -546,11 +547,17 @@ dup .
 	}while{			[ addr n lfa		// lfa != 0
 		match		[ addr n lfa flag	// see if it matches
 		if{		[ addr n lfa		// flag != 0
+#{if debug==1
+10 emit
+#}if
 			exit	[ addr n lfa		// return the lfa
 		}else{		[ addr n lfa (lfa:p)	// flag == 0
 			@	[ addr n lfa:p		// move to next entry
 		}if		[ addr n lfa		// flag == 0
 	}loop			[ addr n lfa		// return lfa:0
+#{if debug==1
+10 emit
+#}if
 }def
 
 #}if
@@ -953,6 +960,7 @@ def{ immediate	[
 [ append the byte at the top of the stack to the dictionary (with allocation)
 def{ c,		[ c
 #{if debug==1
+10 emit
 dup .
 'c' emit
 ',' emit
@@ -988,6 +996,7 @@ def{ s,		[ c
 [ the available dictionary entry is expected to be aligned
 def{ ,		[ n
 #{if debug==1
+10 emit
 dup .
 ',' emit
 #}if

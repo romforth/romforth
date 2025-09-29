@@ -7075,3 +7075,26 @@ genbin/gencode.
 While I'm thinking through how I should resolve that, I want to add a sanity
 checkpoint before embarking on fixing up step 57 by adding an additional check
 at the previous step 56 since I'm feeling a little extra bit cautious today.
+
+29 Sep '25
+----------
+While redoing step 57 in the previous commit I had needed to do a fair bit of
+debugging to get it to work since I'd initially used hex values instead of
+decimals in `rest.inp` - mostly because I'd forgotten that they needed to be
+decimal numbers - since they are handled by the minimal outer interpreter which
+currently doesn't have any support for hex constants.
+
+After rewriting them as decimals, things had worked as expected but the fact
+that figuring it out took me a while got me motivated enough to fix the debug
+logging code so that it might have been a bit easier to catch.
+
+Now, since we are well past step 39, print debugging using 'debug=1' in the
+config'uration file (`fpp.config.6809`, for example) is all that is needed to
+get a fairly voluminous and useful trace. Except that it is all on one line. So
+fixing that up was the first order of business which is now taken care of with
+a few strategically placed line feeds. With that out of the way, I found that
+the output from ./"dot" seemed to have a bug as well since the hex output in
+the debug log did not match the expected values (for some of the constants in
+`rest.inp` that I was looking at). That bug seems to have crept in over 2 years
+ago but seems to have gone undetected so far. I've now fixed that bug as part
+of this commit.
