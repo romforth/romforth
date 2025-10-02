@@ -196,6 +196,9 @@ immediate
 #}if
 
 #{if ARCH eq "z80" or ARCH eq "6809"
+#{if debug==1
+	10 emit 112 emit 97 emit 116 emit 99 emit 104 emit over over . . 10 emit
+#}if
 	c!	[ (a:n)
 #}if
 
@@ -240,6 +243,9 @@ immediate
 [ "jump" compiles in the "j" operator and the placeholder for the offset
 [ for "subroutine threaded code"/STC, it compiles in the machine code for "jmp"
 : jump
+
+#{ifndef USECFA
+
 #{if THREAD!=3
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
@@ -269,6 +275,9 @@ immediate
 	offset,	[ \ j
 	offset	[ h \ 0
 #}if
+
+#}ifndef
+
 #{if THREAD==4
 
 #{if ARCH eq "msp430"
@@ -292,6 +301,15 @@ immediate
 	,	[ \ 0x18 0xC9		// so we just use that as the filler
 	here	[ here			// which will be "patch"ed up ...
 	@	[ h			// ... later
+#}if
+
+#{if ARCH eq "6809"
+[ // machine code for the "unconditional jump" looks like this:
+[ //	011F 20 0A               185 .db 0x20, 10	; bra ...
+	8197	[ 0x2000	// jmp opcode is 0x20 with 1 byte offset
+	,	[ \ 0x20 0	// stick that unconditional jump into the
+	here	[ here		// dictionary and then leave the current offset
+	@	[ h		// to be "patch"ed up later
 #}if
 
 #}if

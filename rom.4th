@@ -1323,6 +1323,8 @@ bl emit
 
 #{if step>=57
 
+'H'
+
 outer		[ 0 1 1
 -		[ 0 0
 +		[ 0
@@ -1330,7 +1332,7 @@ if{		[	// not taken
 	#assert
 }if
 
-'H' emit
+emit
 
 #}if
 

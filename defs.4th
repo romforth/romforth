@@ -1594,6 +1594,10 @@ def{ outer
 
 #{if step>=57
 
+#{if debug==1
+def{ qdup dup if{ dup }if }def
+#}if
+
 #{if THREAD==5 or THREAD==4 or THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
 
 [ // primitives such as lit, j/jz/jnz etc which use "immediate addressing"
@@ -1635,10 +1639,15 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 
 #{if step>=58
 
+#{if debug==1
+def{ baz if{ 1 }else{ 0 }if }def
+#}if
+
 #{if THREAD==5 or THREAD==4 or THREAD==3 or THREAD==1 or (THREAD==2 and prim_var_deref==1)
 
 [ // see the comment for #jz above for the details of why this is needed
 def{ #j
+#{ifndef USECFA
 #{if THREAD!=5
 	lit	[	// to escape the next "token"
 #}if
@@ -1660,6 +1669,7 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ lit	// padding escaped by lit
 #{if big_endian==1
 	j	[ j	// so as to get j on the stack
 #}if
+#}ifndef
 
 }def
 
