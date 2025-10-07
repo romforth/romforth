@@ -1338,12 +1338,16 @@ emit
 
 #{if step>=58
 
+'o'
+
 outer		[ 0 1
 -		[ -1
 inc		[ 0
 if{		[	// not taken
 	#assert
 }if
+
+emit
 
 #}if
 
