@@ -1368,12 +1368,16 @@ emit
 
 #{if step>=60
 
+bl
+
 outer		[ 45		// tests the definition of the sum of n numbers
 45		[ 45 45		// implemented using an until loop : sum(10)=45
 -		[ 0
 if{		[	// not taken
 	#assert
 }if
+
+emit
 
 #}if
 
