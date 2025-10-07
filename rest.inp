@@ -402,6 +402,7 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 [	// this is just a few dummy { to balance out the unbalanced braces
 [ // }until{ is just like }while{ except the jump condition is reversed
 : }until{
+#{ifndef USECFA
 #{if THREAD!=3
 #{if prim_var_deref==1
 [ THREAD==1 and prim_var_deref==1 => x86-user
@@ -431,6 +432,7 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	offset,	[ \ jnz
 	offset	[ h \ 0
 #}if
+#}ifndef
 #{if THREAD==4
 
 #{if ARCH eq "msp430"
@@ -469,6 +471,26 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 	0 c,	[ \ 0		// reserved for the offset
 	here	[ here
 	@	[ h
+#}if
+
+#{if ARCH eq "6809"
+[ // machine code for the "conditional jump if non zero" looks like this:
+[ //	00CD 10 83 00 00         142 .db 0x10, 0x83, 0, 0 ; cmpd #0
+[ //	00D1 37 06               143  .db 0x37, 6
+[ //	00D3 26 F9               144 .db 0x26, -7 ; bne XX
+[ // Unlike MSP430 and Z80, the 6809 was modeled after the 6502 and so it does
+[ // not have a jnz_cfa so we just generate all the code required explicitly
+[ // and then reserve 1 byte for the actual jump offset to be "patch"ed later
+	4227	[ 0x1083	// cmpd
+	,	[ \ 0x10 0x83
+	0	[ 0		// #0
+	,	[ \ 0 0
+	14086	[ 0x3706	// drop
+	,	[ \ 0x37 0x06
+	9728	[ 0x2600	// the 6809 uses 2 bytes for a conditional jump
+	,	[ \ 0x26 0	// 1 byte for the bne + 1 byte for the offset
+	here	[ here		// the byte offset is zero filled
+	@	[ h		// and will be "patch"ed later
 #}if
 
 #}if
