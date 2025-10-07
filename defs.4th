@@ -1893,6 +1893,54 @@ def{ compile	[	| w ]
 	drop		[
 #}if
 
+#{if ARCH eq "6809"
+
+[ // See also the arch specific implementation for MSP430/Z80 above
+[ // Note: much of this code is not arch specific, but better safe than sorry
+
+[ // Also most of this could be retrofitted into the current version of compile
+[ // but since the existing version of 'compile' is already pretty hairy, it
+[ // seems prudent to separate this out and not make it any more unreadable.
+
+[ // the calling code is expected to have the following layout:
+[ //	addr:	jsr compile	#	| 0xBD | compile |
+[ //	addr+3:	jsr foo_cfa	#	| 0xBD | foo_cfa |
+[ // and 'w' will be pointing at addr+3 when compile is being executed. Ideally
+[ // all we need to do is to copy the 3 bytes starting at 'w' and push addr+6
+[ // back on the stack for the matching return instruction. But this breaks
+[ // when >r or r> are being compile'd since their semantics expects expansion
+[ // in place (or at least, an unchanged return stack). So the ugly bandaid
+[ // that this version of 'compile' implements is to expand/copy over the
+[ // body of the definition instead of calling it (just like a macro expansion
+[ // except it happens at run time)
+	3 +	[ w w+3
+	>r	[ w	| w+3 ]
+[ // as explained above, the body of the cfa needs to be expanded in place so I
+[ // use the expedient approach of just copying everything upto the terminating
+[ // ret'urn instruction. Note that this will not work for larger routines that
+[ // may embed the ret'urn instruction within the body of the subroutine but in
+[ // this restricted case where we know that will not happen, it is fine to do
+[ // so, although it means we are living a little dangerously.
+	inc		[ w+1	(w:CALL, w+1:cfa)
+	@		[ cfa
+	loop{		[ c:cfa
+		dup	[ c c
+		c@	[ c b	(b:c)
+		dup	[ c b b
+		0x39	[ c b b r:0xC9	// ret'urn opcode of 6809
+		-	[ c b b-r
+	}while{		[ c b			// (b-r)!=0 ie b!=r
+		c,	[ c	\ b		// append it to dictionary
+		inc	[ c:c+1			// move to next op code
+	}loop		[ c+? b			// (b-r)==0 ie b==r
+	drop		[ c+?
+	drop		[
+#}if
+
+#{if ARCH ne "msp430" and ARCH ne "z80" and ARCH ne "6809"
+step_61_assertion_failure_to_catch_missing_code_additions
+#}if
+
 }def
 
 #}if
