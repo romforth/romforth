@@ -1353,12 +1353,16 @@ emit
 
 #{if step>=59
 
+'t'
+
 outer		[ 144		// tests the definition of fibonacci series
 144		[ 144 144	// implemented using loops. fibonacci(12)==144
 -		[ 0
 if{		[	// not taken
 	#assert
 }if
+
+emit
 
 #}if
 

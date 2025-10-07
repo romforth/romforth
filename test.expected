@@ -44,6 +44,9 @@ H
 #{if step>=58
 o
 #}if
+#{if step>=59
+t
+#}if
 #{if step>=62
  0xC0FE
 #}if
