@@ -163,7 +163,6 @@ sub header {
 		print "$l","_pad:\t.db 0\n";
 	}
 	print qq{.ascii "$w"\n};
-	$len |= 0x80 if ($imm);
 	print "$l","_nfa:\t.db $len\n";
 	print "$l","_lfa:\t.dw $prev\n";
 	$prev="$l"."_lfa";

@@ -7267,3 +7267,176 @@ step 56 and then fix up whatever was broken at step 57. Since the current code
 contains a mix of stuff that was being worked on for step 58, I'll go ahead and
 commit the whole shebang for now as part of this commit and try and maybe
 disentangle it all out later as time (and mood) permits.
+
+03 Oct '25
+----------
+I'm restarting the debug of step 57 on the 6809-stc port after yesterdays long
+drawn out marathon debug session which spilled over from the day before that.
+Just like before, I'll document the debugging process as I go along.
+
+This time, I'm starting off with "debug=1" in the config and running this:
+	make
+	grep -a ^patch test.dict
+gives me:
+	patch 0x1B05  0xA208
+which brings me back full circle to the puzzling output I'd noted in yesterdays
+JOURNAL entry as well. Here also we can see that the offset (which should be
+read as 0x1B05 & 0xff == 0x05) has the correct value of 5. But the address is
+definitely wrong. So part of the debug here is to find how that value made its
+way on to the stack.
+
+The parameters that patch gets are (see "rest.inp" for details) 'o' (sent via
+"if{" and 'h' (sent via "}if"). In this case, it looks like the value sent by
+"if{" got munged and that is generated in the body of the "if{" by "here @".
+
+For debugging purposes, I added the following to tail end of the body of "if{":
+	+#{if debug==1
+	+       dup .
+	+#}if
+to see what is being sent and after rerunning and looking at the logs, I see:
+	0x2700 ,|alloc 0x1C98  0x1C9A [|find
+which shows that after the bytes 0x27 (beq) and the offset (0) are stored in
+the dictionary, the value after "here @" was 0x1C9A (== 0x1C98+2) so the code
+in "if{" appears to be working as expected. So the next sanity check is to add
+similar tracing code to "}if" and see if everything was kosher and so I added
+the same code but this time to the head of the body of "}if" in "rest.inp".
+Looking through the logs again, I can see:
+	0x2700 ,|alloc 0x1C9E  0x1CA0 [|find
+	...
+	n n}if|find
+	0x1C93  0x1C7F
+	0x1CA0
+	patch 0x1B05  0xA208
+Which confirms that "}if" got the same value on the stack that was sent by
+"if{" (see 0x1CA0 in the above snippet from the log). But it is also clear from
+that snippet that by the time "patch" ran it saw 0xA208 instead of the expected
+value of 0x1CA0. So I'm adding yet another debug print this time after the call
+to "over", at the beginning of the body of "patch" in "rest.inp". This time the
+logs show:
+	0x2700 ,|alloc 0x1CA4  0x1CA6 [|find
+	...
+	n n}if|find
+	0x1C99  0x1C85
+	0x1CA6  0x1B06
+	patch 0x1B05  0xA208
+This shows "if{" sent 0x1CA6 which was seen by "}if" but the stack shows 0x1B06
+by the time it gets to "patch". So my suspicion is that the "over" has screwed
+up the stack. To confirm that I'll add yet another debug print at the beginning
+of "patch" to verify this hypothesis. With all of the debug prints in place,
+"patch" now looks like this:
+	 : patch                [ o h
+	+#{if debug==1
+	+       swap dup . swap
+	+#}if
+			over    [ o h o
+	+#{if debug==1
+	+       dup .
+	+#}if
+Since I suspect "over" has a bug, I'm using "swap dup . swap" within the debug
+print instead of "over ." to be extra safe.
+
+Running `make` and looking at "test.dict" shows this:
+	0x2700 ,|alloc 0x1CB0  0x1CB2 [|find
+	...
+	n n}if|find
+	0x1CA5  0x1C91
+	0x1CB2  0x1B06  0x1B06
+	patch 0x1B05  0xA208
+which falsified my hypothesis that "over" was screwing up. It is now clear that
+after the call to "}if" and before it called "patch, the stack was modified.
+
+Since the definition is just this:
+	: }if here @   patch ;
+	             ^
+the next debug attempt is to add a log before the call to patch (at the point
+indicated by the caret above) and rerunning the test shows:
+	0x2700 ,|alloc 0x1CBC  0x1CBE [|find
+	...
+	n n}if|find
+	0x1CB1  0x1C91
+	0x1CBE  0x1B06  0x1B06  0x1B06
+	patch 0x1B05  0xA208
+which indicates that the "here @" seems to be triggering this problem so the
+next log will be added at the point marked by the caret below:
+	: }if here   @ patch ;
+	           ^
+and this results in:
+	0x2700 ,|alloc 0x1CC8  0x1CCA [|find
+	...
+	n n}if|find
+	0x1CBD  0x1C91
+	0x1CCA  0x1B06  0x1B06  0x1B06  0x1B06
+	patch 0x1B05  0xA208
+which indicates that the problem happened when "here" was called since the
+correct value (0x1CCA) was present on the stack before the call to "here"
+and it changed to 0x1B06 after the call.
+
+Looking back at how "}if" was defined to see what code was generated for "here"
+in the "test.dict" log, I can see this:
+	 0x11DE ,|alloc 0x1C97 here|find
+which looks up "here" but after that I don't see the code for the cfa getting
+added to the dictionary (in contrast, I do see the cfa for "@" which comes just
+behind it getting added to the dictionary correctly). I'm going to stop this
+debug session for now to think things over and take another look at the code.
+
+06 Oct '25
+----------
+After going over the code a couple of times, it is clear that the current bug
+is because the call to "here" is resulting in some weirdness. Since I've reread
+the code and gone over it with a fine tooth comb, let me document what I've
+found so far, just in case future me finds it useful.
+
+To summarize, it is clear that I need to go look at how the "outer" interpreter
+is handling the call to "here" via the "repl" and if I missed adding something
+specific for the 6809. The chain that I need to follow is:
+	outer -> repl -> cpl_ex -> cpl_ex_imm -> compdef
+since traversing this code path is fairly straightforward but after taking a
+look at the code for compdef I realize that at this point I've reached a really
+ugly part of the code. I'll console myself by making the claim that all of the
+complexity expressed via the preprocessor directives are really necessary. But
+I'll add a note to self that I really should revisit all of this ugliness and
+take an in-depth look to see if any of it can be simplified.
+
+For now the easy approach to make reading that mess easier is to just look at
+the preprocessed output. Using the output in "defs.ast" compdef is just this:
+	[ "def", "compdef", "compdef", 0, "compcfa_lfa", [
+		[ 'lit', int(1)],
+		[ "cond", [
+			['lit',oct('0xBD')],
+			['visit','lbl029','c,'],
+			['visit','lbl030',','],
+		],[
+			['visit','compcfa','compcfa'],
+		]],
+	]],
+So if I've traced this correctly, the CFA of "here" should have been added to
+the dictionary by this code path. Since it didn't, I have to surmise that this
+path wasn't taken since there is no way the "compcfa" path could be taken in
+the above code (since there is a hardcoded 1 before the if condition).
+
+So I need to backtrack the stack to reexamine cpl_ex_imm which calls compdef to
+see if it did something goofy. If the code path from cpl_ex_imm -> compdef was
+not taken, the only alternative is that the remaining path (cpl_ex_imm -> call)
+was taken and this would imply that "here" was marked as an immediate. Although
+this sound incredible, I checked the value in here_nfa using:
+	grep here_nfa: forth_dict.lst
+which shows surely enough:
+	0E35 84                 2007 here_nfa: .db 132
+and that initialization is clearly wrong since it should contain 4 not 132
+
+So it is clear that the bug here is that "here' was marked immediate since the
+value 132 == (0x80|4 == 128+4) and so the new question becomes why this was
+initialized incorrectly by the "gendict" script.
+
+Looking through the definition of "header" in "gencode" which is sourced by the
+"gendict" script, the problem is clearly a copy-paste bug since I had used the
+code used to generate the dictionary header for definitions "as is" in the code
+for the rest of the primitives and variables as well. So that finding concludes
+this long drawn out debug session where the fix of course turns out to be a
+trivial one-liner.
+
+With hindsight, I'm trying to explain to myself why it took so long to debug
+this bug. Part of it was that I was looking at the wrong place. I assumed the
+bug had to be in the recently added assembly code for the 6809-stc but it was
+actually in the script and I until everything else was painstakingly eliminated
+I'd not have thought to even look there.
