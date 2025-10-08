@@ -2,7 +2,7 @@ romforth is a small, portable, baremetal version of Forth which has been ported
 to various 8/16/32/64-bit microcontrollers with support for both big and little
 endian architectures. So far, it has been ported to the following instruction
 sets: x86 (16-bit, 32-bit and 64-bit), PDP11, 68000, SPARC, Z80, MSP430, ARM64,
-RISC-V(rv32, rv64), WASM, Padauk, 6502, 8051.
+RISC-V(rv32, rv64), WASM, Padauk, 6502, 8051, 6809.
 
 So, at a superficial level, romforth is just yet another Forth which has been
 ported to a wide variety of CPUs and is meant to be runnable directly from the
@@ -62,7 +62,10 @@ By design, the most compact implementation is limited to use just a little over
 ~256 bytes of native code with the rest of the functionality implemented in
 machine independent code. Currently, ~100 bytes of machine independent Forth
 related functionality is used in the x86 implementation. So the overall
-Flash/ROM requirement on x86 is currently about ~350 bytes.
+Flash/ROM requirement on x86 is currently about ~350 bytes. As a proof of
+concept, an even more minimal bootstrap mechanism that uses just a dozen bytes
+of x86 native code which can load in the rest via any available serial interface
+(just like Frank Sergeant's "3 Instruction Forth") is also available.
 
 As mentioned earlier, there is also a regression test suite which is called at
 boot as part of init (which can be optionally #ifdef'ed out) and that currently
@@ -121,18 +124,20 @@ distinguishing features are that it is portable, small and runs baremetal:
 1. Portable : romforth currently runs on 8/16/32/64 bit architectures as well
 	as little and big endian CPUs. It was designed with portability in mind
 	so as to eventually be able to run on "most" microcontrollers. The
-	primitives implemented in native code are only a few instructions
-	each. For a compact implementation, only ~256 bytes of native code
-	will need to be ported to a new architecture.
-2. Small : Designed for low end microcontrollers
-	On x86, a minimal init needs ~350 bytes of code and 7 bytes of RAM
-	As a proof of concept, for even smaller systems, I've coded up an
-	x86 bootloader which needs just a dozen bytes of x86 native code
-	to load the additional bytes in via any available serial interface
-	- either from an "umbilical host" during testing or from, say, an
-	external SPI flash part.
+	primitives that need to be implemented in native code are just a few
+	instructions each and there are machine independent tests (in Forth) that
+	verify the functionality of each primitive as it is added. See the table at
+	the end of this README for a list of ports that already exist.
+2. Small : Designed for low end microcontrollers romforth is meant to be a
+	"shrink to fit" implementation of Forth where the user decides how much of
+	the Forth functionality they really need and only implement what they must.
+	See the table at the end of this README to see the actual implementation
+	sizes for various CPU architectures
 3. Baremetal : Can run directly on the hardware, doesn't require any other
-	underlying runtime or OS support.
+	underlying runtime or OS support. In most of the implementations done so
+	far, serial I/O needs to be supported if a REPL is required, otherwise an
+	"umbilical hosted" support may be needed to flash the code. All of the
+	existing ports have been tested using emulation (and/or on x86 Linux).
 
 License
 =======
@@ -234,6 +239,7 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | 6502-stc     |       0    |    859 (859)    |   3386 (3386)   |
 | 8051-sdcc    |    3502    |   1342 (4844)   |   2379 (5881)   |
 | 8051-stc     |       0    |    143 (181)    |   1494 (1653)   |
+| 6809-stc     |       0    |     44 (2775)   |   3785 (6643)   |
 '--------------'------------'-----------------'-----------------'
 
 *Note: The units for pdk14-stc and pdk14-thr1 are in "words" which can be

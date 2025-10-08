@@ -7440,3 +7440,24 @@ this bug. Part of it was that I was looking at the wrong place. I assumed the
 bug had to be in the recently added assembly code for the 6809-stc but it was
 actually in the script and I until everything else was painstakingly eliminated
 I'd not have thought to even look there.
+
+08 Oct '25
+----------
+Looking back at the log of this project, when I started out, in all innocence,
+I'd assumed that I would be able to finish the 6809-stc port in under a week
+but ended up taking a little over a month which seems to be about the average
+time it seems to take to a complete a port (the current run rate is clocking in
+at ~32 ports in 36 months).
+
+When the failure at step 62 opened up a whole new can of worms, my confidence
+in the tests was shaken quite a bit since they had failed to catch a boatload
+of bugs - well actually, about 4 bugs, I think, across various ports. The one
+really commendable result of all that chaos was the addition of newer/stronger
+stack checks that have been added to the tests with a more renewed (misplaced?)
+confidence that future ports will not run into any of these issues ever again.
+
+Now that I've (hopefully) resolved all the issues with genast/genbin/gencode
+all the way through step 62, I'm thinking that rather than start off on a newer
+port, I can now go back to finish up the f16-zig port which I had to abandon
+midway (at step 4.5, see commit id a1dd52e1514619624a71c67f1a9c8c6407e57ac9)
+since I had changed tack there to work on genast.

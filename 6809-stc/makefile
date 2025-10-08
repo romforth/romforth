@@ -7,7 +7,7 @@
 AS=sdas6808
 ASFLAGS=-l -o
 LD=sdld -i
-all : threeforth
+all : fourforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
