@@ -1310,6 +1310,8 @@ if{		[	// not taken
 
 #{if step>=56
 
+bl
+
 outer		[ 4321
 4321		[ 4321
 -		[ 0
@@ -1317,7 +1319,7 @@ if{		[	// not taken
 	#assert
 }if
 
-bl emit
+emit
 
 #}if
 
