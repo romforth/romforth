@@ -1292,6 +1292,8 @@ if{		[	// not taken
 
 #{if step>=55
 
+'>'
+
 latest		[ latest	// clean up some clutter since 'foo' is reused
 @		[ lfa'bar'	// and the previous tests have polluted the
 @		[ lfa'foo'	// dictionary by adding "foo" and "bar". So we
@@ -1305,6 +1307,8 @@ outer		[ < ": foo 12345 ; foo 3ret "
 if{		[	// not taken
 	#assert
 }if
+
+emit
 
 #}if
 
