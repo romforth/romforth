@@ -35,6 +35,9 @@ o
 #{if step>=51
 k
 #}if
+#{if step==52
+ 
+#}if
 #{if step>=53
  
 #}if

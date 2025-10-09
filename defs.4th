@@ -1161,6 +1161,8 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ exit	// padding escaped by lit
 
 def{ literal	[ n
 
+#{ifndef USECFA
+
 #{if THREAD!=4
 #{if THREAD!=5
 	lit	[ n	// to escape the next "token"
@@ -1186,6 +1188,8 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ n lit	// padding escaped by lit
 
 	offset,	[ n \ lit
 #}if
+
+#}ifndef
 
 #{if THREAD==4
 

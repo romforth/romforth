@@ -1230,6 +1230,9 @@ emit
 #}if
 
 #{if step==52
+
+bl
+
 1234		[ 1234
 0 4		[ 1234 0 4
 for{		[ 1234 < ": baz 1234 ; baz "
@@ -1239,6 +1242,8 @@ for{		[ 1234 < ": baz 1234 ; baz "
 if{		[	// not taken
 	#assert
 }if
+
+emit
 
 #}if
 

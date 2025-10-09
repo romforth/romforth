@@ -7461,3 +7461,15 @@ all the way through step 62, I'm thinking that rather than start off on a newer
 port, I can now go back to finish up the f16-zig port which I had to abandon
 midway (at step 4.5, see commit id a1dd52e1514619624a71c67f1a9c8c6407e57ac9)
 since I had changed tack there to work on genast.
+
+09 Oct '25
+----------
+Before restarting the f16-zig port, I decided to strengthen the sanity checks
+for all of the steps after 50 to make them check "positively" for outputs. This
+worked well as I worked my way backwards from step 61 onwards until I ran into
+a strange failure at step 52 which turned out to be due to the fact that the
+test at step 52 is a one-off and the wrapper condition for it is "==52", not
+">=52", unlike all the other tests. With this out of the way, stronger stack
+and sanity checks are in place for all of the steps after step 50 and I'll keep
+my fingers crossed that this set of changes will help to catch bugs in future
+ports much sooner.
