@@ -1272,6 +1272,8 @@ if{		[	// not taken
 
 #{if step>=54
 
+'r'
+
 0 7		[ 0 7
 for{		[ < ": bar 1234 bl swap here ; bar "
 	repl	[
@@ -1287,6 +1289,8 @@ here		[ 32 1234 here here
 if{		[	// not taken
 	#assert
 }if
+
+emit
 
 #}if
 
