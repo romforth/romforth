@@ -1244,6 +1244,8 @@ if{		[	// not taken
 
 #{if step>=53
 
+bl
+
 0		[ 0		// start off by initializing the
 state		[ state		// state variable to
 c!		[ (state:0)	// interpreting/0, and finally,
@@ -1267,6 +1269,8 @@ if{		[ 1234 1234	// not taken
 if{		[	// not taken
 	#assert
 }if
+
+emit
 
 #}if
 
