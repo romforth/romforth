@@ -7473,3 +7473,32 @@ test at step 52 is a one-off and the wrapper condition for it is "==52", not
 and sanity checks are in place for all of the steps after step 50 and I'll keep
 my fingers crossed that this set of changes will help to catch bugs in future
 ports much sooner.
+
+10 Oct '25
+----------
+I'd previously planned to restart the f16-zig port using genast/genbin/gencode
+(see my earlier JOURNAL entry of 08 Oct '25), but in the meantime I was reading
+up on some of the history of Forth and saw a mention of Chuck Moore's initial
+coding on the IBM 1130 which had some kind of a limit of 5 characters, thus
+ending up with his "Fourth (generation language)" turning into "Forth". I'm now
+at the third anniversary of my first commit to this repo, and to commemorate
+that, I've decided to take a bit of a detour by porting romforth to the IBM1130
+as a means of comparison to see 1. how long it takes and 2. how fast it is.
+
+The f16-zig port will need to stay on the backburner for a little while longer.
+
+One of the downsides to choosing a new CPU which is not currently covered by
+any of the existing toolchains is that the list of dependencies (which is long
+enough already) increases even more. In this case, luckily enough, the build
+can be handled by "asm1130" (assembler for the IBM 1130) and the emulation of
+the generated binary can be handled by "ibm1130" and the best part is that both
+of these utilities are a part of the toolchain that I already happen to use:
+SIMH (https://github.com/open-simh/simh), since it is used for the emulation of
+the PDP11.
+
+Wish me luck as I try to replicate some of the struggles that Chuck Moore may
+have run into as the original implementor and "discoverer" of Forth. Since this
+will only be the second port where I'm using genast+genbin+gencode, I'm going
+to take it a bit easy on myself and choose to use STC for the IBM 1130 port as
+well, although I guess that at some point I should really try using it in other
+THREAD'ing implementations - even if it is only to shake out any remaining bugs.
