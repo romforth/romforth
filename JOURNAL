@@ -7502,3 +7502,110 @@ will only be the second port where I'm using genast+genbin+gencode, I'm going
 to take it a bit easy on myself and choose to use STC for the IBM 1130 port as
 well, although I guess that at some point I should really try using it in other
 THREAD'ing implementations - even if it is only to shake out any remaining bugs.
+
+14 Oct '25
+----------
+Three years (from first commit)! Whoo!
+
+---
+
+I thought the transition to taking out the IBM 1130 for a spin would be smooth
+but boy, was I wrong. I can't complain about the docs though - despite the fact
+that they were probably written before I was even born they are as readable and
+clear as anything written recently (maybe even more so, probably the newer ones
+just copied the style of the earlier docs). The control programs and the overly
+strict layout and formats are the things that appear to have gone stale and do
+not seem to have stood the test of time.
+
+My initial attempts at trying to get "asm1130" to generate a binary ran into
+trouble since it would silently create an empty ".out" file for code that I'd
+copy pasted from the docs. Frustrated, I read through the "asm1130" docs and
+noticed the format requirements (see page 52 of the the docs in "simh.pdf" for
+the IBM 1130 November 23, 2012 release). So rather than try to code things up
+manually, I searched around for existing code to use as a template and further
+research led to downloading a copy of "ibm1130software.zip" to be able to get a
+copy of existing IBM 1130 assembly code. Using the code in "dbootcd.asm", my
+initial experiment was to run `asm1130 -l dbootcd.asm` which was successful and
+I was able to generate a "dbootcd.out" and "dbootcd.lst". Yay! one step of the
+preamble done and one more step to go.
+
+So now with a generated binary in hand, the second part was to actually run the
+darn thing using the "ibm1130" emulator. My previous experience with the PDP11
+was that I just needed to load the binary (ie the generated ".out" file) and
+issue "go". But doing this resulted in an error. Here's what I ran:
+	(echo "load dbootcd.out" ; echo "go") | ibm1130
+and here's the output from the "ibm1130" emulator:
+	Invalid command, IAR: 00000074 (0000 ?00     0000   )
+
+Since I assume this is working code, my speculation was that I had not done
+something correctly.
+
+So now I had to retrace my steps to look closer at what I had done earlier with
+the PDP11. Some of it was not of much use here since in that case, I had used
+binutils to generate the binary and needed to use a shim called "bin2load" to
+turn the binary into an "lda" format which was usable by SIMH's pdp11 emulator
+before it could "load" and "go".
+
+In this case though, all of the stuff in "ibm1130software.zip" used various
+control files (eg: "gdu") and the associated job file (eg: "gdu.job") that in
+turn depended on attaching a disk "dms.dsk" to run stuff from the disk but all
+I wanted was to do was to use the emulator to directly load and just run the
+generated binary.
+
+Rather than continue flailing about in the dark, given my ignorance, I reached
+for 'help' which was available as a subcommand in the "ibm1130" emulator and
+experimenting with it led to the use of '*' to list all the help related docs
+that were available but going through all of those voluminous docs didn't quite
+provide any new enlightenment.
+
+Since "load"+"go" seemed to be the only necessary commands required to get a
+generated binary running in the emulator, I retraced my steps back to the
+remaining ".asm" files that were part of "ibm1130software.zip" and decided to
+test the rest as well.
+
+The list of available .asm files were:
+	dbootcd.asm  gdu.asm  zcrdumpc.asm  zdcip.asm
+and since dbootcd.asm had issues as mentioned earlier, gdu.asm was used thus:
+	asm1130 -l gdu.asm
+which resulted in:
+	E: gdu.asm (40): Unknown opcode 'SGMV'
+	Segmentation fault (core dumped)
+so I moved on to the next one in the list which was "zcrdumpc.asm". Running:
+	asm1130 -l zcrdumpc.asm
+resulted in:
+	E: zcrdumpc.asm (79): Unknown opcode '.IPL'
+	Segmentation fault (core dumped)
+and so I was left with the one remaining asm, which was "zdcip.asm". Running
+	asm1130 -l zdcip.asm
+did not result in yet another segv and to my surprise silently produced a new
+binary in "zdcip.out".
+
+Trying it out in the "ibm1130" emulator did not result in a failure as before
+when I ran the "dbootcd.out" binary. Here's what I ran:
+	(echo "load zdcip.out" ; echo "go") | ibm1130
+which generated this somewhat encouraging output:
+	TURN ON:
+	SW 0 TO INITLZ
+	SW 1 TO COPY
+	SW 2 TO DUMP
+	SW 3 TO PATCH
+	SW 4 TO ANALYZE
+	SW 5 TO CMP
+	SW 6 TO INITLZ NEW DISK
+
+	Wait, IAR: 0000014F (0808 XIO     0158   )
+
+So thanks to that stroke of luck, I'll hope that I can now start to use zdcip
+as "the" template for my remaining coding experiments.
+
+Given that computer time was exorbitantly expensive in 1968 when Chuck Moore
+was trying out his code on a real IBM 1130, I assume he must have been more
+assiduous in his work, typing stuff on to punch cards only after due diligence
+and careful perusal of the docs. Compared to that, my happy go lucky efforts at
+throwing things together based on existing code templates to see what sticks
+must look like a moronic affront to the craft but we'll just have to wait and
+see if my approach has any redeeming qualities, in terms of overall time saved,
+as a result. Nevertheless, there's still the open question of whether this way
+of implementation with a clear goal to be reached, with each step along the way
+clearly specified, should even be compared to Chuck's exploratory work on an
+idea that was still being "discovered"/formulated in his head.
