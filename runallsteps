@@ -40,6 +40,7 @@ my $f16zig_check=1;
 my $m8051c_check=1;
 my $m8051stc_check=1;
 my $m6809stc_check=1;
+my $ibm1130stc_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -73,6 +74,7 @@ if (@ARGV) {
 	$m8051c_check=0;
 	$m8051stc_check=0;
 	$m6809stc_check=0;
+	$ibm1130stc_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -106,6 +108,7 @@ if (@ARGV) {
 		$m8051c_check=1 if ( $d eq "8051-sdcc");
 		$m8051stc_check=1 if ( $d eq "8051-stc");
 		$m6809stc_check=1 if ( $d eq "6809-stc");
+		$ibm1130stc_check=1 if ( $d eq "ibm1130-stc");
 	}
 }
 
@@ -302,6 +305,12 @@ $x=`cat 6809-stc/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $m6809stc_step=$step;
+
+my $ibm1130stc_step;
+$x=`cat ibm1130-stc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$ibm1130stc_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -772,6 +781,19 @@ m6809stc_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the 6809 port\n";
 	system("cd 6809-stc ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+ibm1130stc_port: {
+	last ibm1130stc_port unless ($ibm1130stc_check);
+	last ibm1130stc_port if ($i>$ibm1130stc_step);
+	@ARGV=("ibm1130-stc/fpp.config.1130");
+	open(my $fh, ">ibm1130-stc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the 1130 port\n";
+	system("cd ibm1130-stc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

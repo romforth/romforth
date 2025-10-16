@@ -7609,3 +7609,11 @@ as a result. Nevertheless, there's still the open question of whether this way
 of implementation with a clear goal to be reached, with each step along the way
 clearly specified, should even be compared to Chuck's exploratory work on an
 idea that was still being "discovered"/formulated in his head.
+
+16 Oct '25
+----------
+After spending even more quality time with the docs, I found that I could avoid
+using the strict punch card formatting requirements and could get away with
+using tabs for formatting to place label/opcode/operands on a line. With that
+out of the way, I was able to successfully build and run a null binary on the
+IBM 1130.
