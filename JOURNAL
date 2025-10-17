@@ -7617,3 +7617,12 @@ using the strict punch card formatting requirements and could get away with
 using tabs for formatting to place label/opcode/operands on a line. With that
 out of the way, I was able to successfully build and run a null binary on the
 IBM 1130.
+
+17 Oct '25
+----------
+Guess what is the most helpful place for IBM 1130 docs? Well, at least in my
+opinion, I found the Wikipedia entry for the IBM 1130 extremely useful for
+a summary on how to do call/return linkage. It has a nice summary of the
+instruction set and the call/return linkage details are comprehensive and seem
+to be really well written. I used that to code up this step of the port. Holy
+self modifying code Batman! I assume I'll be doing more of it from here on out.

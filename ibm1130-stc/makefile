@@ -5,8 +5,8 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 all : forth.out
-	(echo "load forth.out" ; echo go) | ibm1130 > test.out
-	grep -q 'Wait, IAR: 00000001 (0000 ?00     0000   )' test.out
+	cat simh.cmds | ibm1130 | grep Wait > test.out
+	cmp test.exp test.out
 
 forth.out : forth.asm
 	asm1130 -l forth.asm

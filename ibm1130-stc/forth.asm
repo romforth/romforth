@@ -6,5 +6,9 @@
 
 	org		0
 
-start	wait
+start	bsi		rom
+	wait
+
+rom	dc		*-*
+	b	i	rom
 	end		start
