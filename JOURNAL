@@ -7626,3 +7626,11 @@ a summary on how to do call/return linkage. It has a nice summary of the
 instruction set and the call/return linkage details are comprehensive and seem
 to be really well written. I used that to code up this step of the port. Holy
 self modifying code Batman! I assume I'll be doing more of it from here on out.
+
+20 Oct '25
+----------
+The "geninp" and "genrestinp" scripts that are currently in the pdp11 directory
+are usable as is in the IBM 1130 port as well. So I've moved them into a common
+"util" directory. I could have done this sooner for the "m2" script and for the
+other scripts that are currently in the ast directory but I'll choose to defer
+those changes to the point when they are needed in other ports.

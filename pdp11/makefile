@@ -16,9 +16,9 @@ test.out : forth.lda simh.cmds test.inp test.exp
 	rm -f test.out
 	pdp11 simh.cmds | grep 'HALT instruction, PC: 000420'
 	cmp test.out test.exp
-test.inp : ../test.inp ../fpp fpp.config geninp ../rest.inp
-	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | ./geninp > test.inp
-	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config | ./genrestinp >> test.inp
+test.inp : ../test.inp ../fpp fpp.config ../util/geninp ../rest.inp ../util/genrestinp
+	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | ../util/geninp > test.inp
+	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config | ../util/genrestinp >> test.inp
 test.exp : ../test.expected ../fpp fpp.config
 	cat ../test.expected | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.exp
 forth.lda : forth
