@@ -7634,3 +7634,38 @@ are usable as is in the IBM 1130 port as well. So I've moved them into a common
 "util" directory. I could have done this sooner for the "m2" script and for the
 other scripts that are currently in the ast directory but I'll choose to defer
 those changes to the point when they are needed in other ports.
+
+21 Oct '25
+----------
+I've used a copy of "gencode" from 6809-stc for the IBM 1130 port and used the
+makefiles in pdp11 and 6809-stc as templates for the version used here. The
+"geninp" and "genrestinp" that were shuffled around in the previous commit (see
+the JOURNAL entry for 20 Oct '25) are used here as well. I've chosen to use m4
+to handle the preprocessing since I'm sure cpp will not be a good fit here.
+
+Part of the purpose of this port is to at least make an attempt to be true to
+the times when Chuck Moore would have been doing his initial implementation of
+Forth. I assume he may have had a copy of the assembler but at a stretch, if
+push came to shove, I assume he wouldn't have been too shy to shirk away from
+doing it in machine code (similar to the approach I took for the 6809 port).
+The big difference of course is in the choice of how I run stuff - where I have
+the luxury of an emulator that runs almost instantaneously compared to the mess
+of punch cards and other hoops he would have had to jump through to get any
+kind of code tested.
+
+Since I'm living in the future compared to him, I've chosen to go ahead and use
+the luxury of all of the modern tools that are available to me and my guess is
+that Perl probably is at the head of the list in terms of the productivity it
+affords me with the SIMH/ibm1130 a close second. An equivalent of m4 might have
+been available at that time since Christoper Strachey's 250 byte GPM was quite
+probably well known by then so I assume that counts as a wash. I'll assume that
+the job and control cards used on the IBM 1130 would be equivalent to today's
+makefiles so that could also be considered as equivalent in terms of power even
+if it was not quite there in terms of performance.
+
+The one other subtle difference between us would be the availability (or lack)
+of information now vs then. I assume Chuck Moore might have had access to all
+of the printed copies of the various IBM 1130 manuals whereas today we have the
+current surfeit of every available piece of information you could possibly need
+on the Internet (which could be considered either a blessing or quite possibly
+even a curse in disguise).

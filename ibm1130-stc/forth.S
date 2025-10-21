@@ -10,5 +10,7 @@ start	bsi		rom
 	wait
 
 rom	dc		*-*
-	b	i	rom
+
+include(`rom.s')
+
 	end		start

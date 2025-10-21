@@ -1,2 +1,4 @@
+do test.inp
 load forth.out
 go
+quit
