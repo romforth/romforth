@@ -5,3 +5,5 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	:	b	i	rom
+key	:	ld		rdbuf
+emit	:	sto		prbuf ;	xio		write

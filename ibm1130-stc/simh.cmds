@@ -1,4 +1,5 @@
 do test.inp
+attach -n ptp test.ptp
 load forth.out
 go
 quit

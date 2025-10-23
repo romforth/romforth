@@ -10,10 +10,12 @@ oneforth : test.out
 
 test.out : forth.out test.inp test.exp
 	ibm1130 simh.cmds | grep Wait > test.out
-	cmp test.out test.exp
+	cmp test.out test.lst
+	cmp test.ptp test.exp
 
 forth.out : forth.asm
-	asm1130 -l forth.asm
+	asm1130 -l forth.asm 2> forth.err
+	! test -s forth.err
 
 forth.asm : forth.S rom.s
 	m4 forth.S > forth.asm
@@ -38,5 +40,8 @@ test.inp : ../test.inp ../fpp fpp.config ../util/geninp ../rest.inp ../util/genr
 fpp.config : stepfile fpp.config.1130
 	cat stepfile fpp.config.1130 > fpp.config
 
+test.exp : ../test.expected ../fpp fpp.config
+	cat ../test.expected | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.exp
+
 clean :
-	rm -f forth.lst forth.out fpp.config test.out test.inp defs.ast defs.map defs.s dict.map forth.asm prims.ast rom.ast rom.map rom.s
+	rm -f forth.lst forth.out fpp.config test.out test.inp defs.ast defs.map defs.s dict.map forth.asm prims.ast rom.ast rom.map rom.s forth.err test.ptp test.exp
