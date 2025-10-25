@@ -33,9 +33,9 @@ defs.s : ../defs.4th ../fpp fpp.config prims.ast ../ast/genast ../ast/genbin gen
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ../ast/genast -g defs.map dict.map > defs.ast
 	../ast/genbin defs.ast > defs.s
 
-test.inp : ../test.inp ../fpp fpp.config ../util/geninp ../rest.inp ../util/genrestinp
-	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | ../util/geninp > test.inp
-	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config | ../util/genrestinp >> test.inp
+test.inp : ../test.inp ../fpp fpp.config ../rest.inp
+	cat ../test.inp | ../fpp -DTESTROM -c fpp.config > test.inp
+	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config >> test.inp
 
 fpp.config : stepfile fpp.config.1130
 	cat stepfile fpp.config.1130 > fpp.config

@@ -51,17 +51,37 @@
 write	dc		prbuf	First IOCC word points to the character
 	dc		/1900	Second IOCC word : write to paper tape punch
 
+readc	dc		rdbuf	First IOCC word points to the character
+	dc		/1A00	Second IOCC word : read from paper tape reader
+
+enptr	dc		rdbuf	First IOCC word points to the character
+	dc		/1C00	Second IOCC word : control paper tape reader
+
+sense	dc		rdbuf	First IOCC word points to the character
+	dc		/1F00	Second IOCC word : sense paper tape reader
+
 prbuf	dc		0
 
-rdbuf	dc		/6600	ASCII 'f', big endian
+rdbuf	dc		0
+
+rresp	dc		/4000
 
 iv	dc		*-*
-	wait
+	b	i	iv
 
 start	bsi		rom
 	wait
+	nop
 
 rom	dc		*-*
+
+	xio		enptr	Enable reads on the IBM 1134 Paper Tape Reader
+
+loop	xio		sense	Issue a sense on the Paper Tape Reader
+	and		rresp	Check if the read response bit is set
+	bz		loop	... and loop until it is set
+
+	xio		readc	Read the character which is now available
 
 include(`rom.s')
 
