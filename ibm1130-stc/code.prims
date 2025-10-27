@@ -7,3 +7,5 @@
 bye	:	b	i	rom
 key	:	ld		rdbuf
 emit	:	sto		prbuf ;	xio		write
+dup	:	mdx	1	-1 ; sto	i	1
+drop	:	ld i	1 ; mdx	1	1

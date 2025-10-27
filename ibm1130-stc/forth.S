@@ -10,7 +10,7 @@
 
 	* The next 3 addresses are reserved for XR[123] as per the docs
 
-	dc		0	Reserved to store register XR1
+	dc		/0100	Reserved to store register XR1
 	dc		0	Reserved to store register XR2
 	dc		0	Reserved to store register XR3
 
@@ -40,7 +40,7 @@
 
 	* Leave some empty space here in case other reserved locations are used
 
-	* If this space is truly unused, the data stack could grow upward here
+	* The data stack grows upward here
 
 	org		/0100
 
