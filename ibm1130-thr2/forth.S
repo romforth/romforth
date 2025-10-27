@@ -6,5 +6,21 @@
 
 	org		0
 
-start	wait
+	b		*-*
+
+	* The next 3 addresses are reserved for XR[123] as per the docs
+
+	dc		rom-1	Reserved to store register XR1
+	dc		0	Reserved to store register XR2
+	dc		0	Reserved to store register XR3
+
+start	bsi		inner
+	wait
+	nop
+
+inner	dc		*-*
+next	mdx	1	1
+	b	i	1
+
+rom	b	i	inner
 	end		start
