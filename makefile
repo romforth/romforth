@@ -33,6 +33,7 @@ all :
 	(cd 8051-stc ; make)
 	(cd 6809-stc ; make)
 	(cd ibm1130-stc ; make)
+	(cd ibm1130-thr2 ; make)
 
 allsteps :
 	./runallsteps
@@ -74,3 +75,4 @@ clean :
 	(cd 8051-stc ; make clean)
 	(cd 6809-stc ; make clean)
 	(cd ibm1130-stc ; make clean)
+	(cd ibm1130-thr2 ; make clean)
