@@ -22,5 +22,8 @@ inner	dc		*-*
 next	mdx	1	1
 	b	i	1
 
-rom	b	i	inner
+rom
+
+include(`rom.s')
+
 	end		start

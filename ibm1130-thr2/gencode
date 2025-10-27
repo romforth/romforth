@@ -1,0 +1,197 @@
+# gencode : native code generation for the IBM 1130
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+sub lit {
+	my ($l)=@_;
+	my $o=$l->[1];
+	print qq(\tdup ; dup\n);
+	print qq(.db 0xCC ; ldd\n);
+	print qq(.dw #$o\n);	# $o ; tos <- $o
+}
+
+sub compile {
+	my ($l)=@_;
+	my $o=$l->[1];
+	$o .= "_cfa";
+	print qq(\tdup ; dup\n);
+	print qq(.db 0xCC ; ldd\n);
+	print qq(.dw #$o\n);	# $o ; tos <- $o
+}
+
+sub prim {
+	my ($w)=@_;
+	my $o=$w->[1];
+	print "\t$o ; $w->[0]\n";
+}
+
+my $jmp='';
+
+sub word {
+	my ($w)=@_;
+	my $o=$w->[1];
+	if ($o eq 'j') { $jmp='j' ; return; }
+	if ($o eq 'jz') { $jmp='jz' ; return; }
+	if ($o eq 'jnz') { $jmp='jnz' ; return; }
+	print "\t$o ; $w->[1]\n";
+}
+
+sub skip {
+	my ($s)=@_;
+	my $o=$s->[1];
+	#print "$jmp $o\n";
+	if ($jmp eq 'j') {
+		print ".db 0x20, $o ; bra $o\n";
+	} elsif ($jmp eq 'jz') {
+		print ".db 0x10, 0x83, 0, 0 ; tst b\n";
+		print "\tdrop ; drop\n";
+		print ".db 0x27, $o ; beq $o\n";
+	} elsif ($jmp eq 'jnz') {
+		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "\tdrop ; drop\n";
+		print ".db 0x26, $o ; bne $o\n";
+	}
+}
+
+my $label;
+sub setlabel {
+	my ($l)=@_;
+	$label=$l;
+}
+
+sub cond {
+	my ($s)=@_;
+	my $i=$s->[1];	# AST for the 'if' part
+	my $e=$s->[2];	# AST for the 'else' part
+	print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+	print "\tdrop ; drop\n";
+	print ".db 0x27, $label", "_then-.-1\n";
+	my ($l,$c)=($label++, "_then");
+	my $si = walk($i);	# expand out the 'if' part of the AST
+	if (defined $e and @$e != 0) {
+		print ".db 0x20,", $l, "_endif-.-1\n";
+		print $l, $c, ":\n";
+		$c='_endif';
+		my $se = walk($e);	# expand out the 'else' part of the AST
+	}
+	print $l, $c, ":\n";
+}
+
+my $gendict=0;
+sub setgendict {
+	my ($v)=@_;
+	$gendict=$v;
+}
+
+my $prev="0";
+
+sub def {
+	my ($s)=@_;
+	my ($k,$w,$l,$imm,$p,$a)=@$s;
+	print "; $k name:$w, label:$l, imm: $imm\n";
+	if ($gendict) {
+		my $len=length($w);
+		# print "\t.align 1\n";
+		if ($len%2==0) {
+			print "$l","_pad:\t.db 0\n";
+		}
+		print qq{.ascii "$w"\n};
+		$len |= 0x80 if ($imm);
+		print "$l","_nfa:\t.db $len\n";
+		print "$l","_lfa:\t.dw $p\n";
+		$prev=$p;
+		$prev="$l"."_lfa";
+	}
+	print "$l", "_cfa : ; $w\n";
+	my $se = walk($a);	# expand out the body of the definition
+	print ".db 0x39\n";
+}
+
+sub visit {
+	my ($s)=@_;
+	#print "$s->[0]  label:$s->[1],  name:$s->[2]\n";
+	print ".db 0xbd\n.dw $s->[1]", "_cfa ; $s->[2]\n";
+}
+
+sub loop {
+	my ($l)=@_;
+
+	# loop can be invoked in a couple of different scenarios:
+	# 1. an unconditional loop such as : [ 'loop', [...] ]
+	# 2. or as a 'while' loop : [ 'loop', [...], 1, [...] ]
+	# 3. or as an 'until' loop : [ 'loop', [...], 0, [...] ]
+
+	my $t; # denotes the 'type' of the loop:
+	# type -1 means unconditional, 0 is for until and 1 for while
+
+	my $c=$l->[1];	# the conditional/first part of the loop
+	my $lbl=$label++;
+	print "$lbl", "_begin:\n";
+	my $lc = walk($c);
+
+	my $b=$l->[2];		# this could be either the type or undefined
+	if (defined $b) {	# conditional loop
+		$t=$b;		# set to either 1: while or 0: until
+		$b=$l->[3];	# get the actual body of the loop
+	} else {		# unconditional loop
+		$t=-1
+	}
+	if ($t==1) {		# conditional while loop
+		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "\tdrop ; drop\n";
+		print ".db 0x27, ", $lbl, "_end-.-1 ; beq\n";
+	} elsif ($t==0) {	# conditional while:until loop
+		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "\tdrop ; drop\n";
+		print ".db 0x26, ", $lbl, "_end-.-1 ; bne\n";
+	} else {		# unconditional loop
+		# no condition code needs to be generated
+	}
+	my $lb = walk($b);
+	print ".db 0x20,", $lbl,"_begin-.-1 ; bra\n";
+	print "$lbl", "_end:\n";
+	#print "\tdrop ; drop\n";
+}
+
+sub header {
+	my ($k,$w,$l,$imm,$prev,$var)=@_;
+	my $len=length($k);
+	# print "\t.align 1\n";
+	if ($len%2==0) {
+		print "$l","_pad:\t.db 0\n";
+	}
+	print qq{.ascii "$w"\n};
+	print "$l","_nfa:\t.db $len\n";
+	print "$l","_lfa:\t.dw $prev\n";
+	$prev="$l"."_lfa";
+	print "$l", "_cfa : ; $k\n";
+	if ($var) {
+		print qq(.db 0x36, 6 ; dup\n);
+		print qq(.db 0xCC ; ldd\n);
+		print qq(.dw #$l ;	# $l ; tos <- $l\n)
+	}
+	return $prev;
+}
+
+sub ret {
+	print ".db 0x39\n";
+}
+
+sub fullheader {
+	my ($k,$v,$prev,$var)=@_;
+	my ($w,$l,$imm,$a)=@$v;
+	$prev=header($k,$w,$l,$imm,$prev,$var);
+	print join("", @$a) if ($var==0);
+	ret();
+	return $prev;
+}
+
+sub latest {
+	open(my $lh, ">latest.s");
+	print $lh "\t.dw $prev\n";
+	close $lh;
+}
+
+1;
