@@ -7,3 +7,5 @@
 bye	:	b	i	inner
 key	:	bsi		rread ;	ld		rdbuf ; sto		prbuf
 emit	:	xio		write
+dup	:	mdx	2	-1 ;	ld	l	tos ;	sto	i	2
+drop	:	ld	i	2 ;	sto	l	tos ;	mdx	2	1

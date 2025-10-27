@@ -10,9 +10,11 @@
 
 	* The next 3 addresses are reserved for XR[123] as per the docs
 
-	dc		rom-1	Reserved to store register XR1
-	dc		0	Reserved to store register XR2
+	dc		rom-1	Reserved to store register XR1 (used as W)
+	dc		/0100	Reserved to store register XR2 (used as SP)
 	dc		0	Reserved to store register XR3
+
+tos	dc		0	/0004 Used as Forth's TOS
 
 	* Addresses 0x8-0xD are reserved for the interrupt vectors per the docs
 
