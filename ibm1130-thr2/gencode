@@ -24,7 +24,7 @@ sub compile {
 sub prim {
 	my ($w)=@_;
 	my $o=$w->[1];
-	print "\t$o ; $w->[0]\n";
+	print "\tdc\t\t$o\t; $w->[0]\n";
 }
 
 my $jmp='';

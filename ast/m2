@@ -6,10 +6,36 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+# usage: m2 [ -p foo:bar -p baz ] file(s)
+# At a high level, all that m2 does is:
+# - replace input lines of the form "\txyz ; abc" with the definition of xyz
+#	- the definition of "xyz" is pulled in from the file "prims.ast"
+#	- the "; abc" match part of the string is optional
+#	- die if xyz is not defined or marked as a passthru using -p
+# - print everything else
+
 use strict;
+
+use Getopt::Long;
+my $pass=[];
+GetOptions(
+	'pass=s@' => \$pass,
+);
+
+my $pt=[split(/:/,join(':',@$pass))];
+my $ps={};
+my $skip=0;
+for my $i (@$pt) {
+	$ps->{$i}=$i;
+	$skip++;
+}
 
 my ($v,$vv);
 my $def={};
+
+if ($skip) {
+	do "genprims" if (-f "genprims");
+}
 
 my $x=require("prims.ast") or die "parse failed";
 for my $n ('code', 'var') {
@@ -23,10 +49,20 @@ for my $n ('code', 'var') {
 
 while (<>) {
 	if (/^\t(\S+)\s*(\;.*)?/) {
-		 $v=\$def->{$1};
-		 die "$1 is not defined" unless ($vv=$$v);
-		 print join("",@$vv);
+		if ($skip) {
+			if (defined $ps->{$1}) {
+				print;
+				next;
+			}
+		}
+		$v=\$def->{$1};
+		die "$1 is not defined" unless ($vv=$$v);
+		print join("",@$vv);
 	} else {
 		print;
 	}
+}
+
+if ($skip) {
+	genprims($def) if (defined "genprims");
 }
