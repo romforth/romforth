@@ -55,6 +55,8 @@ rdbuf	dc		0
 
 rresp	dc		/4000
 
+wresp	dc		/0200
+
 iv	dc		*-*
 	b	i	iv
 
@@ -71,12 +73,25 @@ loop	xio		sense	Issue a sense on the Paper Tape Reader
 	xio		readc	Read the character which is now available
 	b	i	rread
 
+rrite	dc		*-*
+
+wloop	xio		sense	Issue a sense on the Paper Tape Punch (Reader)
+	and		wresp	Check if the punch is still busy
+	bnz		wloop	... and loop until it is not busy
+	b	i	rrite
+
 inner	dc		*-*
 
 next	mdx	1	1
 	ld	i	1	read the contents of the address pointed by XR1
 	sto		*+1	and store it two bytes below here
 	b	l	*-*	... to patch this placeholder
+
+litrl
+	mdx	1	1
+	ld	i	1
+	sto	l	tos
+	b		next
 
 rom
 

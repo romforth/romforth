@@ -4,12 +4,18 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+sub chord {
+	my ($c)=@_;
+	return ord($c);
+}
+
 sub lit {
 	my ($l)=@_;
 	my $o=$l->[1];
-	print qq(\tdup ; dup\n);
-	print qq(.db 0xCC ; ldd\n);
-	print qq(.dw #$o\n);	# $o ; tos <- $o
+	print qq(\tdc\t\tlit\n);
+	print qq(\tdc\t\t);
+	printf("/%x", $o);
+	print qq(\t# $o : dup ; tos <- $o\n);
 }
 
 sub compile {

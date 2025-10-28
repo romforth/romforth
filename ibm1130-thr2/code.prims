@@ -5,7 +5,8 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	:	b	i	inner
-key	:	bsi		rread ;	ld		rdbuf ; sto		prbuf
-emit	:	xio		write
 dup	:	mdx	2	-1 ;	ld	l	tos ;	sto	i	2
 drop	:	ld	i	2 ;	sto	l	tos ;	mdx	2	1
+key	:	dup ;	bsi		rread ;	ld		rdbuf ; sra		8 ;	sto	l	tos
+emit	:	ld	l	tos ;	sla		8 ;	sto		prbuf ; bsi		rrite ;	xio		write ;	drop
+lit	:	dup ;	b		litrl
