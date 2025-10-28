@@ -14,6 +14,9 @@ sub lit {
 	my $o=$l->[1];
 	print qq(\tdc\t\tlit\n);
 	print qq(\tdc\t\t);
+	if ($o < 0) {
+		$o = (1<<16)+$o;
+	}
 	printf("/%x", $o);
 	print qq(\t# $o : dup ; tos <- $o\n);
 }
