@@ -50,18 +50,7 @@ sub word {
 sub skip {
 	my ($s)=@_;
 	my $o=$s->[1];
-	#print "$jmp $o\n";
-	if ($jmp eq 'j') {
-		print ".db 0x20, $o ; bra $o\n";
-	} elsif ($jmp eq 'jz') {
-		print ".db 0x10, 0x83, 0, 0 ; tst b\n";
-		print "\tdrop ; drop\n";
-		print ".db 0x27, $o ; beq $o\n";
-	} elsif ($jmp eq 'jnz') {
-		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
-		print "\tdrop ; drop\n";
-		print ".db 0x26, $o ; bne $o\n";
-	}
+	print "\tdc\t\t$o\n";
 }
 
 my $label;

@@ -11,3 +11,4 @@ key	:	dup ;	bsi		rread ;	ld		rdbuf ; sra		8 ;	sto	l	tos
 emit	:	ld	l	tos ;	sla		8 ;	sto		prbuf ; bsi		rrite ;	xio		write ;	drop
 lit	:	dup ;	b		litrl
 neg	:	ld	l	tos ;	s	l	tos ;	s	l	tos ;	sto	l	tos
+j	:	mdx	1	1 ;	ld	i	1 ; a	l	1 ; sto	l	1
