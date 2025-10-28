@@ -7743,3 +7743,23 @@ I'll chalk up all of the work done so far as training wheels that helped me get
 familiar and learn about the quirks of the IBM 1130 in gory detail and fondly
 hope that it will help the direct threaded implementation progress that much
 faster.
+
+28 Oct '25
+----------
+Although the IBM 1130 STC port was abandoned, none of that code has gone to
+waste since all of it was reused and came in handy for the IBM 1130 "type 2
+threading" port. It wasn't too much trouble to repeat the steps that were done
+for the ibm1130-stc port all over again (and much faster) in the ibm1130-thr2
+port that I started yesterday so I don't regret that decision at all.
+
+Now that I'm through with all of the changes that needed to be repeated, I can
+focus on the implementation of literals (for the ibm1130-thr2 port) and it has
+to be done de novo and one of the very first issues I encountered is that
+characters needed a bit of special handling on the IBM 1130 since they are
+passed in using big endian format during the read/write handling to/from the
+paper tape device.
+
+To deal with this, I decided to special case character handling in genast which
+had the domino effect that the 8051 and 6809 ports were affected. Rather than
+bundle all of these changes into one large commit, I'm splitting it off into a
+smaller more isolated change and committing it separately.

@@ -178,7 +178,7 @@ while (<>) {
 		if ($w eq '}if') { print ']],',"\n"; next}                      #}if
 		if ($w eq 'for{') { runfor(); next}                             #for{
 		if ($w eq '}for') { runendfor(); next}                          #}for
-		if ($w =~ /^\'(.)\'$/) { print "[ 'lit', ord('$1')],\n"; next}  #chr
+		if ($w =~ /^\'(.)\'$/) { print "[ 'lit', chord('$1')],\n"; next}#chr
 		if ($w =~ /^(-?\d+)$/) { print "[ 'lit', int($1)],\n"; next}    #int
 		if ($w =~ /^\#(-?\d+)$/) { print "[ 'skip', int($1)],\n"; next} #skip
 		if ($w =~ /^(-?0x[\dA-Fa-f]+)$/){print "['lit',oct('$1')],\n";next} #hex

@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+sub chord {
+	my ($c)=@_;
+	return ord($c);
+}
+
 sub lit {
 	my ($l)=@_;
 	my $o=$l->[1];

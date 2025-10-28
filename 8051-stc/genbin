@@ -8,6 +8,11 @@
 
 use strict;
 
+sub chord {
+	my ($c)=@_;
+	return ord($c);
+}
+
 my $f=shift or die "usage: $0 file";
 my $x=require $f or die "parse failed";
 
