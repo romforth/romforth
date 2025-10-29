@@ -14,8 +14,6 @@
 	dc		/0100	Reserved to store register XR2 (used as SP)
 	dc		0	Reserved to store register XR3
 
-tos	dc		0	/0004 Used as Forth's TOS
-
 	* Addresses 0x8-0xD are reserved for the interrupt vectors per the docs
 
 	org		/0008
@@ -78,22 +76,23 @@ rrite	dc		*-*
 wloop	xio		sense	Issue a sense on the Paper Tape Punch (Reader)
 	and		wresp	Check if the punch is still busy
 	bnz		wloop	... and loop until it is not busy
+	xio		write	... and write the character
 	b	i	rrite
 
 inner	dc		*-*
 
-next	mdx	1	1
+innnr	mdx	1	1
 	ld	i	1	read the contents of the address pointed by XR1
 	sto		*+1	and store it two bytes below here
 	b	l	*-*	... to patch this placeholder
+
+tos	dc		0	Used as Forth's TOS (top of stack)
 
 litrl
 	mdx	1	1
 	ld	i	1
 	sto	l	tos
-	b		next
-
-rom
+	b		innnr
 
 include(`rom.s')
 

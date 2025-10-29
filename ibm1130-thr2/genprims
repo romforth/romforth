@@ -8,6 +8,6 @@ sub genprims {
 	my ($def)=@_;
 	while (my ($k,$v)=each %$def) {
 		print "$k", join("",@$v);
-		print "\tb\t\tnext\n";
 	}
+	print "\nrom\n";
 }

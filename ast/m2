@@ -47,6 +47,10 @@ for my $n ('code', 'var') {
 	}
 }
 
+if ($skip) {
+	genprims($def) if (defined "genprims");
+}
+
 while (<>) {
 	if (/^\t(\S+)\s*(\;.*)?/) {
 		if ($skip) {
@@ -61,8 +65,4 @@ while (<>) {
 	} else {
 		print;
 	}
-}
-
-if ($skip) {
-	genprims($def) if (defined "genprims");
 }

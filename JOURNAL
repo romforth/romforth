@@ -7763,3 +7763,16 @@ To deal with this, I decided to special case character handling in genast which
 had the domino effect that the 8051 and 6809 ports were affected. Rather than
 bundle all of these changes into one large commit, I'm splitting it off into a
 smaller more isolated change and committing it separately.
+
+29 Oct '25
+----------
+Since I'm getting close to the 128 byte limit for jump offsets, I've gone ahead
+and rearranged the code to save a few bytes. The rom contents are now occupying
+memory higher than the primitives which allows using the 1 byte displacements
+which fit in just 1 word instead of 2. Also, by moving the TOS closer to where
+it is accessed, I can use the shorter 1 word access instead of using the longer
+2 word access. And finally, by using the terminating semicolon for all of the
+definitions in "code.prims", I can get rid of 2 redundant branch operations.
+
+All of this amounts to just a measly savings of ~11 bytes, but hey, I'll take
+whatever I can get.
