@@ -13,5 +13,6 @@ emit	:	ld		tos ;	sla		8 ;	sto		prbuf ; bsi		rrite ;	drop ;
 lit	:	dup ;	b		litrl
 neg	:	ld		tos ;	s		tos ;	s		tos ;	sto		tos ;
 j	:	mdx	1	1 ;	ld	i	1 ; a	l	1 ; sto	l	1 ;
+jnz	:	mdx	1	1 ;	ld	i	1 ;	sto		ofs ;	ld		tos ;	sto		nos ;	ld	i	2 ;	sto		tos ;	mdx	2	1 ;	ld		nos ;	bsc		z ; b		bzero ;
 jz	:	mdx	1	1 ;	ld	i	1 ;	sto		ofs ;	ld		tos ;	sto		nos ;	ld	i	2 ;	sto		tos ;	mdx	2	1 ;	ld		nos ;	bsc		+- ; b		bzero ;
 bzero	:	ld		ofs ;	a	l	1 ;	sto	l	1 ;
