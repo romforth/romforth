@@ -87,6 +87,8 @@ innnr	mdx	1	1
 	b	l	*-*	... to patch this placeholder
 
 tos	dc		0	Used as Forth's TOS (top of stack)
+nos	dc		0	Used as Forth's NOS (next on stack)
+ofs	dc		0	save location for the jump offset
 
 litrl
 	mdx	1	1
