@@ -26,6 +26,7 @@
 #{if step>=3
 
 5
+120
 
 'o'	[ 'o'
 
@@ -136,7 +137,7 @@ if{		[	// taken
 	#assert
 }if		[
 
-#stackcheck
+emit
 
 #}if
 

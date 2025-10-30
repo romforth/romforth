@@ -7776,3 +7776,26 @@ definitions in "code.prims", I can get rid of 2 redundant branch operations.
 
 All of this amounts to just a measly savings of ~11 bytes, but hey, I'll take
 whatever I can get.
+
+30 Oct '25
+----------
+At step 5 I ran into a problem that had its origins in the strengthened tests
+that were added as part of commit id 9c3fba20369c2f29de522fe650aa2f1af44c18c7
+
+Although that change looked good when it was added, it causes a problem for
+new ports (such as the ibm1130-thr2, which is currently in progress) since it
+adds a dependency on the -/subtract operation which is not yet implemented.
+Note that this change was done as part of "testskip" (which was later renamed
+to "stackcheck" as part of commit 08405e6ce88e75e9e7a58f95d11c5aac6645fc95).
+
+So it is clear that I can sanity check the stack using testskip/stackcheck only
+after addition and subtraction have been implemented. Before that, I'll have to
+fall back to printing a character and checking if the right value was printed
+and that is what this change does, but that in turn has the domino effect of
+regressing the pdk14-stc build (as well as the nqh-zig, which is expected and
+fixed in the usual way). Rather than fix the pdk14-stc issue as part of this
+commit, I'm going to defer it since I want to investigate if something better
+can be done about pdk14-stc.
+
+Just in time for Halloween, I think I have a touch of the cold (or flu) so I'm
+just going to rest for a bit as well.
