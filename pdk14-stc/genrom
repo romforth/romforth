@@ -281,12 +281,15 @@ while (<>) {				# map forth words in the standard input
 				if ($i eq 4) { # huge kludge
 					if ($comefrom eq 'j') {
 						$comefrom='';
+						print qq(\tcall dup\n);
 						print qq(\tmov a, #4\n);
 						print qq(\tpcadd a\n);
 						next;
 					}
 					if ($comefrom eq 'jz') {
 						$comefrom='';
+						print qq(\tcall drop\n);
+						print qq(\tcall dup\n);
 						print qq(\tmov a, #5\n);
 						print qq(\tpcadd a\n);
 						print qq(_test_jz_else$jzc:\n);
@@ -295,6 +298,8 @@ while (<>) {				# map forth words in the standard input
 					}
 					if ($comefrom eq 'jnz') {
 						$comefrom='';
+						print qq(\tcall drop\n);
+						print qq(\tcall dup\n);
 						print qq(\tmov a, #5\n);
 						print qq(\tpcadd a\n);
 						print qq(_test_jnz_endif$jnzc:\n);

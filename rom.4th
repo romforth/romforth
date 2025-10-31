@@ -137,6 +137,10 @@ if{		[	// taken
 	#assert
 }if		[
 
+#{if ARCH eq "pdk14"
+drop
+#}if
+
 emit
 
 #}if
