@@ -56,25 +56,30 @@ sub skip {
 my $label;
 sub setlabel {
 	my ($l)=@_;
-	$label=$l;
+
+	# the IBM 1130 assembler only allows labels of length 5 so we
+	# extract the first letter and the 3 digits and reserve the last
+	# slot for a suffix character to be added later (in cond/loop)
+	$l=~/^(.)[^\d]*(\d+)/;
+	$label="$1$2";
 }
 
 sub cond {
 	my ($s)=@_;
 	my $i=$s->[1];	# AST for the 'if' part
 	my $e=$s->[2];	# AST for the 'else' part
-	print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
-	print "\tdrop ; drop\n";
-	print ".db 0x27, $label", "_then-.-1\n";
-	my ($l,$c)=($label++, "_then");
+	print "\tdc\t\tjz\n";
+	print "\tdc\t\t$label", "t-*\n";
+	my ($l,$c)=($label++, "t");
 	my $si = walk($i);	# expand out the 'if' part of the AST
 	if (defined $e and @$e != 0) {
-		print ".db 0x20,", $l, "_endif-.-1\n";
-		print $l, $c, ":\n";
-		$c='_endif';
+		print "\tdc\t\tj\n";
+		print "\tdc\t\t$l", "f-*\n";
+		print $l, $c, "\n";
+		$c='f';
 		my $se = walk($e);	# expand out the 'else' part of the AST
 	}
-	print $l, $c, ":\n";
+	print $l, $c, "\n";
 }
 
 my $gendict=0;
