@@ -86,6 +86,8 @@ innnr	mdx	1	1
 	sto		*+1	and store it two bytes below here
 	b	l	*-*	... to patch this placeholder
 
+mnus1	dc		-1	Constant used by the inv'ert operation
+
 tos	dc		0	Used as Forth's TOS (top of stack)
 nos	dc		0	Used as Forth's NOS (next on stack)
 ofs	dc		0	save location for the jump offset

@@ -18,3 +18,4 @@ jz	:	mdx	1	1 ;	ld	i	1 ;	sto		ofs ;	ld		tos ;	sto		nos ;	ld	i	2 ;	sto		tos ;	mdx	
 bzero	:	ld		ofs ;	a	l	1 ;	sto	l	1 ;
 inc	:	mdm	l	tos,1 ;	nop ;
 dec	:	mdm	l	tos,-1 ;	nop ;
+inv	:	ld		tos ;	eor		mnus1 ;	sto		tos ;
