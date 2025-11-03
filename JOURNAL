@@ -7809,3 +7809,30 @@ that maybe too clever for my own good. I guess I will truly regret this the day
 I have to debug any of it - and that is a truly scary thought. My only excuse
 for this monstrosity is that I'm feeling sick and tired and just want to be
 done with it and just move on.
+
+03 Nov '25
+----------
+Even something simple as inc/dec, which is usually trivially implementable on
+most modern architectures, turned into an uphill struggle on the IBM 1130. My
+initial idea was to use the "MDX L TOS,1" and "MDX L TOS,-1" instructions to
+code up the inc/dec operations. But that didn't work as expected and trawling
+through the CPU trace log (generated using "attach cpu ..." as mentioned in my
+earlier JOURNAL entries) showed that the "MDX" instruction had somehow morphed
+into an "MDM" instruction along the way and I could not find even a trace of
+the newly mutated MDM opcode in the "IBM 1130 Functional Characteristics" docs.
+(I was looking at the file named 1130-102-ocr.pdf, from the ibm1130.net site)
+
+So I switched to the "SIMH IBM 1130 Emulator and Disk Monitor System R2V12
+Reference Guide" which did talk about the MDM instruction in all of one line
+which is quoted here in all its glorious brevity:
+
+	label MDM dest,incr	Modify Memory and Skip
+
+So that is the new code that I've ended up using for now. I had to figure out
+from the CPU trace that it was skipping an extra instruction after it and so
+I've padded out the code with an additional NOP instruction to compensate.
+
+Also, despite the fact that the doc does not mention an "f/t" flag, it turned
+out it was needed so I had to figure out the hard way that I needed to add the
+same 'l' flag, that I would have used for the "MDX" opcode, for the code to
+work as expected.
