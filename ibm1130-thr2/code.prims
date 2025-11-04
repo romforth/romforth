@@ -8,8 +8,8 @@ bye	:	b	i	inner
 next	: b		innnr
 dup	:	mdx	2	-1 ;	ld		tos ;	sto	i	2 ;
 drop	:	ld	i	2 ;	sto		tos ;	mdx	2	1 ;
-key	:	dup ;	bsi		rread ;	ld		rdbuf ; sra		8 ;	sto		tos ;
-emit	:	ld		tos ;	sla		8 ;	sto		prbuf ; bsi		rrite ;	drop ;
+key	:	dup ;	b		rread
+emit	:	bsi		rrite ;	drop ;
 lit	:	dup ;	b		litrl
 neg	:	ld		tos ;	s		tos ;	s		tos ;	sto		tos ;
 j	:	mdx	1	1 ;	ld	i	1 ; a	l	1 ; sto	l	1 ;

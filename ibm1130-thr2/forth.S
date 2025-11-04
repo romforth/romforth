@@ -62,17 +62,22 @@ start	bsi		inner
 	wait
 	nop
 
-rread	dc		*-*
-	xio		enptr	Enable reads on the IBM 1134 Paper Tape Reader
+rread	xio		enptr	Enable reads on the IBM 1134 Paper Tape Reader
 
 loop	xio		sense	Issue a sense on the Paper Tape Reader
 	and		rresp	Check if the read response bit is set
 	bz		loop	... and loop until it is set
 	xio		readc	Read the character which is now available
-	b	i	rread
+	ld		rdbuf	Load the character into the accumulator
+	sra		8	Extract the high bits since it is big-endian
+	sto		tos	... and save it in the TOS
+	b		innnr
 
 rrite	dc		*-*
 
+	ld		tos	Load the character to be printed
+	sla		8	Turn it into big-endian format
+	sto		prbuf	Save it into the print buffer
 wloop	xio		sense	Issue a sense on the Paper Tape Punch (Reader)
 	and		wresp	Check if the punch is still busy
 	bnz		wloop	... and loop until it is not busy
