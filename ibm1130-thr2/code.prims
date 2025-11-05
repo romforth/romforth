@@ -23,3 +23,4 @@ nip	:	ld	i	2 ;	sto	l	nos ;	mdx	2	1 ;
 +	:	ld	l	tos ;	a	i	2 ;	sto	l	tos ;	mdx	2	1 ;
 -	:	ld	i	2 ;	s	l	tos ;	sto	l	tos ;	mdx	2	1 ;
 &	:	ld	l	tos ;	and	i	2 ;	sto	l	tos ;	mdx	2	1 ;
+|	:	ld	l	tos ;	or	i	2 ;	sto	l	tos ;	mdx	2	1 ;
