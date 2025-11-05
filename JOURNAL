@@ -7856,3 +7856,18 @@ is placed at a fixed point now, I'm no longer seeing the flaky build failures
 that used to happen with a fair bit of regularity. As newer words are added I'm
 sure that the problem will reoccur but I'll hold off any additional changes for
 now.
+
+05 Nov '25
+----------
+Despite my valiant attempts at trying to reduce the memory usage by using the
+short format 1 word instructions, the addition/subtract operations that I will
+implement next are sufficient to push the displacements over the edge such that
+the problem that I mentioned in the previous JOURNAL entry has gone from being
+occasional to ever present. So I have no choice but to fix it once and for all
+by caving in and just using the long format addressing throughout.
+
+There is one place where I can't use the long address format and that is in the
+jump to "bzero" from the j/jz path which is in the skip part of the previous
+branch ("BSC") instruction which needs to be 1 word long, so I've moved both of
+the routines to forth.S so that the displacement to bzero is always at a small
+fixed offset.

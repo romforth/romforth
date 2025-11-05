@@ -5,19 +5,18 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	:	b	i	inner
-next	: b		innnr
-dup	:	mdx	2	-1 ;	ld		tos ;	sto	i	2 ;
-drop	:	ld	i	2 ;	sto		tos ;	mdx	2	1 ;
-key	:	dup ;	b		rread
-emit	:	bsi		rrite ;	drop ;
-lit	:	dup ;	b		litrl
-neg	:	ld		tos ;	s		tos ;	s		tos ;	sto		tos ;
+next	: b	l	innnr
+dup	:	mdx	2	-1 ;	ld	l	tos ;	sto	i	2 ;
+drop	:	ld	i	2 ;	sto	l	tos ;	mdx	2	1 ;
+key	:	dup ;	b	l	rread
+emit	:	bsi	l	rrite ;	drop ;
+lit	:	dup ;	b	l	litrl
+neg	:	ld	l	tos ;	s	l	tos ;	s	l	tos ;	sto	l	tos ;
 j	:	mdx	1	1 ;	ld	i	1 ; a	l	1 ; sto	l	1 ;
-jnz	:	mdx	1	1 ;	ld	i	1 ;	sto		ofs ;	ld		tos ;	sto		tmp ;	ld	i	2 ;	sto		tos ;	mdx	2	1 ;	ld		tmp ;	bsc		z ; b		bzero ;
-jz	:	mdx	1	1 ;	ld	i	1 ;	sto		ofs ;	ld		tos ;	sto		tmp ;	ld	i	2 ;	sto		tos ;	mdx	2	1 ;	ld		tmp ;	bsc		+- ; b		bzero ;
-bzero	:	ld		ofs ;	a	l	1 ;	sto	l	1 ;
+jnz	:	b	l	bnz
+jz	:	b	l	bz
 inc	:	mdm	l	tos,1 ;	nop ;
 dec	:	mdm	l	tos,-1 ;	nop ;
-inv	:	ld		tos ;	eor		mnus1 ;	sto		tos ;
-dip	:	mdx	2	-1 ;	ld		nos ;	sto	i	2 ;
-nip	:	ld	i	2 ;	sto		nos ;	mdx	2	1 ;
+inv	:	ld	l	tos ;	eor	l	mnus1 ;	sto	l	tos ;
+dip	:	mdx	2	-1 ;	ld	l	nos ;	sto	i	2 ;
+nip	:	ld	i	2 ;	sto	l	nos ;	mdx	2	1 ;

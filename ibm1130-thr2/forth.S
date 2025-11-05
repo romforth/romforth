@@ -104,6 +104,37 @@ litrl
 	sto	l	tos
 	b		innnr
 
+bz	mdx	1	1
+	ld	i	1
+	sto	l	ofs
+	ld	l	tos
+	sto	l	tmp
+	ld	i	2
+	sto	l	tos
+	mdx	2	1
+	ld	l	tmp
+	bsc		+-
+	b		bzero
+	b	l	innnr
+
+bnz	mdx	1	1
+	ld	i	1
+	sto	l	ofs
+	ld	l	tos
+	sto	l	tmp
+	ld	i	2
+	sto	l	tos
+	mdx	2	1
+	ld	l	tmp
+	bsc		z
+	b		bzero
+	b	l	innnr
+
+bzero	ld	l	ofs
+	a	l	1
+	sto	l	1
+	b	l	innnr
+
 include(`rom.s')
 
 	end		start
