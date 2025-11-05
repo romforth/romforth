@@ -43,8 +43,11 @@ for my $n ('code', 'var') {
 	my $l=$x->{$n};
 	while (my ($k,$v)=each %$l) {
 		my ($w,$l,$imm,$a)=@$v;
-		$def->{$k}=$a;
-		$def->{$l}=$a if ($k ne $l);
+		if ($k ne $l) {
+			$def->{$l}=$a
+		} else {
+			$def->{$k}=$a;
+		}
 	}
 }
 for my $n ('var') {
