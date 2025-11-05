@@ -33,6 +33,9 @@ sub compile {
 sub prim {
 	my ($w)=@_;
 	my $o=$w->[1];
+	if (length($o)>5) {
+		$o=~s/^lbl/l/;
+	}
 	print "\tdc\t\t$o\t; $w->[0]\n";
 }
 

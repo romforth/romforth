@@ -7,7 +7,12 @@
 sub genprims {
 	my ($def)=@_;
 	while (my ($k,$v)=each %$def) {
-		print "$k", join("",@$v);
+		if (length($k)<=5) {
+			print "$k", join("",@$v);
+		} else {
+			$k=~s/^lbl/l/;
+			print "$k", join("",@$v);
+		}
 	}
 	print "\nrom\n";
 }

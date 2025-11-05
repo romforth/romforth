@@ -20,3 +20,5 @@ dec	:	mdm	l	tos,-1 ;	nop ;
 inv	:	ld	l	tos ;	eor	l	mnus1 ;	sto	l	tos ;
 dip	:	mdx	2	-1 ;	ld	l	nos ;	sto	i	2 ;
 nip	:	ld	i	2 ;	sto	l	nos ;	mdx	2	1 ;
++	:	ld	l	tos ;	a	i	2 ;	sto	l	tos ;	mdx	2	1 ;
+-	:	ld	i	2 ;	s	l	tos ;	sto	l	tos ;	mdx	2	1 ;
