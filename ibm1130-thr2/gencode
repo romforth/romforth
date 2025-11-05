@@ -14,6 +14,10 @@ sub lit {
 	my $o=$l->[1];
 	print qq(\tdc\t\tlit\n);
 	print qq(\tdc\t\t);
+	if ($o=~/^[a-z]+/) {
+		print "$o\n";
+		return;
+	}
 	if ($o < 0) {
 		$o = (1<<16)+$o;
 	}
@@ -36,7 +40,7 @@ sub prim {
 	if (length($o)>5) {
 		$o=~s/^lbl/l/;
 	}
-	print "\tdc\t\t$o\t; $w->[0]\n";
+	print "\tdc\t\t$o\t; $w->[2]\n";
 }
 
 my $jmp='';

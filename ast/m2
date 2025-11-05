@@ -32,6 +32,7 @@ for my $i (@$pt) {
 
 my ($v,$vv);
 my $def={};
+my $var={};
 
 if ($skip) {
 	do "genprims" if (-f "genprims");
@@ -46,9 +47,15 @@ for my $n ('code', 'var') {
 		$def->{$l}=$a if ($k ne $l);
 	}
 }
+for my $n ('var') {
+	my $l=$x->{$n};
+	while (my ($k,$v)=each %$l) {
+		$var->{$k}=1;
+	}
+}
 
 if ($skip) {
-	genprims($def) if (defined "genprims");
+	genprims($def,$var) if (defined "genprims");
 }
 
 while (<>) {

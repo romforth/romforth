@@ -5,8 +5,9 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 sub genprims {
-	my ($def)=@_;
+	my ($def,$var)=@_;
 	while (my ($k,$v)=each %$def) {
+		next if ($var->{$k});
 		if (length($k)<=5) {
 			print "$k", join("",@$v);
 		} else {

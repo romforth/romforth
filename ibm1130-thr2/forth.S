@@ -137,4 +137,7 @@ bzero	ld	l	ofs
 
 include(`rom.s')
 
+here	dc		mem
+mem
+
 	end		start

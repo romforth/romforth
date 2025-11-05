@@ -28,3 +28,6 @@ nip	:	ld	i	2 ;	sto	l	nos ;	mdx	2	1 ;
 2drop	:	drop ;	b	l	drop
 swap	:	ld	i	2 ;	sto	l	nos ;	ld	l	tos ;	sto	i	2 ;	ld	l	nos ;	sto	l	tos ;
 @	:	ld	i	tos ;	sto	l	tos ;
+!	:	ld	i	2 ;	sto	i	tos ;	mdx	2	1 ; b	l	drop
+
+var here
