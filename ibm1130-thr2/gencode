@@ -28,10 +28,8 @@ sub lit {
 sub compile {
 	my ($l)=@_;
 	my $o=$l->[1];
-	$o .= "_cfa";
-	print qq(\tdup ; dup\n);
-	print qq(.db 0xCC ; ldd\n);
-	print qq(.dw #$o\n);	# $o ; tos <- $o
+	print qq(\tdc\t\tlit\n);
+	print qq(\tdc\t\t$o\n);
 }
 
 sub prim {
