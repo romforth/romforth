@@ -35,6 +35,8 @@ pick	:	ld	l	tos ;	a	l	2 ;	sto	l	tos ; ld	i	tos ;	sto	l	tos ;
 stick	:	ld	l	tos ;	a	l	2 ;	sto	l	tos ; ld	i	2 ;	sto	i	tos ;	mdx	2	1 ;	b	l	drop
 sp@!	:	ld	l	2 ;	sto	l	nos ;	ld	l	tos ;	sto	l	2 ; ld	l	nos ;	sto	l	tos ;
 rp@!	:	ld	l	3 ;	sto	l	nos ;	ld	l	tos ;	sto	l	3 ; ld	l	nos ;	sto	l	tos ;
+>r	:	mdx	3	-1 ;	ld	l	tos ;	sto i	3 ;	b	l	drop
+r>	:	dup ;	ld	i	3 ; sto	l	tos ;	mdx	3	1 ;
 
 var here
 var state
