@@ -4,12 +4,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-all : oneforth
+all : twoforth
 
 oneforth : test.out
+twoforth : test.defs
 
 test.out : forth.out test.inp test.exp
-	ibm1130 simh.cmds | grep Wait > test.out
+	(echo "load forth.out" ; cat simh.cmds) | ibm1130 | grep Wait > test.out
 	cmp test.out test.lst
 	cmp test.ptp test.exp
 
@@ -43,5 +44,22 @@ fpp.config : stepfile fpp.config.1130
 test.exp : ../test.expected ../fpp fpp.config
 	cat ../test.expected | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.exp
 
+test.defs : forth_defs.out test.inp test.exp
+	(echo "load forth_defs.out" ; cat simh.cmds) | ibm1130 | grep Wait > test.defs
+	cmp test.defs test.lst
+	cmp test.ptp test.exp
+
+forth_defs.out : forth_defs.asm
+	asm1130 -l forth_defs.asm
+
+forth_defs.asm : forth_defs.S rom.s defs.asm
+	m4 forth_defs.S > forth_defs.asm
+
+forth_defs.S : forth.S
+	cp forth.S forth_defs.S
+
+defs.asm : defs.s
+	../ast/m2 -p dc defs.s > defs.asm
+
 clean :
-	rm -f forth.lst forth.out fpp.config test.out test.inp defs.ast defs.map defs.s dict.map forth.asm prims.ast rom.ast rom.map rom.s forth.err test.ptp test.exp
+	rm -f forth.lst forth.out fpp.config test.out test.inp defs.ast defs.map defs.s dict.map forth.asm prims.ast rom.ast rom.map rom.s forth.err test.ptp test.exp defs.asm forth_defs.S forth_defs.asm forth_defs.lst forth_defs.out test.defs

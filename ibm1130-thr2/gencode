@@ -98,7 +98,10 @@ my $prev="0";
 sub def {
 	my ($s)=@_;
 	my ($k,$w,$l,$imm,$p,$a)=@$s;
-	print "; $k name:$w, label:$l, imm: $imm\n";
+	print "\t\t\t\t\t# $k name:$w, label:$l, imm: $imm\n";
+	if (length($l)>5) {
+		$l=~s/^lbl/l/;
+	}
 	if ($gendict) {
 		my $len=length($w);
 		# print "\t.align 1\n";
@@ -112,15 +115,20 @@ sub def {
 		$prev=$p;
 		$prev="$l"."_lfa";
 	}
-	print "$l", "_cfa : ; $w\n";
+	print "$l", "c\t\t\t\t\t# $w\n";
 	my $se = walk($a);	# expand out the body of the definition
-	print ".db 0x39\n";
+	print "\tdc\t\texit\n";
 }
 
 sub visit {
 	my ($s)=@_;
 	#print "$s->[0]  label:$s->[1],  name:$s->[2]\n";
-	print ".db 0xbd\n.dw $s->[1]", "_cfa ; $s->[2]\n";
+	my $l=$s->[1];
+	if (length($l)>5) {
+		$l=~s/^lbl/l/;
+	}
+	print "\tdc\t\tenter\n";
+	print "\tdc\t\t$l", "c-1\t# $s->[2]\n";
 }
 
 sub loop {

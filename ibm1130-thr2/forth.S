@@ -135,6 +135,7 @@ bzero	ld	l	ofs
 	sto	l	1
 	b	l	innnr
 
+sinclude(`defs.s')
 include(`rom.s')
 
 here	dc		mem
