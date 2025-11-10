@@ -7871,3 +7871,11 @@ jump to "bzero" from the j/jz path which is in the skip part of the previous
 branch ("BSC") instruction which needs to be 1 word long, so I've moved both of
 the routines to forth.S so that the displacement to bzero is always at a small
 fixed offset.
+
+10 Nov '25
+----------
+It took me a fair bit of debugging to get this working and it was just a dumb
+move on my part since I had forgotten to invoke drop after the call. The lesson
+learnt from this is that rather than try to wing it during the implementation,
+I should just look at the template in pseudo/code and follow that to the letter
+(or more correctly: word).
