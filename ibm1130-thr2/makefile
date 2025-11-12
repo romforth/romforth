@@ -35,7 +35,7 @@ defs.s : ../defs.4th ../fpp fpp.config prims.ast ../ast/genast ../ast/genbin gen
 	../ast/genbin defs.ast > defs.s
 
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
-	cat ../test.inp | ../fpp -DTESTROM -c fpp.config > test.inp
+	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp
 	cat ../rest.inp | ../fpp -DTESTROM -c fpp.config >> test.inp
 
 fpp.config : stepfile fpp.config.1130

@@ -7879,3 +7879,42 @@ move on my part since I had forgotten to invoke drop after the call. The lesson
 learnt from this is that rather than try to wing it during the implementation,
 I should just look at the template in pseudo/code and follow that to the letter
 (or more correctly: word).
+
+12 Nov '25
+----------
+To read/write a single byte from/to the paper tape reader/punch I had used a
+fairly simple polling loop in the initial code implementation of key/emit. In
+the case of reads, the code was basically this:
+	enable the paper tape reader	(xio enptr)
+	issue a sense on the reader	(xio sense)
+	loop until data is available
+	read the available byte to TOS	(xio readc)
+
+In the case of writes, the polling loop checked if the device had sent out the
+previous byte and was ready for the next byte and the code looked like this:
+	issue a sense on the punch	(xio sense)
+	loop until the punch is not busy
+	write the character in TOS	(xio write)
+
+I used a polling loop in both cases since I didn't want to really deal with the
+interrupt handling on the IBM 1130. At this step though, I realized that I did
+need to get up close and personal with the interrupt handling mechanism since
+that was the only way to read the next byte from the paper tape reader - the
+poller loop just wouldn't be able to pull the next byte in without it.
+
+This was my second rodeo with the interrupt mechanism on the IBM 1130. The very
+first time around, I only had to install a dummy interrupt handler which just
+returned without doing anything (using: b i iv). This time around, I needed to
+figure stuff out the hard way by reading through the SIMH emulator code (this
+is the stuff under Ibm1130/ibm1130_ptrp.c in https://github.com/open-simh/simh)
+
+Ideally I would have liked to do a "proper" implementation where the read and
+write handlers of the paper tape reader and paper tape punch run asynchronously
+with a queue for the read side filling in bytes into a read buffer while the
+write side can drain the bytes from a print buffer queue. For now though I've
+decided to keep things really simple and minimal and accordingly the current
+code uses blocking (using the IBM 1130's wait opcode) and the reads and writes
+are synchronous with the interrupts despite the fact that I have a really good
+interrupt handling mechanism in place. In my copious free time I may decide to
+revisit this code path to use sp@! and rp@! to turn interrupt handling into
+fully asynchronous threads of execution. But that can wait for now, I think.

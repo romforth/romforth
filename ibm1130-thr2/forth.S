@@ -47,6 +47,9 @@ enptr	dc		rdbuf	First IOCC word points to the character
 sense	dc		rdbuf	First IOCC word points to the character
 	dc		/1F00	Second IOCC word : sense paper tape reader
 
+reset	dc		rdbuf	First IOCC word points to the character
+	dc		/1F01	Second IOCC word : reset paper tape reader/punch
+
 prbuf	dc		0
 
 rdbuf	dc		0
@@ -55,22 +58,37 @@ rresp	dc		/4000
 
 wresp	dc		/0200
 
+rwrsp	dc		/5000	(rresp:4000|1000)
+
+savac	dc		0	Temp location to save the accumulator
+
 iv	dc		*-*
-	b	i	iv
+
+	sto		savac	Save the accumulator, just in case it was live
+	xio		sense	Issue a sense on the Paper Tape Reader
+	bsc		+-	if (acc==0) {
+	b		sprus		this was just a spurious interrupt }
+	and		rwrsp	then check if it was a (read | write) response
+	bsc		+-	if (acc==0) {
+	b		sprus	not read/write, something else, ignore? }
+	and		rresp	Check if the read response bit is set
+	bsc		+-	if (acc==0) {
+	b		punch		not read - so it must be a write }
+	xio		readc	Read the character which is now available
+	ld		rdbuf	Load the character into the accumulator
+	sra		8	Extract the high bits since it is big-endian
+	sto		tos	... and save it in the TOS
+punch				# nothing to do in case of a write interrupt
+	xio		reset	just clear out the interrupts ...
+sprus	ld		savac	restore the accumulator and ...
+	bosc	i	iv	return from the interrupt (while clearing it)
 
 start	bsi		inner
 	wait
 	nop
 
 rread	xio		enptr	Enable reads on the IBM 1134 Paper Tape Reader
-
-loop	xio		sense	Issue a sense on the Paper Tape Reader
-	and		rresp	Check if the read response bit is set
-	bz		loop	... and loop until it is set
-	xio		readc	Read the character which is now available
-	ld		rdbuf	Load the character into the accumulator
-	sra		8	Extract the high bits since it is big-endian
-	sto		tos	... and save it in the TOS
+	wait			Let the interrupt handler take care of the rest
 	b		innnr
 
 rrite	dc		*-*
@@ -78,10 +96,8 @@ rrite	dc		*-*
 	ld		tos	Load the character to be printed
 	sla		8	Turn it into big-endian format
 	sto		prbuf	Save it into the print buffer
-wloop	xio		sense	Issue a sense on the Paper Tape Punch (Reader)
-	and		wresp	Check if the punch is still busy
-	bnz		wloop	... and loop until it is not busy
 	xio		write	... and write the character
+	wait			Let the interrupt handler take care of the rest
 	b	i	rrite
 
 inner	dc		*-*
