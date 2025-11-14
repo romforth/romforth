@@ -99,6 +99,10 @@ my $mapper = {
 	"testnest" => "tstn",
 	"third" => "thrd",
 	"fourth" => "frth",
+	"nybble" => "nybl",
+	"append" => "apnd",
+	"wscmpr" => "wscr",
+	"parse" => "prse",
 };
 
 sub def {
