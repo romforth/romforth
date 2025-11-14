@@ -43,6 +43,7 @@ exit	:	ld	i	3 ;	sto	l	1 ;	mdx	3	1 ;
 call	:	mdx	3	-1 ;	ld	l	1 ;	sto	i	3 ;	ld	l	tos ;	sto	l	1 ; b	l	drop
 <<	:	ld	l	3 ; sto	l	tmp ;	ldx	i3	tos ;	drop ;	sla	3 ;	sto	l	tos ;	ld	l	tmp ;	sto	l	3 ;
 >>	:	ld	l	3 ;	sto	l	tmp ;	ldx	i3	tos ;	drop ;	sra	3 ;	sto	l	tos ;	ld	l	tmp ;	sto	l	3 ;
+over	:	dup ;	ld	l2	1 ;	sto	l	tos ;
 
 var here
 var state
