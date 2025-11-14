@@ -98,6 +98,7 @@ my $prev="0";
 my $mapper = {
 	"testnest" => "tstn",
 	"third" => "thrd",
+	"fourth" => "frth",
 };
 
 sub def {
