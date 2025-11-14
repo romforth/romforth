@@ -154,7 +154,7 @@ sub loop {
 
 	my $c=$l->[1];	# the conditional/first part of the loop
 	my $lbl=$label++;
-	print "$lbl", "_begin:\n";
+	print "$lbl", "b\n";
 	my $lc = walk($c);
 
 	my $b=$l->[2];		# this could be either the type or undefined
@@ -165,20 +165,18 @@ sub loop {
 		$t=-1
 	}
 	if ($t==1) {		# conditional while loop
-		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
-		print "\tdrop ; drop\n";
-		print ".db 0x27, ", $lbl, "_end-.-1 ; beq\n";
+		print "\tdc\t\tjz\n";
+		print "\tdc\t\t$lbl", "e-*\n";
 	} elsif ($t==0) {	# conditional while:until loop
-		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
-		print "\tdrop ; drop\n";
-		print ".db 0x26, ", $lbl, "_end-.-1 ; bne\n";
+		print "\tdc\t\tjnz\n";
+		print "\tdc\t\t$lbl", "e-*\n";
 	} else {		# unconditional loop
 		# no condition code needs to be generated
 	}
 	my $lb = walk($b);
-	print ".db 0x20,", $lbl,"_begin-.-1 ; bra\n";
-	print "$lbl", "_end:\n";
-	#print "\tdrop ; drop\n";
+	print "\tdc\t\tj\n";
+	print "\tdc\t\t$lbl", "b-*\n";
+	print "$lbl", "e\n";
 }
 
 sub header {
