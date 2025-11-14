@@ -96,7 +96,8 @@ sub setgendict {
 my $prev="0";
 
 my $mapper = {
-	"testnest" => "tstn"
+	"testnest" => "tstn",
+	"third" => "thrd",
 };
 
 sub def {
@@ -106,7 +107,7 @@ sub def {
 	if (length($l)>5) {
 		$l=~s/^lbl/l/;
 	}
-	if (length($l)>5) {
+	if (length($l)>=5) {
 		die unless ($l=$mapper->{$l});
 	}
 	if ($gendict) {
@@ -134,7 +135,7 @@ sub visit {
 	if (length($l)>5) {
 		$l=~s/^lbl/l/;
 	}
-	if (length($l)>5) {
+	if (length($l)>=5) {
 		die unless ($l=$mapper->{$l});
 	}
 	print "\tdc\t\tenter\n";
