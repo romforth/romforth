@@ -151,11 +151,16 @@ bzero	ld	l	ofs
 	sto	l	1
 	b	l	innnr
 
-sinclude(`defs.s')
+ifdef(`USEDICT',`sinclude(`dict.s')')
+
+ifdef(`USEDICT',`sinclude(`defs_dict.s')',`sinclude(`defs.s')')
+
 include(`rom.s')
 
 here	dc		mem
-state	dc		1
+stat	dc		1	# state
+late				# latest
+sinclude(`latest.s')
 mem
 
 	end		start

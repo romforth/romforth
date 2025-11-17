@@ -4,10 +4,11 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-all : twoforth
+all : threeforth
 
 oneforth : test.out
 twoforth : test.defs
+threeforth : test.dict
 
 test.out : forth.out test.inp test.exp
 	(echo "load forth.out" ; cat simh.cmds) | ibm1130 | grep Wait > test.out
@@ -49,17 +50,43 @@ test.defs : forth_defs.out test.inp test.exp
 	cmp test.defs test.lst
 	cmp test.ptp test.exp
 
+test.dict : forth_dict.out test.inp test.exp
+	(echo "load forth_dict.out" ; cat simh.cmds) | ibm1130 | grep Wait > test.dict
+	cmp test.dict test.lst
+	cmp test.ptp test.exp
+
 forth_defs.out : forth_defs.asm
-	asm1130 -l forth_defs.asm
+	asm1130 -l forth_defs.asm 2> forth.err
+	! test -s forth.err
+
+forth_dict.out : forth_dict.asm
+	asm1130 -l forth_dict.asm 2> forth.err
+	! test -s forth.err
 
 forth_defs.asm : forth_defs.S rom.s defs.asm
 	m4 forth_defs.S > forth_defs.asm
 
+forth_dict.asm : forth_dict.S prims_dict.s defs_dict.s rom.s defs.asm
+	m4 -DUSEDICT forth_dict.S > forth_dict.asm
+
 forth_defs.S : forth.S
 	cp forth.S forth_defs.S
+
+forth_dict.S : forth.S
+	cp forth.S forth_dict.S
+
+prims_dict.s : dict.map ../ast/genprims code.prims ../fpp fpp.config ../ast/gendict gencode
+	../ast/gendict prims.ast dict.map > prims_dict.s
+	[ -L dict.s ] || ln -s prims_dict.s dict.s
+
+dict.map : prims.ast
+
+defs_dict.s : dict.map ../defs.4th ../fpp fpp.config ../ast/genast ../ast/genbin gencode
+	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ../ast/genast -g -d defs.map dict.map > defs_dict.ast
+	../ast/genbin -d defs_dict.ast > defs_dict.s
 
 defs.asm : defs.s
 	../ast/m2 -p dc defs.s > defs.asm
 
 clean :
-	rm -f forth.lst forth.out fpp.config test.out test.inp defs.ast defs.map defs.s dict.map forth.asm prims.ast rom.ast rom.map rom.s forth.err test.ptp test.exp defs.asm forth_defs.S forth_defs.asm forth_defs.lst forth_defs.out test.defs
+	rm -f forth.lst forth.out fpp.config test.out test.inp defs.ast defs.map defs.s dict.map forth.asm prims.ast rom.ast rom.map rom.s forth.err test.ptp test.exp defs.asm forth_defs.S forth_defs.asm forth_defs.lst forth_defs.out test.defs rom.s2 defs_dict.ast defs_dict.s dict.s forth_dict.S forth_dict.asm forth_dict.lst latest.s prims_dict.ast prims_dict.s test.dict forth_dict.out

@@ -4,16 +4,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+do "mapnames"; # to handle the IBM 1130 assembler 5 character label limit
+
 sub genprims {
 	my ($def,$var)=@_;
 	while (my ($k,$v)=each %$def) {
 		next if ($var->{$k});
-		if (length($k)<=5) {
-			print "$k", join("",@$v);
-		} else {
-			$k=~s/^lbl/l/;
-			print "$k", join("",@$v);
-		}
+		$k=maplbl($k,$k);
+		print "$k", join("",@$v);
 	}
 	print "\nrom\n";
 }

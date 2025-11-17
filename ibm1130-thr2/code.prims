@@ -47,3 +47,4 @@ over	:	dup ;	ld	l2	1 ;	sto	l	tos ;
 
 var here
 var state
+var latest

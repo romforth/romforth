@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
+do "mapnames"; # to handle the IBM 1130 assembler 5 character label limit
+
 sub chord {
 	my ($c)=@_;
 	return ord($c);
@@ -15,6 +17,7 @@ sub lit {
 	print qq(\tdc\t\tlit\n);
 	print qq(\tdc\t\t);
 	if ($o=~/^[a-z]+/) {
+		$o=mapany($o,$o);
 		print "$o\n";
 		return;
 	}
@@ -35,9 +38,7 @@ sub compile {
 sub prim {
 	my ($w)=@_;
 	my $o=$w->[1];
-	if (length($o)>5) {
-		$o=~s/^lbl/l/;
-	}
+	$o=maplbl($o,$o);
 	print "\tdc\t\t$o\t; $w->[2]\n";
 }
 
@@ -49,6 +50,7 @@ sub word {
 	if ($o eq 'j') { $jmp='j' ; return; }
 	if ($o eq 'jz') { $jmp='jz' ; return; }
 	if ($o eq 'jnz') { $jmp='jnz' ; return; }
+	$o=mapany($o,$o);
 	print "\t$o ; $w->[1]\n";
 }
 
@@ -95,38 +97,29 @@ sub setgendict {
 
 my $prev="0";
 
-my $mapper = {
-	"testnest" => "tstn",
-	"third" => "thrd",
-	"fourth" => "frth",
-	"nybble" => "nybl",
-	"append" => "apnd",
-	"wscmpr" => "wscr",
-	"parse" => "prse",
-};
-
 sub def {
 	my ($s)=@_;
 	my ($k,$w,$l,$imm,$p,$a)=@$s;
 	print "\t\t\t\t\t# $k name:$w, label:$l, imm: $imm\n";
-	if (length($l)>5) {
-		$l=~s/^lbl/l/;
-	}
-	if (length($l)>=5) {
-		die unless ($l=$mapper->{$l});
-	}
+	$l=maplbl($l,$w);
 	if ($gendict) {
 		my $len=length($w);
 		# print "\t.align 1\n";
 		if ($len%2==0) {
-			print "$l","_pad:\t.db 0\n";
+			#print "$l","_pad:\t.db 0\n";
 		}
-		print qq{.ascii "$w"\n};
+		for my $c (split(//,$w)) { # cannot use dmes instead of .ascii
+			print qq{\tdc\t\t}, chord($c), "\n";
+		}
 		$len |= 0x80 if ($imm);
-		print "$l","_nfa:\t.db $len\n";
-		print "$l","_lfa:\t.dw $p\n";
+		print "$l","n\tdc\t\t$len\n";
+		my $lfa=$p;
+		die "$p" unless ($lfa=~/^([^\_]+)\_lfa/);
+		my $n=maplbl($1,$lfa);
+		$n.='l';
+		print "$l","l\tdc\t\t$n\n";
 		$prev=$p;
-		$prev="$l"."_lfa";
+		$prev="$l"."l";
 	}
 	print "$l", "c\t\t\t\t\t# $w\n";
 	my $se = walk($a);	# expand out the body of the definition
@@ -140,10 +133,8 @@ sub visit {
 	if (length($l)>5) {
 		$l=~s/^lbl/l/;
 	}
-	if (length($l)>=5) {
-		die unless ($l=$mapper->{$l});
-	}
-	print "\tdc\t\tenter\n";
+	$l=maplbl($l,$l);
+	print "\tdc\t\tente\n";	# that's IBM 1130 for enter ;)
 	print "\tdc\t\t$l", "c-1\t# $s->[2]\n";
 }
 
@@ -188,25 +179,25 @@ sub loop {
 sub header {
 	my ($k,$w,$l,$imm,$prev,$var)=@_;
 	my $len=length($k);
-	# print "\t.align 1\n";
-	if ($len%2==0) {
-		print "$l","_pad:\t.db 0\n";
+	#print qq{\tdmes\t\t$k\n};
+	for my $c (split(//,$k)) { # cannot use dmes (in place of .ascii)
+		print qq{\tdc\t\t}, chord($c), "\n";
 	}
-	print qq{.ascii "$w"\n};
-	print "$l","_nfa:\t.db $len\n";
-	print "$l","_lfa:\t.dw $prev\n";
-	$prev="$l"."_lfa";
-	print "$l", "_cfa : ; $k\n";
+	$l=maplbl($l,"$l : $w");
+	print "$l","n\tdc\t\t$len\n";
+	print "$l","l\tdc\t\t$prev\n";
+	$prev="$l"."l";
+	print "$l", "c\t\t\t\t; $k\n";
 	if ($var) {
-		print qq(.db 0x36, 6 ; dup\n);
-		print qq(.db 0xCC ; ldd\n);
-		print qq(.dw #$l ;	# $l ; tos <- $l\n)
+		print qq(\tdc\t\tdup\n);
+		print qq(\tdc\t\tlit\n);
+		print qq(\tdc\t\t$l\t#	$l ; tos <- $l\n)
 	}
 	return $prev;
 }
 
 sub ret {
-	print ".db 0x39\n";
+	print "\tdc\t\texit\n";
 }
 
 sub fullheader {
@@ -220,7 +211,7 @@ sub fullheader {
 
 sub latest {
 	open(my $lh, ">latest.s");
-	print $lh "\t.dw $prev\n";
+	print $lh "\tdc\t\t$prev\n";
 	close $lh;
 }
 

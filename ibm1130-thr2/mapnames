@@ -1,0 +1,31 @@
+# mapnames : enforce label restrictions for the IBM 1130
+#
+# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Please see the LICENSE file for the Affero GPL 3.0 license details
+
+my $limit=5; # the famous IBM 1130 5 character label limit
+
+sub mapper {
+	my ($m)=@_;
+	$m=~s/^(....).*$/$1/; # IBM 1130 assembler's bed of Procrustes
+	return $m;
+}
+
+sub mapany {
+	my ($o,$w)=@_;
+	if (length($o)>=$limit) {
+		die "$w" unless ($o=mapper($o));
+	}
+	return $o;
+}
+
+sub maplbl {
+	my ($o,$w)=@_;
+	if (length($o)>=$limit) {
+		unless ($o=~s/^lbl/l/) {
+			die "$w" unless ($o=mapper($o));
+		}
+	}
+	return $o;
+}
