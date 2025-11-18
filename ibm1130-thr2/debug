@@ -14,7 +14,7 @@
 # This script hardcodes the address "0136" which might change in the future
 # so that needs to be adjusted as necessary.
 
-@ARGV=("forth_defs.lst");
+@ARGV=("forth_dict.lst");
 while (<>) {
 	if (/^(\S+)/) {
 		$hash->{$1}=$_;
