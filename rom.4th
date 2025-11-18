@@ -535,6 +535,9 @@ if{		[	// not taken
 #{if CELL==2
 0x0101			[ 0x0101
 #}if
+#{if CELL==1
+0x01			[ 0x01
+#}if
 4			[ 0x[01]+ 4
 <<			[ 0x[10]+
 
@@ -546,6 +549,9 @@ if{		[	// not taken
 #}if
 #{if CELL==2
 0x1010			[ 0x[10]+ 0x1010
+#}if
+#{if CELL==1
+0x10			[ 0x[10]+ 0x10
 #}if
 -			[ 0
 if{			[	// not taken
@@ -561,6 +567,9 @@ if{			[	// not taken
 #{if CELL==2
 0x1010			[ 0x1010
 #}if
+#{if CELL==1
+0x10			[ 0x10
+#}if
 4			[ 0x[10]+ 4
 >>			[ 0x[01]+
 
@@ -572,6 +581,9 @@ if{			[	// not taken
 #}if
 #{if CELL==2
 0x0101			[ 0x[01]+ 0x0101
+#}if
+#{if CELL==1
+0x01			[ 0x[01]+ 0x01
 #}if
 -			[ 0
 if{			[	// not taken
