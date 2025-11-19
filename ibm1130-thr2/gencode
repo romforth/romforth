@@ -204,7 +204,9 @@ sub fullheader {
 	my ($k,$v,$prev,$var)=@_;
 	my ($w,$l,$imm,$a)=@$v;
 	$prev=header($k,$w,$l,$imm,$prev,$var);
-	print join("", @$a) if ($var==0);
+	#print join("", @$a) if ($var==0);
+	$l=maplbl($l,"$l : $w");
+	print "\tdc\t\t$l\n" if ($var==0);
 	ret();
 	return $prev;
 }
