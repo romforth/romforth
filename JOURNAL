@@ -7939,3 +7939,18 @@ simulator (see the earlier JOURNAL entry of 24 Oct '25 for more details).
 Rather than mix that code in with my other commits, I'm adding that here as a
 standalone commit, in the hope that it turns out to be useful in debugging the
 later steps.
+
+19 Nov '25
+----------
+I took a bunch of twisty turns to get to the final set of diffs for the change
+that is currently part of this commit. In the earlier version I tried to see if
+I could continue down the path of using THREAD type 2 for the IBM 1130 since I
+started off with it. To get that working, I needed to expand out the body of
+dup and lit into the dictionary header of variables (since they get exec'ed
+rather than call'ed via cfaexec). This will cause issues further down the line
+though, so I've decided to rework things to just reuse THREAD type 1 for this
+architecture just like the x86 implementation although there is no resemblance
+between them. The CELL setting of 1 is also a weirdness that needed to creep in
+since the IBM 1130 does not have byte addressing capability. Setting it to that
+value triggered a bug at step 25 so I changed the tests to handle that (which I
+split out as a separate commit, which was pushed yesterday).
