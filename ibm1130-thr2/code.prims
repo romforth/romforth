@@ -38,9 +38,9 @@ rp@!	:	ld	l	3 ;	sto	l	nos ;	ld	l	tos ;	sto	l	3 ; ld	l	nos ;	sto	l	tos ;
 >r	:	mdx	3	-1 ;	ld	l	tos ;	sto i	3 ;	b	l	drop
 r>	:	dup ;	ld	i	3 ; sto	l	tos ;	mdx	3	1 ;
 exec	:	ld	l	tos ;	sto	l	tmp ;	ld	i	2 ;	sto	l	tos ;	mdx	2	1 ;	b	i	tmp
-enter	:	mdx	1	1 ;	mdx	3	-1 ; ld	l	1 ;	sto	i	3 ;	ld	i	1 ;	sto	l	1 ;	b	l	deepr
-exit	:	ld	i	3 ;	sto	l	1 ;	mdx	3	1 ;
-call	:	mdx	3	-1 ;	ld	l	1 ;	sto	i	3 ;	ld	l	tos ;	sto	l	1 ; b	l	drop
+enter	:	mdx	1	1 ;	mdx	3	-1 ; ld	l	1 ;	a	l	deepr+1 ;	sto	i	3 ;	ld	i	1 ;	sto	l	1 ;	b	l	deepr
+exit	:	ld	i	3 ;	sto	l	1 ;	mdx	3	1 ;	b	l	deepr
+call	:	mdx	3	-1 ;	ld	l	1 ;	a	l	deepr+1 ;	sto	i	3 ;	ld	l	tos ;	sto	l	1 ;	ld	i	2 ;	sto	l	tos ;	mdx	2	1 ;	b	l	deepr
 <<	:	ld	l	3 ; sto	l	tmp ;	ldx	i3	tos ;	drop ;	sla	3 ;	sto	l	tos ;	ld	l	tmp ;	sto	l	3 ;
 >>	:	ld	l	3 ;	sto	l	tmp ;	ldx	i3	tos ;	drop ;	sra	3 ;	sto	l	tos ;	ld	l	tmp ;	sto	l	3 ;
 over	:	dup ;	ld	l2	1 ;	sto	l	tos ;

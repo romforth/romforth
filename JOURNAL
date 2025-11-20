@@ -7954,3 +7954,24 @@ between them. The CELL setting of 1 is also a weirdness that needed to creep in
 since the IBM 1130 does not have byte addressing capability. Setting it to that
 value triggered a bug at step 25 so I changed the tests to handle that (which I
 split out as a separate commit, which was pushed yesterday).
+
+20 Nov '25
+----------
+I was starting to get pretty unhappy with the changes that I've been making
+which involve changes to the common code (in defs.4th and rom.4th). Ideally
+those files don't need to be touched as part of a port (except for STC ports).
+
+Rather than continue down this ugly path, I've decided to rewind things all the
+way back (to step 23) and fix up "call" so that it works just like the way it's
+implemented on all the other architectures. One issue that this highlights is
+the fine line that one has to straddle in trying to make the code extremely
+portable - you can see that the previous implementation was faster and more
+compact (by a couple of bytes across enter/exit/call) while the current
+implementation sacrifices most of that for the sake of portability. Looking at
+the big picture though, I'll assume that the tradeoff is a very small price to
+pay. But in the grand scheme of things, loading up on a few bytes here and
+losing a few cycles there is how you end up with Wirth's Law where the software
+gets bloated+slower more rapidly than the hardware can get faster.
+
+I'll hold off any judgement here and vote with my feet for portability - and
+just wait and see which way things turn out in the future.
