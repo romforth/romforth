@@ -103,7 +103,7 @@ rrite	dc		*-*
 inner	dc		*-*
 
 innnr	mdx	1	1
-	ld	i	1	read the contents of the address pointed by XR1
+deepr	ld	i	1	read the contents of the address pointed by XR1
 	sto		*+1	and store it two bytes below here
 	b	l	*-*	... to patch this placeholder
 

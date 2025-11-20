@@ -135,7 +135,7 @@ sub visit {
 	}
 	$l=maplbl($l,$l);
 	print "\tdc\t\tente\n";	# that's IBM 1130 for enter ;)
-	print "\tdc\t\t$l", "c-1\t# $s->[2]\n";
+	print "\tdc\t\t$l", "c\t# $s->[2]\n";
 }
 
 sub loop {
