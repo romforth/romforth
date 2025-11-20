@@ -723,9 +723,6 @@ def{ repl
 		+	[ lfa+cell	// cfa
 #{if prim_var_deref==1
 #{if THREAD!=2
-#{if ARCH eq 'IBM1130'
-		dec
-#}if
 		call
 		exit
 #}if
