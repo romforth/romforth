@@ -1167,6 +1167,14 @@ pad0 pad0 pad0 pad0 pad0 pad0 pad0	[ exit	// padding escaped by lit
 
 def{ literal	[ n
 
+#{if USECFA==1
+#{if THREAD!=4
+cfa		[		// cfa is equivalent to COMPILE and quotes ...
+lit		[ lit	// ... the next word so its cfa will be pushed
+,
+#}if
+#}if
+
 #{ifndef USECFA
 
 #{if THREAD!=4
@@ -1292,6 +1300,9 @@ def{ repl
 		+	[ lfa+cell	// cfa
 #{if prim_var_deref==1
 #{if THREAD!=2
+#{if ARCH eq 'IBM1130'
+		dec
+#}if
 		call	[ ?		// and then exec it
 #}if
 #{if THREAD==2
