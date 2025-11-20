@@ -9,6 +9,7 @@ my $limit=5; # the famous IBM 1130 5 character label limit
 my $collision={
 	'alloc' => 'malloc',
 	'immediatelfa' => 'lfimm',
+	'cpl_ex_imm' => 'cplxi',
 };
 
 sub mapper {

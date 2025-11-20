@@ -114,7 +114,7 @@ sub def {
 		$len |= 0x80 if ($imm);
 		print "$l","n\tdc\t\t$len\n";
 		my $lfa=$p;
-		die "$p" unless ($lfa=~/^([^\_]+)\_lfa/);
+		die "$p" unless ($lfa=~/^(.+)\_lfa/);
 		my $n=maplbl($1,$lfa);
 		$n.='l';
 		print "$l","l\tdc\t\t$n\n";

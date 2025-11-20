@@ -1502,6 +1502,9 @@ def{ cpl_ex_imm		[ cfa
 	if{		[ cfa			// immediate,
 #{if prim_var_deref==1
 #{if THREAD!=2
+#{if ARCH eq 'IBM1130'
+		dec
+#}if
 		call	[ ?			// execute it
 #}if
 #{if THREAD==2
@@ -1530,6 +1533,9 @@ def{ cpl_ex			[ cfa
 	}else{			[ cfa		// s==0, interpreting
 #{if prim_var_deref==1
 #{if THREAD!=2
+#{if ARCH eq 'IBM1130'
+		dec
+#}if
 		call		[ ?		// go ahead and exec it
 #}if
 #{if THREAD==2
