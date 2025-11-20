@@ -599,9 +599,6 @@ def{ cfaexec		[ cfa
 	exec
 #}if
 #{if THREAD!=2
-#{if ARCH eq 'IBM1130'
-	dec
-#}if
 	call
 #}if
 #}if
