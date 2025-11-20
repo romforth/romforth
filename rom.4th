@@ -1198,9 +1198,6 @@ cell		[ addr n lfa cell
 defexec		[ addr n	// since "foo" is currently just a nop
 #}if
 #{if THREAD!=2
-#{if ARCH eq 'IBM1130'
-dec
-#}if
 call		[ addr n	// since "foo" is currently just a nop
 #}if
 #}if
