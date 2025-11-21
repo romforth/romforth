@@ -1296,6 +1296,25 @@ emit
 
 #}if
 
+#{if step>=53.1
+
+bl
+
+0 6		[ 0 6
+for{		[ < ": boo 1234 bl swap ; boo "
+	repl	[
+}for		[ 32 1234 // exec'ing boo should have pushed these
+-		[ -1202
+1202		[ -1202 1202
++		[ 0
+if{		[	// not taken
+	#assert
+}if
+
+emit
+
+#}if
+
 #{if step>=54
 
 'r'

@@ -1537,10 +1537,9 @@ def{ cpl_ex			[ cfa
 
 #{ifdef TESTROM
 
-#{if step==53 || step==54 || step==55 || step>=56
+#{if step>=53
 
-[ Assume that this definition of the repl is just a stepping stone, so it is
-[ ifdef'ed only within step 53
+[ This is the final definition of the "one off" repl
 [ The only change from the previous repl at step==52 is that cpl_ex is called
 [ instead of defexec to compile definitions (in addition to executing them).
 [ With this change, the repl can include definitions that use other definitions

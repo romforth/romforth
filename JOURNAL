@@ -7975,3 +7975,19 @@ gets bloated+slower more rapidly than the hardware can get faster.
 
 I'll hold off any judgement here and vote with my feet for portability - and
 just wait and see which way things turn out in the future.
+
+21 Nov '25
+----------
+I ran into a failure in the IBM 1130 port at step 54 where the test code checks
+whether definitions can correctly handle both primitives and variables. While I
+could go ahead and debug it at this step as is, I've decided that it would be
+better if a new step could be introduced which splits the verification into two
+parts by sanity checking primitives separately from the variables. The sanity
+check for variables remains as is in the existing code while the new code which
+is being added as part of this step adds the sanity check for primitives.
+
+Since renumbering the new test to 54 would cause knock on effects causing a
+whole bunch of unnecessary changes that are superficial to this commit, I've
+decided to just use an in-between value for this step and so I'm calling it
+step 53.1 for now, which increases the overall number of steps for a port from
+~73 to ~74, so I've updated the README as well.

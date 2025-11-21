@@ -62,7 +62,8 @@
     z80-c : step 51 : Verify ':' and ';' work as expected
     z80-c : step 52 : Verify that definitions using literals work in the repl
     z80-c : step 53 : Verify that words can be defined and run from the repl
-    z80-c : step 54 : Verify that definitions can use primitives and variables
+    z80-c : step 53.1 : Verify that definitions can use primitives
+    z80-c : step 54 : Verify that definitions can use variables
     z80-c : step 55 : Verify that the outer interpreter works
     z80-c : step 56 : Verify that comments work in the repl
     z80-c : step 57 : Enable conditionals at the repl

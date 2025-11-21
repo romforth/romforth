@@ -52,7 +52,7 @@ For lack of better names, I'll refer to these "levels" as:
       in addition to the rest of the bells and whistles from "threeforth".
       ROM : ~1024 bytes, RAM : 512 bytes or more - to hold the dictionary
 
-These levels are further broken down into a total of ~73 individual steps which
+These levels are further broken down into a total of ~74 individual steps which
 implement incremental pieces of Forth functionality. Each of these steps comes
 with tests that can be run to verify each additional piece of functionality as
 it is added, one at a time, which helps in having a working implementation at

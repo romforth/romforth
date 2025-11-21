@@ -1113,10 +1113,17 @@ Intermission : } Decide if you need to continue beyond 2/4
 
 # Step 53 } : Verify that words can be defined and run from the repl
 
+# Step 53.1 { : Verify that definitions can use primitives
+
+# As in the previous step, we verify that along with defined words, primitives
+# can also be used within definitions
+
+# Step 54 } : Verify that definitions can use primitives
+
 # Step 54 { : Verify that definitions can use primitives and variables
 
-# As in the previous step, we continue that along with defined words, calls to
-# primitives and variables also work.
+# As in the previous step, we verify that along with defined words and
+# primitives, variables can also be used within definitions.
 
 # Step 54 } : Verify that definitions can use primitives and variables
 
