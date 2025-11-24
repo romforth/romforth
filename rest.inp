@@ -418,6 +418,15 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 [	// this is just a few dummy { to balance out the unbalanced braces
 [ // }until{ is just like }while{ except the jump condition is reversed
 : }until{
+
+#{ifdef USECFA
+#{if THREAD!=4
+	#jnz	[ jnz
+	offset,	[ \ jnz
+	offset	[ h \ 0
+#}if
+#}ifdef
+
 #{ifndef USECFA
 #{if THREAD!=3
 #{if prim_var_deref==1
