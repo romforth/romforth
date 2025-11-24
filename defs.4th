@@ -1618,6 +1618,12 @@ def{ qdup dup if{ dup }if }def
 [ // just a workaround to provide a means of getting their "primitive" values.
 def{ #jz
 
+#{ifdef USECFA
+#{if THREAD!=4
+	cfa jz	[ jz
+#}if
+#}ifdef
+
 #{ifndef USECFA
 #{if THREAD!=5
 	lit	[	// to escape the next "token"

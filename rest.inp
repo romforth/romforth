@@ -26,6 +26,14 @@ latest @ @ latest !	[ // clean up after ourselves to restore the dictionary
 [ // if{ is just syntax sugar replacement for the traditional Forth IF keyword
 : if{
 
+#{ifdef USECFA
+#{if THREAD!=4
+	#jz	[ jz
+	offset,	[ \ jz
+	offset	[ h \ 0
+#}if
+#}ifndef
+
 #{ifndef USECFA
 
 #{if THREAD!=3
