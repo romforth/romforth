@@ -10,6 +10,7 @@ my $collision={
 	'alloc' => 'malloc',
 	'immediatelfa' => 'lfimm',
 	'cpl_ex_imm' => 'cplxi',
+	'compcfa' => 'cmcfa',
 };
 
 sub mapper {

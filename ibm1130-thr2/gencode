@@ -189,7 +189,6 @@ sub header {
 	$prev="$l"."l";
 	print "$l", "c\t\t\t\t; $k\n";
 	if ($var) {
-		print qq(\tdc\t\tdup\n);
 		print qq(\tdc\t\tlit\n);
 		print qq(\tdc\t\t$l\t#	$l ; tos <- $l\n)
 	}
