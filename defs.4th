@@ -1664,6 +1664,13 @@ def{ baz if{ 1 }else{ 0 }if }def
 
 [ // see the comment for #jz above for the details of why this is needed
 def{ #j
+
+#{ifdef USECFA
+#{if THREAD!=4
+	cfa j	[ j
+#}if
+#}ifdef
+
 #{ifndef USECFA
 #{if THREAD!=5
 	lit	[	// to escape the next "token"

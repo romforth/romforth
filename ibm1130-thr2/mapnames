@@ -11,6 +11,9 @@ my $collision={
 	'immediatelfa' => 'lfimm',
 	'cpl_ex_imm' => 'cplxi',
 	'compcfa' => 'cmcfa',
+	'override@' => 'ovrf',
+	'override!' => 'ovrs',
+	'override' => 'ovr',
 };
 
 sub mapper {

@@ -252,6 +252,14 @@ immediate
 [ for "subroutine threaded code"/STC, it compiles in the machine code for "jmp"
 : jump
 
+#{ifdef USECFA
+#{if THREAD!=4
+	#j	[ j
+	offset,	[ \ j
+	offset	[ h \ 0
+#}if
+#}ifndef
+
 #{ifndef USECFA
 
 #{if THREAD!=3
