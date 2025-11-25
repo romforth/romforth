@@ -240,6 +240,7 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | 8051-sdcc    |    3502    |   1342 (4844)   |   2379 (5881)   |
 | 8051-stc     |       0    |    143 (181)    |   1494 (1653)   |
 | 6809-stc     |       0    |     44 (2775)   |   3785 (6643)   |
+| ibm1130-thr2 |    1888    |     30 (3648)   |   2468 (6242)   |
 '--------------'------------'-----------------'-----------------'
 
 *Note: The units for pdk14-stc and pdk14-thr1 are in "words" which can be

@@ -36,6 +36,7 @@ The following ports are complete:
 | 8051-sdcc    |  16  | little | 3 | Baremetal | sdcc       | ucsim/s51     |
 | 8051-stc     |   8  | little | 8 | Baremetal | sdas8051   | ucsim/s51     |
 | 6809-stc     |  16  |  big   | 4 | Baremetal | sdas6808   | ucsim/m6809   |
+| ibm1130-thr2 |  16  |  big   | 1 | Baremetal | asm1130    | ibm1130       |
 '--------------'------'--------'---'-----------'------------'---------------'
 
 Notes for the table above:
@@ -166,6 +167,7 @@ padauk  inc dec not neg     neg:add and     or  xor sl    sr      stopsys  |
 6502    adc adc eor eor,adc neg:adc and     ora eor asl   asr     ucsim/'s'|
 8051    inc dec cpl cpl,inc neg:add anl     orl xrl rl    rr      ucsim/'s'|
 6809    +1  -1  com com,inc neg:add anda    ora eor asl   asr     ucsim/'s'|
+ibm1130 +1  -1  ^-1 0-tos   s   a   and     or  eor sla   sra     wait     |
 ---------------------------------------------------------------------------'
 Note: The + denotes that the Linux SYS_exit syscall is used for halting within
 qemu user emulation

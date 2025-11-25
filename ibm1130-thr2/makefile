@@ -4,11 +4,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-all : threeforth
+all : fourforth
 
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
+fourforth : threeforth
 
 test.out : forth.out test.inp test.exp
 	(echo "load forth.out" ; cat simh.cmds) | ibm1130 | grep Wait > test.out
