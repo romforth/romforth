@@ -1118,7 +1118,7 @@ Intermission : } Decide if you need to continue beyond 2/4
 # As in the previous step, we verify that along with defined words, primitives
 # can also be used within definitions
 
-# Step 54 } : Verify that definitions can use primitives
+# Step 53.1 } : Verify that definitions can use primitives
 
 # Step 54 { : Verify that definitions can use primitives and variables
 

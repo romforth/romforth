@@ -8103,3 +8103,12 @@ In memoriam:
 
 This port is dedicated to the memory of Liji P. Mathew (61) who passed away
 last week after a long struggle with stomach cancer.
+
+12 Dec '25
+----------
+Rather than start off on yet another port, I've been spending some time looking
+at whether the current crop of "agentic" LLMs can help with making these ports
+go faster than my current run rate of ~1 port per month as well as reduce what
+may soon become grunt work that can be easily handled by automation if the LLMs
+ever get there. All of my earlier experiments with the LLMs haven't borne any
+fruit, so let me see if the agentic stuff helps move the needle on this.
