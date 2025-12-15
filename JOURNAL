@@ -8112,3 +8112,12 @@ go faster than my current run rate of ~1 port per month as well as reduce what
 may soon become grunt work that can be easily handled by automation if the LLMs
 ever get there. All of my earlier experiments with the LLMs haven't borne any
 fruit, so let me see if the agentic stuff helps move the needle on this.
+
+15 Dec '25
+----------
+I tried to move to the latest ucsim available at github.com/danieldrotos/ucsim
+and that uncovered a regression (just for the 6809-stc port - while moving from
+the SDCC bundled version of ucsim at 0.6.4 to standalone version 0.9.4 which I
+compiled from the source). This was as expected at step 13 which tends to break
+during such upgrades. I needed to fix up the hardcoded value in the config file
+to resolve this issue.

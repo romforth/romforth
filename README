@@ -186,7 +186,9 @@ To build/test, the following dependencies need to be installed:
 	- simh (open-simh V4.0-0 Current git commit id: 33aad325)
 	- zig (0.11.0)
 	- qemu (7.1.0, via nix)
-	- sdcc(ucsim) (4.2.0 #13081 (Linux), ucsim: 0.6.4)
+	- sdcc (4.2.0 #13081 (Linux))
+	- ucsim (git pulled from github.com/danieldrotos/ucsim, ucsim: 0.9.4)
+		- exact commit used was e6acd12518f8c70313209b9946d9f571b0f9253b
 	- m4 ((GNU M4) 1.4.17)
 	- msp430-gcc ((GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched))
 	- mspdebug(from github.com/romforth/mspdebug, until my changes
