@@ -16,6 +16,8 @@ cold:
 init:
 	mov a, #datastack
 	mov dp, a
+	mov a, #mem
+	mov here, a
 	ret
 
 #if USEDICT
@@ -49,3 +51,5 @@ nos: 	.ds 1
 sa:	.ds 1  ; save/restore for the accumulator
 	.ds 16 ; reserve some space for the data stack
 datastack:
+here:	.ds 1
+mem:	.ds 1 ; reserve some space for alloc
