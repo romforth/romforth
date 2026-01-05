@@ -28,6 +28,7 @@ stick	: add a, dp
 !	: mov sa, a ; call drop ; idxm sa, a ; call drop ; ret
 c@	: @
 c!	: !
+sp@!	: xch a, dp ; ret
 
 var here
 var state
