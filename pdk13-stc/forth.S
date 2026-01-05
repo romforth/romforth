@@ -10,9 +10,13 @@ start:
 cold:
 	mov     a, 0
 	mov.io  sp, a
-
+	call init
 	call rom
 	stopsys
+init:
+	mov a, #datastack
+	mov dp, a
+	ret
 
 #if USEDICT
 #include "prims_dict.s"
@@ -38,5 +42,8 @@ rom:
 
 	.area   PREG (ABS)
 	.org 0
-	.ds 30 ; reserve some space for the stack
+	.ds 16 ; reserve some space for the call stack
 p:	.ds 2
+dp:	.ds 1
+	.ds 16 ; reserve some space for the data stack
+datastack:
