@@ -33,6 +33,7 @@ rp@!	: xch a, rp ; ret
 # rp@!	: mov sa, a ; mov.io a, sp ; call dup ; mov a, sa ; mov.io sp, a ; call drop ; ret
 >r	: inc rp ; idxm rp, a ; call drop ; ret
 r>	: call dup ; idxm a, rp ; dec rp ; ret
+exec	: ret
 
 var here
 var state
