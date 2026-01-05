@@ -235,6 +235,7 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | msp430-f     |     344    |    602 (946)    |   1408 (1752)   |
 | nqh-zig      |    9387    |    341 (9728)   |   1009 (10396)  |
 | wasm32-c     |    1735    |   2840 (4575)   |   5552 (7287)   |
+| pdk13-stc*   |       0    |     15 (125)    |    503 (613)    |
 | pdk14-stc*   |       0    |     15 (125)    |    503 (613)    |
 | pdk14-thr1*  |     264    |     40 (304)    |    609 (873)    |
 | 6502-sdcc    |    2624    |   2060 (4684)   |   3495 (6119)   |
@@ -245,5 +246,5 @@ The table below lists the current ROM usage (in bytes) of the various ports:
 | ibm1130-thr2 |    1888    |     30 (3648)   |   2468 (6242)   |
 '--------------'------------'-----------------'-----------------'
 
-*Note: The units for pdk14-stc and pdk14-thr1 are in "words" which can be
-       13/14/15/... bits long depending on the processor family.
+*Note: The units for pdk13-stc, pdk14-stc and pdk14-thr1 are in "words" which
+can be 13/14/15/... bits long depending on the processor family.

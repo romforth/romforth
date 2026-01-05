@@ -7,7 +7,7 @@
 AS=sdaspdk13
 ASFLAGS=-l
 LD=sdldpdk
-all : oneforth
+all : twoforth
 oneforth : test.out
 twoforth : test.defs
 threeforth : test.dict
