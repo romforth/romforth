@@ -17,3 +17,4 @@ nip	: mov sa, a ; idxm a, dp ; inc dp ; mov nos, a ; mov a, sa ; ret
 dip	: mov sa, a ; mov a, nos ; dec dp ; idxm dp, a ; mov a, sa ; ret
 -	: call neg
 +	: call nip ; add a, nos ; ret
+&	: call nip ; and a, nos ; ret
