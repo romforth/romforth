@@ -8,6 +8,7 @@ bye	: popaf ; ret
 key	: call dup ; mov a, #0x7f ; mov p, a ; mov a, #'r' ; idxm p, a ; idxm a, p ; ret
 emit	: pushaf ; mov a, #0x7f ; mov p, a ; mov a, #'w' ; idxm p, a ; popaf ; idxm p, a ; call drop ; ret
 dup	: dec dp ; idxm dp, a ; ret
+2drop	: call drop
 drop	: idxm a, dp ; inc dp ; ret
 neg	: neg a ; ret
 inc	: add a, #1 ; ret
