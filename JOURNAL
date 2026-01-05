@@ -8121,3 +8121,15 @@ the SDCC bundled version of ucsim at 0.6.4 to standalone version 0.9.4 which I
 compiled from the source). This was as expected at step 13 which tends to break
 during such upgrades. I needed to fix up the hardcoded value in the config file
 to resolve this issue.
+
+05 Jan '26
+----------
+Part of the reason to upgrade ucsim from 0.6.4 to version 0.9.4 was to use some
+of the additional CPUs that are emulated in the newer version. Rather than use
+a completely new processor though, I decided that testing out the PDK13 support
+(which is adjacent to the existing PDK14 processor) was a safer approach
+especially since SDCC already has assembler support for it-so no new/additional
+toolchain is needed. To keep the code changes simple, I've used the git patches
+that were used for the pdk14-stc code and applied that to create the pdk13-stc
+port so that I can test the newer ucsim version without having to worry about
+the assembly code at the same time.

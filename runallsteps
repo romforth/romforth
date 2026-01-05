@@ -2,7 +2,7 @@
 
 # runallsteps : regression test suite
 #
-# Copyright (c) 2023-2025 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2023-2026 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -42,6 +42,7 @@ my $m8051stc_check=1;
 my $m6809stc_check=1;
 my $ibm1130stc_check=1;
 my $ibm1130thr2_check=1;
+my $pdk13stc_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -77,6 +78,7 @@ if (@ARGV) {
 	$m6809stc_check=0;
 	$ibm1130stc_check=0;
 	$ibm1130thr2_check=0;
+	$pdk13stc_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -112,6 +114,7 @@ if (@ARGV) {
 		$m6809stc_check=1 if ( $d eq "6809-stc");
 		$ibm1130stc_check=1 if ( $d eq "ibm1130-stc");
 		$ibm1130thr2_check=1 if ( $d eq "ibm1130-thr2");
+		$pdk13stc_check=1 if ( $d eq "pdk13-stc");
 	}
 }
 
@@ -320,6 +323,12 @@ $x=`cat ibm1130-thr2/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $ibm1130thr2_step=$step;
+
+my $pdk13stc_step;
+$x=`cat pdk13-stc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$pdk13stc_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -816,6 +825,19 @@ ibm1130thr2_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the 1130 port\n";
 	system("cd ibm1130-thr2 ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+pdk13stc_port: {
+	last pdk13stc_port unless ($pdk13stc_check);
+	last pdk13stc_port if ($i>$pdk13stc_step);
+	@ARGV=("pdk13-stc/fpp.config.pdk");
+	open(my $fh, ">pdk13-stc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the pdk13 port\n";
+	system("cd pdk13-stc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }
