@@ -137,7 +137,7 @@ if{		[	// taken
 	#assert
 }if		[
 
-#{if ARCH eq "pdk14"
+#{if ARCH eq "pdk14" or ARCH eq "pdk13"
 drop
 #}if
 
