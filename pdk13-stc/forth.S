@@ -47,14 +47,14 @@ rom:
 
 	.area   PREG (ABS)
 	.org 0
-	.ds 16 ; reserve some space for the call stack
+	.ds 10 ; reserve some space for the call stack
 p:	.ds 2
 dp:	.ds 1
 nos: 	.ds 1
 sa:	.ds 1  ; save/restore for the accumulator
-	.ds 16 ; reserve some space for the data stack
+	.ds 8 ; reserve some space for the data stack
 datastack:
-	.ds 16 ; reserve some space for the return stack
+	.ds 7 ; reserve some space for the return stack
 rp:	.ds 1
 here:	.dw mem
 state:	.ds 1
