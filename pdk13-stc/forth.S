@@ -18,6 +18,8 @@ init:
 	mov dp, a
 	mov a, #mem
 	mov here, a
+	mov a, #1
+	mov state, a
 	ret
 
 #if USEDICT
@@ -52,4 +54,5 @@ sa:	.ds 1  ; save/restore for the accumulator
 	.ds 16 ; reserve some space for the data stack
 datastack:
 here:	.dw mem
+state:	.ds 1
 mem:	.ds 1 ; reserve some space for alloc
