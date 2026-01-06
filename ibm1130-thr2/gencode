@@ -1,10 +1,10 @@
 # gencode : native code generation for the IBM 1130
 #
-# Copyright (c) 2025 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2025-2026 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-do "mapnames"; # to handle the IBM 1130 assembler 5 character label limit
+do "./mapnames"; # to handle the IBM 1130 assembler 5 character label limit
 
 sub chord {
 	my ($c)=@_;
