@@ -201,6 +201,11 @@ the ports and run each of them in an emulator and should complete successfully.
 To do a partial build, you can go into any individual processor specific
 directory and run `make` within that subdirectory.
 
+The gzipped output from running a `make clean` followed by a successful toplevel
+`make` (captured using `script`) is in the `log` subdirectory. This is meant to
+be a one-time snapshot to help you understand the commands that are run as part
+of the full build - it will not be updated when newer ports are added.
+
 ROM/RAM Requirements
 ====================
 
