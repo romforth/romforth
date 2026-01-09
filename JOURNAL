@@ -8133,3 +8133,13 @@ toolchain is needed. To keep the code changes simple, I've used the git patches
 that were used for the pdk14-stc code and applied that to create the pdk13-stc
 port so that I can test the newer ucsim version without having to worry about
 the assembly code at the same time.
+
+09 Jan '26
+----------
+Getting GCC (gcc-msp430) built for the MSP430 port on Gentoo is a fair bit of
+work and a resource intensive undertaking. Building the msp430 assembler+linker
+in binutils is fairly trivial by comparison. As I mentioned in the RATIONALE,
+the toolchain can be a source of friction while starting out on a port so the
+less heavyweight I can make things the better and so the purpose of this work
+is to get rid of gcc-msp430 from the build process and build the msp430-* ports
+using just the assembler and the linker from binutils.

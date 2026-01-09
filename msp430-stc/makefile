@@ -1,14 +1,12 @@
 # makefile : drive the build and test for the MSP430 STC assembly code
 #
-# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2023,2026 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
-CC=msp430-gcc
-#CFLAGS=-c
-#AS=msp430-unknown-elf-as
-#ASFLAGS=-al=forth.lst
-#LD=msp430-unknown-elf-ld
+AS=msp430-elf-as
+ASFLAGS=-al=forth.lst
+LD=msp430-elf-ld
 
 all : fourforth
 
@@ -40,6 +38,10 @@ test.exp : ../test.expected ../fpp fpp.config
 forth.s : forth.S prims.s rom.s
 	../fix_comments rom.s
 	cpp -P forth.S | m4 > forth.s
+forth.o : forth.s
+	$(AS) $(ASFLAGS) -o forth.o forth.s
+forth : forth.o
+	$(LD) -o forth forth.o
 forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
@@ -47,7 +49,10 @@ forth_defs.s : forth_defs.S prims.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs.s
 	cpp -P forth_defs.S | m4 > forth_defs.s
-forth_defs : forth_defs.s
+forth_defs.o : forth_defs.s
+	$(AS) $(ASFLAGS) -o forth_defs.o forth_defs.s
+forth_defs : forth_defs.o
+	$(LD) -o forth_defs forth_defs.o
 forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
 	../fix_comments rom.s
 	../fix_comments defs_dict.s
@@ -56,7 +61,10 @@ forth_dict.s : forth_dict.S prims_dict.s defs_dict.s rom.s
 forth_dict.S : forth.S forth_defs.S
 	cp forth_defs.S forth_dict.S
 	sed -i 's/define USEDICT 0/define USEDICT 1/' forth_dict.S
-forth_dict : forth_dict.s
+forth_dict.o : forth_dict.s
+	$(AS) $(ASFLAGS) -o forth_dict.o forth_dict.s
+forth_dict : forth_dict.o
+	$(LD) -o forth_dict forth_dict.o
 defs_dict.s : ../defs.4th ../fpp fpp.config genrom
 	cat ../defs.4th | ../fpp -DTESTROM -c fpp.config | ./genrom -g -d defs.map dict.map > defs_dict.s
 defs.s : ../defs.4th ../fpp fpp.config prims.s genrom
