@@ -1,6 +1,6 @@
 # forth.S : initialization and glue code
 #
-# Copyright (c) 2023 Charles Suresh <romforth@proton.me>
+# Copyright (c) 2023,2026 Charles Suresh <romforth@proton.me>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -21,10 +21,10 @@ halt:
 init:
 	mov #0, r15
 	mov #linkage, nr
+	mov #6, r15
 data_copy:
-	mov _unexpected_+2(r15), __data_start(r15)
-	incd r15
-	cmp #6, r15
+	decd r15
+	mov _etext(r15), latest(r15)
 	jnz data_copy
 	ret
 linkage:

@@ -1,6 +1,6 @@
 [ // rom.4th : arch neutral (for the most part) test cases and init code
 [
-[ // Copyright (c) 2022-2023 Charles Suresh <romforth@proton.me>
+[ // Copyright (c) 2022-2026 Charles Suresh <romforth@proton.me>
 [ // SPDX-License-Identifier: AGPL-3.0-only
 [ // Please see the LICENSE file for the Affero GPL 3.0 license details
 
@@ -123,6 +123,11 @@ jnz		[	// raw opcode test of the 'jnz' operator
 
 #}if
 
+#}if
+
+#{if step>=3 and step<5
+drop
+drop
 #}if
 
 #{if step>=5
@@ -353,6 +358,10 @@ if{		[	// not taken
 	#assert
 }if		[
 
+#}if
+
+#{if step>=5 and step<17
+drop
 #}if
 
 #{if step>=17
@@ -1459,10 +1468,12 @@ outer		[ > 0xC0FE
 
 #stackcheck
 
-drop
-
 #}if
 
 #}ifdef
+
+#{if step>=17
+drop
+#}if
 
 bye

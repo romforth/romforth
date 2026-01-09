@@ -190,7 +190,6 @@ To build/test, the following dependencies need to be installed:
 	- ucsim (git pulled from github.com/danieldrotos/ucsim, ucsim: 0.9.4)
 		- exact commit used was e6acd12518f8c70313209b9946d9f571b0f9253b
 	- m4 ((GNU M4) 1.4.17)
-	- msp430-gcc ((GCC) 4.6.3 20120301 (mspgcc LTS 20120406 unpatched))
 	- mspdebug(from github.com/romforth/mspdebug, until my changes
 		are upstreamed)
 	- wasmtime (wasmtime-cli 9.0.4)
