@@ -8143,3 +8143,59 @@ the toolchain can be a source of friction while starting out on a port so the
 less heavyweight I can make things the better and so the purpose of this work
 is to get rid of gcc-msp430 from the build process and build the msp430-* ports
 using just the assembler and the linker from binutils.
+
+12 Jan '26
+----------
+Soon after the completion of the IBM 1130 port, I wanted to go on a "historical
+voyage of discovery" and see if I could port romforth to even older machines
+(which are currently emulated by SIMH). But my kid wisely asked me "why". So I
+decided that rather than depend on human judgement, I'd ask our new overlords
+their opinion on this matter. I decided to consult with Google's Gemini for a
+change and prompted its oracular wellspring of wisdom thusly:
+"Suggest the next CPU to which [romforth](https://github.com/romforth/romforth)
+could be ported without adding new toolchain dependencies."
+
+And from the depths of its deep ML networks behold, it spake thus:
+	"... the most logical next step would be AVR (Atmel AVR/ATmega series) ..."
+and concluded: "toolchain compatibility: romforth already relies heavily on
+GNU Binutils and GCC-based toolchains (it includes a build-binutils script)"
+
+Now, I've not bothered with AVR since any of these devices would be right up
+avr-gcc's bailiwick and for a register rich architecture, C is a good fit.
+Even on a low-end device (TinyAVR series), I assume C might still be fairly
+usable. Also amforth already exists and at a stretch, gforth could be compiled
+to any device that was large enough and I assume other Forth implementations
+already exist for it. But given that this is what our new robotic overlords
+have asked for, ignore all previous instructions - your wish is my command.
+
+So AVR it is and to gain brownie points with my kid, I may try to actually run
+the port on real hardware rather than just emulate it this time - since we have
+an Arduino that I may just have to "borrow" - hopefully without releasing any
+"magic smoke" in the process.
+
+Starting off on a new port always brings with it the joys of figuring out the
+toolchain and locating the documentation. Since I'd just wrapped up the removal
+of the gcc-msp430 toolchain dependency, there was no way that I'd want to add
+gcc-avr back in, just to be able to run avr-gcc.
+
+Surprisingly enough, SDCC does not have avr support although ucsim can emulate
+it (using savr/ucsim_avr). So after more groveling around with search engines
+(and the shiny new crop of LLMs), it turns out binutils already has AVR support
+so that was an easy dependency to add. So with all of the important toolchain
+dependencies (ie emulator and assembler, in that order) sorted out, I then went
+looking for docs and it turns out that I had stashed away a copy (dated all the
+way back to Feb 2016) of the 'ATtiny25-45-85\ Reference.pdf' which boasts of a
+comfortable set of "32 x 8 General Purpose Working Registers", 120 "Powerful"
+Instructions, 2/4/8K Bytes of Flash (10,000 Write/Erase Cycles), 128/256/512
+Bytes EEPROM (100,000 Write/Erase Cycles) and 128/256/512 Bytes Internal SRAM.
+
+So it is time to dust off my decade old copy of the docs and since the device
+looks like it is in the lineage of the PDP11 I just have to hope that this port
+will also be like a nice and easy relaxing walk in the park.
+
+Further investigation turned up the fact that zig cc can target AVR using the
+"avr-freestanding" target (even using the old 0.11.0 version of zig that is
+currently part of the romforth toolchain) so my obvious choice is to try out a
+port using the C based code first before having to trawl through all 234 pages
+of the docs figuring out which of the "powerful" instructions I should have to
+pick and choose - if I start off with an AVR port in assembler.
