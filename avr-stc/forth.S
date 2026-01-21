@@ -6,6 +6,8 @@
 
 	.avr8
 
+	.set SIF=0xffff
+
 	.org	0
 
 	rjmp reset	; reset vector

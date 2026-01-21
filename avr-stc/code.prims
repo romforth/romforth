@@ -5,3 +5,5 @@
 # Please see the LICENSE file for the Affero GPL 3.0 license details
 
 bye	: jmp halt
+key	: ldi r16, 0x66
+emit	: sts SIF, r16
