@@ -25,4 +25,17 @@ halt:
 	ret	; unmatched ret to terminate the naken_util emulation as per docs
 
 rom:
-	jmp halt
+
+#include "rom.s"
+
+#define USEDEFS 0
+#define USEDICT 0
+
+#if USEDEFS
+#if USEDICT
+#include "dict.s"
+#include "defs_dict.s"
+#else
+#include "defs.s"
+#endif
+#endif
