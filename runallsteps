@@ -43,6 +43,7 @@ my $m6809stc_check=1;
 my $ibm1130stc_check=1;
 my $ibm1130thr2_check=1;
 my $pdk13stc_check=1;
+my $avrstc_check=1;
 if (@ARGV) {
 	$c_check=0;
 	$pdp11_check=0;
@@ -79,6 +80,7 @@ if (@ARGV) {
 	$ibm1130stc_check=0;
 	$ibm1130thr2_check=0;
 	$pdk13stc_check=0;
+	$avrstc_check=0;
 	for my $d (@ARGV) {
 		$pdp11_check=1 if ( $d eq "pdp11");
 		$c_check=1 if ( $d eq "C");
@@ -115,6 +117,7 @@ if (@ARGV) {
 		$ibm1130stc_check=1 if ( $d eq "ibm1130-stc");
 		$ibm1130thr2_check=1 if ( $d eq "ibm1130-thr2");
 		$pdk13stc_check=1 if ( $d eq "pdk13-stc");
+		$avrstc_check=1 if ( $d eq "avr-stc");
 	}
 }
 
@@ -329,6 +332,12 @@ $x=`cat pdk13-stc/stepfile`;
 $x=~s/^/\$/;
 eval $x;
 $pdk13stc_step=$step;
+
+my $avrstc_step;
+$x=`cat avr-stc/stepfile`;
+$x=~s/^/\$/;
+eval $x;
+$avrstc_step=$step;
 
 my $debug=0;
 @ARGV=("C/forth.c");
@@ -838,6 +847,19 @@ pdk13stc_port: {
 	close $fh; select STDOUT;
 	print "\nRunning step $i for the pdk13 port\n";
 	system("cd pdk13-stc ; make") == 0 or die "make failed at step $i with exit status $?";
+}
+
+avrstc_port: {
+	last avrstc_port unless ($avrstc_check);
+	last avrstc_port if ($i>$avrstc_step);
+	@ARGV=("avr-stc/fpp.config.avr");
+	open(my $fh, ">avr-stc/fpp.config");
+	select $fh;
+	print "step=$i\n";
+	while (<>) { print; }
+	close $fh; select STDOUT;
+	print "\nRunning step $i for the avr port\n";
+	system("cd avr-stc ; make") == 0 or die "make failed at step $i with exit status $?";
 }
 
 }

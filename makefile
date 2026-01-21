@@ -35,6 +35,7 @@ all :
 	(cd ibm1130-stc ; make)
 	(cd ibm1130-thr2 ; make)
 	(cd pdk13-stc ; make)
+	(cd avr-stc ; make)
 
 allsteps :
 	./runallsteps
@@ -78,3 +79,4 @@ clean :
 	(cd ibm1130-stc ; make clean)
 	(cd ibm1130-thr2 ; make clean)
 	(cd pdk13-stc ; make clean)
+	(cd avr-stc ; make clean)

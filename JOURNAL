@@ -8255,3 +8255,40 @@ looks like a bug in ucsim. And if all of that does not already count as a punch
 to the mouth, as if to add insult to injury, I still don't have an answer to
 what ucsim_avr needs as the argument to 'if='. I guess I should go try to chew
 out someone's ear as well - and did you see what I did there? ;)
+
+21 Jan '26
+----------
+Since I seem to have reached a dead end with the ucsim_avr experiment, I guess
+it is now time to move on and look for alternatives. Since I already have a
+local copy of Mike A. Kohn's excellent naken_{asm,util} (which I had tried out
+a while back, while looking for MSP430 emulators) installed on my machine and
+since it already has support for AVR8 (among a bunch of other architectures) I
+think it is about time to take it out for a little spin.
+
+For a new port, I need 2 things: an emulator and an assembler and the winning
+combination of SDCC+ucsim provided exactly that. But given the recent problem
+with ucsim_avr that I ran into, the new champion might be naken_util+naken_asm.
+
+While reading through the docs of naken_asm, I saw that it even has support for
+emulating the AGC (Apollo Guidance Computer) which in itself makes it an even
+more awesome candidate for addition to the build toolchain of romforth so that
+I can try seeing if romforth can be sent to the moon - and brought back safely
+but I'm going to try really hard to resist all of that awesomeness, as tempting
+as it looks, and put a really narrow focus on what I want to get done here, as
+of right now which is an AVR port, with a promise to myself to go back and look
+at the AGC port later.
+
+After reading through the naken_{asm,util} docs, it looks like an unmatched
+'ret' is an easy means of terminating the emulation, but unlike ucsim, it does
+not currently seem to have an easy way of setting up a "special interface"
+address that can be used for reading and writing to input/output files via the
+serial port. I'm not going to let that small missing feature stand in my way
+and so I've gone ahead and modified the code to support an emulated serial port
+and sent the changes as a pull request upstream to Mike Kohn.
+
+As usual, I've started off the port by running `./newport avr-stc avrstc avr`
+and using the fpp.config from the 6809 port as the template and creating a
+bare makefile and forth.S to sanity check the functionality of naken_{asm,util}
+by running (from the toplevel) `./runallsteps avr-stc` to verify that all the
+required pieces are in place. I'm using the 6809 port as a template so that I
+can use the ast (genast+genbin) scripts.
