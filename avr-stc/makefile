@@ -8,7 +8,7 @@ AS=naken_asm
 ASFLAGS=-l -o
 
 all : test.log
-	grep ' ! 0x0012: 0x9508 ret' test.log > /dev/null
+	grep ' ! 0x0014: 0x9508 ret' test.log > /dev/null
 
 test.log : forth.ihx
 	naken_util -avr8 -run forth.ihx > test.log

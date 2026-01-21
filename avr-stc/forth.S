@@ -19,4 +19,10 @@ reset:
 	jmp start
 
 start:
+	jmp rom
+
+halt:
 	ret	; unmatched ret to terminate the naken_util emulation as per docs
+
+rom:
+	jmp halt
