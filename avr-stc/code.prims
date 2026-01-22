@@ -9,3 +9,4 @@ dup	: st Y+, TOSL ; st Y+, TOSH
 drop	: ld TOSH, -Y ; ld TOSL, -Y
 key	: dup ; lds TOSL, SIF ; eor TOSH, TOSH
 emit	: sts SIF, TOSL ; drop
+neg	: neg TOSH ; neg TOSL ; sbci TOSH, 0
