@@ -13,8 +13,8 @@ sub lit {
 	my ($l)=@_;
 	my $o=$l->[1];
 	print qq(\tdup ; dup\n);
-	print qq(.db 0xCC ; ldd\n);
-	print qq(.dw #$o\n);	# $o ; tos <- $o
+	print qq(ldi TOSH, ($o >> 8)\n);	# tosh <- high8($o)
+	print qq(ldi TOSL, ($o & 0xff)\n);	# tosl <- low8($o)
 }
 
 sub compile {
