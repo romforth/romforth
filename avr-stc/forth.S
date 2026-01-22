@@ -8,6 +8,11 @@
 
 	.set SIF=0xffff
 
+#define TOSH r27
+#define TOSL r26
+#define YL r28
+#define YH r29
+
 	.org	0
 
 	rjmp reset	; reset vector
@@ -27,6 +32,9 @@ halt:
 	ret	; unmatched ret to terminate the naken_util emulation as per docs
 
 rom:
+
+	ldi YL, 0x60	; YL <- data stack base (assume 128 byte Internal SRAM)
+	eor YH, YH	; YH <- 0
 
 #include "rom.s"
 
