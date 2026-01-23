@@ -48,7 +48,7 @@ sub skip {
 	my $o=$s->[1];
 	#print "$jmp $o\n";
 	if ($jmp eq 'j') {
-		print ".db 0x20, $o ; bra $o\n";
+		print ".db $o, 0xc0 ; rjmp $o\n";
 	} elsif ($jmp eq 'jz') {
 		print ".db 0x10, 0x83, 0, 0 ; tst b\n";
 		print "\tdrop ; drop\n";

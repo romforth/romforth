@@ -8292,3 +8292,71 @@ bare makefile and forth.S to sanity check the functionality of naken_{asm,util}
 by running (from the toplevel) `./runallsteps avr-stc` to verify that all the
 required pieces are in place. I'm using the 6809 port as a template so that I
 can use the ast (genast+genbin) scripts.
+
+23 Jan '26
+----------
+Since generating the machine code for j/jz/jnz at steps 4.1, 4.2 and 4.3 can
+be a hit or miss exercise, I'm documenting the easy route I took to handle it
+for the AVR. The first step is to add a 'fake' word to bracket the code at step
+4.1 as shown in the diff of rom.4th below:
+
+#{if step>=4.1
+
++fake
+  j      [       // raw opcode test of the 'j' operator
+  #JUMP  [       // the byte offset to skip over the assert below
+  #assert
++fake
+
+We also create a dummy definition for 'fake' in code.prims as:
+
++fake   : nop
+
+With these changes in place, we can now run `make` and take a look at the
+generated `forth.s` file. Since the code we need is bracketed by `nop`, we can
+extract just that part out and create a fake.s file with the content. The
+generated code will look like this (since we are using the 6809 as template):
+
+	nop
+	.db 0x20, 10 ; bra 10
+	st -Y, r27
+	st -Y, r26
+	ldi r27, 0
+	ldi r26, 34
+	sts 0xffff, r26
+	ld r26, Y+
+	ld r27, Y+
+	nop
+
+The first line of code after the nop (which is the the current definition of
+'j' as defined in `gencode` which happens to be the 6809 template) needs to
+be replaced with the AVR equivalent of an unconditional jump. So the new code
+will first need to be saved to `fake.s` and will look like this:
+Note: this is after getting rid of the nop's and adding AVR's 'rjmp'
+
+	.avr8
+
+	rjmp end
+	st -Y, r27
+	st -Y, r26
+	ldi r27, 0
+	ldi r26, 34
+	sts 0xffff, r26
+	ld r26, Y+
+	ld r27, Y+
+end:
+
+We use naken_asm to generate the code for rjmp and the offset by running:
+	naken_asm -l -o fake.ihx fake.s
+and in the generated fake.lst we can see the required code:
+	0x0000: c008 rjmp 0x9 (8)                             cycles: 2
+In the machine code shown above as 'c008', 0x08 is the offset and 0xC0 is the
+actual opcode for 'rjmp' so we need to update the `fpp.config.avr` with the
+value of '8' by setting 'JUMP=8' and we use the '0xc0' in `gencode' by updating
+the 'j' case in 'skip' to:
+	print ".db $o, 0xc0 ; rjmp $o\n";
+The order of bytes is reversed here since the AVR is little-endian as you might
+find out the hard way while debugging - as I did.
+
+With step 4.1 out of the way, you can now repeat a modified version of this
+exercise for steps 4.[2-5] as well.
