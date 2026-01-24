@@ -18,3 +18,4 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 +	: nip ; add TOSL, NOSL ; adc TOSH, NOSH
 -	: neg ; +
 &	: nip ; and TOSL, NOSL ; and TOSH, NOSH
+|	: nip ; or TOSL, NOSL ; or TOSH, NOSH

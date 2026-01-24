@@ -8381,3 +8381,22 @@ index 5461496..7d8f872 100644
 
    return table_avr8->cycles_min;
  }
+
+---
+
+I ran into a second bug in naken_util in the implementation of 'or' and I've
+fixed that as well. The one-liner diff is listed below:
+
+diff --git a/simulate/avr8.cpp b/simulate/avr8.cpp
+index 7d8f872..3d0dedf 100644
+--- a/simulate/avr8.cpp
++++ b/simulate/avr8.cpp
+@@ -691,7 +691,7 @@ int SimulateAvr8::execute_op_two_reg(
+       if ((temp & 0x8000) != 0) { SREG_SET(SREG_C); } else { SREG_CLR(SREG_C); }
+       break;
+     case AVR8_OR:
+-      reg[rd] = reg[rd] - reg[rr];
++      reg[rd] |= reg[rr];
+       execute_set_sreg_logic(prev, reg[rd], reg[rr]);
+       break;
+     case AVR8_SBC:
