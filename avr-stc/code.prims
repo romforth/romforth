@@ -17,3 +17,4 @@ nip	: ld NOSH, -Y ; ld NOSL, -Y
 dip	: st Y+, NOSL ; st Y+, NOSH
 +	: nip ; add TOSL, NOSL ; adc TOSH, NOSH
 -	: neg ; +
+&	: nip ; and TOSL, NOSL ; and TOSH, NOSH
