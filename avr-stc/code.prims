@@ -19,3 +19,4 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 -	: neg ; +
 &	: nip ; and TOSL, NOSL ; and TOSH, NOSH
 |	: nip ; or TOSL, NOSL ; or TOSH, NOSH
+^	: nip ; eor TOSL, NOSL ; eor TOSH, NOSH
