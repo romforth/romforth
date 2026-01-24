@@ -20,3 +20,4 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 &	: nip ; and TOSL, NOSL ; and TOSH, NOSH
 |	: nip ; or TOSL, NOSL ; or TOSH, NOSH
 ^	: nip ; eor TOSL, NOSL ; eor TOSH, NOSH
+2drop	: drop ; drop
