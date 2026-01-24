@@ -50,9 +50,9 @@ sub skip {
 	if ($jmp eq 'j') {
 		print ".db $o, 0xc0 ; rjmp $o\n";
 	} elsif ($jmp eq 'jz') {
-		print ".db 0x10, 0x83, 0, 0 ; tst b\n";
+		print "sbiw TOSL, 0\n";
 		print "\tdrop ; drop\n";
-		print ".db 0x27, $o ; beq $o\n";
+		print ".dw 0xf041 ; breq +8\n";
 	} elsif ($jmp eq 'jnz') {
 		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
 		print "\tdrop ; drop\n";
