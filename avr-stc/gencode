@@ -72,13 +72,13 @@ sub cond {
 	my ($s)=@_;
 	my $i=$s->[1];	# AST for the 'if' part
 	my $e=$s->[2];	# AST for the 'else' part
-	print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+	print "sbiw TOSL, 0\n";
 	print "\tdrop ; drop\n";
-	print ".db 0x27, $label", "_then-.-1\n";
+	print "breq $label", "_then\n";
 	my ($l,$c)=($label++, "_then");
 	my $si = walk($i);	# expand out the 'if' part of the AST
 	if (defined $e and @$e != 0) {
-		print ".db 0x20,", $l, "_endif-.-1\n";
+		print "rjmp ", $l, "_endif\n";
 		print $l, $c, ":\n";
 		$c='_endif';
 		my $se = walk($e);	# expand out the 'else' part of the AST
