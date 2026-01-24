@@ -55,9 +55,10 @@ sub skip {
 		die "$o doesn't fit in 5 bits" if ($o < -64 or $o > 63);
 		printf ".dw 0x%x ; breq $o\n", ((($o<<3) & 0x3F8) | 0xF001);
 	} elsif ($jmp eq 'jnz') {
-		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "sbiw TOSL, 0\n";
 		print "\tdrop ; drop\n";
-		print ".db 0x26, $o ; bne $o\n";
+		die "$o doesn't fit in 5 bits" if ($o < -64 or $o > 63);
+		printf ".dw 0x%x ; brne $o\n", ((($o<<3) & 0x3F8) | 0xF401);
 	}
 }
 
