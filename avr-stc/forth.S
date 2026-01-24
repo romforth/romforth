@@ -10,6 +10,8 @@
 
 #define TOSH r27
 #define TOSL r26
+#define NOSH r25
+#define NOSL r24
 #define YL r28
 #define YH r29
 
