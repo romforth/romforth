@@ -52,7 +52,8 @@ sub skip {
 	} elsif ($jmp eq 'jz') {
 		print "sbiw TOSL, 0\n";
 		print "\tdrop ; drop\n";
-		print ".dw 0xf041 ; breq +8\n";
+		die "$o doesn't fit in 5 bits" if ($o < -64 or $o > 63);
+		printf ".dw 0x%x ; breq $o\n", ((($o<<3) & 0x3F8) | 0xF001);
 	} elsif ($jmp eq 'jnz') {
 		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
 		print "\tdrop ; drop\n";
