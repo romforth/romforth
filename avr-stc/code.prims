@@ -15,3 +15,5 @@ dec	: sbiw TOSL, 1
 inv	: com TOSL ; com TOSH
 nip	: ld NOSH, -Y ; ld NOSL, -Y
 dip	: st Y+, NOSL ; st Y+, NOSH
++	: nip ; add TOSL, NOSL ; adc TOSH, NOSH
+-	: neg ; +
