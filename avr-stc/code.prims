@@ -12,3 +12,4 @@ emit	: sts SIF, TOSL ; drop
 neg	: neg TOSH ; neg TOSL ; sbci TOSH, 0
 inc	: adiw TOSL, 1
 dec	: sbiw TOSL, 1
+inv	: com TOSL ; com TOSH
