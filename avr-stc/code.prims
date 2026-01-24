@@ -21,3 +21,4 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 |	: nip ; or TOSL, NOSL ; or TOSH, NOSH
 ^	: nip ; eor TOSL, NOSL ; eor TOSH, NOSH
 2drop	: drop ; drop
+swap	: nip ; dup ; movw TOSL, NOSL
