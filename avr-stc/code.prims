@@ -22,3 +22,4 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 ^	: nip ; eor TOSL, NOSL ; eor TOSH, NOSH
 2drop	: drop ; drop
 swap	: nip ; dup ; movw TOSL, NOSL
+@	: ld NOSL, X+ ; ld NOSH, X ; movw TOSL, NOSL
