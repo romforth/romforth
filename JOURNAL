@@ -8360,3 +8360,24 @@ find out the hard way while debugging - as I did.
 
 With step 4.1 out of the way, you can now repeat a modified version of this
 exercise for steps 4.[2-5] as well.
+
+24 Jan '26
+----------
+I ran into an actual bug in naken_util while using the adiw/sbiw opcodes and I
+have fixed the bug in the simulator (for now the fix is just in my repo). I'll
+need to report it and push it upstream.
+
+Until the changes make it in, I'll list the diffs here since it is fairly short:
+diff --git a/simulate/avr8.cpp b/simulate/avr8.cpp
+index 5461496..7d8f872 100644
+--- a/simulate/avr8.cpp
++++ b/simulate/avr8.cpp
+@@ -895,6 +895,8 @@ int SimulateAvr8::execute_op_reg_imm_word(
+       execute_set_sreg_reg16(prev_reg16, reg16);
+       break;
+   }
++  reg[rd] = reg16 & 0xff;
++  reg[rd + 1] = (reg16 >> 8) & 0xff;
+
+   return table_avr8->cycles_min;
+ }

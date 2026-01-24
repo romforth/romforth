@@ -10,3 +10,5 @@ drop	: ld TOSH, -Y ; ld TOSL, -Y
 key	: dup ; lds TOSL, SIF ; eor TOSH, TOSH
 emit	: sts SIF, TOSL ; drop
 neg	: neg TOSH ; neg TOSL ; sbci TOSH, 0
+inc	: adiw TOSL, 1
+dec	: sbiw TOSL, 1
