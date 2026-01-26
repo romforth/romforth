@@ -8400,3 +8400,19 @@ index 7d8f872..3d0dedf 100644
        execute_set_sreg_logic(prev, reg[rd], reg[rr]);
        break;
      case AVR8_SBC:
+
+26 Jan '26
+----------
+I ran into a fair bit of trouble at this step since the regression test which
+can be invoked as `./runallsteps avr-stc` from the toplevel failed strangely
+enough at step 4. After an extensively long debug session, I found a discrepancy
+between the forth.lst and forth.ihx which might imply a bug in naken_asm.
+
+By dumb luck, I also happened to notice that the offset at which this occured
+matched the offset of where the data segment starts. So rather than try to find
+what is going on with naken_asm, I found that I could workaround the regression
+by the expedient approach of not initializing the data segment (but reserving
+space for the variables). I'm starting to regret my choice of using naken_asm
+since I assume it may not be as well tested as binutils. Anyway, this JOURNAL
+entry is just to explain to future me why the data segment looks very different
+from all of the other ports so I'll just call it out here and move on.

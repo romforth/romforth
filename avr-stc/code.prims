@@ -23,3 +23,6 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 2drop	: drop ; drop
 swap	: nip ; dup ; movw TOSL, NOSL
 @	: ld NOSL, X+ ; ld NOSH, X ; movw TOSL, NOSL
+!	: nip ; st X+, NOSL ; st X, NOSH ; drop
+
+var here

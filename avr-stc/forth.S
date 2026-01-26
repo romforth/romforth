@@ -35,7 +35,7 @@ halt:
 
 rom:
 
-	ldi YL, 0x60	; YL <- data stack base (assume 128 byte Internal SRAM)
+	ldi YL, stk	; YL <- data stack base (assume 128 byte Internal SRAM)
 	eor YH, YH	; YH <- 0
 
 #include "rom.s"
@@ -51,3 +51,10 @@ rom:
 #include "defs.s"
 #endif
 #endif
+
+	.org 0
+	.resb 0x60	; Register and I/O memory map region as per docs
+stk:
+	.resw 20	; Data stack
+here:	.resw 1
+mem:	.resb 128-$
