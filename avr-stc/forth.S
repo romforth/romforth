@@ -35,6 +35,8 @@ halt:
 
 rom:
 
+	ldi YL, 1	; initialize the state variable in memory
+	sts state, YL	; ... to 1
 	ldi YL, stk	; YL <- data stack base (assume 128 byte Internal SRAM)
 	eor YH, YH	; YH <- 0
 
@@ -56,5 +58,6 @@ rom:
 	.resb 0x60	; Register and I/O memory map region as per docs
 stk:
 	.resw 20	; Data stack
+state:	.resb 1
 here:	.resw 1
 mem:	.resb 128-$

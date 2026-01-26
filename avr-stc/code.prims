@@ -24,5 +24,8 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 swap	: nip ; dup ; movw TOSL, NOSL
 @	: ld NOSL, X+ ; ld NOSH, X ; movw TOSL, NOSL
 !	: nip ; st X+, NOSL ; st X, NOSH ; drop
+c@	: ld NOSL, X ; eor NOSH, NOSH ; movw TOSL, NOSL
+c!	: nip ; st X, NOSL ; drop
 
 var here
+var state
