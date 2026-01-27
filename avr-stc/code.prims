@@ -28,6 +28,7 @@ c@	: ld NOSL, X ; eor NOSH, NOSH ; movw TOSL, NOSL
 c!	: nip ; st X, NOSL ; drop
 pick	: inc ; lsl TOSL ; neg ; add TOSL, YL ; adc TOSH, YH ; @
 stick	: inc ; lsl TOSL ; neg ; add TOSL, YL ; adc TOSH, YH ; !
+sp@!	: movw NOSL, TOSL ; movw TOSL, YL ; movw YL, NOSL
 
 var here
 var state
