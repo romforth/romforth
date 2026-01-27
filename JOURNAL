@@ -8416,3 +8416,58 @@ space for the variables). I'm starting to regret my choice of using naken_asm
 since I assume it may not be as well tested as binutils. Anyway, this JOURNAL
 entry is just to explain to future me why the data segment looks very different
 from all of the other ports so I'll just call it out here and move on.
+
+27 Jan '26
+----------
+I ran into yet another bug in naken_util at this step. Before describing the
+fix, I need to explain a bit about the AVR memory map. Just like the 8051, the
+AVR maps registers to memory locations. So the 32 registers map to memory 0-0x1F
+
+The AVR also has an IO register space that appears to be both memory and IO
+mapped.  The memory mapping goes from 0x20 to 0x5F while the IO map is from
+0 to 3F. So you could use in/out on 0-0x3F or use ld/st on 0x20-0x5F.
+
+The stack pointer (SP) on the AVR is mapped to IO registers 0x3D (SPL) and
+0x3E (SPH) so that in/out on these addresses should translate into a read/write
+of the SP. But this is currently not implemented in naken_util. As usual, I'm
+not going to stand on ceremony and wait for it to get fixed upstream since I
+need the fix now, so I've just gone ahead and patched in the following changes
+which takes care of the SP mapping (but only for the IO address space).
+
+diff --git a/simulate/avr8.cpp b/simulate/avr8.cpp
+index 3d0dedf..1061bee 100644
+--- a/simulate/avr8.cpp
++++ b/simulate/avr8.cpp
+@@ -1057,8 +1057,16 @@ int SimulateAvr8::execute()
+           cycles = table_avr8[n].cycles_min;
+           break;
+         case OP_IN:
+-          rd = (opcode >> 4) & 0xf;
++          rd = (opcode >> 4) & 0x1f;
+           k = ((opcode & 0x600) >> 5) | (opcode & 0xf);
++          if (k == 0x3D)
++          {
++            io[k] = (sp & 0xFF);
++          }
++          if (k == 0x3E)
++          {
++            io[k] = ((sp >> 8) & 0xFF);
++          }
+           reg[rd] = io[k];
+           cycles = table_avr8[n].cycles_min;
+           break;
+@@ -1066,6 +1074,14 @@ int SimulateAvr8::execute()
+           rd = (opcode >> 4) & 0x1f;
+           k = ((opcode & 0x600) >> 5) | (opcode & 0xf);
+           io[k] = reg[rd];
++          if (k == 0x3D)
++          {
++            sp = (sp & 0xff00) | reg[rd];
++          }
++          if (k == 0x3E)
++          {
++            sp = (reg[rd] << 8) | (sp & 0xff);
++          }
+           cycles = table_avr8[n].cycles_min;
+           break;
+         case OP_MOVW:

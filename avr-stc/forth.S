@@ -7,6 +7,8 @@
 	.avr8
 
 	.set SIF=0xffff
+	.set SPH=0x3e
+	.set SPL=0x3d
 
 #define TOSH r27
 #define TOSL r26
