@@ -21,7 +21,7 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 |	: nip ; or TOSL, NOSL ; or TOSH, NOSH
 ^	: nip ; eor TOSL, NOSL ; eor TOSH, NOSH
 2drop	: drop ; drop
-swap	: nip ; dup ; movw TOSL, NOSL
+swap	: rcall swap_cfa
 @	: ld NOSL, X+ ; ld NOSH, X ; movw TOSL, NOSL
 !	: nip ; st X+, NOSL ; st X, NOSH ; drop
 c@	: ld NOSL, X ; eor NOSH, NOSH ; movw TOSL, NOSL
@@ -32,6 +32,7 @@ sp@!	: movw NOSL, TOSL ; movw TOSL, YL ; movw YL, NOSL
 rp@!	: in NOSL, SPL ; in NOSH, SPH ; out SPL, TOSL ; out SPH, TOSH ; movw TOSL, NOSL
 >r	: push TOSH ; push TOSL ; drop
 r>	: dup ; pop TOSL ; pop TOSH
+exec	: movw ZL, TOSL ; drop ; icall
 
 var here
 var state

@@ -22,8 +22,8 @@ sub compile {
 	my $o=$l->[1];
 	$o .= "_cfa";
 	print qq(\tdup ; dup\n);
-	print qq(.db 0xCC ; ldd\n);
-	print qq(.dw #$o\n);	# $o ; tos <- $o
+	print qq(ldi TOSH, ($o >> 8)\n);
+	print qq(ldi TOSL, ($o & 0xff)\n);
 }
 
 sub prim {

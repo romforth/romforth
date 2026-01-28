@@ -16,6 +16,8 @@
 #define NOSL r24
 #define YL r28
 #define YH r29
+#define ZL r30
+#define ZH r31
 
 	.org	0
 
@@ -34,6 +36,14 @@ start:
 
 halt:
 	ret	; unmatched ret to terminate the naken_util emulation as per docs
+
+swap_cfa:
+	ld NOSH, -Y
+	ld NOSL, -Y
+	st Y+, TOSL
+	st Y+, TOSH
+	movw TOSL, NOSL
+	ret
 
 rom:
 

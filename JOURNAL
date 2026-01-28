@@ -8471,3 +8471,33 @@ index 3d0dedf..1061bee 100644
            cycles = table_avr8[n].cycles_min;
            break;
          case OP_MOVW:
+
+28 Jan '26
+----------
+Another day another bug (in naken_util). The strength of the "step-by-step"
+approach to porting that I use here is on full display since I can easily figure
+out when the bug is in the environment rather that in my own code.
+
+The bug this time around is that the nesting count of calls and returns is not
+being maintained correctly and can be fixed using the following diff:
+
+diff --git a/simulate/avr8.cpp b/simulate/avr8.cpp
+index 1061bee..53a1ca1 100644
+--- a/simulate/avr8.cpp
++++ b/simulate/avr8.cpp
+@@ -969,6 +969,7 @@ int SimulateAvr8::execute_op_relative(
+     case AVR8_RJMP:
+       break;
+     case AVR8_RCALL:
++      nested_call_count++;
+       PUSH_STACK16(pc)
+       break;
+   }
+@@ -989,6 +990,7 @@ int SimulateAvr8::execute_op_jump(
+   switch(table_avr8->id)
+   {
+     case AVR8_CALL:
++      nested_call_count++;
+       PUSH_STACK16(pc);
+     case AVR8_JMP:
+       pc = k;
