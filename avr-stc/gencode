@@ -111,15 +111,15 @@ sub def {
 		$prev=$p;
 		$prev="$l"."_lfa";
 	}
-	print "$l", "_cfa : ; $w\n";
+	print "$l", "_cfa: ; $w\n";
 	my $se = walk($a);	# expand out the body of the definition
-	print ".db 0x39\n";
+	print "ret\n";
 }
 
 sub visit {
 	my ($s)=@_;
 	#print "$s->[0]  label:$s->[1],  name:$s->[2]\n";
-	print ".db 0xbd\n.dw $s->[1]", "_cfa ; $s->[2]\n";
+	print "rcall $s->[1]", "_cfa ; $s->[2]\n";
 }
 
 sub loop {

@@ -7,7 +7,7 @@
 AS=naken_asm
 ASFLAGS=-l -o
 
-all : oneforth
+all : twoforth
 
 oneforth : test.out
 twoforth : test.defs
@@ -40,7 +40,7 @@ forth.s : forth.S prims.ast rom.s
 forth.ihx : forth.s
 	$(AS) $(ASFLAGS) forth.ihx forth.s >/dev/null
 forth_defs.ihx : forth_defs.s
-	$(AS) $(ASFLAGS) forth_defs.ihx forth_defs.s
+	$(AS) $(ASFLAGS) forth_defs.ihx forth_defs.s >/dev/null
 forth_defs.S : forth.S
 	cp forth.S forth_defs.S
 	sed -i 's/define USEDEFS 0/define USEDEFS 1/' forth_defs.S
