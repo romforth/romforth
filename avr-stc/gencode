@@ -146,9 +146,9 @@ sub loop {
 		$t=-1
 	}
 	if ($t==1) {		# conditional while loop
-		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "sbiw TOSL, 0\n";
 		print "\tdrop ; drop\n";
-		print ".db 0x27, ", $lbl, "_end-.-1 ; beq\n";
+		print "breq $lbl", "_end\n";
 	} elsif ($t==0) {	# conditional while:until loop
 		print "sbiw TOSL, 0\n";
 		print "\tdrop ; drop\n";
