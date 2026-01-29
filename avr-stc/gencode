@@ -150,14 +150,14 @@ sub loop {
 		print "\tdrop ; drop\n";
 		print ".db 0x27, ", $lbl, "_end-.-1 ; beq\n";
 	} elsif ($t==0) {	# conditional while:until loop
-		print ".db 0x10, 0x83, 0, 0 ; cmpd #0\n";
+		print "sbiw TOSL, 0\n";
 		print "\tdrop ; drop\n";
-		print ".db 0x26, ", $lbl, "_end-.-1 ; bne\n";
+		print "brne $lbl", "_end\n";
 	} else {		# unconditional loop
 		# no condition code needs to be generated
 	}
 	my $lb = walk($b);
-	print ".db 0x20,", $lbl,"_begin-.-1 ; bra\n";
+	print "rjmp ", $lbl,"_begin\n";
 	print "$lbl", "_end:\n";
 	#print "\tdrop ; drop\n";
 }
