@@ -35,7 +35,8 @@ start:
 	jmp rom
 
 halt:
-	ret	; unmatched ret to terminate the naken_util emulation as per docs
+	nop
+	out 0, r0	; write to port 0 to exit
 
 swap_cfa:
 	ld NOSH, -Y

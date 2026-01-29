@@ -16,18 +16,18 @@ fourforth : test.dict
 
 test.dict : forth_dict.ihx test.inp test.exp
 	cp test.inp test.in
-	naken_util -avr8 -run -serial_addr 0xffff -serial_in test.in -serial_out test.dict forth_dict.ihx > test.log
-	grep ' ! 0x0014: 0x9508 ret' test.log > /dev/null
+	naken_util -avr8 -run -serial_addr 0xffff -serial_in test.in -serial_out test.dict -break_io 0 forth_dict.ihx > test.log
+	grep '> 0x0015: 0xb800 out 0x0, r0' test.log > /dev/null
 	cmp test.dict test.exp
 test.defs : forth_defs.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
-	naken_util -avr8 -run -serial_addr 0xffff -serial_in test.in -serial_out test.defs forth_defs.ihx > test.log
-	grep ' ! 0x0014: 0x9508 ret' test.log > /dev/null
+	naken_util -avr8 -run -serial_addr 0xffff -serial_in test.in -serial_out test.defs -break_io 0 forth_defs.ihx > test.log
+	grep '> 0x0015: 0xb800 out 0x0, r0' test.log > /dev/null
 	cmp test.defs test.exp
 test.out : forth.ihx test.inp test.exp
 	cat test.inp | perl -pe chomp > test.in
-	naken_util -avr8 -run -serial_addr 0xffff -serial_in test.in -serial_out test.out forth.ihx > test.log
-	grep ' ! 0x0014: 0x9508 ret' test.log > /dev/null
+	naken_util -avr8 -run -serial_addr 0xffff -serial_in test.in -serial_out test.out -break_io 0 forth.ihx > test.log
+	grep '> 0x0015: 0xb800 out 0x0, r0' test.log > /dev/null
 	cmp test.out test.exp
 test.inp : ../test.inp ../fpp fpp.config ../rest.inp
 	cat ../test.inp | ../fpp -DTESTROM -c fpp.config | perl -pe chomp > test.inp

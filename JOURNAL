@@ -8501,3 +8501,39 @@ index 1061bee..53a1ca1 100644
        PUSH_STACK16(pc);
      case AVR8_JMP:
        pc = k;
+
+29 Jan '26
+----------
+This is bug #5 in naken_util that I have found so far - the documented support
+for the -break_io option does not appear to be implemented for the AVR.
+
+So far, I have been using an unmatched/additional ret to exit out of naken_util
+(this is a documented "feature" of naken_util). At step 23 though, this can no
+longer be used since the code manipulates the return stack explicitly as part
+of the tests and the final ret happens to be matched resulting in an infinite
+loop during the tests.
+
+Rather than try to make this scheme work, I'm going to fall back to the earlier
+method that I was using in ucsim where you can write to a port to exit out of
+the simulator. In naken_util, this is supported by the -break_io option except
+that it is not currently implemented in the code so I've gone ahead and done
+that - diffs below:
+
+diff --git a/simulate/avr8.cpp b/simulate/avr8.cpp
+index 53a1ca1..c75b9cf 100644
+--- a/simulate/avr8.cpp
++++ b/simulate/avr8.cpp
+@@ -1076,6 +1076,10 @@ int SimulateAvr8::execute()
+           rd = (opcode >> 4) & 0x1f;
+           k = ((opcode & 0x600) >> 5) | (opcode & 0xf);
+           io[k] = reg[rd];
++          if (k == break_io)
++          {
++            exit(0);
++          }
+           if (k == 0x3D)
+           {
+             sp = (sp & 0xff00) | reg[rd];
+
+With this change in place, it turned out the implementation of >r and r> needed
+to be tweaked so that the endianness matches what is expected for call and ret.
