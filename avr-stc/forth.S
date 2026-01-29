@@ -46,6 +46,30 @@ swap_cfa:
 	movw TOSL, NOSL
 	ret
 
+shiftleft:
+	clc
+backl:
+	dec TOSL
+	brmi endl
+	rol NOSL
+	rol NOSH
+	rjmp backl
+endl:
+	movw TOSL, NOSL
+	ret
+
+shiftright:
+	clc
+backr:
+	dec TOSL
+	brmi endr
+	ror NOSH
+	ror NOSL
+	rjmp backr
+endr:
+	movw TOSL, NOSL
+	ret
+
 rom:
 
 	ldi YL, 1	; initialize the state variable in memory
