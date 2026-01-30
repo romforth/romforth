@@ -21,7 +21,7 @@ dip	: st Y+, NOSL ; st Y+, NOSH
 |	: nip ; or TOSL, NOSL ; or TOSH, NOSH
 ^	: nip ; eor TOSL, NOSL ; eor TOSH, NOSH
 2drop	: drop ; drop
-swap	: rcall swap_cfa
+swap	: call swap_cfa
 @	: ld NOSL, X+ ; ld NOSH, X ; movw TOSL, NOSL
 !	: nip ; st X+, NOSL ; st X, NOSH ; drop
 c@	: ld NOSL, X ; eor NOSH, NOSH ; movw TOSL, NOSL
