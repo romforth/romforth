@@ -37,6 +37,7 @@ call	: movw ZL, TOSL ; drop ; icall
 <<	: nip ; rcall shiftleft
 >>	: nip ; rcall shiftright
 over	: dup ; sbiw YL, 2 ; drop ; adiw YL, 4
+exit	: ret
 
 var here
 var state
