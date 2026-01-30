@@ -72,6 +72,10 @@ endr:
 
 rom:
 
+	ldi YL, (mem & 0xff)
+	sts here, YL
+	ldi YL, (mem >> 8)
+	sts here+1, YL
 	ldi YL, 1	; initialize the state variable in memory
 	sts state, YL	; ... to 1
 	ldi YL, stk	; YL <- data stack base (assume 128 byte Internal SRAM)
@@ -94,7 +98,7 @@ rom:
 	.org 0
 	.resb 0x60	; Register and I/O memory map region as per docs
 stk:
-	.resw 20	; Data stack
-state:	.resb 1
+	.resb 20	; Data stack
+state:	.resw 1
 here:	.resw 1
 mem:	.resb 128-$
