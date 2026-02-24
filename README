@@ -205,6 +205,11 @@ The gzipped output from running a `make clean` followed by a successful toplevel
 be a one-time snapshot to help you understand the commands that are run as part
 of the full build - it will not be updated when newer ports are added.
 
+Contributing
+====================
+Code contributions in the form of new ports or improvements to the existing
+ports are welcome. Please see CONTRIBUTING.md for details.
+
 ROM/RAM Requirements
 ====================
 
